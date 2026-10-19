@@ -1,0 +1,401 @@
+/**
+ * DÜZEN SINIFLARI — satır, sütun, ızgara, boşluk (`PLAN-MOTOR.md` §8, P1)
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Panelin inline stillerinin çoğu düzendir, süsleme değil: 139 `display:flex`,
+ * 153 `gap`, 102 `align-items:center`, 42 `justify-content:space-between`,
+ * 97 `margin-bottom`. Buradaki sınıflar tam olarak o kalıpları karşılar.
+ *
+ * ⚠ P1'de bu sınıflar HİÇBİR YERE UYGULANMAZ. Dosya yüklenir, sınıflar hazır
+ * bekler; işaretleme P3'te sayfa sayfa taşınır. Böylece "panel aynı görünür"
+ * ölçütü ölçülebilir kalır — bu adımda ekranda değişen tek piksel olmamalı.
+ *
+ * Sınıf adları mevcut 77 sınıfın hiçbiriyle çakışmıyor (denetim:
+ * `scripts/panel-denetim.js`). Çakışsalardı yeni kural eski işaretlemeye
+ * sessizce uygulanır ve panelin görünümü habersiz değişirdi.
+ */
+
+/* ── Satır ve sütun ──────────────────────────────────────────────────────
+   `.row` dikeyde ORTALAR (panelde 102 yerde elle yazılan davranış).
+   Ortalama istenmiyorsa `.row-top` kullanılır.                          */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.row-top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
+/** Sol/sağ uçlara yaslanan satır — başlık + düğme kalıbı, 42 yerde. */
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+/**
+ * Aynısı ama BOŞLUKSUZ.
+ *
+ * `space-between` zaten uçlara yaslıyor; bir `gap` yalnızca kutular
+ * sığmayıp yan yana gelince görünür. İki uçta iki kutu varken gap
+ * gereksizdir ve `.row-between` + `.gap-*` ile ezmek yerine kendi
+ * kuralı olması niyeti okunur kılıyor.
+ */
+.row-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/** Dar ekranda alt satıra geçen satır; filtre/rozet dizileri (38 yer). */
+.row-wrap {
+  flex-wrap: wrap;
+}
+
+/** Dikey yığın — form alanları ve etiket+değer çiftleri. */
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/** Satırda kalan boşluğu yiyip komşuyu sağa iten esnek ara. */
+.push {
+  margin-left: auto;
+}
+
+/** Hizalamasız satır — çocuklar kendi yüksekliğinde kalır. */
+.row-plain {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+/** Sağa yaslı satır — eylem düğmeleri. */
+.row-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.items-end { align-items: flex-end; }
+
+/**
+ * Taban çizgisine hizalı satır — yan yana duran farklı boyda iki metnin
+ * (etiket + sayı) alt çizgileri tutsun diye.
+ */
+.row-baseline {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.grid-auto-180 { grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); }
+.grid-auto-320-lg { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: var(--sp-5); }
+
+/** Hizalamasız, yalnızca uçlara yaslayan satır (`.row-split`in dikey serbest hâli). */
+.split { display: flex; justify-content: space-between; }
+
+/* ── Izgaralar ───────────────────────────────────────────────────────────
+   İki genişlik var ve ikisi de token: yoğun kart dizileri 210px, geniş
+   özet kartları 240px. Yeni bir genişlik gerekiyorsa önce token açılır. */
+.grid-auto {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min-dense), 100%), 1fr));
+}
+
+.grid-auto-card {
+  display: grid;
+  gap: var(--sp-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min-card), 100%), 1fr));
+}
+
+.grid-2 {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr 1fr;
+}
+
+/**
+ * Sabit oranlı ızgaralar. Adlar SÜTUN ORANINI söyler — "sol", "sağ" gibi
+ * adlar dar ekranda tek sütuna düşünce yanlış olurdu.
+ */
+.grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: var(--sp-5); }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: var(--sp-5); }
+.grid-14-1 { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--sp-4); }
+.grid-190-1 { display: grid; grid-template-columns: 190px 1fr; gap: var(--sp-4); align-items: start; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-4); }
+.grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+/**
+ * Otomatik ızgaranın dar sürümleri — kart genişliği içeriğe göre değişiyor.
+ * Her genişlik panelde gerçekten kullanılıyor.
+ */
+.grid-auto-140 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: var(--sp-3); }
+.grid-auto-160 { grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); }
+.grid-auto-170 { grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); }
+.grid-auto-190 { grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); }
+.grid-auto-170-std { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: var(--sp-4); }
+.grid-auto-320 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: var(--sp-4); }
+
+/**
+ * ⚠ Boşluk, hizalama, genişlik ve görünürlük yardımcıları BURADA DEĞİL —
+ * `utilities.css` içinde ve o dosya EN SON yükleniyor. Sebep: yardımcı bir
+ * sınıf bileşeni ezebilmeli (`.check-label`in boşluğunu `.gap-1` yenmeli).
+ * Aynı özgüllükte son yazılan kural kazandığı için sıra tek belirleyici.
+ */
+
+/* ═══ DUYARLILIK: dar ekranda tek sütun vb. — `css/kirilim.css` (Pusula P5, tek dosya). */
+
+
+
+
+/* ═══ KABUK — yeni panel F2 (PLAN-PANEL-YENI §2 + EK-1, TradeZella tarzı) ═══════════
+   Masaüstü (≥ 1024 px): solda tam boy yapışkan yan menü (marka + dört grup, iki seviye),
+   sağda üst çubuk + bant yuvası + içerik. Telefon/tablet (< 1024 px): yan menü soldan
+   açılan ÇEKMECE (alt çubuktaki "Menü"), altta Ana · Portföy · Botlar · Sinyaller · Menü.
+   Kırılım noktaları: 640 / 1024 (css/kirilim.css). Gezinme: js/core/rota.js + js/pages/kabuk.js. */
+.kabuk {
+  display: grid;
+  grid-template-columns: var(--menu-genislik) minmax(0, 1fr);
+  align-items: start;
+  min-height: 100vh;
+}
+
+/* Izgara çocuğu varsayılan min-width:auto ile içeriğin (geniş tablo, grafik) en küçük
+   genişliğine kilitlenir ve sayfayı yatay taşırır (Botlar 1400 px'te 1512 ölçüldü). */
+.kabuk > * { min-width: 0; }
+.kabuk-sag { display: flex; flex-direction: column; min-width: 0; }
+.kabuk-sag > main { width: 100%; box-sizing: border-box; }
+
+.yan-menu {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-4) var(--sp-3) var(--sp-6);
+  background: var(--surface-inset);
+  border-right: 1px solid var(--border);
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+.yan-menu-bas { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: 0 var(--sp-2) var(--sp-3); }
+.yan-menu-kapat { display: none; }
+
+.menu-grup-ad {
+  margin: var(--sp-4) var(--sp-3) var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.menu-ogesi {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+.menu-ogesi svg { width: 18px; height: 18px; flex-shrink: 0; }
+.menu-ogesi:hover { background: var(--surface-2); color: var(--text-strong); }
+.menu-ogesi.is-active { background: var(--accent-soft); color: var(--text-strong); }
+.menu-dal.is-acik > .menu-ust { background: var(--surface-3); color: var(--text-strong); }
+.menu-ust .menu-ok { width: 14px; height: 14px; margin-left: auto; transition: transform var(--transition-fast); }
+.menu-ust .menu-rozet:not(.is-hidden) + .menu-ok { margin-left: var(--sp-1); }
+.menu-dal.is-acik .menu-ok { transform: rotate(180deg); }
+
+.menu-altlar { display: none; flex-direction: column; gap: 1px; margin: 2px 0 var(--sp-1); }
+.menu-dal.is-acik .menu-altlar { display: flex; }
+.menu-alt {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 var(--sp-3) 0 38px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+.menu-alt:hover { background: var(--surface-2); color: var(--text-strong); }
+.menu-alt.is-active { background: var(--accent-soft); color: var(--text-strong); }
+
+/* Telefon çekmecesinin perdesi: masaüstünde yok. */
+.menu-perde { display: none; }
+
+/* Telefon/tablet alt çubuğu: masaüstünde yok. */
+.alt-cubuk { display: none; }
+
+.alt-cubuk-ogesi {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--sp-1) 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.alt-cubuk-ogesi svg { width: 20px; height: 20px; }
+.alt-cubuk-ogesi span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alt-cubuk-ogesi.is-active { color: var(--accent-metin); font-weight: var(--fw-semibold); }
+
+/* Üst çubuk: kırıntı + sayfa adı solda, eylemler sağda (içerikteki sayfa başlığı kopyası components.css'te gizli). */
+.ust-yol { min-width: 0; display: grid; gap: 2px; }
+.ust-kirinti { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ust-kirinti:empty { display: none; }
+.ust-baslik { margin: 0; font-size: var(--fs-xl); font-weight: 800; color: var(--text-strong); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ust-gorunum { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.ust-acil { color: var(--neg-metin); border-color: var(--neg-border); }
+.ust-acil:hover { background: var(--neg-soft); color: var(--neg-metin); }
+
+/* Aynı işi yan menü yapıyor (adres taşır): Botlar › Hücum/Denge ve Ayarlar › … şeritleri içerikte gizli. */
+#botSekmeler, #ayarSekmeler { display: none; }
+
+/* TEK bant yuvası: içeriğin üstünde; bantlar kart gibi (sol çizgi yok). */
+.bant-yuvasi { display: grid; gap: var(--sp-2); padding: 0 var(--sp-6); }
+.bant-yuvasi:has(> :not(.is-hidden)) { padding-top: var(--sp-3); }
+
+/* Marka: rüzgâr gülü (satır içi SVG, 32 px altında yalnız 4 kol — §4a/3). */
+.brand-logo { width: var(--logo-boy); height: var(--logo-boy); flex-shrink: 0; display: block; }
+.logo-kol { fill: var(--logo-kol); }
+.logo-golge { fill: var(--logo-golge); }
+.logo-ara { fill: var(--logo-ara); }
+
+/* Bant (araştırma modu, telefon kademesi, bağlantı) — tek yuvada (.bant-yuvasi), uyarı kartı görünümü. */
+.arastirma-bandi {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--warn-soft);
+  /* Metin --text: uyarı rengi kendi açık zemininde 4,05:1 kalıyordu (AA 4,5). */
+  color: var(--text);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+}
+
+/* Ekran içi bölüm başlığı (Hesaplar: borsa / hesap kaydı; Arşiv). */
+.bolum-baslik {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--text-soft);
+  margin: var(--sp-5) 0 var(--sp-3);
+}
+
+/* Ana sayfa (yeni panel F5, K-B): Yapman gerekenler EN ÜSTTE tam genişlik; Portföy özeti (geniş) · Sistem ışıkları; Botlar altta.
+   Modeller kartı gizli (emirler Yapman gerekenler'de). Telefonda (< 1024 px) tek sütun, DOM sırası: yapılacaklar → portföy → sistem → botlar. */
+.ana-izgara {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas: "yapilacak yapilacak yapilacak" "portfoy portfoy sistem" "botlar botlar botlar";
+  gap: var(--sp-4);
+  align-items: stretch;
+}
+.ana-botlar { grid-area: botlar; }
+.ana-portfoy { grid-area: portfoy; }
+.ana-modeller { display: none; }
+.ana-sistem { grid-area: sistem; }
+.ana-yapilacak { grid-area: yapilacak; }
+.ana-portfoy, .ana-sistem { display: flex; flex-direction: column; gap: var(--sp-2); }
+.ana-buyuk-sayi { font-size: var(--fs-xl); font-weight: var(--fw-medium); color: var(--text-strong); }
+.ana-kart-bag { align-self: flex-start; margin-top: auto; padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-semibold); cursor: pointer; }
+.ana-kart-bag:hover { text-decoration: underline; }
+.ana-isik-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-2); }
+.ana-isik-satir { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-sm); }
+/* 68.3 Sistem › Kurulum denetimi (js/pages/kurulumDenetimi.js) */
+.kd-satir { flex-wrap: wrap; align-items: baseline; padding: var(--sp-1) 0; border-bottom: 1px solid var(--border); }
+.kd-satir:last-child { border-bottom: 0; }
+.kd-baslik { font-weight: 600; flex: 0 1 22rem; }
+.kd-ayrinti { flex: 1 1 16rem; overflow-wrap: anywhere; }
+.kd-onar { margin-left: auto; }
+/* 68.3 Botlarımızın gerçekleşmiş sonuçları (js/pages/botPerformans.js) */
+.bp-ozet { cursor: pointer; list-style: revert; }
+.bp-kap[open] .bp-ozet { margin-bottom: var(--sp-3); }
+.bp-grup { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin: var(--sp-3) 0 var(--sp-2); }
+.bp-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--sp-3); }
+.bp-kart { border: 1px solid var(--border); border-radius: 10px; padding: var(--sp-3); min-width: 0; }
+.bp-baslik { margin: 0 0 var(--sp-1); font-size: var(--fs-md, 1rem); }
+.bp-kunye { font-size: var(--fs-xs, .78rem); margin: 0 0 var(--sp-2); }
+.bp-grafik { width: 100%; height: auto; display: block; }
+.bp-cizgi { stroke-width: 2; vector-effect: non-scaling-stroke; }
+.bp-cizgi-ana { stroke: var(--accent); }
+.bp-cizgi-kiyas { stroke: var(--text-muted); stroke-dasharray: 4 3; }
+.bp-taban { stroke: var(--text-muted); stroke-opacity: .35; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.bp-lejant { font-size: var(--fs-xs, .78rem); margin: var(--sp-1) 0; }
+.bp-l-ana { color: var(--accent); }
+.bp-sayilar { list-style: none; margin: var(--sp-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); font-size: var(--fs-sm); }
+.bp-uyari { margin: var(--sp-3) 0 var(--sp-1); font-size: var(--fs-sm); }
+.ana-bot .kv-list dd { text-align: right; }
+.ana-bot-ad { font-size: var(--fs-lg); }
+
+.ana-sayilar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: var(--sp-3);
+}
+
+.ana-sayi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* Dağılım: halka + yanında lejant; dar kutuda alt alta. */
+.ana-dagilim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.saglik-serit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+/* Botlar: 62.6 sekme = bot — seçili botun kartı tam genişlik (diğeri .is-hidden). */
+.bot-kartlari {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
+}
+.bot-kartlari > * { min-width: 0; }
+
+.bos-durum {
+  padding: var(--sp-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+

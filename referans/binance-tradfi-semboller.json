@@ -1,0 +1,4701 @@
+{
+ "olusturma": "2026-10-19T08:03:11.528Z",
+ "kaynak": "Binance USDⓈ-M herkese açık uçlar: /fapi/v1/exchangeInfo, /ticker/24hr, /premiumIndex, /fundingInfo, /fundingRate, /klines; Nasdaq-100 listesi api.nasdaq.com; QQQ kapanışı Yahoo v8 chart",
+ "betik": "node scripts/nasdaq-erisim.js",
+ "notlar": [
+  "TradFi sözleşmeleri Nest Exchange Limited (ADGM/FSRA) üzerinden sunuluyor; işlemden önce \"TradFi-Perps agreement\" imzası gerekiyor (POST /fapi/v1/stock/contract). Türkiye yerleşiklerine açık olup olmadığı DOĞRULANAMADI.",
+  "Hepsi 2026'da listelendi: geçmiş veri birkaç ay. Backtest dayanak seriyle (QQQ/hisse) yapılmalı; perp fonlaması ve primi ayrıca modellenmeli.",
+  "azamiKaldirac = 100 / requiredMarginPercent (exchangeInfo); gerçek kademeli sınır hesap anahtarıyla leverageBracket ucundan okunur — bu betik anahtarsız.",
+  "nasdaq100Uyesi: güncel listeye göre (nokta-zamanlı DEĞİL)."
+ ],
+ "ozet": {
+  "tradfiToplam": 221,
+  "turSayilari": {
+   "KR_EQUITY": 8,
+   "EQUITY": 183,
+   "COMMODITY": 8,
+   "CN_EQUITY": 2,
+   "HK_EQUITY": 15,
+   "PREMARKET": 4,
+   "FX": 1
+  },
+  "nasdaq100Listesi": {
+   "tarih": "Oct 16, 2026",
+   "uyeSayisi": 101
+  },
+  "nasdaq100UyesiPerpSayisi": 45,
+  "nasdaq100UyesiPerpler": [
+   "SNDK",
+   "MU",
+   "SPCX",
+   "TSLA",
+   "MSTR",
+   "INTC",
+   "NVDA",
+   "NBIS",
+   "AMD",
+   "LITE",
+   "MRVL",
+   "CRWV",
+   "GOOGL",
+   "AAPL",
+   "META",
+   "WDC",
+   "AVGO",
+   "PLTR",
+   "MSFT",
+   "AMZN",
+   "ARM",
+   "RKLB",
+   "MRNA",
+   "ASML",
+   "AMAT",
+   "QCOM",
+   "ALAB",
+   "NFLX",
+   "APP",
+   "LRCX",
+   "TER",
+   "WMT",
+   "CRWD",
+   "ADBE",
+   "TTWO",
+   "KLAC",
+   "COST",
+   "SHOP",
+   "CSCO",
+   "DDOG",
+   "TXN",
+   "PDD",
+   "PANW",
+   "SNPS",
+   "PYPL"
+  ],
+  "endeksVeEtf": [
+   {
+    "sembol": "SOXLUSDT",
+    "hacim24sUSDT": 1057162920,
+    "listeleme": "2026-05-15"
+   },
+   {
+    "sembol": "SOXSUSDT",
+    "hacim24sUSDT": 216340428,
+    "listeleme": "2026-07-16"
+   },
+   {
+    "sembol": "QQQUSDT",
+    "hacim24sUSDT": 137123946,
+    "listeleme": "2026-04-06"
+   },
+   {
+    "sembol": "TQQQUSDT",
+    "hacim24sUSDT": 58579313,
+    "listeleme": "2026-06-29"
+   },
+   {
+    "sembol": "SPYUSDT",
+    "hacim24sUSDT": 38734437,
+    "listeleme": "2026-04-06"
+   },
+   {
+    "sembol": "SQQQUSDT",
+    "hacim24sUSDT": 19270403,
+    "listeleme": "2026-06-29"
+   },
+   {
+    "sembol": "IWMUSDT",
+    "hacim24sUSDT": 1065820,
+    "listeleme": "2026-06-08"
+   },
+   {
+    "sembol": "SMHUSDT",
+    "hacim24sUSDT": 957582,
+    "listeleme": "2026-07-29"
+   }
+  ],
+  "fonlamaGecmisi": {
+   "QQQUSDT": {
+    "kayit": 500,
+    "bas": "2026-05-10",
+    "son": "2026-10-19",
+    "toplamYuzde": 2.724,
+    "yillikLongMaliyetYuzde": 6.15,
+    "sifirOrani": 0.65
+   },
+   "SPYUSDT": {
+    "kayit": 500,
+    "bas": "2026-05-10",
+    "son": "2026-10-19",
+    "toplamYuzde": 0.357,
+    "yillikLongMaliyetYuzde": 0.81,
+    "sifirOrani": 0.79
+   },
+   "TQQQUSDT": {
+    "kayit": 351,
+    "bas": "2026-06-24",
+    "son": "2026-10-19",
+    "toplamYuzde": 0.895,
+    "yillikLongMaliyetYuzde": 2.8,
+    "sifirOrani": 0.72
+   },
+   "NVDAUSDT": {
+    "kayit": 500,
+    "bas": "2026-05-10",
+    "son": "2026-10-19",
+    "toplamYuzde": 3.995,
+    "yillikLongMaliyetYuzde": 9.02,
+    "sifirOrani": 0.57
+   },
+   "AAPLUSDT": {
+    "kayit": 500,
+    "bas": "2026-05-11",
+    "son": "2026-10-19",
+    "toplamYuzde": 0.589,
+    "yillikLongMaliyetYuzde": 1.33,
+    "sifirOrani": 0.82
+   },
+   "MSFTUSDT": {
+    "kayit": 500,
+    "bas": "2026-05-15",
+    "son": "2026-10-19",
+    "toplamYuzde": 1.764,
+    "yillikLongMaliyetYuzde": 4.09,
+    "sifirOrani": 0.74
+   }
+  },
+  "qqqPerpIzleme": {
+   "gun": 86,
+   "bas": "2026-06-16",
+   "son": "2026-10-16",
+   "primOrtYuzde": 0.088,
+   "primSdYuzde": 0.054,
+   "primMinYuzde": -0.096,
+   "primMaxYuzde": 0.213,
+   "gunlukGetiriKorelasyonu": 0.9996,
+   "gunlukIzlemeHatasiYuzde": 0.04
+  },
+  "canliEvrenRiski": {
+   "ilk15": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "ZECUSDT",
+    "SOLUSDT",
+    "SKHYNIXUSDT*",
+    "QUSDT",
+    "SOXLUSDT*",
+    "XAUUSDT*",
+    "KORUUSDT*",
+    "SNDKUSDT*",
+    "NEARUSDT",
+    "XRPUSDT",
+    "XAGUSDT*",
+    "HYPEUSDT",
+    "CLUSDT*"
+   ],
+   "tradfiSayisi": 7,
+   "not": "* = TradFi. lib/live/evren.js perpMi süzgeci bunları ayırmıyor."
+  }
+ },
+ "digerBorsalar": {
+  "bybit": {
+   "hisseVeEtfPerpSayisi": 270,
+   "nasdaq": [
+    {
+     "sembol": "QQQUSDT",
+     "azamiKaldirac": 50,
+     "fonlamaDk": 480,
+     "hacim24sUSD": 12279047
+    }
+   ]
+  },
+  "bitget": {
+   "rwaPerpSayisi": 376,
+   "nasdaq": [
+    {
+     "sembol": "NDX100USDT",
+     "azamiKaldirac": 50,
+     "fonlamaSaat": 8,
+     "hacim24sUSD": 397896
+    },
+    {
+     "sembol": "QQQUSDT",
+     "azamiKaldirac": 20,
+     "fonlamaSaat": 8,
+     "hacim24sUSD": 17668368
+    }
+   ]
+  },
+  "okx": {
+   "hissePerpSayisi_instCategory3": 198,
+   "nasdaq": [
+    {
+     "sembol": "QQQ-USDT-SWAP",
+     "azamiKaldirac": 50,
+     "listeleme": "2026-03-04",
+     "hacim24sUSD": 22648292
+    }
+   ]
+  },
+  "gate": {
+   "nasdaq": [
+    {
+     "sembol": "NAS100_USDT",
+     "azamiKaldirac": 100,
+     "fonlamaSaat": 8,
+     "hacim24sUSD": 376508
+    },
+    {
+     "sembol": "QQQ_USDT",
+     "azamiKaldirac": 50,
+     "fonlamaSaat": 8,
+     "hacim24sUSD": 28656722
+    }
+   ]
+  },
+  "krakenFutures": {
+   "nasdaq": [
+    {
+     "sembol": "PF_US100USD",
+     "hacim24sUSD": 29896
+    }
+   ]
+  },
+  "hyperliquidHip3": {
+   "xyzPiyasaSayisi": 115,
+   "nasdaq": [
+    {
+     "sembol": "xyz:XYZ100",
+     "azamiKaldirac": 30,
+     "fonlamaSaat": 1,
+     "hacim24sUSD": 294066029
+    }
+   ]
+  }
+ },
+ "semboller": [
+  {
+   "sembol": "SKHYNIXUSDT",
+   "taban": "SKHYNIX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0.00043924,
+   "hacim24sUSDT": 1270831259,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SOXLUSDT",
+   "taban": "SOXL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1057162920,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "XAUUSDT",
+   "taban": "XAU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2025-12-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 970798673,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "KORUUSDT",
+   "taban": "KORU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 863542459,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SNDKUSDT",
+   "taban": "SNDK",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-07",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 706991926,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "XAGUSDT",
+   "taban": "XAG",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-01-07",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0.00004935,
+   "hacim24sUSDT": 494422908,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CLUSDT",
+   "taban": "CL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": -0.00003153,
+   "hacim24sUSDT": 375056937,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SKHYUSDT",
+   "taban": "SKHY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 321894417,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MUUSDT",
+   "taban": "MU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-07",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 301156082,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "BZUSDT",
+   "taban": "BZ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 252950928,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SOXSUSDT",
+   "taban": "SOXS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-16",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00020812,
+   "hacim24sUSDT": 216340428,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SPCXUSDT",
+   "taban": "SPCX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 200811780,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "SAMSUNGUSDT",
+   "taban": "SAMSUNG",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0.00011357,
+   "hacim24sUSDT": 178058040,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "QQQUSDT",
+   "taban": "QQQ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 137123946,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "EWYUSDT",
+   "taban": "EWY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-16",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 129866618,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SNXXUSDT",
+   "taban": "SNXX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 126740886,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TSLAUSDT",
+   "taban": "TSLA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-01-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 113048879,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MSTRUSDT",
+   "taban": "MSTR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00013733,
+   "hacim24sUSDT": 110463148,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "INTCUSDT",
+   "taban": "INTC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 100303086,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "DRAMUSDT",
+   "taban": "DRAM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 97343152,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRCLUSDT",
+   "taban": "CRCL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 93076356,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "UNITREEUSDT",
+   "taban": "UNITREE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "CN_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-19",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00621734,
+   "hacim24sUSDT": 72734903,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NVDAUSDT",
+   "taban": "NVDA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 71202115,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "TQQQUSDT",
+   "taban": "TQQQ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00000323,
+   "hacim24sUSDT": 58579313,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NBISUSDT",
+   "taban": "NBIS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 40557911,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "SPYUSDT",
+   "taban": "SPY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 38734437,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AMDUSDT",
+   "taban": "AMD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00014703,
+   "hacim24sUSDT": 33476749,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "LITEUSDT",
+   "taban": "LITE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 30946654,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MRVLUSDT",
+   "taban": "MRVL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 30154185,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MUUUSDT",
+   "taban": "MUU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-16",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 28664215,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CXMTUSDT",
+   "taban": "CXMT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "CN_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 28032201,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AAOIUSDT",
+   "taban": "AAOI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 26587183,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRWVUSDT",
+   "taban": "CRWV",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 23886516,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "NATGASUSDT",
+   "taban": "NATGAS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 23561350,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GOOGLUSDT",
+   "taban": "GOOGL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 21737936,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "AAPLUSDT",
+   "taban": "AAPL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 21406262,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "METAUSDT",
+   "taban": "META",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 20130997,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "SQQQUSDT",
+   "taban": "SQQQ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00013525,
+   "hacim24sUSDT": 19270403,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CBRSUSDT",
+   "taban": "CBRS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-19",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 18584687,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "WDCUSDT",
+   "taban": "WDC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00030383,
+   "hacim24sUSDT": 17661392,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "ZHIPUUSDT",
+   "taban": "ZHIPU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 16841850,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BMNRUSDT",
+   "taban": "BMNR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00004271,
+   "hacim24sUSDT": 16464277,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BEUSDT",
+   "taban": "BE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 16251927,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CSOPSKHYNIX2LUSDT",
+   "taban": "CSOPSKHYNIX2L",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0.00226133,
+   "hacim24sUSDT": 14787711,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PENGUSDT",
+   "taban": "PENG",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 14313372,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "COINUSDT",
+   "taban": "COIN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 14309462,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AXTIUSDT",
+   "taban": "AXTI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 13468424,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AVGOUSDT",
+   "taban": "AVGO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-20",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 13432250,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "IRENUSDT",
+   "taban": "IREN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 12087186,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PLTRUSDT",
+   "taban": "PLTR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 11636387,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MSFTUSDT",
+   "taban": "MSFT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-20",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 11209170,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "HOODUSDT",
+   "taban": "HOOD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 11056846,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SKDDUSDT",
+   "taban": "SKDD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-25",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 10887503,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "DELLUSDT",
+   "taban": "DELL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 10855405,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TSMUSDT",
+   "taban": "TSM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 10764370,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ORCLUSDT",
+   "taban": "ORCL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 10654502,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "STXXUSDT",
+   "taban": "STXX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00272951,
+   "hacim24sUSDT": 10633237,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MVLLUSDT",
+   "taban": "MVLL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 10578815,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AMZNUSDT",
+   "taban": "AMZN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-02-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00003268,
+   "hacim24sUSDT": 10307057,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "INTWUSDT",
+   "taban": "INTW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00013446,
+   "hacim24sUSDT": 10157454,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ZHONGJIUSDT",
+   "taban": "ZHONGJI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": -0.00119465,
+   "hacim24sUSDT": 9994201,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MINIMAXUSDT",
+   "taban": "MINIMAX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 9188508,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "COPPERUSDT",
+   "taban": "COPPER",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 9107267,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ARMUSDT",
+   "taban": "ARM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 8910545,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "UVXYUSDT",
+   "taban": "UVXY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 8789787,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "OPENAIUSDT",
+   "taban": "OPENAI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "PREMARKET",
+   "altTur": [
+    "Pre-IPO",
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00005,
+   "hacim24sUSDT": 8762064,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RKLBUSDT",
+   "taban": "RKLB",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 8523240,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "SKUUUSDT",
+   "taban": "SKUU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-25",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.0000884,
+   "hacim24sUSDT": 7610383,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ANTHROPICUSDT",
+   "taban": "ANTHROPIC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "PREMARKET",
+   "altTur": [
+    "Pre-IPO",
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00005,
+   "hacim24sUSDT": 7327245,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "COHRUSDT",
+   "taban": "COHR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-26",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00021969,
+   "hacim24sUSDT": 6910497,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MRNAUSDT",
+   "taban": "MRNA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-25",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 5279542,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "XPDUSDT",
+   "taban": "XPD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-01-30",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 5220099,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "XPTUSDT",
+   "taban": "XPT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "COMMODITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-01-30",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 4512217,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GLWUSDT",
+   "taban": "GLW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 4244323,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CSOPSAMSUNG2LUSDT",
+   "taban": "CSOPSAMSUNG2L",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0.00051356,
+   "hacim24sUSDT": 4218016,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ASMLUSDT",
+   "taban": "ASML",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 4041883,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "AMATUSDT",
+   "taban": "AMAT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 4013984,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "QCOMUSDT",
+   "taban": "QCOM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 3968559,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "BABAUSDT",
+   "taban": "BABA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-04-20",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 3408953,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BNCUSDT",
+   "taban": "BNC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 3309427,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "STRCUSDT",
+   "taban": "STRC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00037987,
+   "hacim24sUSDT": 3274236,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SMCIUSDT",
+   "taban": "SMCI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00007528,
+   "hacim24sUSDT": 3216976,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "KSTRUSDT",
+   "taban": "KSTR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00025321,
+   "hacim24sUSDT": 3122525,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ASTSUSDT",
+   "taban": "ASTS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 2584274,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GIGADEVUSDT",
+   "taban": "GIGADEV",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": -0.00098695,
+   "hacim24sUSDT": 2549328,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRDOUSDT",
+   "taban": "CRDO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 2422160,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SAMSUNGEMUSDT",
+   "taban": "SAMSUNGEM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0.00069683,
+   "hacim24sUSDT": 2282399,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ALABUSDT",
+   "taban": "ALAB",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 2242781,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "FLNCUSDT",
+   "taban": "FLNC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 2222546,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NOKUSDT",
+   "taban": "NOK",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00007916,
+   "hacim24sUSDT": 2107832,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RAMUSDT",
+   "taban": "RAM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-25",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 2032526,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NFLXUSDT",
+   "taban": "NFLX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1901898,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "EWJUSDT",
+   "taban": "EWJ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-19",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1834176,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HYUNDAIUSDT",
+   "taban": "HYUNDAI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 0.5,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1744424,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HPEUSDT",
+   "taban": "HPE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1584222,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "IONQUSDT",
+   "taban": "IONQ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1532437,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BSPUSDT",
+   "taban": "BSP",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1452243,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BOTUSDT",
+   "taban": "BOT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.0014303,
+   "hacim24sUSDT": 1385226,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HK1810USDT",
+   "taban": "HK1810",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1376745,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ONDSUSDT",
+   "taban": "ONDS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.0001647,
+   "hacim24sUSDT": 1262661,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "USARUSDT",
+   "taban": "USAR",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1194553,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TSLLUSDT",
+   "taban": "TSLL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1134548,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "EWTUSDT",
+   "taban": "EWT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1077839,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "IWMUSDT",
+   "taban": "IWM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1065820,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "APPUSDT",
+   "taban": "APP",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1055989,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "LLYUSDT",
+   "taban": "LLY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 1031727,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MSTUUSDT",
+   "taban": "MSTU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-12",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 998146,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "LRCXUSDT",
+   "taban": "LRCX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00010202,
+   "hacim24sUSDT": 996140,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "TMFUSDT",
+   "taban": "TMF",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-27",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00101537,
+   "hacim24sUSDT": 973223,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SMHUSDT",
+   "taban": "SMH",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 957582,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HIMSUSDT",
+   "taban": "HIMS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 949820,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GMEUSDT",
+   "taban": "GME",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 946785,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BWETUSDT",
+   "taban": "BWET",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00006703,
+   "hacim24sUSDT": 939812,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SHAZUSDT",
+   "taban": "SHAZ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00232723,
+   "hacim24sUSDT": 930749,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "IBMUSDT",
+   "taban": "IBM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 929970,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NVOUSDT",
+   "taban": "NVO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 906330,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TERUSDT",
+   "taban": "TER",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 898677,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "WMTUSDT",
+   "taban": "WMT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 849583,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "QNTXUSDT",
+   "taban": "QNTX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 844288,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRWDUSDT",
+   "taban": "CRWD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 832859,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "HANMIUSDT",
+   "taban": "HANMI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 827019,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CIENUSDT",
+   "taban": "CIEN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 818674,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRMUSDT",
+   "taban": "CRM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 795589,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "VSTUSDT",
+   "taban": "VST",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 774962,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "APLDUSDT",
+   "taban": "APLD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 768906,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ADBEUSDT",
+   "taban": "ADBE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00006296,
+   "hacim24sUSDT": 765444,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "ZCSHUSDT",
+   "taban": "ZCSH",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-12",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 759129,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TTWOUSDT",
+   "taban": "TTWO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 749469,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "KLACUSDT",
+   "taban": "KLAC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 693483,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "VRTUSDT",
+   "taban": "VRT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 673224,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "POPMARTUSDT",
+   "taban": "POPMART",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-23",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 644101,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BRKBUSDT",
+   "taban": "BRKB",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00029429,
+   "hacim24sUSDT": 590241,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SOFIUSDT",
+   "taban": "SOFI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 587722,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "LGELECTRONICSUSDT",
+   "taban": "LGELECTRONICS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 584649,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BBXUSDT",
+   "taban": "BBX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 563037,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "COSTUSDT",
+   "taban": "COST",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 558717,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "CYPHUSDT",
+   "taban": "CYPH",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 550916,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "EWZUSDT",
+   "taban": "EWZ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 534943,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TZAUSDT",
+   "taban": "TZA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-16",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 515888,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SECZUSDT",
+   "taban": "SECZ",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00030942,
+   "hacim24sUSDT": 512427,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NOWUSDT",
+   "taban": "NOW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 504555,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NVDLUSDT",
+   "taban": "NVDL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 486698,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SNOWUSDT",
+   "taban": "SNOW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 447999,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "KOUSDT",
+   "taban": "KO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00017133,
+   "hacim24sUSDT": 446518,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "DISUSDT",
+   "taban": "DIS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 443759,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SHOPUSDT",
+   "taban": "SHOP",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 440930,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "XLEUSDT",
+   "taban": "XLE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 439827,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RDDTUSDT",
+   "taban": "RDDT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 426064,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HDUSDT",
+   "taban": "HD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 419479,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SPCXUSD1",
+   "taban": "SPCX",
+   "kotasyon": "USD1",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-20",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 396757,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "CATUSDT",
+   "taban": "CAT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 391108,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MARAUSDT",
+   "taban": "MARA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 384555,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "URNMUSDT",
+   "taban": "URNM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 374121,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "OKLOUSDT",
+   "taban": "OKLO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 372476,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TEMUSDT",
+   "taban": "TEM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 366749,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NAVERUSDT",
+   "taban": "NAVER",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 352647,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "WENUSDT",
+   "taban": "WEN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 345670,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "VUSDT",
+   "taban": "V",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 340277,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "USDEXUSDT",
+   "taban": "USDEX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 335031,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RIVNUSDT",
+   "taban": "RIVN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 333118,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TENCENTUSDT",
+   "taban": "TENCENT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 325435,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "UBERUSDT",
+   "taban": "UBER",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 323771,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "DKNGUSDT",
+   "taban": "DKNG",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 320524,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CSCOUSDT",
+   "taban": "CSCO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-15",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 320298,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "SONYUSDT",
+   "taban": "SONY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 316542,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MCDUSDT",
+   "taban": "MCD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00015028,
+   "hacim24sUSDT": 312000,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "DDOGUSDT",
+   "taban": "DDOG",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 304283,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "TXNUSDT",
+   "taban": "TXN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 290910,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "PAYPUSDT",
+   "taban": "PAYP",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-03-23",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00291035,
+   "hacim24sUSDT": 289911,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "JPMUSDT",
+   "taban": "JPM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-05-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 289395,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "FLEXUSDT",
+   "taban": "FLEX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00025204,
+   "hacim24sUSDT": 286203,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GSUSDT",
+   "taban": "GS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 283214,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "FWDIUSDT",
+   "taban": "FWDI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00012307,
+   "hacim24sUSDT": 279840,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GEVUSDT",
+   "taban": "GEV",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 279080,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GPROUSDT",
+   "taban": "GPRO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-03",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00048583,
+   "hacim24sUSDT": 275321,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AGPUUSDT",
+   "taban": "AGPU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00151003,
+   "hacim24sUSDT": 258589,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HK0700USDT",
+   "taban": "HK0700",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 251385,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HUTUSDT",
+   "taban": "HUT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 242489,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AMCUSDT",
+   "taban": "AMC",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00009261,
+   "hacim24sUSDT": 241405,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RDWUSDT",
+   "taban": "RDW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-12",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 239390,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MPUSDT",
+   "taban": "MP",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 239348,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ACNUSDT",
+   "taban": "ACN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 238330,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NETUSDT",
+   "taban": "NET",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 220518,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "NKEUSDT",
+   "taban": "NKE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 218102,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PDDUSDT",
+   "taban": "PDD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 214152,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "LYTEUSDT",
+   "taban": "LYTE",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 212112,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ZMUSDT",
+   "taban": "ZM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-10",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00075599,
+   "hacim24sUSDT": 197670,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BXUSDT",
+   "taban": "BX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-08",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 197131,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "XOMUSDT",
+   "taban": "XOM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00003214,
+   "hacim24sUSDT": 194850,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BITOUSDT",
+   "taban": "BITO",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-27",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00040734,
+   "hacim24sUSDT": 181890,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PANWUSDT",
+   "taban": "PANW",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 179765,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MOONSHOTUSDT",
+   "taban": "MOONSHOT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "PREMARKET",
+   "altTur": [
+    "TradFi",
+    "Pre-IPO"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-22",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00005,
+   "hacim24sUSDT": 173006,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "KUAISHOUUSDT",
+   "taban": "KUAISHOU",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 160978,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "KODEX200USDT",
+   "taban": "KODEX200",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "KR_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-14",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0.00005928,
+   "hacim24sUSDT": 156468,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "EBAYUSDT",
+   "taban": "EBAY",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-06-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 154105,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "DJTUSDT",
+   "taban": "DJT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-25",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 149574,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TWSTUSDT",
+   "taban": "TWST",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 147078,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MDBUSDT",
+   "taban": "MDB",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 143380,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "SNPSUSDT",
+   "taban": "SNPS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-12",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 133927,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "XBIUSDT",
+   "taban": "XBI",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-09",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 130394,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PYPLUSDT",
+   "taban": "PYPL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00046887,
+   "hacim24sUSDT": 125953,
+   "nasdaq100Uyesi": true
+  },
+  {
+   "sembol": "MEITUANUSDT",
+   "taban": "MEITUAN",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-11",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 123029,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CVNAUSDT",
+   "taban": "CVNA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 115092,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "OURAUSDT",
+   "taban": "OURA",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "PREMARKET",
+   "altTur": [
+    "Pre-IPO",
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-23",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0.00005,
+   "hacim24sUSDT": 106248,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "CRMLUSDT",
+   "taban": "CRML",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 104419,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HK0992USDT",
+   "taban": "HK0992",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-07",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 92029,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GDXUSDT",
+   "taban": "GDX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-17",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 91490,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ZSUSDT",
+   "taban": "ZS",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 90907,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "BYDUSDT",
+   "taban": "BYD",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-07",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 80496,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "GTLBUSDT",
+   "taban": "GTLB",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 75728,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "RUMUSDT",
+   "taban": "RUM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 70417,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "HK0625USDT",
+   "taban": "HK0625",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "HK_EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-01",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 4,
+   "fonlamaTavaniYuzde": 1,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 68591,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TBTUSDT",
+   "taban": "TBT",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-07-27",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": -0.00062219,
+   "hacim24sUSDT": 68045,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "ANETUSDT",
+   "taban": "ANET",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 64167,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "MRKUSDT",
+   "taban": "MRK",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-08-28",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 63881,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "AKAMUSDT",
+   "taban": "AKAM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 63111,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "TEAMUSDT",
+   "taban": "TEAM",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-02",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 59284,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "PATHUSDT",
+   "taban": "PATH",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-18",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 56489,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "UNHUSDT",
+   "taban": "UNH",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-29",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 56446,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "VKTXUSDT",
+   "taban": "VKTX",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "EQUITY",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-10-06",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 2,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 41796,
+   "nasdaq100Uyesi": false
+  },
+  {
+   "sembol": "USDBRLUSDT",
+   "taban": "USDBRL",
+   "kotasyon": "USDT",
+   "sozlesmeTuru": "TRADIFI_PERPETUAL",
+   "dayanakTuru": "FX",
+   "altTur": [
+    "TradFi"
+   ],
+   "durum": "TRADING",
+   "listeleme": "2026-09-21",
+   "azamiKaldirac": 20,
+   "bakimMarjiYuzde": 2.5,
+   "asgariEmirUSDT": 5,
+   "fonlamaAraligiSaat": 8,
+   "fonlamaTavaniYuzde": 0.375,
+   "sonFonlama": 0,
+   "hacim24sUSDT": 40603,
+   "nasdaq100Uyesi": false
+  }
+ ]
+}

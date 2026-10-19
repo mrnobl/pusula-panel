@@ -1,0 +1,6 @@
+# Windows toplu is dosyalari CRLF kalmali (LF ile goto/etiketler bozulabilir).
+# -text: git satir sonlarina dokunmaz; depodaki CRLF bayt bayt cikar.
+*.cmd -text
+*.bat -text
+# 68.3: Inno Setup betigi UTF-8 BOM + CRLF kalmali (Turkce metinler)
+*.iss -text

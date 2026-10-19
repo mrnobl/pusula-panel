@@ -1,0 +1,458 @@
+{
+ "bicim": 1,
+ "surum": "68.3",
+ "uretim": "2026-10-20",
+ "kaynak": "Pusula geliştiricisinin kendi hesapları: Hücum ve Denge Binance Demo Trading (sanal para) hesabında, model portföyler kâğıt hesapta (gerçek fiyatlarla, emir yok).",
+ "uyari": "Geçmiş sonuç geleceği göstermez. Yatırım tavsiyesi değildir. Değerler yüzde / endekstir (başlangıç = 100); tutar, bakiye ve miktar içermez.",
+ "botlar": [
+  {
+   "ad": "hucum",
+   "baslik": "Hücum",
+   "aciklama": "Kripto: Donchian kırılımı + DCA kolları (Binance USDⓈ-M)",
+   "veriVar": true,
+   "hesap": "Binance Demo Trading (sanal para)",
+   "bas": "2026-10-07",
+   "bit": "2026-10-18",
+   "gunSayisi": 12,
+   "getiriYuzde": -2,
+   "enDerinDususYuzde": -4.01,
+   "islemSayisi": 38,
+   "seri": [
+    [
+     "2026-10-07",
+     100
+    ],
+    [
+     "2026-10-08",
+     98.28
+    ],
+    [
+     "2026-10-09",
+     99.29
+    ],
+    [
+     "2026-10-10",
+     99.86
+    ],
+    [
+     "2026-10-11",
+     100.91
+    ],
+    [
+     "2026-10-12",
+     98.07
+    ],
+    [
+     "2026-10-13",
+     99.94
+    ],
+    [
+     "2026-10-14",
+     97.7
+    ],
+    [
+     "2026-10-15",
+     98.75
+    ],
+    [
+     "2026-10-16",
+     97.51
+    ],
+    [
+     "2026-10-17",
+     96.86
+    ],
+    [
+     "2026-10-18",
+     98
+    ]
+   ],
+   "kiyas": {
+    "baslik": "BTC al-tut (aynı dönem)",
+    "getiriYuzde": -0.95,
+    "enDerinDususYuzde": -2.8,
+    "seri": [
+     [
+      "2026-10-07",
+      100
+     ],
+     [
+      "2026-10-08",
+      98.63
+     ],
+     [
+      "2026-10-09",
+      99.63
+     ],
+     [
+      "2026-10-10",
+      100.09
+     ],
+     [
+      "2026-10-11",
+      101.03
+     ],
+     [
+      "2026-10-12",
+      98.76
+     ],
+     [
+      "2026-10-13",
+      100.34
+     ],
+     [
+      "2026-10-14",
+      98.54
+     ],
+     [
+      "2026-10-15",
+      99.21
+     ],
+     [
+      "2026-10-16",
+      98.44
+     ],
+     [
+      "2026-10-17",
+      98.2
+     ],
+     [
+      "2026-10-18",
+      99.05
+     ]
+    ]
+   }
+  },
+  {
+   "ad": "denge",
+   "baslik": "Denge",
+   "aciklama": "Kripto: daha düşük riskli kol karışımı (Binance USDⓈ-M)",
+   "veriVar": false,
+   "neden": "Bu bot henüz demo hesapta çalışmıyor (yalnız kâğıt üstünde) — gerçekleşmiş sonuç yok."
+  }
+ ],
+ "modeller": [
+  {
+   "kimlik": "m-qqq-m10",
+   "baslik": "Nasdaq Momentum 10",
+   "veriVar": true,
+   "hesap": "Kâğıt hesap (model portföy, gerçek fiyatlarla)",
+   "para": "USD",
+   "takvim": "NYSE",
+   "bas": "2026-10-12",
+   "bit": "2026-10-16",
+   "gunSayisi": 5,
+   "getiriYuzde": -16,
+   "enDerinDususYuzde": -16,
+   "seri": [
+    [
+     "2026-10-12",
+     97.32
+    ],
+    [
+     "2026-10-13",
+     96.7
+    ],
+    [
+     "2026-10-14",
+     91.23
+    ],
+    [
+     "2026-10-15",
+     89.34
+    ],
+    [
+     "2026-10-16",
+     84
+    ]
+   ],
+   "kiyaslar": [
+    {
+     "baslik": "QQQ al-tut",
+     "getiriYuzde": -5.31,
+     "enDerinDususYuzde": -5.31,
+     "seri": [
+      [
+       "2026-10-12",
+       99.52
+      ],
+      [
+       "2026-10-13",
+       99.19
+      ],
+      [
+       "2026-10-14",
+       97.24
+      ],
+      [
+       "2026-10-15",
+       97.11
+      ],
+      [
+       "2026-10-16",
+       94.69
+      ]
+     ]
+    },
+    {
+     "baslik": "BTC al-tut",
+     "getiriYuzde": -1.98,
+     "enDerinDususYuzde": -2.72,
+     "seri": [
+      [
+       "2026-10-12",
+       97.7
+      ],
+      [
+       "2026-10-13",
+       99.28
+      ],
+      [
+       "2026-10-14",
+       97.5
+      ],
+      [
+       "2026-10-15",
+       98.18
+      ],
+      [
+       "2026-10-16",
+       97.42
+      ],
+      [
+       "2026-10-17",
+       97.28
+      ],
+      [
+       "2026-10-18",
+       98.02
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "kimlik": "m-bist-m10",
+   "baslik": "BIST Momentum 10",
+   "veriVar": true,
+   "hesap": "Kâğıt hesap (model portföy, gerçek fiyatlarla)",
+   "para": "TRY",
+   "takvim": "BIST",
+   "bas": "2026-10-12",
+   "bit": "2026-10-12",
+   "gunSayisi": 1,
+   "getiriYuzde": -2.8,
+   "enDerinDususYuzde": -2.8,
+   "seri": [
+    [
+     "2026-10-12",
+     97.2
+    ]
+   ],
+   "kiyaslar": [
+    {
+     "baslik": "XU030 (USD)",
+     "getiriYuzde": -1.01,
+     "enDerinDususYuzde": -1.01,
+     "seri": [
+      [
+       "2026-10-12",
+       98.99
+      ]
+     ]
+    },
+    {
+     "baslik": "EW BIST30 (USD)",
+     "getiriYuzde": -1.25,
+     "enDerinDususYuzde": -1.25,
+     "seri": [
+      [
+       "2026-10-12",
+       98.75
+      ]
+     ]
+    },
+    {
+     "baslik": "QQQ al-tut",
+     "getiriYuzde": -5.31,
+     "enDerinDususYuzde": -5.31,
+     "seri": [
+      [
+       "2026-10-12",
+       99.52
+      ],
+      [
+       "2026-10-13",
+       99.19
+      ],
+      [
+       "2026-10-14",
+       97.24
+      ],
+      [
+       "2026-10-15",
+       97.11
+      ],
+      [
+       "2026-10-16",
+       94.69
+      ]
+     ]
+    },
+    {
+     "baslik": "BTC al-tut",
+     "getiriYuzde": -1.98,
+     "enDerinDususYuzde": -2.72,
+     "seri": [
+      [
+       "2026-10-12",
+       97.7
+      ],
+      [
+       "2026-10-13",
+       99.28
+      ],
+      [
+       "2026-10-14",
+       97.5
+      ],
+      [
+       "2026-10-15",
+       98.18
+      ],
+      [
+       "2026-10-16",
+       97.42
+      ],
+      [
+       "2026-10-17",
+       97.28
+      ],
+      [
+       "2026-10-18",
+       98.02
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "kimlik": "m-837",
+   "baslik": "%50 QQQ + %50 Hücum",
+   "veriVar": true,
+   "hesap": "Kâğıt hesap (model portföy, gerçek fiyatlarla)",
+   "para": "USD",
+   "takvim": "GUN",
+   "bas": "2026-10-12",
+   "bit": "2026-10-18",
+   "gunSayisi": 7,
+   "getiriYuzde": -3.89,
+   "enDerinDususYuzde": -4.52,
+   "seri": [
+    [
+     "2026-10-12",
+     98.22
+    ],
+    [
+     "2026-10-13",
+     98.96
+    ],
+    [
+     "2026-10-14",
+     96.91
+    ],
+    [
+     "2026-10-15",
+     97.26
+    ],
+    [
+     "2026-10-16",
+     95.48
+    ],
+    [
+     "2026-10-17",
+     95.66
+    ],
+    [
+     "2026-10-18",
+     96.11
+    ]
+   ],
+   "kiyaslar": [
+    {
+     "baslik": "QQQ al-tut",
+     "getiriYuzde": -5.31,
+     "enDerinDususYuzde": -5.31,
+     "seri": [
+      [
+       "2026-10-12",
+       99.52
+      ],
+      [
+       "2026-10-13",
+       99.19
+      ],
+      [
+       "2026-10-14",
+       97.24
+      ],
+      [
+       "2026-10-15",
+       97.11
+      ],
+      [
+       "2026-10-16",
+       94.69
+      ]
+     ]
+    },
+    {
+     "baslik": "BTC al-tut",
+     "getiriYuzde": -1.98,
+     "enDerinDususYuzde": -2.72,
+     "seri": [
+      [
+       "2026-10-12",
+       97.7
+      ],
+      [
+       "2026-10-13",
+       99.28
+      ],
+      [
+       "2026-10-14",
+       97.5
+      ],
+      [
+       "2026-10-15",
+       98.18
+      ],
+      [
+       "2026-10-16",
+       97.42
+      ],
+      [
+       "2026-10-17",
+       97.28
+      ],
+      [
+       "2026-10-18",
+       98.02
+      ]
+     ]
+    },
+    {
+     "baslik": "XU030 (USD)",
+     "getiriYuzde": -1.01,
+     "enDerinDususYuzde": -1.01,
+     "seri": [
+      [
+       "2026-10-12",
+       98.99
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

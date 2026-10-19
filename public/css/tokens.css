@@ -1,0 +1,364 @@
+/**
+ * TASARIM TOKENLARI — TEK KAYNAK (`PLAN-MOTOR.md` §8)
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Panelin bütün renk, boşluk, yarıçap ve yazı boyutu değerleri BURADADIR.
+ * Başka hiçbir dosyada `--token: değer` tanımı olmamalı; `scripts/panel-
+ * denetim.js` bunu denetliyor.
+ *
+ * ───────────────────────────────────────────────────────────────────────────
+ * ANLAMSAL TOKENLAR + İKİ TEMA (2026-10-06; 2026-10-07 Pusula "Kâğıt" paleti)
+ * ───────────────────────────────────────────────────────────────────────────
+ * Eski liste bir ENVANTERDİ (12 yazı boyu, 10 boşluk, 6 yarıçap, 20'ye yakın
+ * yarı saydam yüzey). Artık bir ÖLÇEK: adlar ROLÜ söyler, değeri değil;
+ * tema yalnızca rol → değer eşlemesini değiştirir.
+ *
+ *   Yüzey   --bg < --surface-1 (kart) < --surface-2 (kart içi şerit)
+ *           < --surface-3 (vurgulu/üzerine gelinen); --surface-inset çukur
+ *           alan (girdi, kod, sayı kutusu).
+ *   Metin   --text-strong > --text > --text-soft > --text-muted
+ *   Anlam   --accent (eylem) · --pos (kâr, uzun) · --neg (zarar, kısa)
+ *           · --warn · --info. Her birinin `-soft` (zemin) ve `-border`
+ *           (çerçeve) kardeşi var — saydamlık oranı tek yerde.
+ *
+ * Tema seçimi: `<html data-theme="dark|light">` (js/core/tema.js HER ZAMAN yazar,
+ * tercih localStorage'da). Varsayılan KOYU (PLAN-PANEL-YENI 2026-10-19, K-H):
+ * TradeZella tarzı koyu zemin + mor vurgu; açık tema seçenek olarak kalır.
+ *
+ * ⚠ KÂR YEŞİL / ZARAR KIRMIZI her iki temada da aynı anlamı taşır; açık
+ * temada yalnızca beyaz zemin üstünde okunabilir koyu tonlar seçilir.
+ */
+
+/* ═══ KOYU — VARSAYILAN (yeni panel, TradeZella tarzı; prototip 2026-10-18) ══
+   Zemin #0e1016, kart #171a23, vurgu MOR #6e5bff (para rengi değil: kâr yeşili
+   ve zarar kırmızısıyla karışmaz). Öznitelik "light" değilse geçerli.      */
+:root {
+  color-scheme: dark;
+
+  --bg: #0e1016;
+  --surface-1: #171a23;
+  --surface-2: #1c1f2b;
+  --surface-3: #232737;
+  --surface-inset: #12141b;
+  --overlay: rgba(5, 6, 10, 0.72);
+
+  --border: #262a36;
+  --border-strong: #2e3342;
+
+  --text-strong: #f2f4f8;
+  --text: #e3e6ee;
+  --text-soft: #c8cdd8;
+  --text-muted: #a3a9b8;
+
+  --accent: #6e5bff;
+  --accent-hover: #8170ff;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(110, 91, 255, 0.16);
+  --accent-border: rgba(110, 91, 255, 0.5);
+
+  --pos: #4ed19a;
+  --pos-soft: rgba(78, 209, 154, 0.13);
+  --pos-border: rgba(78, 209, 154, 0.4);
+  --neg: #ff7a6e;
+  --neg-soft: rgba(255, 122, 110, 0.13);
+  --neg-border: rgba(255, 122, 110, 0.42);
+  /* Dolu kâr/zarar/uyarı zemini (düğme, rozet, ısı hücresi) üstündeki yazı. */
+  --ton-contrast: #1f0b09;
+  --warn: #f0a35e;
+  --warn-soft: rgba(240, 163, 94, 0.13);
+  --warn-border: rgba(240, 163, 94, 0.42);
+  --info: #5aa9ff;
+  --info-soft: rgba(90, 169, 255, 0.13);
+  --info-border: rgba(90, 169, 255, 0.4);
+
+  /* Rozet / küçük metin rengi (-metin): kendi -soft zemininde ve her yüzeyde ≥ 4,5:1
+     (WCAG AA küçük metin; scripts/panel-kontrast-testi.js). Ana renk çizgi/ikon içindir. */
+  --pos-metin: #6fe0ae;
+  --neg-metin: #ff968c;
+  --warn-metin: #f5b97f;
+  --info-metin: #8ec3ff;
+  --accent-metin: #a9bbff;
+
+  /* İkincil vurgu (altın): rüzgâr gülünün ara yönleri, kriz/stres gölgesi. */
+  --gold: #e8b04b;
+  --gold-soft: rgba(232, 176, 75, 0.16);
+
+  /* Logo (rüzgâr gülü): ana kol, kolun gölge yarısı, ara yön. */
+  --logo-kol: #6e5bff;
+  --logo-golge: #4a3bc4;
+  --logo-ara: #f0a35e;
+
+  /* Grafik tuvali + grafik dili (§4a/4) — açık temadaki rollerin koyu zemin karşılığı. */
+  --chart-bg: #171a23;
+  --chart-grid: rgba(227, 230, 238, 0.05);
+  --chart-text: #a3a9b8;
+  --chart-1: #a9bbff;
+  --chart-2: #f0a35e;
+  --chart-notr: #7d8494;
+  --chart-bant: rgba(110, 91, 255, 0.2);
+  --chart-kriz: rgba(240, 163, 94, 0.14);
+
+  /* Grafik serileri: kategorik, sabit sırada atanır (portföy laboratuvarı). */
+  --seri-1: #8f7dff;
+  --seri-2: #f0a35e;
+  --seri-3: #4ed19a;
+  --seri-4: #5aa9ff;
+  --seri-5: #ff7a6e;
+  --seri-6: #d38cff;
+  --seri-7: #e8d36a;
+  --seri-8: #8d93a3;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 2px rgba(110, 91, 255, 0.6);
+}
+
+/* ═══ AÇIK — seçenek (K-H): soğuk gri zemin, koyu mor vurgu ════════════════
+   İki kez yazılıyor (öznitelik + sistem tercihi) çünkü CSS'te "seçici VEYA
+   medya sorgusu" birleşimi yok. Değerler BİREBİR aynı olmalı —
+   `scripts/panel-denetim.js` iki bloğu karşılaştırıyor.                  */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f4f5f9;
+  --surface-1: #ffffff;
+  --surface-2: #f9fafc;
+  --surface-3: #eceef4;
+  --surface-inset: #f0f1f6;
+  --overlay: rgba(20, 22, 32, 0.45);
+
+  --border: #e1e4ec;
+  --border-strong: #cbd0dc;
+
+  --text-strong: #11131a;
+  --text: #1c1f2a;
+  --text-soft: #3e4352;
+  --text-muted: #5c6272;
+
+  --accent: #5b45e0;
+  --accent-hover: #4a35c9;
+  --accent-contrast: #ffffff;
+  --accent-soft: #eeebff;
+  --accent-border: rgba(91, 69, 224, 0.35);
+
+  --pos: #1f7a4d;
+  --pos-soft: rgba(31, 122, 77, 0.1);
+  --pos-border: rgba(31, 122, 77, 0.35);
+  --neg: #b4432f;
+  --neg-soft: rgba(180, 67, 47, 0.09);
+  --neg-border: rgba(180, 67, 47, 0.35);
+  /* Dolu kâr/zarar/uyarı zemini (düğme, rozet, ısı hücresi) üstündeki yazı. */
+  --ton-contrast: #ffffff;
+  --warn: #9a6212;
+  --warn-soft: rgba(154, 98, 18, 0.1);
+  --warn-border: rgba(154, 98, 18, 0.38);
+  --info: #3b6fb6;
+  --info-soft: rgba(59, 111, 182, 0.1);
+  --info-border: rgba(59, 111, 182, 0.35);
+
+  /* Rozet / küçük metin rengi (-metin): kendi -soft zemininde ve her yüzeyde ≥ 4,5:1. */
+  --pos-metin: #1a6b43;
+  --neg-metin: #a23a28;
+  --warn-metin: #855410;
+  --info-metin: #335f9e;
+  --accent-metin: #4f3ad1;
+
+  /* İkincil vurgu (altın): rüzgâr gülünün ara yönleri, kriz/stres gölgesi. */
+  --gold: #c98a2b;
+  --gold-soft: rgba(201, 138, 43, 0.14);
+
+  /* Logo (rüzgâr gülü): ana kol, kolun gölge yarısı, ara yön. */
+  --logo-kol: #5b45e0;
+  --logo-golge: #4a35c9;
+  --logo-ara: #c98a2b;
+
+  /* Grafik tuvali + grafik dili (§4a/4): portföy kalın yeşil, ikinci seri mavi,
+     kıyaslar gri ince, güven bandı açık yeşil, kriz dönemi altın gölge. */
+  --chart-bg: #ffffff;
+  --chart-grid: rgba(27, 36, 48, 0.06);
+  --chart-text: #5e6673;
+  --chart-1: #5b45e0;
+  --chart-2: #3b6fb6;
+  --chart-notr: #8a909a;
+  --chart-bant: rgba(91, 69, 224, 0.14);
+  --chart-kriz: rgba(201, 138, 43, 0.16);
+
+  /* Grafik serileri: kategorik, sabit sırada atanır (portföy laboratuvarı). */
+  --seri-1: #5b45e0;
+  --seri-2: #c98a2b;
+  --seri-3: #1f7a4d;
+  --seri-4: #3b6fb6;
+  --seri-5: #b4432f;
+  --seri-6: #5f7f2e;
+  --seri-7: #4f97b0;
+  --seri-8: #8a909a;
+
+  --shadow-1: 0 1px 2px rgba(20, 22, 32, 0.06);
+  --shadow-2: 0 12px 32px rgba(20, 22, 32, 0.16);
+  --focus-ring: 0 0 0 2px rgba(91, 69, 224, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --bg: #f4f5f9;
+    --surface-1: #ffffff;
+    --surface-2: #f9fafc;
+    --surface-3: #eceef4;
+    --surface-inset: #f0f1f6;
+    --overlay: rgba(20, 22, 32, 0.45);
+
+    --border: #e1e4ec;
+    --border-strong: #cbd0dc;
+
+    --text-strong: #11131a;
+    --text: #1c1f2a;
+    --text-soft: #3e4352;
+    --text-muted: #5c6272;
+
+    --accent: #5b45e0;
+    --accent-hover: #4a35c9;
+    --accent-contrast: #ffffff;
+    --accent-soft: #eeebff;
+    --accent-border: rgba(91, 69, 224, 0.35);
+
+    --pos: #1f7a4d;
+    --pos-soft: rgba(31, 122, 77, 0.1);
+    --pos-border: rgba(31, 122, 77, 0.35);
+    --neg: #b4432f;
+    --neg-soft: rgba(180, 67, 47, 0.09);
+    --neg-border: rgba(180, 67, 47, 0.35);
+    /* Dolu kâr/zarar/uyarı zemini (düğme, rozet, ısı hücresi) üstündeki yazı. */
+    --ton-contrast: #ffffff;
+    --warn: #9a6212;
+    --warn-soft: rgba(154, 98, 18, 0.1);
+    --warn-border: rgba(154, 98, 18, 0.38);
+    --info: #3b6fb6;
+    --info-soft: rgba(59, 111, 182, 0.1);
+    --info-border: rgba(59, 111, 182, 0.35);
+
+    /* Rozet / küçük metin rengi (-metin): kendi -soft zemininde ve her yüzeyde ≥ 4,5:1. */
+    --pos-metin: #1a6b43;
+    --neg-metin: #a23a28;
+    --warn-metin: #855410;
+    --info-metin: #335f9e;
+    --accent-metin: #4f3ad1;
+
+    /* İkincil vurgu (altın): rüzgâr gülünün ara yönleri, kriz/stres gölgesi. */
+    --gold: #c98a2b;
+    --gold-soft: rgba(201, 138, 43, 0.14);
+
+    /* Logo (rüzgâr gülü): ana kol, kolun gölge yarısı, ara yön. */
+    --logo-kol: #5b45e0;
+    --logo-golge: #4a35c9;
+    --logo-ara: #c98a2b;
+
+    /* Grafik tuvali + grafik dili (§4a/4): portföy kalın yeşil, ikinci seri mavi,
+       kıyaslar gri ince, güven bandı açık yeşil, kriz dönemi altın gölge. */
+    --chart-bg: #ffffff;
+    --chart-grid: rgba(27, 36, 48, 0.06);
+    --chart-text: #5e6673;
+    --chart-1: #5b45e0;
+    --chart-2: #3b6fb6;
+    --chart-notr: #8a909a;
+    --chart-bant: rgba(91, 69, 224, 0.14);
+    --chart-kriz: rgba(201, 138, 43, 0.16);
+
+    /* Grafik serileri: kategorik, sabit sırada atanır (portföy laboratuvarı). */
+    --seri-1: #5b45e0;
+    --seri-2: #c98a2b;
+    --seri-3: #1f7a4d;
+    --seri-4: #3b6fb6;
+    --seri-5: #b4432f;
+    --seri-6: #5f7f2e;
+    --seri-7: #4f97b0;
+    --seri-8: #8a909a;
+
+    --shadow-1: 0 1px 2px rgba(20, 22, 32, 0.06);
+    --shadow-2: 0 12px 32px rgba(20, 22, 32, 0.16);
+    --focus-ring: 0 0 0 2px rgba(91, 69, 224, 0.35);
+  }
+}
+
+/* ═══ TEMADAN BAĞIMSIZ ÖLÇEKLER ═════════════════════════════════════════ */
+:root {
+  /* ── Yazı tipi ────────────────────────────────────────────────────────
+     IBM Plex Sans (gövde/başlık) + IBM Plex Mono (rakamlar) — YEREL,
+     `css/yazitipi.css` (@font-face, public/vendor/fonts/). Dosya
+     yüklenemezse sistem yazı tipine düşer; sayılar her durumda
+     `tabular-nums` ile eş genişlikli. `--font-num`: kart sayıları,
+     tablo rakamları (`.sayi` yardımcı sınıfı).                         */
+  --font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  --font-num: var(--font-mono);
+
+  /* ── Yazı ölçeği — ALTI basamak ───────────────────────────────────────
+     Eski on iki basamak (0.65 … 1.6rem) buna indirildi; 0.68 / 0.70 /
+     0.72rem gibi gözle ayırt edilemeyen basamaklar tek basamak oldu.   */
+  --fs-xs: 0.6875rem;   /* 11px — rozet, ipucu, tablo künyesi */
+  --fs-sm: 0.75rem;     /* 12px — yoğun tablo, etiket */
+  --fs-base: 0.875rem;  /* 14px — gövde (yeni panel §6: taban 14 px) */
+  --fs-md: 0.875rem;    /* 14px — düğme, form, kart başlığı */
+  --fs-lg: 1rem;        /* 16px — bölüm/sayfa başlığı */
+  --fs-xl: 1.375rem;    /* 22px — büyük sayı (stat kartı) */
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ── Boşluk ölçeği — 4px tabanlı ──────────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* ── Yarıçap — üç basamak ─────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --transition-fast: 0.15s ease;
+
+  /* ── Izgara ───────────────────────────────────────────────────────── */
+  --grid-min-dense: 190px;
+  /* Üst özet kartları: 8 kart 1440px'de tek satıra, telefonda ikişer sığsın. */
+  --grid-min-stat: 150px;
+  --grid-min-card: 240px;
+
+  /* ── Kabuk (Pusula P1): masaüstü sol menü, telefon alt çubuğu ────── */
+  --menu-genislik: 248px;
+  --alt-cubuk-h: 60px;
+  --logo-boy: 30px;
+
+  /* ── Kırılım noktaları (Pusula P5) ────────────────────────────────────
+     CSS `@media` içinde değişken KULLANILAMAZ; bu yüzden değerler burada
+     BELGE ve JS içindir (`AG.tablo.telefonMu()` buradan okur). Medya
+     sorgularının TAMAMI `css/kirilim.css` içinde ve yalnız bu iki değeri
+     kullanır: telefon ≤ 640 px · masaüstü ≥ 1024 px (arası tablet: alt
+     çubuk + masaüstü yoğunluğu). Denetim (`panel-mobil-testi.js`) başka
+     dosyada ya da başka değerde `@media (…width…)` bulursa kırmızı verir. */
+  --bp-tel: 640px;
+  --bp-masa: 1024px;
+  /* Telefonda dokunma hedefinin en küçük boyu (WCAG 2.5.5 / Apple HIG). */
+  --dokunma: 44px;
+}
+
+/* ═══ UYUM ADLARI ═══════════════════════════════════════════════════════
+   JS bugün ~250 yerde `var(--accent-success)` gibi ESKİ adları dize olarak
+   yazıyor ve `AG.fmt.renkTonu` bu dizeleri ton sınıfına çeviriyor. Adlar
+   burada ANLAMSAL tokena bağlanır; böylece tema değişince JS'in boyadığı
+   hücreler de değişir. CSS dosyaları bu adları KULLANMAZ — denetim bunu
+   tutuyor; yeni kural doğrudan anlamsal adı yazar.                      */
+:root {
+  --accent-primary: var(--accent);
+  --accent-success: var(--pos);
+  --accent-danger: var(--neg);
+  --accent-warning: var(--warn);
+  --accent-cyan: var(--info);
+  --text-main: var(--text);
+}

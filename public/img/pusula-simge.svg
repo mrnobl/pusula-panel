@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Pusula UYGULAMA SİMGESİ (PWA, 60.5): favicon.svg'nin rüzgâr gülü; tam kare zemin + %60 güvenli bölge
+       ("maskable": telefon simgeyi daire/yuvarlak kare kırpar). PNG'ler: npm run pwa:simge. -->
+  <rect width="512" height="512" fill="#1F6F63"/>
+  <g transform="translate(256 256) scale(5.2) translate(-32 -32)">
+    <path fill="#FFFFFF" d="M32 3 27 27 32 32Z"/><path fill="#CFE5DF" d="M32 3 37 27 32 32Z"/>
+    <path fill="#FFFFFF" d="M61 32 37 27 32 32Z"/><path fill="#CFE5DF" d="M61 32 37 37 32 32Z"/>
+    <path fill="#FFFFFF" d="M32 61 37 37 32 32Z"/><path fill="#CFE5DF" d="M32 61 27 37 32 32Z"/>
+    <path fill="#FFFFFF" d="M3 32 27 37 32 32Z"/><path fill="#CFE5DF" d="M3 32 27 27 32 32Z"/>
+  </g>
+</svg>

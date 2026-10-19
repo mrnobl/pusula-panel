@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Pusula · Panel</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- PWA (60.5): telefonda/masaüstünde "uygulama olarak yükle". Service worker yalnız kabuğu, ağ-önce (public/sw.js). -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="img/pusula-180.png">
+  <meta name="theme-color" content="#0E1016">
+
+  <!-- Yazı tipleri YEREL (IBM Plex Sans + Mono, public/vendor/fonts/, OFL):
+       CDN yok. Yüklenmezse tokens.css'teki sistem yığınına düşülür. -->
+  <link rel="stylesheet" href="css/yazitipi.css">
+
+  <!-- Üçüncü taraf kütüphaneler YEREL ve SÜRÜMÜ SABİT (public/vendor/).
+       Önceden sürümsüz CDN'den geliyordu: internetsiz panel grafiksiz
+       açılıyor, büyük bir sürüm sıçraması sessizce kırıyordu.
+       lucide 1.52.0 (ISC) · lightweight-charts 5.2.1 (Apache-2.0)
+       · chart.js 4.5.1 (MIT). Güncellerken sürümü burada da değiştirin. -->
+  <script src="vendor/lucide.min.js"></script>
+  <script src="vendor/lightweight-charts.standalone.production.js"></script>
+  <script src="vendor/chart.umd.min.js"></script>
+
+  <!-- Sıra ÖNEMLİ: tokens → styles → layout → components → utilities.
+       `tokens.css` tanımları taşır ve önce gelmek ZORUNDADIR; sırayı bozan
+       bir sayfada her `var(--…)` boşa düşer ve panel renksiz açılır.
+       `utilities.css` EN SONDA çünkü tek amaçlı bir yardımcı, bir bileşenin
+       kuralını ezebilmeli (bkz. `PLAN-MOTOR.md` §8). -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/kirilim.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <!-- Tema stillerden HEMEN SONRA ve senkron: `data-theme` ilk boyamadan
+       önce yazılmazsa sayfa bir an yanlış temada açılır. -->
+  <script src="js/core/tema.js?v=68.3"></script>
+</head>
+<body>
+
+  <!-- KABUK (yeni panel F2, PLAN-PANEL-YENI §2 + EK-1): solda iki seviyeli yan menü (Günlük · İzleme · Araştırma · Sistem),
+       sağda üst çubuk (kırıntı + sayfa adı, rozetler, görünüm yuvası, Kur, ?, Acil durdur, tema), TEK bant yuvası ve içerik.
+       Telefon/tablet (< 1024 px): yan menü çekmeceye döner, altta Ana · Portföy · Botlar · Sinyaller · Menü (K-G); "Menü" bu
+       çekmeceyi açar — ayrı bir telefon menüsü yok. Gezinme URL ile (js/core/rota.js), çekmece + kırıntı js/pages/kabuk.js. -->
+  <div class="kabuk">
+    <nav class="yan-menu" id="yanMenu" aria-label="Ana menü">
+      <div class="yan-menu-bas">
+        <a class="brand no-underline" href="#/ana" aria-label="Pusula — ana sayfa">
+          <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <path class="logo-kol" d="M32 3 27 27 32 32Z"/><path class="logo-golge" d="M32 3 37 27 32 32Z"/>
+            <path class="logo-kol" d="M61 32 37 27 32 32Z"/><path class="logo-golge" d="M61 32 37 37 32 32Z"/>
+            <path class="logo-kol" d="M32 61 37 37 32 32Z"/><path class="logo-golge" d="M32 61 27 37 32 32Z"/>
+            <path class="logo-kol" d="M3 32 27 37 32 32Z"/><path class="logo-golge" d="M3 32 27 27 32 32Z"/>
+          </svg>
+          <div class="brand-text">
+            <span class="brand-ad">Pusula</span>
+            <span>Portföy ve bot paneli</span>
+          </div>
+        </a>
+        <button type="button" class="yan-menu-kapat" id="btnMenuKapat" aria-label="Menüyü kapat"><i data-lucide="x"></i></button>
+      </div>
+
+      <p class="menu-grup-ad">Günlük</p>
+      <a class="menu-ogesi" href="#/ana" data-rota="ana"><i data-lucide="house"></i><span>Ana sayfa</span></a>
+      <div class="menu-dal" data-menu="portfoy">
+        <a class="menu-ogesi menu-ust" href="#/portfoy" aria-expanded="false"><i data-lucide="pie-chart"></i><span>Portföy</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/portfoy/pano" data-rota="portfoy/pano">Pano</a>
+          <a class="menu-alt" href="#/portfoy/hesaplar" data-rota="portfoy/hesaplar">Hesaplar</a>
+          <a class="menu-alt" href="#/portfoy/varliklar" data-rota="portfoy/varliklar">Varlıklar</a>
+          <a class="menu-alt" href="#/portfoy/islem-defteri" data-rota="portfoy/islem-defteri">İşlem defteri</a>
+          <a class="menu-alt" href="#/portfoy/hedefim" data-rota="portfoy/hedefim">Hedefim</a>
+          <a class="menu-alt" href="#/portfoy/nasdaq" data-rota="portfoy/nasdaq" data-rota-de="portfoy/bist portfoy/q837">Modeller</a>
+          <a class="menu-alt" href="#/portfoy/takvim" data-rota="portfoy/takvim">Takvim ve akış</a>
+          <a class="menu-alt" href="#/portfoy/rapor" data-rota="portfoy/rapor">Rapor</a>
+        </div>
+      </div>
+      <div class="menu-dal" data-menu="botlar">
+        <a class="menu-ogesi menu-ust" href="#/botlar" aria-expanded="false"><i data-lucide="bot"></i><span>Botlar</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/botlar/hucum" data-rota="botlar/hucum">Hücum</a>
+          <a class="menu-alt" href="#/botlar/denge" data-rota="botlar/denge">Denge</a>
+        </div>
+      </div>
+      <a class="menu-ogesi" href="#/raporlar" data-rota="raporlar"><i data-lucide="file-bar-chart"></i><span>Raporlar</span></a>
+
+      <p class="menu-grup-ad">İzleme</p>
+      <a class="menu-ogesi" href="#/sinyaller" data-rota="sinyaller"><i data-lucide="radar"></i><span>Sinyaller</span></a>
+      <div class="menu-dal" data-menu="ileri">
+        <a class="menu-ogesi menu-ust" href="#/ileri" aria-expanded="false"><i data-lucide="route"></i><span>İleri test</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/ileri/genel" data-rota="ileri/genel">Genel bakış</a>
+          <a class="menu-alt" href="#/ileri/hucum-denge" data-rota="ileri/hucum-denge">Hücum / Denge simülasyonu</a>
+          <a class="menu-alt" href="#/ileri/bollinger" data-rota="ileri/bollinger">Bollinger düşüş azaltıcı</a>
+          <a class="menu-alt" href="#/ileri/876" data-rota="ileri/876">876 gölge</a>
+          <a class="menu-alt" href="#/ileri/cbdr" data-rota="ileri/cbdr">EUR/USD CBDR</a>
+        </div>
+      </div>
+
+      <!-- 68.1: [data-arastirma] araştırma eklentisi yokken gizlenir (yeni boş kurulum; js/pages/kabuk.js arastirmaEklentisiniUygula). -->
+      <p class="menu-grup-ad" data-arastirma>Araştırma</p>
+      <div class="menu-dal" data-menu="arastirma" data-arastirma>
+        <a class="menu-ogesi menu-ust" href="#/arastirma/ozet" aria-expanded="false"><i data-lucide="flask-conical"></i><span>Araştırma</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/arastirma/ozet" data-rota="arastirma/ozet">Özet</a>
+          <a class="menu-alt" href="#/arastirma/stratejiler" data-rota="arastirma/stratejiler">Stratejiler</a>
+          <a class="menu-alt" href="#/arastirma/backtest" data-rota="arastirma/backtest">Backtest</a>
+          <a class="menu-alt" href="#/arastirma/izleme" data-rota="arastirma/izleme">Backtest sembolleri</a>
+          <!-- 63.3: gösterge havuzu ayrı sayfa ("← Pusula" Araştırma › Stratejiler'e döner). -->
+          <a class="menu-alt" href="indicators.html" id="altMenuGostergeHavuzu" title="53 göstergeyi grafikte tek tek dene; botların grafiği de burada">Gösterge havuzu ↗</a>
+          <a class="menu-alt" href="#/arastirma/pine" data-rota="arastirma/pine">Pine</a>
+          <a class="menu-alt" href="#/arastirma/laboratuvar" data-rota="arastirma/laboratuvar" title="Kendi portföy tasarımını dene: model kurucu, varlık kataloğu, simülasyon, varyasyon">Portföy laboratuvarı</a>
+          <a class="menu-alt" href="#/arastirma/defter" data-rota="arastirma/defter">Araştırma defteri</a>
+        </div>
+      </div>
+      <div class="menu-dal" data-menu="tarama">
+        <a class="menu-ogesi menu-ust" href="#/tarama" aria-expanded="false"><i data-lucide="scan-search"></i><span>Coin tarama</span><span class="menu-rozet badge badge-danger is-hidden" data-tarama-rozet></span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/tarama" data-rota="tarama">Tarama</a>
+          <a class="menu-alt" href="#/tarama/kacin" data-rota="tarama/kacin">Kaçın listesi</a>
+          <a class="menu-alt" href="#/tarama/izle" data-rota="tarama/izle">İzle listesi</a>
+          <a class="menu-alt" href="#/tarama/listeler" data-rota="tarama/listeler">Listeler</a>
+          <a class="menu-alt" href="#/tarama/ayarlar" data-rota="tarama/ayarlar">Tarama ayarları</a>
+        </div>
+      </div>
+
+      <p class="menu-grup-ad">Sistem</p>
+      <div class="menu-dal" data-menu="veri">
+        <a class="menu-ogesi menu-ust" href="#/veri" aria-expanded="false"><i data-lucide="database"></i><span>Veri</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/veri/kaynaklar" data-rota="veri/kaynaklar">Kaynaklar</a>
+          <a class="menu-alt" href="#/veri/tarama" data-rota="veri/tarama">Coin tarama kaynakları</a>
+          <a class="menu-alt" href="#/veri/arsiv" data-rota="veri/arsiv">Günlük arşiv</a>
+        </div>
+      </div>
+      <a class="menu-ogesi" href="#/gunluk" data-rota="gunluk"><i data-lucide="scroll-text"></i><span>Günlükler</span></a>
+      <a class="menu-ogesi" href="#/bildirimler" data-rota="bildirimler"><i data-lucide="bell"></i><span>Bildirimler</span></a>
+      <a class="menu-ogesi" href="#/kurulum-denetimi" data-rota="kurulum-denetimi"><i data-lucide="shield-check"></i><span>Kurulum denetimi</span></a>
+      <div class="menu-dal" data-menu="ayarlar">
+        <a class="menu-ogesi menu-ust" href="#/ayarlar" aria-expanded="false"><i data-lucide="settings"></i><span>Ayarlar</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/ayarlar/botlar" data-rota="ayarlar/botlar">Botlar (özet)</a>
+          <a class="menu-alt" href="#/ayarlar/bildirimler" data-rota="ayarlar/bildirimler">Bildirimler</a>
+          <a class="menu-alt" href="#/ayarlar/borsa" data-rota="ayarlar/borsa">Bağlantılar</a>
+          <a class="menu-alt" href="#/ayarlar/bilgisayar" data-rota="ayarlar/bilgisayar">Bu bilgisayar</a>
+          <a class="menu-alt" href="#/ayarlar/guncelleme" data-rota="ayarlar/guncelleme">Güncelleme</a>
+          <a class="menu-alt" href="#/ayarlar/yedek" data-rota="ayarlar/yedek">Yedek ve taşıma</a>
+        </div>
+      </div>
+      <div class="menu-dal" data-menu="bilgi">
+        <a class="menu-ogesi menu-ust" href="#/kilavuz" aria-expanded="false"><i data-lucide="book-open"></i><span>Bilgi</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/kilavuz" data-rota="kilavuz">Kılavuz</a>
+          <a class="menu-alt" href="#/kitapcik" data-rota="kitapcik" data-arastirma>Kitapçık</a>
+          <a class="menu-alt" href="#/kurulum" data-rota="kurulum">Kurulum sihirbazı</a>
+        </div>
+      </div>
+      <div class="menu-dal" data-menu="arsiv">
+        <a class="menu-ogesi menu-ust" href="#/arsiv" aria-expanded="false"><i data-lucide="archive"></i><span>Arşiv</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
+        <div class="menu-altlar">
+          <a class="menu-alt" href="#/arsiv/genel" data-rota="arsiv/genel">Genel</a>
+          <a class="menu-alt" href="#/arsiv/kagit" data-rota="arsiv/kagit">Kâğıt test</a>
+          <a class="menu-alt" href="#/arsiv/kagit-risk" data-rota="arsiv/kagit-risk">Kâğıt test riski</a>
+          <a class="menu-alt" href="#/arsiv/emekli" data-rota="arsiv/emekli">Emekli botlar</a>
+        </div>
+      </div>
+    </nav>
+    <!-- Telefonda çekmece açıkken arka plan perdesi (dokununca kapanır). -->
+    <div class="menu-perde" id="menuPerde" hidden></div>
+
+    <div class="kabuk-sag">
+      <header class="navbar">
+        <!-- Kırıntı + sayfa adı: rota değişince js/pages/kabuk.js yazar (bölüm › alt sayfa). -->
+        <div class="ust-yol">
+          <p class="ust-kirinti" id="ustKirinti">Günlük</p>
+          <h1 class="ust-baslik" id="ustBaslik">Ana sayfa</h1>
+        </div>
+
+        <!-- Sunucu ARASTIRMA_MODU=1 ile açıldıysa görünür (GET /api/health → arastirmaModu; js/pages/kabuk.js). -->
+        <span id="arastirmaRozet" class="badge badge-warning is-hidden" title="Bu makinede bot, borsa ve emir işlemleri kapalı — bot başka bir makinede çalışıyor.">Araştırma modu</span>
+        <!-- Telefon kademesi (60.5): bu bilgisayardan gelmeyen istek (Tailscale / köprü) → GET /api/health kademe: telefon (js/pages/kabuk.js). -->
+        <span id="telefonRozet" class="badge badge-warning is-hidden" title="Telefondan yalnız izleme ve acil durdurma (acil PIN ile).">Telefon: izleme</span>
+
+        <div class="navbar-actions">
+          <!-- Görünüm yuvası (Ben / Anıl / Tümü · $ / ₺ / Gizli): Portföy sayfaları F4'te doldurur; boşken gizli. -->
+          <div class="ust-gorunum is-hidden" id="ustGorunum"></div>
+          <!-- 60.8: her ekrandan kur çevirici (js/pages/kurCevirici.js) ve o ekranın kılavuz bölümü (js/pages/kilavuz.js ustDugme). -->
+          <button type="button" id="btnKurCevirici" class="ust-dugme" aria-label="Kur çevirici" title="Kur çevirici: USD, TRY, EUR, gram altın, BTC">
+            <i data-lucide="arrow-left-right"></i><span class="ust-dugme-yazi">Kur</span>
+          </button>
+          <a id="btnKilavuzUst" class="ust-dugme no-underline" href="#/kilavuz" aria-label="Bu ekranın kılavuzu" title="Bu ekranın kılavuz bölümünü aç">
+            <span class="ust-dugme-isaret" aria-hidden="true">?</span><span class="ust-dugme-yazi">Kılavuz</span>
+          </a>
+          <!-- Acil durdur: bir bot çalışırken görünür; Botlar'daki PIN'li acil durdurma diyaloğunu açar (js/pages/kabuk.js). -->
+          <button type="button" id="btnUstAcil" class="ust-dugme ust-acil is-hidden" title="Çalışan botu acil durdur (PIN ve DURDUR yazmayı ister)">
+            <i data-lucide="octagon-x"></i><span class="ust-dugme-yazi">Acil durdur</span>
+          </button>
+          <button type="button" id="btnThemeToggle" class="theme-toggle" data-theme-toggle aria-label="Temayı değiştir">
+            <span class="theme-icon-dark" aria-hidden="true">☀</span>
+            <span class="theme-icon-light" aria-hidden="true">☾</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TEK BANT YUVASI: araştırma modu, telefon kademesi ve PWA bağlantı bantları burada, içeriğin üstünde. -->
+      <div class="bant-yuvasi" id="bantYuvasi">
+        <div id="arastirmaBandi" class="arastirma-bandi is-hidden" role="note">
+          Araştırma modu: bu makinede bot başlatma, borsa ve emir işlemleri kapalı (bot başka bir makinede çalışıyor) — ilgili düğmeler devre dışı.
+          Backtest, portföy laboratuvarı ve okuma ekranları çalışır. <span id="evKaynakNotu"></span>
+        </div>
+        <div id="telefonBandi" class="arastirma-bandi is-hidden" role="note">
+          Telefondan yalnız izleme ve acil durdurma: her ekranı görürsünüz; bot başlatma/durdurma, ayar, emir ve backtest sunucudaki panelden yapılır.
+          Botlar ekranındaki kırmızı "Acil durdur" acil PIN ve "DURDUR" yazmayı ister.
+        </div>
+        <!-- PWA bağlantı bandı (60.5, js/core/pwa.js): sunucuya ulaşılamıyorsa "son görülen" saatiyle görünür. -->
+        <div id="baglantiBandi" class="arastirma-bandi is-hidden" role="status" aria-live="polite"></div>
+        <!-- Kurulum bandı (PLAN-PANEL-2, kullanıcı: sihirbaz zorunlu değil, tamamlanmadıysa her girişte uyar) — js/pages/kurulum.js. -->
+        <div id="kurulumBandi" class="arastirma-bandi kurulum-bandi is-hidden" role="note"></div>
+      </div>
+
+  <main class="main-container" id="icerik">
+
+    <!-- ANA SAYFA: yapılacaklar + portföy özeti (elle girilen tutarlar, dağılım halkası) + bot sağlığı şeridi
+         (js/pages/anasayfa.js). Telefonda yapılacaklar en üstte; masaüstünde portföy solda, yapılacaklar sağda. -->
+    <section id="tab-ana" class="tab-content" role="tabpanel" aria-label="Ana sayfa">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="compass"></i> Ana sayfa
+        </h2>
+      </div>
+      <!-- "Bu sürümde yeni" kartı (js/pages/kilavuz.js): kullanıcı bu sürümün notunu görmediyse görünür. -->
+      <div class="glass-panel panel-pad mb-5 kl-yeni-kart is-hidden" id="anaYeniSurum" aria-live="polite"></div>
+      <!-- 68.3 (PLAN-TASIMA §4): yalnız YENİ kurulumda — geliştiricinin botlarının gerçekleşmiş sonuçları, kısa (js/pages/botPerformans.js). -->
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="anaBotPerformans" aria-live="polite"></div>
+      <!-- Yeni panel F5 (K-B, denetim 1 §1.5): Yapman gerekenler EN ÜSTTE → Portföy özeti (Pano'nun kısası) + Sistem ışıkları → Botlar.
+           Modeller kartı gizli: model emirleri Yapman gerekenler'de yazar (aynı iş iki kez yazılmasın). Telefonda DOM sırası. js/pages/anasayfa.js -->
+      <div class="ana-izgara">
+        <div class="glass-panel panel-pad ana-yapilacak" id="anaYapilacaklar" aria-live="polite">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="list-todo"></i> Yapman gerekenler</h3>
+          <p class="hint mb-0">Yükleniyor…</p>
+        </div>
+        <div class="glass-panel panel-pad ana-portfoy" id="anaPortfoy" aria-live="polite">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="pie-chart"></i> Portföyüm</h3>
+          <p class="hint mb-0">Yükleniyor…</p>
+        </div>
+        <div class="glass-panel panel-pad ana-sistem" id="anaSistem" aria-live="polite">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="activity"></i> Sistem</h3>
+          <p class="hint mb-0">Yükleniyor…</p>
+        </div>
+        <div class="glass-panel panel-pad ana-botlar" id="anaBotSagligi" aria-live="polite">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="bot"></i> Botlar</h3>
+          <p class="hint mb-0">Yükleniyor…</p>
+        </div>
+        <div class="glass-panel panel-pad ana-modeller" id="anaModeller" aria-live="polite">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="layers"></i> Modeller</h3>
+          <p class="hint mb-0">Yükleniyor…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BİLGİ › KURULUM SİHİRBAZI (PLAN-PANEL-2): ilk açılışta yeni kullanıcıyı eğiten sekiz adım + risk onayı (js/pages/kurulum.js; GET/POST /api/kurulum). -->
+    <section id="tab-kurulum" class="tab-content" role="tabpanel" aria-label="Kurulum sihirbazı">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="compass"></i> Kurulum sihirbazı</h2>
+      </div>
+      <div id="kurulumKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- SİSTEM › KURULUM DENETİMİ (68.3, PLAN-TASIMA F4): görevler, veri yeri, Git, sürüm, jeton, uyku — ışık + "Onar" (js/pages/kurulumDenetimi.js; GET/POST /api/kurulum-denetimi). -->
+    <section id="tab-kurulum-denetimi" class="tab-content" role="tabpanel" aria-label="Kurulum denetimi">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="shield-check"></i> Kurulum denetimi</h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">Pusula'nın bu bilgisayara doğru kurulup kurulmadığını gösterir: zamanlanmış görevler, kısayollar, veri yeri, güncelleme deposu, sürüm, telefon jetonu ve uyku ayarı. Sayfa hiçbir şeyi kendiliğinden değiştirmez.</p>
+      <div id="kurulumDenetimiKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- GÜNLÜK › RAPORLAR (PLAN-PANEL-2): günlük / haftalık rapor arşivi — botlar, model emirleri, portföy botlarının tercihleri (js/pages/raporlar.js; GET /api/rapor). -->
+    <section id="tab-raporlar" class="tab-content" role="tabpanel" aria-label="Raporlar">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="file-bar-chart"></i> Raporlar</h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">Her sabah 09:00'da dünün günlük raporu, pazartesi geçen haftanın, ayın 1'i geçen ayın, 1 Ocak geçen yılın raporu hazırlanır; özeti Telegram'a gider.</p>
+      <div id="raporKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- SİSTEM › BİLDİRİMLER (PLAN-PANEL-2): Telegram'a giden her bildirim türü, aç/kapat, son gönderilenler (js/pages/bildirimMerkezi.js; GET/POST /api/bildirim). -->
+    <section id="tab-bildirim" class="tab-content" role="tabpanel" aria-label="Bildirimler">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="bell"></i> Bildirimler</h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">Telegram'a giden her bildirim türü burada. Açık olanlar gönderilir; hepsi sağdaki kayıtta görünür. Telegram bağlantısı (bot token, chat id) Ayarlar › Bildirimler'de.</p>
+      <div id="bildirimKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- SİSTEM › GÜNLÜKLER (PLAN-PANEL-2): son 24 saat özeti + süzülebilir olay kaydı (js/pages/gunluk.js; GET /api/gunluk, salt okuma). -->
+    <section id="tab-gunluk" class="tab-content" role="tabpanel" aria-label="Günlükler">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="scroll-text"></i> Günlükler</h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">Botların, veri kaynaklarının ve sunucunun yaptığı her şey tek yerde. 30 gün saklanır.</p>
+      <div id="gunlukKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- ARAŞTIRMA › ÖZET (yeni panel F5): deneme sayacı, durumlar, hükmü yaklaşanlar, aileler (js/pages/arastirmaOzet.js; GET /api/defter, salt okunur). -->
+    <section id="tab-arastirma-ozet" class="tab-content" role="tabpanel" aria-label="Araştırma özeti">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="flask-conical"></i> Araştırma özeti</h2>
+      </div>
+      <div id="arOzetKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- BOTLAR: Hücum / Denge kartları, canlı grafik, bot işlemleri. -->
+    <section id="tab-botlar" class="tab-content" role="tabpanel" aria-label="Botlar">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="bot"></i> Botlar
+        </h2>
+      </div>
+      <!-- 68.3 (PLAN-TASIMA §4): "Botlarımızın gerçekleşmiş sonuçları" — yeni kurulumda açık, kendi verisi olan kurulumda kapalı (js/pages/botPerformans.js). -->
+      <div id="botPerformans"></div>
+      <!-- Yeni panel F5 (PLAN-PANEL-YENI §2, K-A): bot yan menüden (Botlar › Hücum / Denge); bot içinde dört görünüm, adres taşır
+           (#/botlar/<bot>/<genel|hesap|islemler|yonetim>, js/pages/botlar.js gorunumUygula):
+             Genel    — başlık (durum, kural, Durdur/Başlat + Acil fren) · sayılar · grafik · para nerede · aylık · künye
+             Hesap    — botun borsadaki hesabı (eski "Borsa hesapları", js/pages/hesaplar.js) + Binance bakiyesi kartı
+             İşlemler — coin grafiği + açık pozisyon / bekleyen emir / geçmiş
+             Yönetim  — hesap türü, para kaydı, küçük hesap kipi, şimdi çalıştır, kontroller (eskiden Ayarlar › Botlar) + kabul süreci -->
+      <div id="botGorunumler" class="p-sekmeler mb-4" role="tablist" aria-label="Bot görünümü">
+        <button type="button" class="p-sekme" role="tab" aria-selected="true" data-bot-gorunum="genel">Genel</button>
+        <button type="button" class="p-sekme" role="tab" aria-selected="false" data-bot-gorunum="hesap">Hesap</button>
+        <button type="button" class="p-sekme" role="tab" aria-selected="false" data-bot-gorunum="islemler">İşlemler</button>
+        <button type="button" class="p-sekme" role="tab" aria-selected="false" data-bot-gorunum="yonetim">Yönetim</button>
+      </div>
+      <div id="botSekmeler" class="pf-alt-sekmeler pf-ana-sekmeler" role="tablist" aria-label="Botlar"></div>
+      <div data-bot-gorunum-kap="genel">
+        <div class="bot-kartlari mb-5" id="botKartlari" aria-live="polite"></div>
+      </div>
+
+      <div data-bot-gorunum-kap="hesap" class="is-hidden">
+        <!-- Eski "Borsa hesapları" (62.7) — botun kullandığı hesap seçili gelir; #tab-exchange / #/borsa eski adresleri buraya döner. -->
+        <div id="borsaSekmeler" class="pf-alt-sekmeler pf-ana-sekmeler is-hidden" role="tablist" aria-label="Borsa hesapları"></div>
+        <div id="borsaPanel" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+        <div id="botHesapBinance" class="mt-4"></div>
+      </div>
+
+      <div class="mb-5 is-hidden" data-bot-gorunum-kap="islemler">
+        <div class="glass-panel panel-pad col-plain" id="botCoinPaneli">
+          <div class="row-between row-wrap gap-5 mb-4">
+            <h3 class="card-title m-0">
+              <i data-lucide="candlestick-chart" class="tone-primary"></i> <span id="txtBotCoinBaslik">Coin grafiği</span>
+              <button type="button" class="yardim-isareti" data-sozluk="mum">?</button>
+            </h3>
+
+            <!-- 62.6: varlık seçimi botun coin düğmeleriyle (#botSembolDugmeleri); izleme listesi seçicisi gizli (app.js kullanır) -->
+            <div class="row row-wrap gap-2">
+              <select id="chartSymbolSelect" class="form-control control-sm sunken-deep w-auto is-hidden" title="İzleme listesindeki varlıklar" aria-label="Grafik varlığı">
+                <!-- İzleme listesinden doldurulur -->
+              </select>
+
+              <button type="button" class="yardim-isareti" data-sozluk="zamanDilimi">?</button>
+              <select id="chartTimeframeSelect" class="form-control control-sm sunken-deep w-auto" title="Mum zaman dilimi (1m = 1 dakika, 1h = 1 saat, 1d = 1 gün)" aria-label="Grafik zaman dilimi">
+                <option value="1m">1m</option>
+                <option value="5m">5m</option>
+                <option value="15m">15m</option>
+                <option value="30m">30m</option>
+                <option value="1h">1h</option>
+                <option value="4h">4h</option>
+                <option value="1d" selected>1d</option>
+              </select>
+
+              <select id="chartBarCount" class="form-control control-sm sunken-deep w-auto" title="Geriye dönük kaç mum yüklensin" aria-label="Mum sayısı">
+                <option value="300">300 mum</option>
+                <option value="500">500 mum</option>
+                <option value="1000" selected>1.000 mum</option>
+                <option value="2000">2.000 mum</option>
+                <option value="5000">5.000 mum (maks.)</option>
+              </select>
+
+              <button type="button" id="btnReloadChart" class="btn btn-secondary btn-xs" title="Mum verisini borsadan yeniden çek" aria-label="Grafiği yeniden yükle">
+                <i data-lucide="refresh-cw" class="icon-13"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="row-between row-wrap gap-5 mb-5 hint hint-sm">
+            <span id="txtChartStatus">Grafik hazırlanıyor...</span>
+
+            <!-- Bot bilgisi yalnızca bu varlıkta çalışan bot varken gösterilir -->
+            <span id="chartBotInfo" class="is-hidden">
+              Bot zaman dilimi: <strong class="tone-strong" id="txtTimeframe">1h</strong>
+              &nbsp;|&nbsp; Strateji: <strong class="tone-cyan" id="txtActiveStrategyName"></strong>
+            </span>
+            <span id="chartNoBotInfo" class="is-hidden">
+              Bu varlıkta çalışan bot yok — yalnızca geçmiş işlemler gösteriliyor
+            </span>
+          </div>
+          <!-- Portföy botunun işlem gördüğü semboller: hızlı geçiş (js/pages/bindirmeIslem.js) -->
+          <div id="botSembolDugmeleri" class="row row-wrap gap-2 mb-3"></div>
+          <div id="tvChartContainer" class="chart-canvas"></div>
+          <!-- İmleç bot işaretli bir mumun üzerindeyken: zaman · fiyat · miktar · sebep -->
+          <div id="botIsaretBilgi" class="hint hint-sm mb-0 mt-2" aria-live="polite"></div>
+
+          <!-- BOT İŞLEMLERİ — grafiğin hemen altı (js/pages/bindirmeIslem.js); bot = seçili bot sekmesi. Satıra tıkla → grafik o sembol/mum. -->
+          <div id="botIslemPaneli" class="mt-5">
+            <div class="row-between row-wrap gap-3 mb-2">
+              <div class="row gap-2 console-heading tone-cyan">
+                <i data-lucide="list-checks" class="icon-16"></i> İşlemler — grafikte ▲ alış · ▼ satış / kâr al · ● kademeli alım · kesikli çizgi = bekleyen emir
+                <button type="button" class="yardim-isareti" data-sozluk="dca">?</button>
+              </div>
+              <span id="botIslemBotYer" class="is-hidden"></span>
+            </div>
+            <div id="botIslemSekmeler" class="dock-tabs mb-3" role="tablist" aria-label="Bot işlemleri"></div>
+            <div id="botIslemIcerik"><p class="hint hint-sm mb-0">Yükleniyor…</p></div>
+          </div>
+          <!-- 62.6: "Göstergeler" düğmesi ve gösterge havuzu bağlantısı kaldırıldı (kullanıcı kararı; havuz Sinyaller ekranında). -->
+        </div>
+      </div>
+      <div data-bot-gorunum-kap="yonetim" class="is-hidden">
+        <!-- K-A: bot yönetimi (js/pages/botlar.js ayarlarCiz, seçili bot); araştırma modunda kabuk.js KILITLI #ayarBotlar. -->
+        <div class="glass-panel panel-pad-lg mb-5" id="ayarBotlar" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+        <!-- Demo kabul süreci (İleri test'ten; js/pages/ileri.js #ileriDemoKabul) — yalnız Hücum'da görünür. -->
+        <div id="botKabulSureci" class="mb-5"></div>
+      </div>
+
+    </section>
+
+    <!-- STRATEJİLER: eski Strateji + Araştırma sekmeleri. Liste katalogdan
+         (/api/strategies, ölçüm durumu lib/research/adaylar.js'ten); içini
+         js/pages/stratejiler.js + app.js doldurur. -->
+    <section id="tab-strategy" class="tab-content" role="tabpanel">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="flask-conical"></i> Stratejiler
+        </h2>
+      </div>
+      <!-- 62.9: liste = çalışan botlar · adaylar · katlı "Geçti, kullanılmıyor"; elenenler Arşiv › Eski stratejiler (js/pages/stratejiler.js). -->
+      <p class="hint mb-5 max-w-prose">Çalışan botlar, adaylar ve testi geçip kullanılmayanlar. Elenenler <a href="#/arsiv">Arşiv › Eski stratejiler</a>'de. "Geçti" kârın garantisi değildir.</p>
+
+      <div class="strat-layout">
+        <nav class="glass-panel strat-liste" id="stratListe" aria-label="Strateji listesi">
+          <p class="tone-muted">Yükleniyor…</p>
+        </nav>
+
+        <div class="glass-panel panel-pad strat-detay" id="stratDetay">
+          <div class="row-between row-wrap gap-5 mb-5">
+            <div>
+              <h3 class="panel-title m-0" id="stratDetayAd">—</h3>
+              <div class="row row-wrap gap-2 mt-3" id="stratDetayRozetler"></div>
+            </div>
+            <div class="row row-wrap gap-2">
+              <button type="button" id="btnStratBacktest" class="btn btn-success">
+                <i data-lucide="line-chart"></i> Backtest'te aç
+              </button>
+              <!-- 62.9: kâğıt test Arşiv'de — düğme gizli (app.js bağı zararsız kalır). -->
+              <button type="button" id="btnStratBotBaslat" class="btn btn-secondary is-hidden">
+                <i data-lucide="flask-round"></i> Kâğıt testte dene
+              </button>
+            </div>
+          </div>
+
+          <div class="dock-tabs chip-row mb-5" role="tablist" aria-label="Strateji ayrıntısı">
+            <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="strat-kurallar" data-strat-tab="strat-kurallar">Kurallar</button>
+            <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="strat-parametreler" data-strat-tab="strat-parametreler">Parametreler</button>
+            <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="strat-olcum" data-strat-tab="strat-olcum">Ölçüm</button>
+          </div>
+
+          <div id="strat-kurallar" role="tabpanel"></div>
+
+          <div id="strat-parametreler" class="is-hidden" role="tabpanel">
+            <!-- Form katalogdaki `static paramSchema`dan üretilir (paramFormuCiz). -->
+            <form id="formStrategy">
+              <div class="row-baseline row-wrap gap-5 mb-3">
+                <h4 class="card-title-sm tone-primary m-0" id="strategyParamTitle">Parametreler</h4>
+                <button type="button" id="btnResetStrategyParams" class="btn btn-secondary btn-strat">
+                  Varsayılanlara dön
+                </button>
+              </div>
+              <div id="strategyParamForm"></div>
+              <div class="mt-7 row-between row-wrap gap-5">
+                <span class="hint hint-sm">Stop, risk tavanı, kademe ve soğuma ayarları Arşiv › Kâğıt test riski ekranında.</span>
+                <button type="submit" id="btnSaveStrategyParams" class="btn btn-primary">
+                  <i data-lucide="save"></i> Kaydet
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div id="strat-olcum" class="is-hidden" role="tabpanel">
+            <div id="arastirmaDetay"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RİSK — tüm risk parametrelerinin tek adresi -->
+    <section id="tab-risk" class="tab-content" role="tabpanel" aria-label="Kâğıt test risk ayarları">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="shield"></i> Kâğıt test risk ayarları <button type="button" class="yardim-isareti" data-sozluk="kagitRisk" aria-label="Açıklama">?</button>
+        </h2>
+      </div>
+      <p class="hint mb-7 max-w-prose">
+        Yalnız <a href="#/arsiv/kagit">Kâğıt test</a> botlarına uygulanır: pozisyon büyüklüğü, stop, düşüş freni ve tavanlar.
+        Hücum / Denge botlarının kendi kuralları vardır ve bu ayarlardan etkilenmez.
+      </p>
+
+      <!-- Canlı risk durumu: ayar değiştirmeden önce nerede olduğunu gör -->
+      <div class="stats-grid stats-grid-dense mb-8">
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Sermaye / Zirve</span>
+          <div id="rkEquity" class="stat-value">$0.00</div>
+          <span id="rkEquitySub" class="stat-sub">Zirve — · Düşüş —</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Açık Risk</span>
+          <div id="rkOpenRisk" class="stat-value">$0.00</div>
+          <span id="rkOpenRiskSub" class="stat-sub">Bütçe —</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Planlanan Risk (R)</span>
+          <div id="rkPlannedRisk" class="stat-value">$0.00</div>
+          <span id="rkPlannedRiskSub" class="stat-sub">Girişten stop'a</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Maruziyet</span>
+          <div id="rkExposure" class="stat-value">$0.00</div>
+          <span id="rkExposureSub" class="stat-sub">Sermayenin —</span>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Pozisyon Slotu</span>
+          <div id="rkSlots" class="stat-value">0 / 0</div>
+          <span id="rkSlotsSub" class="stat-sub">Brüt tavan —</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Bugünkü Sonuç</span>
+          <div id="rkDaily" class="stat-value">$0.00</div>
+          <span id="rkDailySub" class="stat-sub">Gün başı — · limit —</span>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Aktif Kademe</span>
+          <div id="rkTier" class="stat-value stat-value-sm">Normal</div>
+          <span id="rkTierSub" class="stat-sub">Boyut ×1</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Frenler</span>
+          <div id="rkBrakes" class="stat-value stat-value-sm">—</div>
+          <span id="rkBrakesSub" class="stat-sub">Acil fren · soğuma</span>
+        </div>
+      </div>
+
+      <!-- Pozisyon bazlı açık risk dökümü -->
+      <div class="glass-panel panel-pad mb-8 edge-warning">
+        <div class="toolbar">
+          <h3 class="panel-title tone-warning">
+            <i data-lucide="alert-triangle"></i> Pozisyon Bazlı Açık Risk
+          </h3>
+          <span class="hint hint-micro">
+            Risk = (güncel fiyat − efektif stop) × miktar. Gerçekleşmemiş zarar değil, stop'a kadar masadaki sermaye.
+          </span>
+        </div>
+        <div class="table-container">
+          <table id="tblRiskPositions" class="dock-table tablo-kart">
+            <thead>
+              <tr>
+                <th>Varlık</th>
+                <th>Bot</th>
+                <th>Miktar</th>
+                <th>Giriş</th>
+                <th>Güncel</th>
+                <th>Stop Mesafesi</th>
+                <th>Efektif Stop</th>
+                <th>Açık Risk</th>
+                <th>Planlanan R</th>
+                <th>Maruziyet</th>
+                <th>Boyutu Belirleyen</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Drawdown & toparlanma: derinlik kadar süre de önemli -->
+      <div class="glass-panel panel-pad mb-8 edge-danger">
+        <div class="toolbar">
+          <h3 class="panel-title tone-danger">
+            <i data-lucide="trending-down"></i> Düşüş ve toparlanma
+          </h3>
+          <div class="row row-wrap gap-4">
+            <label for="selDdRange" class="hint hint-sm m-0">Pencere:</label>
+            <select id="selDdRange" class="form-control control-xs w-auto">
+              <option value="6">Son 6 saat</option>
+              <option value="24" selected>Son 24 saat</option>
+              <option value="168">Son 7 gün</option>
+              <option value="0">Tüm geçmiş</option>
+            </select>
+            <span class="hint hint-micro" id="ddMeta">—</span>
+          </div>
+        </div>
+
+        <div class="stats-grid grid-auto-180 mb-7">
+          <div class="glass-panel stat-card">
+            <span class="stat-title">En büyük düşüş</span>
+            <div id="ddMax" class="stat-value">%0.00</div>
+            <span id="ddMaxSub" class="stat-sub">—</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-title">Güncel düşüş</span>
+            <div id="ddCurrent" class="stat-value">%0.00</div>
+            <span id="ddCurrentSub" class="stat-sub">—</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-title">Zirveye Dönmek İçin</span>
+            <div id="ddRequired" class="stat-value">%0.00</div>
+            <span id="ddRequiredSub" class="stat-sub">Kayıp–kazanç asimetrisi</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-title">Sualtı Kalma Oranı</span>
+            <div id="ddUnderwater" class="stat-value">%0.0</div>
+            <span id="ddUnderwaterSub" class="stat-sub">—</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-title">Ulcer Index</span>
+            <div id="ddUlcer" class="stat-value">0.00</div>
+            <span id="ddUlcerSub" class="stat-sub">Derinlik + süre birlikte</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-title">Toparlanma Faktörü</span>
+            <div id="ddRecovery" class="stat-value">—</div>
+            <span id="ddRecoverySub" class="stat-sub">Net kâr ÷ max drawdown</span>
+          </div>
+        </div>
+
+        <!-- Sualtı eğrisi: zirveden ne kadar uzakta, ne kadar süre kalındı -->
+        <div class="mb-7">
+          <div class="row-baseline mb-2">
+            <span class="label-strong">Sualtı Eğrisi</span>
+            <span class="hint hint-lg" id="ddChartHint">0 = zirvede · aşağısı zirveden uzaklık</span>
+          </div>
+          <div class="table-container py-3">
+            <svg id="ddChart" viewBox="0 0 800 160" preserveAspectRatio="none"
+                 class="spark-canvas"></svg>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="tblDdEpisodes" class="dock-table tablo-kart tablo-siralanabilir">
+            <thead>
+              <tr>
+                <th>Derinlik</th>
+                <th>Tutar</th>
+                <th>Zirve → Dip</th>
+                <th>Başlangıç</th>
+                <th>Süre</th>
+                <th>Toparlanma</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Korelasyon kümeleri: "farklı sembol" ile "farklı risk" ayrımı -->
+      <div class="glass-panel panel-pad mb-8 edge-cyan">
+        <div class="toolbar">
+          <h3 class="panel-title tone-cyan">
+            <i data-lucide="git-branch"></i> Korelasyon Kümeleri & Maruziyet Dağılımı
+          </h3>
+          <span class="hint hint-micro">
+            Kriptoda çeşitlendirme çoğu zaman illüzyondur: aynı kümedeki varlıklar birlikte düşer.
+          </span>
+        </div>
+        <div class="table-container">
+          <table id="tblRiskClusters" class="dock-table tablo-kart">
+            <thead>
+              <tr>
+                <th>Küme</th>
+                <th>Varlıklar</th>
+                <th>Pozisyon</th>
+                <th>Maruziyet</th>
+                <th>% Sermaye</th>
+                <th>Küme Tavanı</th>
+                <th>Kullanım</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Kademe merdiveni: hem canlı durum hem düzenlenebilir eşikler -->
+      <div class="glass-panel panel-pad mb-8 edge-primary">
+        <div class="toolbar">
+          <h3 class="panel-title tone-primary">
+            <i data-lucide="layers"></i> Sermaye kademeleri (düşüş merdiveni)
+          </h3>
+          <button type="button" id="btnResetTiers" class="btn btn-secondary btn-tier">
+            Varsayılan merdivene dön
+          </button>
+        </div>
+        <div class="table-container">
+          <table id="tblRiskTiers" class="dock-table tablo-kart">
+            <thead>
+              <tr>
+                <th>Kademe</th>
+                <th>Düşüş eşiği (%)</th>
+                <th>Pozisyon boyutu çarpanı</th>
+                <th>Yeni giriş</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint hint-micro mt-note">
+          Eşikler boş bırakılırsa kill-switch limitinin %40 / %60 / %80'i kullanılır. Merdivenin son basamağı
+          her zaman kill-switch'tir: drawdown limite değince tüm pozisyonlar kapanır ve motor durur.
+        </p>
+      </div>
+
+      <!-- Tüm risk parametreleri -->
+      <div class="glass-panel panel-pad-lg">
+        <form id="formRisk">
+
+          <h3 class="heading-plain tone-warning">
+            🎯 Pozisyon Çıkış Kuralları
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpStopLoss">Zarar durdur — stop (%)</label>
+              <input type="number" id="inpStopLoss" class="form-control" step="0.1" min="0.1" value="2.0">
+              <small class="hint">Girişten bu kadar düşünce pozisyon kapanır. Açık risk hesabının temeli.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpTakeProfit">Kâr al (%)</label>
+              <input type="number" id="inpTakeProfit" class="form-control" step="0.1" min="0.1" value="4.0">
+            </div>
+            <div class="form-group">
+              <label for="inpTrailingStop">İzleyen stop (%)</label>
+              <input type="number" id="inpTrailingStop" class="form-control" step="0.1" min="0.1" value="1.5">
+              <small class="hint">Zirveden bu kadar düşüşte çıkar. Yalnızca kâr bölgesinde çalışır.</small>
+            </div>
+            <div class="form-group">
+              <label>Çıkış Anahtarları</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkTrailingStop"> Trailing stop aktif
+                </label>
+                <small class="hint">Breakeven: kâr stop mesafesinin 1,5 katına ulaşınca stop girişe çekilir (ATR stop açıksa ATR mesafesi esas alınır).</small>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            📐 Pozisyon Boyutu
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpRiskPerTrade">İşlem Başına Risk (% sermaye)</label>
+              <input type="number" id="inpRiskPerTrade" class="form-control" step="0.25" min="0.1" value="1.0">
+              <small class="hint">Boyut buradan türer: riske atılan tutar ÷ stop mesafesi. Stop dar olan varlıkta pozisyon büyür, geniş olanda küçülür — risk sabit kalır.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMaxRiskPerBot">Bot Başına Risk Kotası (% sermaye)</label>
+              <input type="number" id="inpMaxRiskPerBot" class="form-control" step="0.5" min="0.1" value="2.0">
+              <small class="hint">Tek bir botun taşıyabileceği toplam açık risk.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMaxPositionSize">Maks. Pozisyon Boyutu (% nakit)</label>
+              <input type="number" id="inpMaxPositionSize" class="form-control" step="1" min="1" max="100" value="25">
+              <small class="hint">Tek pozisyonun nakitten alabileceği en yüksek pay. Risk bazlı boyut kapalıyken tek belirleyici budur.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMinOrderUSDT">Minimum Emir Tutarı ($)</label>
+              <input type="number" id="inpMinOrderUSDT" class="form-control" step="1" min="0" value="10">
+              <small class="hint">Risk bütçesine göre kırpılan emir bunun altında kalırsa hiç açılmaz.</small>
+            </div>
+            <div class="form-group">
+              <label>Boyutlandırma Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkRiskSizing"> Risk bazlı boyutlandırma
+                </label>
+                <small class="hint">Kapatılırsa boyut yalnızca nakit yüzdesinden hesaplanır.</small>
+                <label class="check-label mt-1">
+                  <input class="clickable" type="checkbox" id="chkSplitCashCap"> Nakit tavanını bot sayısına böl
+                </label>
+                <small class="hint">Önerilen: kapalı. Toplam maruziyeti brüt tavan, açık risk bütçesi ve slot limiti zaten tutuyor; açılırsa tavan bot sayısına bölünür ve pozisyonlar çok küçülür.</small>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            📊 Volatiliteye Göre Stop (ATR)
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="selAtrTimeframe">ATR Zaman Dilimi</label>
+              <select id="selAtrTimeframe" class="form-control">
+                <option value="5m">5 dakika</option>
+                <option value="15m">15 dakika</option>
+                <option value="1h">1 saat</option>
+                <option value="4h">4 saat</option>
+                <option value="1d">1 gün</option>
+              </select>
+              <small class="hint">İşlem zaman diliminden bağımsızdır. ATR bar aralığını ölçer — 1m barın aralığı pozisyon stopu için çok küçüktür ve alt sınıra yapışır.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpAtrStopPeriod">ATR Periyodu</label>
+              <input type="number" id="inpAtrStopPeriod" class="form-control" step="1" min="2" value="14">
+            </div>
+            <div class="form-group">
+              <label for="inpAtrStopMultiplier">ATR Çarpanı</label>
+              <input type="number" id="inpAtrStopMultiplier" class="form-control" step="0.1" min="0.1" value="2.0">
+              <small class="hint">Stop mesafesi = ATR × çarpan. Büyütmek stopu gevşetir, pozisyonu küçültür.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpAtrStopMin">Stop Alt Sınırı (%)</label>
+              <input type="number" id="inpAtrStopMin" class="form-control" step="0.1" min="0.1" value="0.8">
+              <small class="hint">Çok sakin piyasada stopun gürültüye yapışmasını önler.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpAtrStopMax">Stop Üst Sınırı (%)</label>
+              <input type="number" id="inpAtrStopMax" class="form-control" step="0.5" min="0.5" value="6.0">
+              <small class="hint">Volatilite patlamasında tek işlemin aşırı büyümesini önler.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpTakeProfitRR">Risk/Ödül Oranı (TP)</label>
+              <input type="number" id="inpTakeProfitRR" class="form-control" step="0.25" min="0.25" value="2.0">
+              <small class="hint">ATR açıkken TP = stop mesafesi × bu oran. Sabit TP, kayan stopla birlikte R:R'yi bozardı.</small>
+            </div>
+            <div class="form-group">
+              <label>ATR Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkAtrStop"> ATR bazlı stop aktif
+                </label>
+                <small class="hint">Kapatılırsa yukarıdaki sabit Stop Loss / Take Profit yüzdeleri kullanılır.</small>
+                <label class="check-label mt-1">
+                  <input class="clickable" type="checkbox" id="chkStrategyStopPrecedence"> Strateji kendi stopunu gönderirse öncelik ver
+                </label>
+                <small class="hint">Kendi stopunu yapıdan hesaplayan stratejilerde (ör. Range İçi Ortalamaya Dönüş, Donchian izleyen stop) genel bir yüzdeyle ezmek risk/ödül yapısını bozar. Açıkken o botlarda ATR stopu devre dışı kalır.</small>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            🛡️ Açık Risk Tavanı
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpMaxOpenRisk">Açık Risk Tavanı (% sermaye)</label>
+              <input type="number" id="inpMaxOpenRisk" class="form-control" step="0.5" min="0.5" value="6.0">
+              <small class="hint">Tüm açık pozisyonların stop'a kadar taşıdığı toplam kayıp bu oranı aşamaz.</small>
+            </div>
+            <div class="form-group">
+              <label>Tavan Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkOpenRiskLimit"> Açık risk tavanı aktif
+                </label>
+                <small class="hint">Kapatılırsa risk ölçülmeye devam eder ama yeni girişler kırpılmaz.</small>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            📉 Düşüş ve sermaye kademeleri
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpMaxDrawdown">Acil fren düşüş sınırı (%)</label>
+              <input type="number" id="inpMaxDrawdown" class="form-control" step="0.5" min="1" value="10.0">
+              <small class="hint">Zirveden bu kadar erimede acil fren: kâğıt test pozisyonları kapanır, kâğıt motor durur.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpTierHysteresis">Kademe Histerezisi (puan)</label>
+              <input type="number" id="inpTierHysteresis" class="form-control" step="0.5" min="0" value="1.0">
+              <small class="hint">Bir kademe aşağı inmek için eşiğin bu kadar altına toparlanmak gerekir.</small>
+            </div>
+            <div class="form-group">
+              <label>Kademe Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkEquityTiers"> Sermaye kademeleri aktif
+                </label>
+                <small class="hint">Kapatılırsa boyut hiç küçülmez; tek fren acil fren olur.</small>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            🧩 Maruziyet Limitleri
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpMaxConcurrent">Maks. Eşzamanlı Pozisyon</label>
+              <input type="number" id="inpMaxConcurrent" class="form-control" step="1" min="1" value="10">
+              <small class="hint">Mevcut bir varlığa ekleme yapmak slot tüketmez; yalnızca yeni varlıklar sayılır.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMaxSymbolExposure">Varlık Tavanı (% sermaye)</label>
+              <input type="number" id="inpMaxSymbolExposure" class="form-control" step="1" min="1" max="100" value="15">
+              <small class="hint">Tek bir varlığa ayrılabilecek en yüksek maruziyet.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMaxClusterExposure">Küme Tavanı (% sermaye)</label>
+              <input type="number" id="inpMaxClusterExposure" class="form-control" step="1" min="1" max="100" value="40">
+              <small class="hint">Aynı korelasyon kümesindeki varlıkların toplamı.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpMaxGrossExposure">Brüt Tavan (% sermaye)</label>
+              <input type="number" id="inpMaxGrossExposure" class="form-control" step="1" min="1" max="100" value="80">
+              <small class="hint">Tüm açık pozisyonların toplam piyasa değeri.</small>
+            </div>
+            <div class="form-group">
+              <label>Limit Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkExposureLimits"> Maruziyet limitleri aktif
+                </label>
+                <small class="hint">Kapatılırsa dağılım ölçülmeye devam eder ama girişler kırpılmaz.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-7">
+            <label class="row-between row-wrap">
+              <span>Küme Tanımları</span>
+              <button type="button" id="btnClusterScan" class="btn btn-secondary btn-tier-sm">
+                📐 Korelasyondan hesapla
+              </button>
+            </label>
+            <textarea id="txtClusters" class="form-control textarea-mono" rows="7" spellcheck="false"></textarea>
+            <small class="hint">
+              Satır başına bir küme: <code>Küme adı: SEMBOL, SEMBOL, ...</code> —
+              tanımlanmamış her sembol otomatik olarak "Sınıflandırılmamış" kümesine düşer ve aynı tavana tabi olur.
+            </small>
+            <!-- Tarama sonucu buraya yazılır: öneri metin alanına DOLDURULUR ama
+                 kaydedilmez. Risk parametresini yazan tek yol formun Kaydet'i. -->
+            <div class="is-hidden mt-5" id="clusterScanResult"></div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            🛑 Günlük Zarar Limiti
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpDailyLossLimit">Günlük Zarar Limiti (%)</label>
+              <input type="number" id="inpDailyLossLimit" class="form-control" step="0.5" min="0.5" value="3.0">
+              <small class="hint">Gün başındaki sermayeden bu kadar uzaklaşılınca gün sonuna kadar giriş durur.</small>
+            </div>
+            <div class="form-group">
+              <label for="selDailyLossAction">Limite Değince</label>
+              <select id="selDailyLossAction" class="form-control">
+                <option value="halt">Yeni girişi durdur (pozisyonlar açık kalır)</option>
+                <option value="flatten">Tüm pozisyonları kapat</option>
+              </select>
+              <small class="hint">"Durdur" seçiliyken açık pozisyonlar kendi stop/TP kurallarıyla yönetilmeye devam eder.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpDayResetHour">Gün Sınırı (yerel saat)</label>
+              <input type="number" id="inpDayResetHour" class="form-control" step="1" min="0" max="23" value="0">
+              <small class="hint">İşlem gününün başladığı saat. 0 = gece yarısı. Limit bu saatte kendiliğinden sıfırlanır.</small>
+            </div>
+            <div class="form-group">
+              <label>Limit Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkDailyLossLimit"> Günlük zarar limiti aktif
+                </label>
+                <button type="button" id="btnResetDailyHalt" class="btn btn-secondary btn-tier-xs is-hidden btn-outline-danger">
+                  Limiti şimdi kaldır
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading tone-warning">
+            ⏸️ Kayıp Serisi & Soğuma
+          </h3>
+          <div class="grid-auto">
+            <div class="form-group">
+              <label for="inpMaxLossStreak">Maks. Ardışık Kayıp</label>
+              <input type="number" id="inpMaxLossStreak" class="form-control" step="1" min="1" value="3">
+              <small class="hint">Bu sayıya ulaşınca soğuma başlar. Her kayıpta boyut ayrıca ×0.25 azalır.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpCooldownMinutes">Soğuma Süresi (dakika)</label>
+              <input type="number" id="inpCooldownMinutes" class="form-control" step="1" min="1" value="15">
+            </div>
+            <div class="form-group">
+              <label>Soğuma Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkCooldownEnabledForm"> Soğuma modu aktif
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-auto mt-7">
+            <div class="form-group">
+              <label for="inpAntiMartStep">Anti-Martingale Adımı</label>
+              <input type="number" id="inpAntiMartStep" class="form-control" step="0.05" min="0" max="1" value="0.25">
+              <small class="hint">Her kayıpta boyut çarpanından düşülen miktar. 0.25 → 3 kayıpta tabana iner.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpAntiMartFloor">Anti-Martingale Tabanı</label>
+              <input type="number" id="inpAntiMartFloor" class="form-control" step="0.05" min="0.05" max="1" value="0.25">
+              <small class="hint">Çarpanın inebileceği en düşük değer. 0.25 = pozisyonlar dörtte bire iner.</small>
+            </div>
+            <div class="form-group">
+              <label for="selLossStreakReset">Kârlı İşlemde</label>
+              <select id="selLossStreakReset" class="form-control">
+                <option value="full">Seriyi sıfırla (boyut bir anda tam döner)</option>
+                <option value="step">Bir kademe geri al (boyut kademeli döner)</option>
+              </select>
+              <small class="hint">"Sıfırla" seçiliyken 9 kayıptan sonra tek kârlı işlem boyutu dört katına çıkarır.</small>
+            </div>
+            <div class="form-group">
+              <label for="inpLossStreakDecay">Seri Erime Süresi (dakika)</label>
+              <input type="number" id="inpLossStreakDecay" class="form-control" step="5" min="0" value="0">
+              <small class="hint">Bu kadar kayıpsız süre geçince seri bir kademe erir. 0 = kapalı; seri yalnızca kârlı işlemle azalır.</small>
+            </div>
+            <div class="form-group">
+              <label>Anti-Martingale Anahtarı</label>
+              <div class="col pt-1">
+                <label class="check-label">
+                  <input class="clickable" type="checkbox" id="chkAntiMartingale"> Kayıp serisinde boyut küçült
+                </label>
+                <small class="hint">Kapatılırsa kayıp serisi yalnızca soğuma modunu tetikler, boyuta dokunmaz.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-heading row-end gap-7">
+            <button type="submit" id="btnSaveRisk" class="btn btn-primary">
+              <i data-lucide="save"></i> Risk ayarlarını kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- BACKTEST VE PARAMETRE OPTİMİZASYONU -->
+    <section id="tab-backtest" class="tab-content" role="tabpanel" aria-label="Backtest" data-bt-gorunum="kosu">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="line-chart"></i> Backtest
+        </h2>
+      </div>
+
+      <div class="grid-1-2 mb-9">
+        
+        <!-- Backtest Control Form -->
+        <div class="glass-panel panel-pad">
+          <h3 class="card-title mb-3">
+            <i class="tone-success" data-lucide="play-circle"></i> Backtest ayarları
+          </h3>
+          <p class="hint hint-sm mb-5">Stratejiyi geçmiş veride dener; hiçbir emir gönderilmez.</p>
+
+          <form id="formBacktest">
+            
+            <div class="form-group">
+              <label for="btStrategy">Strateji</label>
+              <select id="btStrategy" class="form-control">
+                <option value="">yükleniyor…</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="btSymbol">Coin <span class="tone-muted fw-normal">(izleme listesinden)</span></label>
+              <select id="btSymbol" class="form-control">
+                <!-- Populated dynamically from Watchlist -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="btTimeframe">Zaman dilimi</label>
+              <select id="btTimeframe" class="form-control">
+                <option value="1m">1 dakika</option>
+                <option value="5m">5 dakika</option>
+                <option value="15m">15 dakika</option>
+                <option value="30m">30 dakika</option>
+                <option value="1h" selected>1 saat</option>
+                <option value="2h">2 saat</option>
+                <option value="4h">4 saat</option>
+                <option value="6h">6 saat</option>
+                <option value="12h">12 saat</option>
+                <option value="1d">1 gün</option>
+                <option value="1w">1 hafta</option>
+              </select>
+              <!-- B-25: günlük stratejide zaman dilimi uyarısı (app.js btZamanDilimiUygula) -->
+              <div class="hint mt-03 is-hidden" id="btTfUyari" aria-live="polite"></div>
+            </div>
+
+            <!-- TARİH ARALIĞI (2026-10-06): "son N mum" yerine. Eksik mumlar koşudan
+                 önce borsadan indirilir; "Tümü" borsadaki ilk mumdan başlar. -->
+            <div class="form-group">
+              <label>Tarih aralığı</label>
+              <div class="grid-2 gap-3">
+                <input type="date" id="btStart" class="form-control" aria-label="Başlangıç">
+                <input type="date" id="btEnd" class="form-control" aria-label="Bitiş">
+              </div>
+              <div class="row row-wrap gap-2 mt-3">
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="tum">Tümü</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="5y">5 yıl</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="3y">3 yıl</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="1y">1 yıl</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="6a">6 ay</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="1a">1 ay</button>
+                <button type="button" class="btn btn-secondary btn-tag" data-bt-aralik="7g">1 hafta</button>
+              </div>
+            </div>
+
+            <div class="rule-box" id="btKapsam" aria-live="polite"></div>
+
+            <!-- 62.9 (kullanıcıyla taslak): sade form — strateji, coin, zaman dilimi, dönem önde; borsa, piyasa, sermaye, test türü
+                 (tek koşu / walk-forward / optimizasyon), aranacak parametreler ve arşivdeki stratejiler "Gelişmiş" katında. -->
+            <details class="bt-gelismis mt-5" id="btGelismis">
+              <summary>Gelişmiş — borsa, piyasa, sermaye, test türü (walk-forward, optimizasyon), arşivdeki stratejiler</summary>
+              <div class="bt-gelismis-ic">
+                <!-- Alt sekmeler (js/pages/backtestEkran.js): tek koşu · walk-forward · optimizasyon. Form ortak. -->
+                <div class="dock-tabs chip-row bt-alt-sekme" id="btAltSekme" role="tablist" aria-label="Backtest türü">
+                  <button type="button" class="dock-tab active" role="tab" aria-selected="true" data-bt-alt="kosu">Tek koşu</button>
+                  <button type="button" class="dock-tab" role="tab" aria-selected="false" data-bt-alt="wf">Walk-forward</button>
+                  <button type="button" class="dock-tab" role="tab" aria-selected="false" data-bt-alt="opt">Optimizasyon</button>
+                </div>
+                <div class="form-group">
+                  <label for="btExchangeProvider">Veri kaynağı (borsa)</label>
+                  <select id="btExchangeProvider" class="form-control">
+                    <option value="binance" selected>Binance</option>
+                    <option value="okx">OKX</option>
+                    <option value="bybit">Bybit</option>
+                    <option value="kucoin">KuCoin</option>
+                    <option value="gateio">Gate.io</option>
+                    <option value="bitget">Bitget</option>
+                    <option value="coinbase">Coinbase</option>
+                  </select>
+                </div>
+
+                <!-- Piyasa ve kaldıraç YALNIZ bu koşu içindir; canlı ayara yazılmaz. -->
+                <div class="grid-2 gap-3">
+                  <div class="form-group">
+                    <label for="btMarket">Piyasa</label>
+                    <select id="btMarket" class="form-control">
+                      <option value="spot" selected>Spot</option>
+                      <option value="perp">Vadeli (USDⓈ-M perp)</option>
+                    </select>
+                  </div>
+                  <div class="form-group is-hidden" id="btLeverageGroup">
+                    <label for="btLeverage">Kaldıraç</label>
+                    <input type="number" id="btLeverage" class="form-control" value="1" min="1" max="100" step="1">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="btCapital">Başlangıç sermayesi (USDT)</label>
+                  <input type="number" id="btCapital" class="form-control" value="10000">
+                </div>
+                <label class="check-label mt-3"><input type="checkbox" id="btArsivGoster"> <span>Arşivdeki (elenen) stratejileri de göster</span></label>
+              </div>
+            </details>
+
+            <!--
+              ARANACAK PARAMETRELER. Optimizatör en çok 4 parametreyi birlikte
+              arar; hangileri olduğu SEÇİLEBİLİR olmalı. Otomatik seçim bir
+              tahmindir (şemadaki ilk sayısal parametreler) ve içe aktarılan
+              botlarda pozisyon boyutu gibi aranmaması gereken alanlara
+              denk gelebilir.
+            -->
+            <div class="form-group mt-7 bt-yalniz-wf bt-yalniz-opt">
+              <label class="row-between">
+                <span>Aranacak parametreler <span class="tone-muted fw-normal" id="optParamSayi"></span></span>
+                <button type="button" id="btnOptParamTemizle" class="btn btn-secondary btn-tag" title="Seçimi kaldır; sunucu ilk sayısal parametreleri seçer">Seçimi temizle</button>
+              </label>
+              <div class="pick-list pick-list-sm" id="optParamPicker"></div>
+              <div class="hint mt-03" id="optParamHint"></div>
+            </div>
+
+            <div class="col-plain gap-5 mt-7">
+              <button type="submit" id="btnRunBacktest" class="btn btn-success w-full bt-yalniz-kosu">
+                <i data-lucide="play"></i> Backtest çalıştır
+              </button>
+              
+              <button type="button" id="btnOptimizeParams" class="btn btn-primary w-full btn-grad-optimize bt-yalniz-opt">
+                <i data-lucide="zap"></i> Parametreleri optimize et
+              </button>
+
+              <div class="row gap-3 bt-yalniz-wf">
+                <button type="button" id="btnWalkForward" class="btn btn-secondary flex-1 btn-grad-walk">
+                  <i data-lucide="shield-check"></i> Walk-forward testi
+                </button>
+                <!-- Kat: son %30 kaç test dilimine bölünsün. 1 = tek bölme. -->
+                <label for="btWfFolds" class="hint hint-sm m-0">Kat</label>
+                <select id="btWfFolds" class="form-control w-auto" title="Son %30'un kaç test dilimine bölüneceği">
+                  <option value="1">1 kat</option>
+                  <option value="3">3 kat</option>
+                  <option value="4" selected>4 kat</option>
+                  <option value="6">6 kat</option>
+                </select>
+              </div>
+
+              <div class="ilerleme-kutu is-hidden" id="btIsDurum" aria-live="polite"></div>
+
+            </div>
+          </form>
+        </div>
+
+        <!-- SAĞ SÜTUN: görünüme göre tek koşu sonucu / walk-forward raporu / optimizasyon sıralaması. -->
+        <div class="bt-sag">
+        <div class="glass-panel panel-pad col-plain gap-7 bt-yalniz-kosu">
+          <div class="row-split">
+            <h3 class="card-title">
+              <i class="tone-cyan" data-lucide="bar-chart-2"></i> Sonuç
+            </h3>
+            <div class="col-plain items-end">
+              <span class="text-base tone-cyan fw-semibold" id="txtBacktestTargetInfo"></span>
+              <span class="mono-note" id="txtBacktestDateRange"></span>
+              <!-- Vadeli künyesi: kaldıraç, finansman kaynağı, marj kademesi kaynağı, likidasyon sayısı. -->
+              <span class="is-hidden mono-note mono-note-sm" id="txtBacktestPerpNote"></span>
+            </div>
+          </div>
+          <!-- Hücum/Denge: botun TAMAMI (kol ×3 dahil) — standart sonuçtan ayrı, js/pages/bindirme.js -->
+          <div id="btBindirmeEk" class="is-hidden mb-7"></div>
+          
+          <!-- 3–5 ANA SAYI (Pusula §3): ayrıntı katlı. Kâr faktörü ve beklenti "Ayrıntılı analiz"de. -->
+          <div class="bt-bos bos-durum" id="btBosDurum">
+            <p class="hint mb-0">Henüz koşu yok. Formda (masaüstünde solda, telefonda üstte) stratejiyi, sembolü ve tarih aralığını seçip <strong>Backtest çalıştır</strong>'a basın — ya da Stratejiler ekranında bir stratejiyi seçip "Backtest'te aç".</p>
+          </div>
+          <div class="ana-sayilar is-hidden" id="btOzetSayilar">
+            <div class="ana-sayi">
+              <span class="stat-title">Toplam getiri</span>
+              <span class="stat-value stat-value-sm sayi" id="btResProfit">—</span>
+              <span class="hint hint-sm mb-0 sayi" id="btResProfitAlt">—</span>
+            </div>
+            <div class="ana-sayi">
+              <span class="stat-title">Al-tut'a göre <button type="button" class="yardim-isareti" data-sozluk="altut" aria-label="Açıklama">?</button></span>
+              <span class="stat-value stat-value-sm sayi" id="btResAlpha">—</span>
+              <span class="hint hint-sm mb-0 sayi" id="btResAlphaAlt">—</span>
+            </div>
+            <div class="ana-sayi">
+              <span class="stat-title">Sharpe <button type="button" class="yardim-isareti" data-sozluk="sharpe" aria-label="Açıklama">?</button></span>
+              <span class="stat-value stat-value-sm sayi" id="btResSharpe">—</span>
+              <span class="hint hint-sm mb-0">yıllık, günlük getiriden</span>
+            </div>
+            <div class="ana-sayi">
+              <span class="stat-title">En büyük düşüş</span>
+              <span class="stat-value stat-value-sm sayi tone-danger" id="btResDrawdown">—</span>
+              <span class="hint hint-sm mb-0">tepeden en derin</span>
+            </div>
+            <div class="ana-sayi">
+              <span class="stat-title">İşlem</span>
+              <span class="stat-value stat-value-sm sayi" id="btResTrades">—</span>
+              <span class="hint hint-sm mb-0 sayi" id="btResWinRate">—</span>
+            </div>
+          </div>
+          <!-- İçe aktarılan Pine: motorla birebir örtüşmeyen yapı sayaçları (lib/pine/strategy.js). -->
+          <div id="btPineFark" class="is-hidden"></div>
+          <!-- TEK ANA GRAFİK (§4a/4): strateji kalın yeşil, olası sıralamalar bandı, al-tut gri ince, kriz altın, düşüş altta. -->
+          <div id="btAnaGrafik" class="bt-ana-grafik is-hidden" aria-live="polite"></div>
+
+          <details class="bt-ayrinti" id="btAyrinti">
+            <summary>Ayrıntılı analiz — varsayımlar, kâr yapısı, fiyat grafiği ve işlemler, düşüşler</summary>
+            <div class="ana-sayilar mt-3 mb-3">
+              <div class="ana-sayi">
+                <span class="stat-title">Kâr faktörü</span>
+                <span class="stat-value stat-value-sm sayi" id="btResProfitFactor">—</span>
+              </div>
+              <div class="ana-sayi">
+                <span class="stat-title">İşlem başı beklenti</span>
+                <span class="stat-value stat-value-sm sayi" id="btResExpectancy">—</span>
+              </div>
+            </div>
+          <div id="btVarsayimlar"></div>
+
+          <!-- ============ GELİŞMİŞ BACKTEST ANALİZİ ============ -->
+          <div class="is-hidden mt-8" id="btAnalyticsPanel">
+
+            <!-- PERFORMANS GRAFİĞİ + GÖRÜNÜRLÜK SEÇENEKLERİ -->
+            <div class="glass-panel panel-pad-narrow mb-7">
+              <div class="bt-section-title"><i class="tone-primary" data-lucide="line-chart"></i> Performans</div>
+              <div class="grid-190-1">
+                <div class="col-plain gap-3">
+                  <label class="check-row">
+                    <input type="checkbox" id="anTogCum" checked> Birikimli kâr/zarar
+                  </label>
+                  <label class="check-row">
+                    <input type="checkbox" id="anTogBh" checked> Al-tut
+                  </label>
+                  <label class="check-row">
+                    <input type="checkbox" id="anTogTrades"> İşlem sapmaları
+                  </label>
+                  <label class="check-row">
+                    <input type="checkbox" id="anTogRuns"> Yükseliş ve düşüşler
+                  </label>
+                </div>
+                <div>
+                  <div class="canvas-box canvas-300">
+                    <canvas id="anPerfChart" role="img" aria-label="Birikimli kâr/zarar ve al-tut grafiği"></canvas>
+                  </div>
+                  <!-- Zaman şeridi: kârlı (yeşil) / zararlı (kırmızı) dönemler -->
+                  <div class="ratio-bar" id="anTimeStrip"></div>
+                  <div class="ratio-legend">
+                    <span id="anStripStart">—</span><span id="anStripEnd">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FİYAT GRAFİĞİ + İŞLEM GİRİŞ/ÇIKIŞLARI (canlı izlemedeki grafiğin aynısı) -->
+            <div class="glass-panel panel-pad-narrow mb-7">
+              <div class="row-between row-wrap gap-5 mb-5">
+                <div class="bt-section-title m-0">
+                  <i class="tone-primary" data-lucide="candlestick-chart"></i> Fiyat grafiği ve işlemler
+                </div>
+                <div class="row row-wrap gap-5 hint hint-sm">
+                  <label class="row gap-1 clickable">
+                    <input type="checkbox" id="anTogMarkers" checked> Giriş / Çıkış işaretleri
+                  </label>
+                  <label class="row gap-1 clickable">
+                    <input type="checkbox" id="anTogTradeLevels"> Ortalama giriş çizgileri
+                  </label>
+                  <!-- Uygulanmayan sinyaller: strateji sinyal üretti ama motor
+                       işlemedi (pozisyon açık, sermaye yetmedi, SHORT). -->
+                  <label class="row gap-1 clickable">
+                    <input type="checkbox" id="anTogBlockedSignals"> Uygulanmayan sinyaller
+                  </label>
+                  <span id="anChartInfo">—</span>
+                </div>
+              </div>
+              <div class="chart-canvas chart-canvas-tall" id="anPriceChartContainer"></div>
+
+              <!-- Backtest grafiğinde göstergeler: stratejinin gerçekten
+                   doğru barlarda al-sat yapıp yapmadığını gözle doğrulamak için. -->
+              <div class="row-between row-wrap mt-3">
+                <button type="button" id="btnBtIndicators" class="btn btn-secondary btn-sm">
+                  📈 Göstergeler
+                </button>
+                <span class="hint" id="btIndicatorStatus"></span>
+                <a class="hint hint-sm no-underline" href="indicators.html">Gösterge havuzu ↗</a>
+              </div>
+              <div id="btIndicatorPanel" class="is-hidden indicator-drawer"></div>
+
+              <!-- Sinyal izi: stratejinin ürettiği HER sinyal ve akıbeti.
+                   Backtest bugüne kadar yalnızca gerçekleşen işlemleri
+                   gösteriyordu; yutulan sinyaller görünmüyordu. -->
+              <div class="mt-7" id="signalTraceBox"></div>
+              <div class="row-plain row-wrap gap-8 mt-3 hint hint-micro">
+                <span><span class="tone-success">▲</span> Alım (giriş)</span>
+                <span><span class="tone-cyan">▼</span> Kârlı çıkış</span>
+                <span><span class="tone-danger">▼</span> Zararlı çıkış</span>
+                <span><span class="tone-warning">◆</span> Bar sonunda açık pozisyon</span>
+              </div>
+            </div>
+
+            <!-- 2. RETURN DETAILS -->
+            <div class="glass-panel panel-pad-narrow mb-7">
+              <div class="bt-section-title"><i class="tone-success" data-lucide="trending-up"></i> Getiri ayrıntıları</div>
+              <div class="dock-tabs chip-row" role="tablist">
+                <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="an-ret-overview" data-an-tab="an-ret-overview">Genel bakış</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-ret-earnings" data-an-tab="an-ret-earnings">Kazançlar</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-ret-bench" data-an-tab="an-ret-bench">Kıyaslama</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-ret-risk" data-an-tab="an-ret-risk">Riske göre performans</button>
+              </div>
+
+              <div id="an-ret-overview" class="dock-tab-pane active" role="tabpanel">
+                <div class="stats-grid grid-auto-160 mb-7">
+                  <div class="glass-panel stat-card"><span class="stat-title">Açık pozisyon kâr/zararı</span><div id="anOpenPnl" class="stat-value stat-value-md">$0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Al-tut üstü getiri</span><div id="anAlpha" class="stat-value stat-value-md">$0.00</div><span id="anAlphaPct" class="stat-sub">%0.00</span></div>
+                </div>
+                <div class="grid-2">
+                  <div>
+                    <div class="bt-metric-label mb-2">Kâr yapısı</div>
+                    <div class="canvas-box canvas-210"><canvas id="anProfitStructChart"></canvas></div>
+                  </div>
+                  <div>
+                    <div class="bt-metric-label mb-2">Kıyaslama (al-tut / strateji)</div>
+                    <div id="anBenchRange"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="an-ret-earnings" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblEarnings"></table></div>
+              </div>
+              <div id="an-ret-bench" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblBench"></table></div>
+              </div>
+              <div id="an-ret-risk" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblRisk"></table></div>
+              </div>
+            </div>
+
+            <!-- 3. TRADE ANALYSIS -->
+            <div class="glass-panel panel-pad-narrow mb-7">
+              <div class="bt-section-title"><i class="tone-cyan" data-lucide="bar-chart-2"></i> İşlem analizi</div>
+              <div class="dock-tabs chip-row" role="tablist">
+                <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="an-tr-overview" data-an-tab="an-tr-overview">Genel bakış</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-tr-detail" data-an-tab="an-tr-detail">Ayrıntılar</button>
+              </div>
+
+              <div id="an-tr-overview" class="dock-tab-pane active" role="tabpanel">
+                <div class="stats-grid grid-auto-160 mb-7">
+                  <div class="glass-panel stat-card"><span class="stat-title">Ortalama kâr/zarar</span><div id="anAvgPnl" class="stat-value stat-value-md">$0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Ortalama işlem süresi (bar)</span><div id="anAvgBars" class="stat-value stat-value-md">0</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">En büyük kâr</span><div id="anLargestProfit" class="stat-value stat-value-md tone-success">$0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">En büyük zarar</span><div id="anLargestLoss" class="stat-value stat-value-md tone-danger">$0.00</div></div>
+                </div>
+                <div class="grid-14-1">
+                  <div>
+                    <div class="bt-metric-label mb-2">Getiri dağılımı</div>
+                    <div class="canvas-box canvas-230"><canvas id="anHistChart"></canvas></div>
+                  </div>
+                  <div>
+                    <div class="bt-metric-label mb-2">Kazanan / kaybeden</div>
+                    <div class="canvas-box canvas-230"><canvas id="anDonutChart"></canvas></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="an-tr-detail" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblTradeDetail"></table></div>
+              </div>
+            </div>
+
+            <!-- 4. EQUITY RUN-UPS AND DRAWDOWNS -->
+            <div class="glass-panel panel-pad-narrow mb-7">
+              <div class="bt-section-title"><i class="tone-warning" data-lucide="activity"></i> Sermaye yükseliş ve düşüşleri</div>
+              <div class="dock-tabs chip-row" role="tablist">
+                <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="an-ex-overview" data-an-tab="an-ex-overview">Genel bakış</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-ex-runup" data-an-tab="an-ex-runup">Yükselişler</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-ex-dd" data-an-tab="an-ex-dd">Düşüşler</button>
+              </div>
+
+              <div id="an-ex-overview" class="dock-tab-pane active" role="tabpanel">
+                <div class="stats-grid grid-auto-170 mb-7">
+                  <div class="glass-panel stat-card"><span class="stat-title">Ortalama yükseliş süresi</span><div id="anAvgRuDur" class="stat-value stat-value-md">0</div><span class="stat-sub">bar</span></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Ortalama düşüş süresi</span><div id="anAvgDdDur" class="stat-value stat-value-md">0</div><span class="stat-sub">bar</span></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Maks. düşüş / başlangıç sermayesi</span><div id="anDdOfInitial" class="stat-value stat-value-md">%0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Getiri / en büyük düşüş</span><div id="anReturnOfDd" class="stat-value stat-value-md">0.00</div></div>
+                </div>
+                <div class="grid-2">
+                  <div>
+                    <div class="bt-metric-label mb-2">Yükseliş ve düşüş</div>
+                    <div class="canvas-box canvas-210"><canvas id="anExChart"></canvas></div>
+                  </div>
+                  <div>
+                    <div class="bt-metric-label mb-2">Karşılaştırma</div>
+                    <div id="anExBars"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="an-ex-runup" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblRunUp"></table></div>
+              </div>
+              <div id="an-ex-dd" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblDd"></table></div>
+              </div>
+            </div>
+
+            <!-- 5. CAPITAL EFFICIENCY -->
+            <div class="glass-panel panel-pad-narrow">
+              <div class="bt-section-title"><i class="tone-primary" data-lucide="pie-chart"></i> Sermaye verimliliği</div>
+              <div class="dock-tabs chip-row" role="tablist">
+                <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="an-cap-overview" data-an-tab="an-cap-overview">Genel bakış</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-cap-usage" data-an-tab="an-cap-usage">Sermaye kullanımı</button>
+                <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="an-cap-margin" data-an-tab="an-cap-margin" id="anTabMargin">Teminat kullanımı</button>
+              </div>
+
+              <div id="an-cap-overview" class="dock-tab-pane active" role="tabpanel">
+                <div class="stats-grid grid-auto-170 mb-7">
+                  <div class="glass-panel stat-card"><span class="stat-title">Yıllık bileşik getiri (CAGR)</span><div id="anCagr" class="stat-value stat-value-md">—</div><span id="anCagrNote" class="stat-sub"></span></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Gerekli hesap büyüklüğü</span><div id="anReqAccount" class="stat-value stat-value-md">$0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Başlangıç sermayesi getirisi</span><div id="anReturnInitial" class="stat-value stat-value-md">%0.00</div></div>
+                  <div class="glass-panel stat-card"><span class="stat-title">Likidasyon</span><div id="anMarginCalls" class="stat-value stat-value-md">0</div><span class="stat-sub" id="anMarginCallsNote">Kaldıraçsız spot</span></div>
+                </div>
+                <div id="anMarginBox">
+                  <div class="bt-metric-label mb-2">Kullanılan teminat oranı (%)</div>
+                  <div class="canvas-box canvas-210"><canvas id="anMarginChart" aria-label="Kullanılan teminat oranı grafiği" role="img"></canvas></div>
+                </div>
+              </div>
+
+              <div id="an-cap-usage" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblCapUsage"></table></div>
+              </div>
+              <div id="an-cap-margin" class="dock-tab-pane" role="tabpanel">
+                <div class="table-container"><table class="dock-table tablo-kart" id="anTblMargin"></table></div>
+              </div>
+            </div>
+
+          </div>
+
+          </details>
+
+          <!-- Dynamic Interactive Parameter Tuning Card under Backtest Results -->
+          <div class="apply-box" id="backtestParamsTuneBox">
+            <div class="row-split mb-5">
+              <h4 class="apply-title tone-warning">
+                <i data-lucide="sliders"></i> Test edilen ayarlar — değiştirip yeniden dene
+              </h4>
+              <span class="hint hint-sm" id="txtTuneStrategyLabel"></span>
+            </div>
+            
+            <div class="grid-auto-140" id="tuneFieldsContainer">
+              <!-- Dynamic parameter inputs populated by JS -->
+            </div>
+
+            <div class="row-end gap-5 mt-5">
+              <button type="button" id="btnRerunCustomBacktest" class="btn btn-primary btn-lg btn-grad-apply">
+                <i data-lucide="refresh-cw"></i> Yeniden test et
+              </button>
+              <button type="button" id="btnApplyTunedToLive" class="btn btn-success btn-lg" title="Test edilen parametreleri stratejinin kayıtlı ayarına yazar (arşivdeki kâğıt test motoru kullanır). Hücum ve Denge'yi etkilemez — onların yönetimi Botlar › Yönetim'de.">
+                <i data-lucide="check-circle"></i> Stratejinin kayıtlı ayarına yaz
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="glass-panel panel-pad bt-yalniz-wf" id="btWfBos">
+          <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="shield-check"></i> Walk-forward — aşırı uyum kontrolü</h3>
+          <p class="hint mb-0">Henüz koşulmadı. Formda stratejiyi ve aralığı seçip <strong>Walk-forward testi</strong>'ne basın: veri kayan pencerelere bölünür, her pencerede bulunan en iyi ayar hiç görmediği sonraki dilimde denenir.</p>
+        </div>
+        <!-- WALK-FORWARD RAPORU — kayan pencere, %70 eğitim / %30 test.
+             Hesap `lib/backtest/optimize.js` runWalkForward; çizim `js/pages/backtest.js`.
+             txtWf* kimlikleri panel testine bağlı. -->
+        <div id="walkForwardPanel" class="glass-panel panel-pad edge-primary bt-yalniz-wf is-hidden">
+          <div class="row-split mb-3">
+            <h3 class="panel-title tone-primary">
+              <i data-lucide="shield-check"></i> Walk-forward raporu — aşırı uyum kontrolü
+            </h3>
+            <div class="score-pill" id="txtWfStatusBadge"></div>
+          </div>
+          <p class="mono-note mb-7" id="txtWfKunye"></p>
+
+          <div class="grid-4 mb-7">
+            <div class="sunken sunken-bordered sunken-lg">
+              <div class="hint hint-sm">Eğitim getirisi</div>
+              <div class="metric-num-lg tone-success" id="txtWfInReturn">—</div>
+              <div class="hint hint-lg" id="txtWfInCandles">—</div>
+            </div>
+            <div class="sunken sunken-bordered sunken-lg">
+              <div class="hint hint-sm">Test getirisi (görülmemiş veri)</div>
+              <div class="metric-num-lg tone-cyan" id="txtWfOutReturn">—</div>
+              <div class="hint hint-lg" id="txtWfOutCandles">—</div>
+            </div>
+            <div class="sunken sunken-bordered sunken-lg">
+              <div class="hint hint-sm">Walk-forward verimi (WFE)</div>
+              <div class="metric-num-lg tone-warning" id="txtWfEfficiency">—</div>
+              <div class="hint hint-lg">Yıllık test getirisi / yıllık eğitim getirisi</div>
+            </div>
+            <div class="sunken sunken-bordered sunken-lg">
+              <div class="hint hint-sm">Sonuç</div>
+              <div class="metric-num" id="txtWfOverfitRisk">—</div>
+              <div class="hint hint-lg">Kabul kriterlerine göre</div>
+            </div>
+          </div>
+
+          <div class="grid-2 mb-7">
+            <div>
+              <div class="bt-metric-label mb-2">Kabul kriterleri</div>
+              <div class="table-container">
+                <table class="dock-table tablo-kart">
+                  <thead><tr><th>Kriter</th><th>Değer</th><th>Eşik</th><th>Durum</th></tr></thead>
+                  <tbody id="wfKriterGovde"></tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <div class="bt-metric-label mb-2">Uyarılar</div>
+              <div id="wfUyarilar"></div>
+            </div>
+          </div>
+
+          <div class="bt-metric-label mb-2">Katlar — her kat kendi eğitim penceresinde optimize edildi, hemen sonraki dilimde değiştirilmeden test edildi</div>
+          <div class="table-container mb-7">
+            <table class="dock-table tablo-kart">
+              <thead>
+                <tr><th>Kat</th><th>Eğitim dönemi</th><th>Test dönemi</th><th>Eğitim (işlem)</th><th>Test</th><th>Test işlem</th><th>WFE</th><th>Seçilen ayar</th></tr>
+              </thead>
+              <tbody id="wfKatlarGovde"></tbody>
+            </table>
+          </div>
+
+          <div class="verdict-box">
+            <strong>Nasıl okunur.</strong>
+            Verinin son %30'u eşit test dilimlerine (kat) bölünür. Her kat için hemen öncesindeki, verinin %70'i
+            uzunluğundaki pencerede en iyi ayar aranır; bulunan ayar hiç görmediği sonraki dilimde değiştirilmeden
+            çalıştırılır. Test diliminin önüne göstergeler ısınsın diye eğitim barları eklenir, ama o barlarda işlem açılmaz.
+            WFE iki dönemi süre farkını düzelterek (yıllıklandırarak) karşılaştırır.
+            <strong>Geçmek, stratejinin kazanacağını göstermez</strong> — yalnızca optimizasyonun geçmişe uydurma
+            olmadığını gösterir. Test dilimlerinde 30'dan az işlem varsa sonuç şansa açıktır.
+          </div>
+        </div>
+
+        <div class="glass-panel panel-pad bt-yalniz-opt" id="btOptBos">
+          <h3 class="card-title mb-3"><i class="tone-warning" data-lucide="award"></i> Optimizasyon</h3>
+          <p class="hint mb-0">Henüz koşulmadı. Aranacak parametreleri seçip <strong>Parametreleri optimize et</strong>'e basın. Uyarı: aynı veride en iyi ayarı bulmak geleceği göstermez — sonucu Walk-forward ile sınayın.</p>
+        </div>
+        <!-- Parameter Optimizer Rankings Table -->
+        <div id="optimizerPanel" class="glass-panel panel-pad bt-yalniz-opt is-hidden">
+          <h3 class="card-title mb-7 tone-warning">
+            <i data-lucide="award"></i> Optimizasyon sonuçları — en iyi 10 ayar
+          </h3>
+          <div class="table-container">
+            <table id="tblOptimizationResults" class="tablo-kart tablo-siralanabilir">
+              <thead>
+                <tr>
+                  <th data-sirasiz>Sıra</th>
+                  <th>Skor</th>
+                  <th>Kâr %</th>
+                  <th>Kazanma %</th>
+                  <th>Sharpe</th>
+                  <th>En büyük düşüş</th>
+                  <th data-sirasiz>Parametreler</th>
+                  <th data-sirasiz>İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dynamic Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+
+      </div>
+
+      <!-- RAPOR EKLERİ: aylık getiri tablosu ve işlem listesi (js/pages/backtestIs.js). -->
+      <div id="btRaporEk" class="glass-panel panel-pad mb-9 bt-yalniz-kosu is-hidden">
+        <div class="bt-section-title"><i class="tone-primary" data-lucide="calendar"></i> Aylık getiri</div>
+        <div id="btAylik" class="mb-8"></div>
+        <div class="bt-section-title"><i class="tone-primary" data-lucide="list"></i> İşlem listesi</div>
+        <div id="btIslemListesi"></div>
+      </div>
+
+    </section>
+
+    <!-- 63.0: Ayarlar'dan taşındı — Piyasa verisi (kâğıt test motoru ve Botlar'daki canlı grafiğin mum kaynağı) + İzleme listesi
+         (backtest, grafik ve tarama sembolleri). Botları ETKİLEMEZ. Kimlikler değişmedi (app.js formMarket / watchlist bağları). -->
+    <section id="tab-izleme" class="tab-content" role="tabpanel" aria-label="Veri ve izleme listesi">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="database"></i> Veri ve izleme listesi
+        </h2>
+      </div>
+      <div class="glass-panel panel-pad-lg page-narrow">
+        <h2 class="page-title-sm mb-3">
+          <i class="tone-primary" data-lucide="database"></i> Piyasa verisi
+        </h2>
+        <!-- Denetim A-28: bu ayar Hücum/Denge'nin borsasını DEĞİŞTİRMEZ. -->
+        <p class="hint text-base mb-7">
+          Yalnız Kâğıt test motoru ve Botlar ekranındaki canlı grafik bu borsadan mum alır. Hücum ve Denge her zaman Binance'te
+          çalışır — buradaki seçim onları değiştirmez. Backtest kendi borsa seçimini kullanır.
+          <button type="button" class="yardim-isareti" data-sozluk="spot">?</button>
+        </p>
+        <form id="formMarket">
+          <div class="grid-2 gap-8">
+            <div class="form-group">
+              <label for="selExchangeProvider">Borsa</label>
+              <select id="selExchangeProvider" class="form-control">
+                <option value="binance" selected>Binance</option>
+                <option value="bybit">Bybit</option>
+                <option value="okx">OKX (yalnızca spot)</option>
+                <option value="kucoin">KuCoin (yalnızca spot)</option>
+                <option value="gateio">Gate.io (yalnızca spot)</option>
+                <option value="bitget">Bitget (yalnızca spot)</option>
+                <option value="coinbase">Coinbase (yalnızca spot)</option>
+              </select>
+              <small class="hint" id="txtVenueNote"></small>
+            </div>
+            <!-- Piyasa tipi hem ccxt sınıfını hem mumların önbellek kovasını
+                 belirler; spot ve perp serileri asla karışmaz. -->
+            <div class="form-group">
+              <label for="selMarketType">Piyasa tipi <button type="button" class="yardim-isareti" data-sozluk="perpetual">?</button></label>
+              <select id="selMarketType" class="form-control">
+                <option value="spot" selected>Spot</option>
+                <option value="perpetual">Vadeli — perpetual (USDⓈ-M)</option>
+              </select>
+              <small class="hint">Vadelide semboller <code>BTC/USDT:USDT</code> biçimindedir ve mum geçmişi ayrı tutulur.</small>
+            </div>
+            <div class="form-group is-hidden" id="grpLeverage">
+              <label for="numLeverage">Kaldıraç <button type="button" class="yardim-isareti" data-sozluk="kaldirac">?</button></label>
+              <input type="number" id="numLeverage" class="form-control" min="1" max="100" step="1" value="1">
+              <small class="hint" id="txtLeverageNote"></small>
+            </div>
+          </div>
+          <div class="row-end mt-7">
+            <button type="submit" id="btnSaveMarket" class="btn btn-primary">
+              <i data-lucide="save"></i> Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="glass-panel panel-pad-lg page-narrow-top">
+        <h2 class="page-title-sm mb-3">
+          <i class="tone-cyan" data-lucide="list"></i> İzleme listesi
+        </h2>
+        <p class="hint text-base mb-7">
+          Bot başlatma, grafik, backtest ve izleme listesi taraması bu listedeki varlıklarla çalışır.
+        </p>
+        <div class="row row-wrap gap-3 mb-7">
+          <input type="text" id="inpAddWatchlistSymbol" class="form-control max-w-320" placeholder="Örn. SOL/USDT" aria-label="Eklenecek sembol">
+          <button type="button" id="btnAddWatchlistSymbol" class="btn btn-success">
+            <i data-lucide="plus-circle"></i> Listeye ekle
+          </button>
+        </div>
+        <div class="row row-wrap gap-4 min-h-40 mb-7" id="watchlistBadgeContainer"></div>
+        <div class="row row-wrap gap-5">
+          <label for="selWatchlistCacheTf" class="hint text-base m-0">Önbellek zaman dilimi</label>
+          <select id="selWatchlistCacheTf" class="form-control control-md w-auto">
+            <option value="1m">1 dakika</option>
+            <option value="5m">5 dakika</option>
+            <option value="15m">15 dakika</option>
+            <option value="1h" selected>1 saat</option>
+            <option value="4h">4 saat</option>
+            <option value="1d">1 gün</option>
+          </select>
+          <button type="button" id="btnPreloadWatchlist" class="btn btn-secondary btn-outline-cyan">
+            <i data-lucide="database"></i> Fiyat geçmişini önceden yükle
+          </button>
+        </div>
+        <p class="hint hint-sm mt-3">
+          Rozetler seçili zaman dilimindeki mum önbelleğini gösterir. Backtest eksik mumu kendisi indirir; ön yükleme canlı grafiği ve bot ısınmasını hızlandırır.
+        </p>
+      </div>
+    </section>
+
+    <!-- KÂĞIT TEST: kâğıt işlem motoru — özet kartları, bot başlat, çalışan botlar, kâğıt cüzdan. -->
+    <section id="tab-kagit" class="tab-content" role="tabpanel" aria-label="Kâğıt test">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="flask-round"></i> Kâğıt test
+        </h2>
+        <!-- Kâğıt motorunun acil fren sıfırlaması (yeni panel F2: üst çubuktan buraya; app.js gerekince gösterir). -->
+        <button id="btnResetKillSwitch" class="btn btn-secondary is-hidden btn-outline-danger">
+          <i data-lucide="refresh-cw"></i> Kâğıt test acil frenini sıfırla
+        </button>
+      </div>
+      <p class="hint mb-7 max-w-prose">
+        Stratejileri canlı fiyatlarla kâğıt hesapta gözlemleme: gerçek emir gönderilmez. Risk ayarları
+        <a href="#/arsiv/kagit-risk">Kâğıt test risk ayarları</a> ekranında; açık pozisyonlar, bekleyen emirler ve geçmiş işlemler
+        aşağıdaki hesap tablosunda.
+      </p>
+      <!-- Kâğıt test motorunun hesabı (açık pozisyon, bekleyen emir, geçmiş; js/pages/hesaplar.js panelCiz arsiv) — yeni panel F5: Genel'den buraya, tek yer. -->
+      <div id="arsivKagitKok" class="mb-7"><p class="hint mb-0">Yükleniyor…</p></div>
+      <!-- KÂĞIT TEST HESABI: beş kart (eski "PAPER" özet kartları). "Risk durumu" kartı risk ayarlarına götürür. -->
+      <h3 class="bolum-baslik">Kâğıt test hesabı <button type="button" class="yardim-isareti" data-sozluk="kagitTest" aria-label="Açıklama">?</button></h3>
+      <div class="stats-grid stats-grid-dense">
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Hesap değeri <span id="txtModeBadge" class="mode-badge">kâğıt</span></span>
+          <div id="cardEquity" class="stat-value">—</div>
+          <span id="cardEquitySub" class="stat-sub">Nakit — · Pozisyon —</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Kapanan işlemlerin K/Z</span>
+          <div id="cardRealized" class="stat-value">$0.00</div>
+          <span id="cardRealizedSub" class="stat-sub">Henüz kapanmış işlem yok</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Açık pozisyon</span>
+          <div id="cardOpenPos" class="stat-value">0</div>
+          <span id="cardOpenPosSub" class="stat-sub">Açık pozisyon yok</span>
+        </div>
+        <div class="glass-panel stat-card">
+          <span class="stat-title">Çalışan kâğıt bot</span>
+          <div id="cardBots" class="stat-value">0</div>
+          <span id="cardBotsSub" class="stat-sub">Bot çalışmıyor</span>
+        </div>
+        <button type="button" id="cardRiskState" class="glass-panel stat-card stat-card-btn" data-goto-tab="tab-risk" title="Kâğıt test risk ayarlarını aç">
+          <span class="stat-title">Risk durumu</span>
+          <span id="cardRisk" class="stat-value stat-value-sm">—</span>
+          <span id="cardRiskSub" class="stat-sub">Düşüş — · açık risk —</span>
+        </button>
+      </div>
+
+      <!-- Bot başlatma: strateji + zaman dilimi + işaretli varlıklar. -->
+      <div class="glass-panel console-panel" id="botBaslatPanel">
+        <div class="console-bar">
+          <div class="row row-wrap gap-7">
+            <div class="row gap-2 console-heading tone-cyan">
+              <i data-lucide="play-circle" class="icon-16"></i> Kâğıt bot başlat
+            </div>
+            <div class="row gap-2">
+              <label for="dashSelectStrategy" class="hint hint-sm m-0">Strateji</label>
+              <!-- Yalnız Aktif + Aday stratejiler (arşiv backtestte kıyas için kalır). -->
+              <select id="dashSelectStrategy" class="form-control control-md sunken-deep w-auto">
+                <option value="">yükleniyor…</option>
+              </select>
+            </div>
+            <div class="row gap-2">
+              <label for="dashSelectTimeframe" class="hint hint-sm m-0">Zaman dilimi</label>
+              <select id="dashSelectTimeframe" class="form-control control-md sunken-deep w-auto">
+                <option value="1m">1m</option>
+                <option value="5m">5m</option>
+                <option value="15m">15m</option>
+                <option value="30m">30m</option>
+                <option value="1h" selected>1h</option>
+                <option value="4h">4h</option>
+                <option value="1d">1d</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-assets">
+          <div class="row row-wrap gap-5">
+            <div class="row gap-2 console-heading console-heading-lg tone-success">
+              <i data-lucide="layers" class="icon-16"></i>
+              Varlıklar <span id="txtWatchlistCount" class="tone-muted fw-medium"></span>:
+            </div>
+            <div id="multiSymbolCheckboxes" class="row-wrap chip-list">
+              <span class="tone-muted">İzleme listesi yükleniyor...</span>
+            </div>
+            <div class="row gap-xs">
+              <input type="text" id="inpQuickAddSymbol" class="form-control control-sm sunken-deep w-9r" placeholder="ör. SOL/USDT" aria-label="İzleme listesine eklenecek sembol">
+              <button type="button" id="btnQuickAddSymbol" class="btn btn-secondary btn-add" title="İzleme listesine varlık ekle">＋ Ekle</button>
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" id="btnSaveMultiSymbols" class="btn btn-success btn-md fw-semibold">
+              Kâğıt botları başlat
+            </button>
+            <button type="button" id="btnStopAllBots" class="btn btn-secondary btn-md btn-outline-danger" title="Çalışan tüm kâğıt test botlarını durdur">
+              Tümünü durdur
+            </button>
+          </div>
+        </div>
+
+        <div class="bots-card">
+          <div class="table-container">
+            <table class="table bots-table tablo-kart" id="tblActiveBotsList">
+              <thead>
+                <tr>
+                  <th>Varlık</th>
+                  <th>Strateji</th>
+                  <th>Zaman dilimi</th>
+                  <th>Canlı fiyat</th>
+                  <th>Sinyal</th>
+                  <th>Pozisyon</th>
+                  <th class="text-center">İşlem</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Kâğıt test hesabının ayrıntıları (eski hesap dock'u). Pozisyonlar ve emirler Arşiv › Kâğıt test hesabı'nda
+           (62.7, js/pages/hesaplar.js); burada yalnız bakiye geçmişi, varlıklar ve günlük. -->
+      <div class="trading-dock glass-panel page-narrow-top">
+        <div class="dock-subnav">
+          <div class="dock-tabs" role="tablist" aria-label="Kâğıt test hesabı ayrıntıları">
+            <button type="button" class="dock-tab active" role="tab" aria-selected="true" aria-controls="dock-balance-history" data-dock-tab="dock-balance-history">
+              Bakiye geçmişi
+            </button>
+            <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="dock-assets" data-dock-tab="dock-assets">
+              Varlıklar
+            </button>
+            <button type="button" class="dock-tab" role="tab" aria-selected="false" aria-controls="dock-activity-log" data-dock-tab="dock-activity-log">
+              Günlük
+            </button>
+          </div>
+          <div class="row">
+            <button type="button" id="btnExportDockCsv" class="btn btn-secondary btn-export" title="Açık sekmedeki tabloyu CSV olarak indir" aria-label="Tabloyu CSV olarak indir">
+              <i data-lucide="download" class="icon-14"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="dock-content-area">
+          <div id="dock-balance-history" class="dock-tab-pane active" role="tabpanel">
+            <div class="table-container">
+              <table id="tblDockBalanceHistory" class="dock-table bot-tablo tablo-kart">
+                <thead>
+                  <tr>
+                    <th>Zaman</th>
+                    <th>Önceki bakiye</th>
+                    <th>Sonraki bakiye</th>
+                    <th>Gerçekleşmiş K/Z</th>
+                    <th>İşlem detayı</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Cüzdandaki varlıklar (eski Portföy sekmesinin döküm tablosu). -->
+          <div id="dock-assets" class="dock-tab-pane" role="tabpanel">
+            <div class="table-container">
+              <table id="tblDockAssets" class="dock-table bot-tablo tablo-kart">
+                <thead>
+                  <tr>
+                    <th>Varlık</th>
+                    <th>Bakiye</th>
+                    <th>Birim fiyat</th>
+                    <th>Toplam USDT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="4" class="text-center tone-muted empty-cell">Bakiye verisi bekleniyor…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="dock-activity-log" class="dock-tab-pane" role="tabpanel">
+            <div class="row-split mb-3">
+              <div class="tone-muted log-caption">Günlük — son 20 kayıt</div>
+              <!-- Yalnız EKRANI temizler; sunucudaki kayıtlara dokunmaz. -->
+              <button type="button" id="btnClearDockLogs" class="btn btn-secondary btn-xs">
+                Ekranı temizle
+              </button>
+            </div>
+            <div id="dockLogTerminal" class="log-terminal log-terminal-dock" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-panel panel-pad-lg page-narrow-top">
+        <h2 class="page-title-sm mb-3">
+          <i class="tone-cyan" data-lucide="wallet"></i> Kâğıt hesap bakiyesi
+        </h2>
+        <p class="hint text-base mb-5">
+          Kâğıt işlem bakiyesi. Yalnız kullanılabilir USDT değişir; açık pozisyonlar korunur, drawdown referansı yeni bakiyeye göre güncellenir.
+        </p>
+        <div class="row row-wrap gap-2">
+          <select id="selBalanceMode" class="form-control control-xs2 sunken-deep w-auto" aria-label="Bakiye işlemi">
+            <option value="set">Bakiyeyi ayarla</option>
+            <option value="deposit">Para ekle</option>
+            <option value="withdraw">Para çek</option>
+          </select>
+          <input type="number" id="inpBalanceAmount" class="form-control control-xs2 sunken-deep w-10r" step="any" min="0" placeholder="Tutar (USDT)" aria-label="Tutar (USDT)">
+          <button type="button" id="btnApplyBalance" class="btn btn-success btn-venue">Uygula</button>
+        </div>
+      </div>
+
+      <!-- Yıkıcı işlemler canlı panelden uzakta. -->
+      <div class="glass-panel panel-pad-lg page-narrow-top danger-box">
+        <h2 class="page-title-sm mb-5 tone-danger">
+          <i data-lucide="alert-triangle"></i> Kâğıt hesabı sıfırla
+        </h2>
+        <p class="hint text-base mb-7">
+          Tüm işlem geçmişini, emirleri ve bakiye kayıtlarını siler; sanal cüzdanı başlangıç bakiyesine döndürür. Geri alınamaz.
+        </p>
+        <button type="button" id="btnResetAll" class="btn btn-secondary btn-outline-danger">
+          <i data-lucide="rotate-ccw"></i> Kâğıt geçmişi sil ve hesabı sıfırla
+        </button>
+      </div>
+    </section>
+
+    <!-- PINE (Pusula P4): betiği yapıştır → denetle → kaydet → Backtest'te / Kâğıt testte dene. js/pages/pine.js (AG.dom);
+         sunucu /api/pine/* (lib/pine/store.js). Eski ayrı sayfa pine.html buraya yönlendirir. -->
+    <section id="tab-pine" class="tab-content" role="tabpanel" aria-label="Pine">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="file-code"></i> Pine betikleri
+        </h2>
+      </div>
+      <ol class="pn-adimlar" aria-label="Akış">
+        <li><span class="sayi">1</span> TradingView betiğini yapıştır</li>
+        <li><span class="sayi">2</span> Denetle — desteklenmeyen satırlar listelenir</li>
+        <li><span class="sayi">3</span> Kaydet — strateji listesine girer</li>
+        <li><span class="sayi">4</span> Backtest'te ya da kâğıt testte dene</li>
+      </ol>
+      <div class="pn-izgara">
+        <aside class="glass-panel panel-pad pn-liste-kutu" aria-label="Kayıtlı betikler">
+          <div class="row-between mb-3">
+            <h3 class="card-title m-0">Kayıtlı betikler</h3>
+            <button type="button" id="btnPineYeni" class="btn btn-secondary btn-sm">+ Yeni</button>
+          </div>
+          <div id="pineListe" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+        </aside>
+        <div class="pn-sag">
+          <div class="glass-panel panel-pad">
+            <div class="row-between row-wrap gap-3 mb-3">
+              <div class="row gap-3">
+                <h3 class="card-title m-0">Betik</h3>
+                <span class="mono-note" id="pineAnahtar">(yeni)</span>
+              </div>
+              <div class="row row-wrap gap-2">
+                <button type="button" id="btnPineDenetle" class="btn btn-secondary">Denetle</button>
+                <button type="button" id="btnPineKaydet" class="btn btn-primary">Kaydet</button>
+                <button type="button" id="btnPineSil" class="btn btn-outline-danger btn-secondary is-hidden">Sil</button>
+              </div>
+            </div>
+            <label for="pineKaynak" class="hint hint-sm">Pine v5 strateji betiği (<code>strategy(...)</code> bildirimi gerekir)</label>
+            <textarea id="pineKaynak" class="form-control pn-kaynak" spellcheck="false" autocomplete="off"
+              placeholder="//@version=5&#10;strategy(&quot;SMA kesişimi&quot;, overlay = true)&#10;hizli = input.int(10, &quot;Hızlı SMA&quot;)&#10;yavas = input.int(30, &quot;Yavaş SMA&quot;)&#10;if ta.crossover(ta.sma(close, hizli), ta.sma(close, yavas))&#10;    strategy.entry(&quot;Al&quot;, strategy.long)&#10;if ta.crossunder(ta.sma(close, hizli), ta.sma(close, yavas))&#10;    strategy.close(&quot;Al&quot;)"></textarea>
+          </div>
+          <div class="glass-panel panel-pad">
+            <div class="row-between mb-3">
+              <h3 class="card-title m-0">Denetim raporu</h3>
+              <span id="pineDurum"></span>
+            </div>
+            <div id="pineRapor" class="pn-rapor" aria-live="polite"><p class="hint mb-0">Betiği yapıştırıp Denetle'ye basın.</p></div>
+            <h4 class="bt-metric-label mt-4 mb-2">Parametreler (betikteki <code>input.*</code>)</h4>
+            <div id="pineParametreler" class="pn-param"><p class="hint mb-0">—</p></div>
+          </div>
+          <div class="glass-panel panel-pad is-hidden" id="pineSonraki">
+            <h3 class="card-title mb-2">Dene</h3>
+            <p class="hint mb-3" id="pineSonrakiMetin">Kayıtlı betik strateji listesinde. Geçmiş veride ya da canlı fiyatlarla kâğıt hesapta deneyin.</p>
+            <div class="row row-wrap gap-2">
+              <button type="button" id="btnPineBacktest" class="btn btn-success"><i data-lucide="line-chart"></i> Backtest'te dene</button>
+              <button type="button" id="btnPineKagit" class="btn btn-secondary"><i data-lucide="flask-round"></i> Kâğıt testte dene</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COIN TARAMA (60.3): ileriye dönük günlük zincir üstü kayıt (js/pages/tarama.js, sunucu lib/tarama). -->
+    <section id="tab-tarama" class="tab-content" role="tabpanel" aria-label="Coin tarama">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="scan-search"></i> Coin tarama
+        </h2>
+        <div class="row row-wrap gap-2">
+          <button type="button" id="btnTaramaSimdi" class="btn btn-primary"><i data-lucide="refresh-cw"></i> Şimdi tara</button>
+        </div>
+      </div>
+      <p class="hint mb-3 max-w-prose">İzleme listesindeki coinlerin borsa, DEX ve sözleşme bilgisi her gün kayda geçer. <strong>Kırmızı bayrak alım/satım sinyali değildir</strong> — yalnız "şuna bak" işareti; hiçbir botu etkilemez.</p>
+      <div id="taramaIs" class="is-hidden mb-4"></div>
+      <div id="taramaUyarilar" class="mb-4 is-hidden" aria-live="polite"></div>
+      <div class="ana-sayilar mb-5" id="taramaSayilar"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="list-checks"></i> Coinler</h3>
+        <div id="taramaTablo"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="taramaAyrinti" aria-live="polite"></div>
+      <details class="glass-panel panel-pad" id="taramaKaynakKat">
+        <summary class="card-title-sm">Kaynak durumu (son tarama)</summary>
+        <div id="taramaKaynaklar" class="mt-3"></div>
+      </details>
+    </section>
+
+    <!-- DİKKAT LİSTESİ (64.1): otomatik KAÇIN listesi (kural-v1) + kendini denetleme karnesi (js/pages/dikkat.js, sunucu lib/tarama/dikkat*.js). -->
+    <section id="tab-dikkat" class="tab-content" role="tabpanel" aria-label="Dikkat listesi">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="shield-alert"></i> Dikkat listesi
+        </h2>
+        <div class="row row-wrap gap-2">
+          <select id="selDikkatKip" class="form-control" aria-label="Hangi kayıt">
+            <option value="resmi">Resmî kayıt (sunucu)</option>
+            <option value="deneme">Deneme kaydı (bu bilgisayar)</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint mb-3 max-w-prose">Her gece yüzlerce coin kendiliğinden taranır; 16 kuraldan biri tutan coin "dikkat" listesine girer (sözleşme yetkisi, likidite çekilmesi, büyük cüzdan boşaltması, ölü repo…). <strong>Alım/satım sinyali değildir</strong>, hiçbir botu etkilemez. Listeye giren her coin 90 gün izlenir; gerçekten sorun yaşayıp yaşamadığı rastgele kontrol coinleriyle karşılaştırılır. <a href="#/kilavuz/dikkat-listesi/kurallar">Hangi coinler taranır, 16 kural ve eşikleri →</a></p>
+      <div id="dikkatSerit" class="mb-4 is-hidden" aria-live="polite"></div>
+      <div class="ana-sayilar mb-5" id="dikkatSayilar"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <div class="row-between row-wrap gap-2 mb-3">
+          <h3 class="card-title m-0"><i class="tone-primary" data-lucide="list-checks"></i> Bugünkü liste</h3>
+          <div id="dikkatFiltre" class="row row-wrap gap-2"></div>
+        </div>
+        <div id="dikkatTablo"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="dikkatAyrinti" aria-live="polite"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="clipboard-check"></i> Kendimizi denetleme — liste gerçekten işe yarıyor mu?</h3>
+        <div id="dikkatKarne"></div>
+      </div>
+      <details class="glass-panel panel-pad">
+        <summary class="card-title-sm">Ön kayıt ve hüküm (deneme 780)</summary>
+        <div id="dikkatHukum" class="mt-3"></div>
+      </details>
+    </section>
+
+    <!-- İZLE LİSTESİ (64.3): İZLE dilimi (kural-v1 §3, deneme 781) + puan gölgesi (puan-v1, 782) + ön izleme (js/pages/izle.js, sunucu lib/tarama/izle*.js). -->
+    <section id="tab-izle" class="tab-content" role="tabpanel" aria-label="İzle listesi">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="eye"></i> İzle listesi
+        </h2>
+        <div class="row row-wrap gap-2">
+          <select id="selIzleKip" class="form-control" aria-label="Hangi kayıt">
+            <option value="resmi">Resmî kayıt (sunucu)</option>
+            <option value="deneme">Deneme kaydı (bu bilgisayar)</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint mb-3 max-w-prose">Dikkat listesinin "bakmaya değer" yarısı: hiçbir uyarı kuralı tutmayan, en az 3 veri ailesi olan, kendi kategorisinde kazandığı ücrete göre ucuz (P/F en düşük %20) ve holder sayısı 30 günde artan coinler — en çok 15. <strong>Alım/satım sinyali değildir</strong>, hiçbir botu etkilemez. Listenin işe yarayıp yaramadığı ön kayıtlı kuralla rastgele sepetlere karşı ölçülür; sonuç hüküm gününe kadar gizlidir. <a href="#/kilavuz/izle-listesi/olcutler">Ölçütler ve nasıl değerlendirildiği →</a></p>
+      <div id="izleSerit" class="mb-4 is-hidden" aria-live="polite"></div>
+      <div class="ana-sayilar mb-5" id="izleSayilar"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <div class="row-between row-wrap gap-2 mb-3">
+          <h3 class="card-title m-0"><i class="tone-primary" data-lucide="list-checks"></i> Bugünkü İZLE listesi</h3>
+          <div id="izleFiltre" class="row row-wrap gap-2"></div>
+        </div>
+        <div id="izleTablo"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="izleAyrinti" aria-live="polite"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="sigma"></i> Puan listesi (gölge)</h3>
+        <div id="izlePuan"></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="arrow-left-right"></i> Girenler ve çıkanlar</h3>
+        <div id="izleGecis"></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="clipboard-check"></i> Ön izleme karnesi</h3>
+        <div id="izleOnIzleme"></div>
+      </div>
+      <details class="glass-panel panel-pad">
+        <summary class="card-title-sm">Ön kayıt ve hüküm (deneme 781 · 782)</summary>
+        <div id="izleHukum" class="mt-3"></div>
+      </details>
+    </section>
+
+    <!-- TARAMA AYARLARI (60.3): izleme listesi, elle düzeltme, kaynaklar, eşikler, aralıklar, Telegram, denetim kaydı. -->
+    <section id="tab-tarama-ayar" class="tab-content" role="tabpanel" aria-label="Tarama ayarları">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="sliders-horizontal"></i> Tarama ayarları
+        </h2>
+        <div class="row row-wrap gap-2">
+          <button type="button" id="btnTaramaZincir" class="btn btn-secondary"><i data-lucide="shield-check"></i> Zinciri doğrula</button>
+          <button type="button" id="btnTaramaYenidenUret" class="btn btn-secondary"><i data-lucide="history"></i> Özeti yeniden üret</button>
+        </div>
+      </div>
+      <p class="hint mb-5 max-w-prose">
+        Ayarlar <code>data/tarama/ayarlar.json</code>'da (config.json değişmez). Her elle değişiklik — coin ekleme/çıkarma, sözleşme/ağ düzeltmesi,
+        yok sayılan bayrak, eşik, kaynak — kim/ne zaman/eski → yeni olarak denetim kaydına yazılır.
+      </p>
+      <div class="glass-panel panel-pad mb-5">
+        <div class="row-between row-wrap gap-2 mb-3">
+          <h3 class="card-title m-0"><i class="tone-primary" data-lucide="list"></i> İzleme listesi</h3>
+          <button type="button" id="btnTaramaCoinEkle" class="btn btn-success btn-sm"><i data-lucide="plus"></i> Coin ekle</button>
+        </div>
+        <div id="taramaIzleme"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="taramaCoinFormu"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="database"></i> Kaynaklar</h3>
+        <div id="taramaKaynakAyar"></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="flag"></i> Kırmızı bayrak eşikleri</h3>
+        <div id="taramaEsikAyar"></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="clock"></i> Otomatik güncelleme ve bildirim</h3>
+        <div id="taramaGenelAyar"></div>
+      </div>
+      <div class="glass-panel panel-pad">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="file-check"></i> Denetim kaydı (son 50)</h3>
+        <div id="taramaDenetim"></div>
+      </div>
+    </section>
+
+    <!-- LİSTELER (60.3): arkadaşın coin listelerinin tarih damgalı, SHA-256 zincirli kaydı + değerlendirme (js/pages/listeler.js). -->
+    <section id="tab-listeler" class="tab-content" role="tabpanel" aria-label="Listeler">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="clipboard-list"></i> Listeler
+        </h2>
+        <div class="row row-wrap gap-2">
+          <span id="listeZincir" class="liste-zincir"></span>
+          <button type="button" id="btnListeDogrula" class="btn btn-secondary"><i data-lucide="shield-check"></i> Zinciri doğrula</button>
+        </div>
+      </div>
+      <p class="hint mb-5 max-w-prose">
+        Her liste girildiği an kayda geçer (seçilenler ve elenenler, o anki fiyatlarla). Kayıt değiştirilemez: yalnız eklenir ve her kayıt bir
+        öncekinin özetini taşır. Hata olursa eski kayıt silinmez, "düzeltme kaydı" eklenir. Dışa aktarım <code>kayitlar/listeler/</code>
+        klasöründe; git'e işlemek isterseniz siz işlersiniz (panel git komutu çalıştırmaz).
+      </p>
+      <details class="glass-panel panel-pad mb-5" id="listeYeniKat" open>
+        <summary class="card-title-sm">Yeni liste gir</summary>
+        <div class="grid-2 gap-5 mt-4">
+          <div class="form-group">
+            <label for="inpListeTarih">Liste tarihi</label>
+            <input type="date" id="inpListeTarih" class="form-control">
+            <small class="hint">Varsayılan bugün. Geçmiş tarih girilirse kayıt "geriye dönük" işaretlenir.</small>
+          </div>
+          <div class="form-group">
+            <label for="inpListeKaynak">Kaynak</label>
+            <input type="text" id="inpListeKaynak" class="form-control" value="arkadaş" maxlength="60">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inpListeNot">Not</label>
+          <textarea id="inpListeNot" class="form-control" rows="2" maxlength="1000" placeholder="ör. hangi kategoriler, nasıl seçildi"></textarea>
+        </div>
+        <h4 class="card-title-sm mt-3 mb-2">Coinler</h4>
+        <div id="listeYeniSatirlar" class="tarama-coin-satirlar"></div>
+        <div class="row row-wrap gap-3 mt-3">
+          <button type="button" id="btnListeSatirEkle" class="btn btn-secondary btn-sm"><i data-lucide="plus"></i> Satır ekle</button>
+        </div>
+        <div class="form-group mt-4">
+          <label for="inpListeToplu">Toplu ekle (her satıra bir coin; elenenler "-SEMBOL" ya da "SEMBOL elendi"; isteğe bağlı ağ ve sözleşme)</label>
+          <textarea id="inpListeToplu" class="form-control" rows="3" placeholder="MET sol&#10;UNI&#10;-NES&#10;CLANKER base 0x1bc0c42215582d5a085795f4badbac3ff36d1bcb"></textarea>
+        </div>
+        <div class="row-between row-wrap gap-3 mt-3">
+          <button type="button" id="btnListeToplu" class="btn btn-secondary btn-sm"><i data-lucide="list-plus"></i> Satırlara dönüştür</button>
+          <button type="button" id="btnListeKaydet" class="btn btn-primary"><i data-lucide="save"></i> Listeyi kaydet</button>
+        </div>
+      </details>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="listeDuzeltme"></div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="history"></i> Kayıtlar</h3>
+        <div id="listeKayitlar"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad is-hidden" id="listeDegerlendirme" aria-live="polite"></div>
+    </section>
+
+    <!-- ARAŞTIRMA DEFTERİ (60.6): deneme sayacının kanonik kaydı kayitlar/denemeler.jsonl (js/pages/defter.js, sunucu lib/defter.js).
+         Sayaçlar, hükmü yaklaşanlar, aile sayacı, arama + süzgeç, tablo/kart, satır ayrıntısı; "Yeni kayıt" yalnız masaüstünde. -->
+    <section id="tab-defter" class="tab-content" role="tabpanel" aria-label="Araştırma defteri">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="notebook-pen"></i> Araştırma defteri
+        </h2>
+        <div class="row row-wrap gap-2">
+          <button type="button" id="btnDefterYenile" class="btn btn-secondary"><i data-lucide="refresh-cw"></i> Yenile</button>
+        </div>
+      </div>
+      <p class="hint mb-5 max-w-prose">
+        Ön kayıtlı her aday kural ve hipotez burada bir numara alır (çoklu karşılaştırma sayacı; DSR'deki N bu sayıdır). Kayıt
+        <code>kayitlar/denemeler.jsonl</code> dosyasında; numaralar çakışamaz ve boşluk bırakılamaz, kullanılmayan numaralar "BOŞ"
+        kaydıyla ayrılır. Yeni deneme önce sonraki boş numarayı alır (<code>npm run defter:sonraki</code>). Panel git çalıştırmaz.
+      </p>
+      <div id="defterBant" class="mb-5 is-hidden" aria-live="polite"></div>
+      <div id="defterSayilar" class="ana-sayilar mb-5" aria-live="polite"></div>
+      <div class="grid-2 gap-5 mb-5">
+        <div class="glass-panel panel-pad" id="defterYaklasan"></div>
+        <div class="glass-panel panel-pad" id="defterAileler"></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5">
+        <h3 class="card-title mb-3"><i class="tone-primary" data-lucide="list-filter"></i> Kayıtlar <span id="defterSuzgecSayi" class="hint hint-sm mb-0"></span></h3>
+        <div class="row row-wrap gap-3 mb-4">
+          <div class="form-group mb-0">
+            <label for="inpDefterAra">Ara (başlık, hipotez, sonuç, neden, plan; numara)</label>
+            <input type="search" id="inpDefterAra" class="form-control" autocomplete="off" placeholder="ör. funding, PLAN-PUMP, 773">
+          </div>
+          <div class="form-group mb-0">
+            <label for="selDefterDurum">Durum</label>
+            <select id="selDefterDurum" class="form-control"></select>
+          </div>
+          <div class="form-group mb-0">
+            <label for="selDefterAile">Aile</label>
+            <select id="selDefterAile" class="form-control"></select>
+          </div>
+          <button type="button" id="btnDefterTemizle" class="btn btn-secondary btn-sm">Süzgeci temizle</button>
+        </div>
+        <div id="defterTablo"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="glass-panel panel-pad mb-5 is-hidden" id="defterAyrinti" aria-live="polite"></div>
+      <details class="glass-panel panel-pad mb-5" id="defterYeniKat">
+        <summary class="card-title-sm">Yeni kayıt ekle (yalnız bu bilgisayardan)</summary>
+        <p class="hint mt-3 mb-4"><span id="defterSonrakiNo"></span>. Kayıt dosyaya EKLENİR; panel düzeltme ya da silme yapmaz. Numara mevcut bir kayıtla çakışırsa ya da boşluk açarsa sunucu reddeder.</p>
+        <div class="grid-2 gap-5">
+          <div class="form-group">
+            <label for="inpDfIlk">İlk numara</label>
+            <input type="number" id="inpDfIlk" class="form-control" min="1" step="1">
+          </div>
+          <div class="form-group">
+            <label for="inpDfSon">Son numara (tek deneme ise aynı)</label>
+            <input type="number" id="inpDfSon" class="form-control" min="1" step="1">
+          </div>
+          <div class="form-group">
+            <label for="inpDfAile">Aile kimliği (küçük harf, tire)</label>
+            <input type="text" id="inpDfAile" class="form-control" list="dlDefterAile" maxlength="60" autocomplete="off" placeholder="ör. funding-oi">
+            <datalist id="dlDefterAile"></datalist>
+          </div>
+          <div class="form-group">
+            <label for="inpDfAileAd">Aile adı</label>
+            <input type="text" id="inpDfAileAd" class="form-control" maxlength="120" placeholder="ör. Funding / OI">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inpDfBaslik">Başlık</label>
+          <input type="text" id="inpDfBaslik" class="form-control" maxlength="300">
+        </div>
+        <div class="form-group">
+          <label for="inpDfHipotez">Hipotez (ölçümden ÖNCE yazılan)</label>
+          <textarea id="inpDfHipotez" class="form-control" rows="2" maxlength="4000"></textarea>
+        </div>
+        <div class="grid-2 gap-5">
+          <div class="form-group">
+            <label for="inpDfTarih">Ön kayıt tarihi</label>
+            <input type="date" id="inpDfTarih" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="inpDfPlan">Plan dosyası</label>
+            <input type="text" id="inpDfPlan" class="form-control" maxlength="200" placeholder="PLAN-X.md">
+          </div>
+          <div class="form-group">
+            <label for="inpDfOnKayit">Ön kayıt commit (isteğe bağlı)</label>
+            <input type="text" id="inpDfOnKayit" class="form-control" maxlength="64" spellcheck="false" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="inpDfSonucCommit">Sonuç commit (isteğe bağlı)</label>
+            <input type="text" id="inpDfSonucCommit" class="form-control" maxlength="64" spellcheck="false" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="selDfDurum">Durum</label>
+            <select id="selDfDurum" class="form-control">
+              <option value="ACIK">AÇIK (ölçüm sürüyor)</option>
+              <option value="GOLGE">GÖLGE (ileri izleme)</option>
+              <option value="RED">RED</option>
+              <option value="KABUL">KABUL</option>
+              <option value="BOS">BOŞ (ayrıldı, kullanılmadı)</option>
+              <option value="BILGI">BİLGİ</option>
+              <option value="BELGESIZ">BELGESİZ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="selDfHoldout">Holdout</label>
+            <select id="selDfHoldout" class="form-control">
+              <option value="bekliyor">bekliyor</option>
+              <option value="acilmadi">açılmadı</option>
+              <option value="acildi">açıldı</option>
+              <option value="yok">yok</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="inpDfHukum">Hüküm tarihi (GÖLGE / AÇIK için)</label>
+            <input type="date" id="inpDfHukum" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="inpDfKaynak">Kaynak</label>
+            <input type="text" id="inpDfKaynak" class="form-control" maxlength="200" value="panel">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inpDfSonuc">Sonuç</label>
+          <textarea id="inpDfSonuc" class="form-control" rows="2" maxlength="4000"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="inpDfNeden">Neden kapandı (isteğe bağlı)</label>
+          <input type="text" id="inpDfNeden" class="form-control" maxlength="1000">
+        </div>
+        <div class="row-end gap-3 mt-3">
+          <button type="button" id="btnDefterKaydet" class="btn btn-primary" data-kilit="telefon"><i data-lucide="file-plus"></i> Deftere ekle</button>
+        </div>
+      </details>
+    </section>
+
+    <!-- PORTFÖY (60.9; 61.0 Bu ay emir listesi + Uyguladım): alt sekmeler TASARIMCI + BU AY (js/pages/tasarimci.js → #pfTasarimciKok / #pfBuAyKok; sunucu lib/tasarimci, /api/tasarimci/*),
+         MODEL İZLEME (js/pages/modelPortfoy.js → #pfModelKok), PORTFÖYÜM (gerçek portföy, js/pages/portfoyum.js → #pfPortfoyumKok; /api/portfoyum/*)
+         ve LABORATUVAR ▸ (js/pages/portfoy.js; sunucu lib/portfoy/api.js, /api/portfoy/*). Sekme düzeni ve içerik js kurar (AG.dom.el). -->
+    <section id="tab-portfoy" class="tab-content" role="tabpanel">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="pie-chart"></i> <span id="pfSayfaBaslik">Portföy</span>
+        </h2>
+      </div>
+      <div id="pfKok"></div>
+    </section>
+
+
+    <!-- İLERİ TEST: canlı veride gölge izleme (js/pages/ileri.js). -->
+    <section id="tab-ileri" class="tab-content" role="tabpanel" aria-label="İleri test" data-alt-sayfalar="genel hucum-denge bollinger 876 cbdr">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="route"></i> İleri test
+        </h2>
+      </div>
+      <!-- 63.1 (kullanıcıyla taslak 1–2): ara rapor notu bir kez → karar takvimi → grafikler (her test kendi grafiği) → sade kartlar.
+           js/pages/ileri.js takvimCiz / grafiklerCiz / kartCiz. -->
+      <p class="hint mb-4 max-w-prose">
+        Kuralları önceden kayda geçirilmiş stratejilerin, backtestte görmediği yeni günlerde nasıl davrandığı.
+        <strong>Ara rapor:</strong> karar günlerine kadar yalnız izlenir — hüküm verilmez, kurala dokunulmaz.
+        <button type="button" class="yardim-isareti" data-sozluk="araRapor" aria-label="Açıklama">?</button>
+      </p>
+      <!-- Yeni panel F5: Genel bakış = durum tablosu + takvim; her test kendi alt sayfasında (kart + grafikleri). Demo kabul → Botlar › Hücum › Yönetim. -->
+      <div id="ileriDurum" class="mb-4" data-alt="genel"></div>
+      <div id="ileriTakvim" class="mb-4" data-alt="genel"></div>
+      <div id="ileriGrafikler" class="is-hidden"></div>
+      <!-- Beş kart: Bollinger düşüş azaltıcı · Hücum/Denge simülasyonu · demo kabul protokolü · EUR/USD CBDR (63.7, PLAN-ILERI-CBDR) ·
+           876 gölge — Hücum %90 + TVL L/S %10 (64.9, PLAN-ILERI-876). -->
+      <div class="ileri-tek">
+        <div data-alt="bollinger"><div id="btIleriBollinger"><p class="hint">Yükleniyor…</p></div><div id="ileriG-bollinger" class="ileri-grafikler mt-3"></div></div>
+        <div data-alt="hucum-denge"><div id="ileriHucumDenge"></div><div id="ileriG-hucum-denge" class="ileri-grafikler mt-3"></div></div>
+        <div data-alt="cbdr"><div id="ileriCbdr"></div><div id="ileriG-cbdr" class="ileri-grafikler mt-3"></div></div>
+        <div data-alt="876"><div id="ileri876"></div></div>
+        <div id="ileriDemoKabulKap" class="is-hidden"><div id="ileriDemoKabul"></div><div id="ileriG-demo" class="ileri-grafikler mt-3"></div></div>
+      </div>
+    </section>
+
+    <!-- SİNYALLER (63.3, kullanıcıyla taslak 1–2): "bugün sistem ne diyor" — uygulanan kurallar tek tabloda (#snlKurallar: BTC trendi ·
+         Coin sepeti · Nasdaq M10 · Dengeleme bandı · BIST M10 gri), coin coin (#snlSepet) ve M10 sınırı (#snlM10) katlı, gölge kurallar
+         (#snlGolge). Yalnız okur. Bilgi göstergeleri yok (kullanıcı kararı); gösterge havuzu Araştırma › Strateji testi'nde. js/pages/sinyaller.js -->
+    <section id="tab-sinyaller" class="tab-content" role="tabpanel" aria-label="Sinyaller">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="radar"></i> Sinyaller
+        </h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">
+        Botların ve modellerin bugün uyguladığı kurallar: ne diyorlar, fikir değiştirmeye ne kadar uzaklar, sıradaki karar ne zaman.
+        Bu sayfa yalnız okur; hiçbir emir ya da ayar değiştirmez.
+      </p>
+      <div class="glass-panel panel-pad mb-3">
+        <h3 class="card-title mb-2">Uygulanan kurallar</h3>
+        <div id="snlKurallar" aria-live="polite"><p class="hint mb-0">Hesaplanıyor…</p></div>
+      </div>
+      <details class="glass-panel veri-grup mb-3" id="snlSepet">
+        <summary><strong>Coin sepeti — coin coin</strong><span class="hint hint-sm mb-0"> — açık pencere, en yakın çıkış ve giriş</span></summary>
+        <div id="snlSepetIc"><p class="hint mb-0">Hesaplanıyor…</p></div>
+      </details>
+      <details class="glass-panel veri-grup mb-3" id="snlM10">
+        <summary><strong>Nasdaq M10 — sıralamanın sınırı</strong><span class="hint hint-sm mb-0"> — 8.–13. sıra, çıkacak ve girecek hisseler</span></summary>
+        <div id="snlM10Ic"><p class="hint mb-0">Yükleniyor…</p></div>
+      </details>
+      <div class="glass-panel panel-pad">
+        <h3 class="card-title mb-2">Gölge kurallar <span class="hint hint-sm mb-0">— yalnız izleniyor, uygulanmıyor</span></h3>
+        <div id="snlGolge"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+    </section>
+
+    <!-- VERİ (63.2, kullanıcıyla taslak 1–2): üç büyük durum (#veriOzet) → kullanana göre katlı gruplar (#veriKok: Botlar ·
+         Portföy ve modeller · Araştırma; "kim kullanıyor" etiketleri) → Coin tarama kaynakları ve Günlük arşiv katları. Sorunsuz grup
+         kapalı, sorunlu grup açık. js/pages/veri.js (+ portfoy.js dikkatKaynakCiz → #veriDikkat, gunlukArsiv.js → #veriArsiv). -->
+    <section id="tab-veri" class="tab-content" role="tabpanel" aria-label="Veri" data-alt-sayfalar="kaynaklar tarama arsiv">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="database"></i> Veri
+        </h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">
+        Botların, portföyün ve araştırmanın kullandığı veri güncel mi? Bayat kaynaklar açılışta ve her gece kendiliğinden güncellenir.
+      </p>
+      <div id="veriOzet" class="ana-sayilar mb-4" aria-live="polite" data-alt="kaynaklar"></div>
+      <div id="veriKok" class="veri-gruplar" data-alt="kaynaklar"><p class="hint mb-0">Yükleniyor…</p></div>
+      <details class="glass-panel veri-grup" id="veriGrupTarama" data-alt="tarama" open>
+        <summary id="veriGrupTaramaOzet"><strong>Coin tarama kaynakları</strong></summary>
+        <p class="hint hint-sm mb-3 mt-2 max-w-prose">Coin taramasının dayandığı ücretsiz kaynaklar: çalışıyor mu, son 30 günün başarısı ve kaynak bozulursa hangi işaretin üretilemeyeceği. Salt okunur.</p>
+        <div id="veriDikkat" class="pf-veri-kutu"><p class="hint mb-0">Yükleniyor…</p></div>
+      </details>
+      <details class="glass-panel veri-grup" id="veriGrupArsiv" data-alt="arsiv" open>
+        <summary id="veriGrupArsivOzet"><strong>Günlük arşiv</strong></summary>
+        <p class="hint hint-sm mb-3 mt-2 max-w-prose">Coin taramasının her gece yazılan ham kaydı (giren ve elenen coinler, kaynak görüntüleri); günlük kayıtlar birbirine mühürlenir (SHA-256 zinciri). Salt okunur.</p>
+        <div id="veriArsiv" class="pf-veri-kutu"><p class="hint mb-0">Yükleniyor…</p></div>
+      </details>
+    </section>
+
+    <!-- AYARLAR: piyasa verisi · izleme listesi · Telegram · sanal cüzdan · tehlikeli bölge -->
+    <section id="tab-settings" class="tab-content" role="tabpanel" aria-label="Ayarlar">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="settings"></i> Ayarlar
+        </h2>
+      </div>
+
+      <!-- 63.0 (kullanıcıyla taslak 1–2): Ayarlar BEŞ SEKME — Botlar · Bildirimler (Telegram + Sağlık sinyali) · Borsa · Bu bilgisayar ·
+           Güncelleme. Adres sekmeyi taşır (#/ayarlar/<sekme>); açılış her zaman Botlar (js/pages/ayarlar.js sekmeSec).
+           Piyasa verisi ve İzleme listesi Araştırma › Strateji testi › Veri ve izleme listesi'ne taşındı (#tab-izleme). -->
+      <div id="ayarSekmeler" class="pf-alt-sekmeler pf-ana-sekmeler mb-4" role="tablist" aria-label="Ayarlar bölümleri">
+        <button type="button" class="pf-alt-sekme is-active" role="tab" aria-selected="true" id="ayarSekme-botlar" data-ayar-sekme="botlar"><span>Botlar</span></button>
+        <button type="button" class="pf-alt-sekme" role="tab" aria-selected="false" id="ayarSekme-bildirimler" data-ayar-sekme="bildirimler"><span>Bildirimler</span></button>
+        <button type="button" class="pf-alt-sekme" role="tab" aria-selected="false" id="ayarSekme-borsa" data-ayar-sekme="borsa"><span>Bağlantılar</span></button>
+        <button type="button" class="pf-alt-sekme" role="tab" aria-selected="false" id="ayarSekme-bilgisayar" data-ayar-sekme="bilgisayar"><span>Bu bilgisayar</span><span class="borsa-isik borsa-isik-notr is-hidden" id="ayarIsik-bilgisayar" aria-hidden="true"></span></button>
+        <button type="button" class="pf-alt-sekme" role="tab" aria-selected="false" id="ayarSekme-guncelleme" data-ayar-sekme="guncelleme"><span>Güncelleme</span><span class="pf-is-sayi is-hidden" id="ayarIsik-guncelleme">onay</span></button>
+        <button type="button" class="pf-alt-sekme" role="tab" aria-selected="false" id="ayarSekme-yedek" data-ayar-sekme="yedek"><span>Yedek ve taşıma</span></button>
+      </div>
+      <div class="ayar-bolum" data-ayar-bolum="botlar" id="ayarBolum-botlar" role="tabpanel">
+      <!-- Yeni panel F5 (K-A): bot yönetimi Botlar › <bot> › Yönetim'de; burada iki botun SALT OKUNUR özeti (js/pages/botlar.js ayarOzetCiz). -->
+      <div class="glass-panel panel-pad-lg mb-5" id="ayarBotOzet" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      <div class="ayar-bolum is-hidden" data-ayar-bolum="bildirimler" id="ayarBolum-bildirimler" role="tabpanel">
+      <div class="glass-panel panel-pad-lg page-narrow">
+        <h2 class="page-title-sm mb-7">
+          <i class="tone-cyan" data-lucide="send"></i> Telegram bildirimleri
+        </h2>
+
+        <!-- Telegram'ın bugünkü durumu (js/pages/botlar.js telegramSatiri; eskiden Botlar sayfasının altında). -->
+        <div id="txtPortfoyTelegram" class="hint hint-sm mb-1">Telegram durumu yükleniyor…</div>
+        <div id="txtTelegramKomut" class="hint hint-sm mb-3"></div>
+        <form id="formTelegram">
+          <div class="form-group">
+            <label class="row" for="chkTgEnabled">
+              <input class="icon-18" type="checkbox" id="chkTgEnabled">
+              Telegram bildirimlerini etkinleştir
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="inpTgToken">Bot token</label>
+            <input type="password" id="inpTgToken" class="form-control" autocomplete="off" placeholder="bot token">
+            <!-- Denetim A-19: nereden alınacağı formda (BotFather / userinfobot; ayrıntı kılavuzda). -->
+            <small class="hint">Telegram'da <strong>@BotFather</strong> → /newbot ile alınır. <a href="#/kilavuz/ayarlar/telegram">Nasıl alınır?</a></small>
+          </div>
+
+          <div class="form-group">
+            <label for="inpTgChatId">Chat ID <button type="button" class="yardim-isareti" data-sozluk="chatId">?</button></label>
+            <input type="text" id="inpTgChatId" class="form-control" autocomplete="off" placeholder="ör. 987654321">
+            <small class="hint">Telegram'da <strong>@userinfobot</strong>'a yazınca söyler. Kayıtlı değer maskeli görünür; boş bırakırsanız değişmez. <a href="#/kilavuz/ayarlar/telegram">Nasıl alınır?</a></small>
+          </div>
+
+          <!-- PLAN-PANEL-2: hangi bildirimin gideceği artık Sistem › Bildirimler'de (lib/bildirimMerkezi.js); burada yalnız bağlantı. -->
+          <div class="form-group">
+            <div class="label-strong mb-2">Bildirim türleri</div>
+            <p class="hint mb-0">Hangi bildirimin gönderileceği (işlem, günlük özet, uyarı, rapor, güncelleme …) ve son gönderilenler <a href="#/bildirimler">Sistem › Bildirimler</a> sayfasında. Acil durum bildirimleri kapatılamaz.</p>
+          </div>
+
+          <div class="row-plain gap-7 mt-9">
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="save"></i> Ayarları kaydet
+            </button>
+            <button type="button" id="btnTestTg" class="btn btn-secondary">
+              <i data-lucide="send"></i> Test mesajı gönder
+            </button>
+          </div>
+
+          <div class="hint hint-sm mt-5">
+            <strong>Telegram komutları (yalnız okuma):</strong> botunuza
+            <code>/durum</code> · <code>/pozisyonlar</code> · <code>/ozet</code> · <code>/saglik</code> · <code>/yapilacaklar</code> · <code>/ileri</code> · <code>/yardim</code>
+            yazın. Yalnız yukarıdaki Chat ID'den gelen mesajlar cevaplanır, aynı komut 10 sn'de bir.
+            Emir veren, botu başlatan ya da durduran komut <strong>bilinçli olarak yok</strong> — telefon kaybolur ya da token sızarsa hesap tehlikeye girmesin.
+            Komutlar bildirimler etkinken çalışır; etkinleştirince kendiliğinden başlar (sunucuyu yeniden başlatmak gerekmez).
+          </div>
+        </form>
+      </div>
+
+      <div class="glass-panel panel-pad-lg page-narrow-top">
+        <h2 class="page-title-sm mb-3">
+          <i class="tone-cyan" data-lucide="heart-pulse"></i> Sağlık sinyali (healthchecks.io)
+        </h2>
+        <p class="hint text-base mb-5">
+          "Ölü adam anahtarı": bot her başarılı günlük çalışmadan sonra healthchecks.io'ya sinyal gönderir; hata olursa ya da bot kendini durdurursa "başarısız" sinyali.
+          Sinyal belirlenen sürede gelmezse (bilgisayar kapandı, internet gitti, sunucu dondu) healthchecks.io size kendisi haber verir — Telegram alarmının yetişemediği durumlar.
+          Önerilen ayar: <strong>Period</strong> (sinyal aralığı) 1 gün, <strong>Grace</strong> (gecikme payı — bu kadar beklenir, sonra uyarılır) 3 saat.
+          <button type="button" class="yardim-isareti" data-sozluk="healthchecks">?</button>
+        </p>
+        <form id="formSaglik">
+          <div class="form-group">
+            <label for="inpHcUrl">Bot ping URL'si</label>
+            <input type="password" id="inpHcUrl" class="form-control" autocomplete="off" spellcheck="false" placeholder="https://hc-ping.com/...">
+          </div>
+          <div class="form-group">
+            <label for="inpHcSunucuUrl">Sunucu kalp atışı URL'si (isteğe bağlı — ikinci bir check)</label>
+            <input type="password" id="inpHcSunucuUrl" class="form-control" autocomplete="off" spellcheck="false" placeholder="https://hc-ping.com/... (boş bırakılabilir)">
+            <div class="hint hint-sm mt-2">
+              Sunucu açıkken günde bir kez gönderilir. Bot URL'sinden AYRI bir check olmalı: aynı URL'ye gitseydi, sunucu açık ama bot durmuşken uyarı hiç gelmezdi.
+            </div>
+          </div>
+          <div id="txtHcDurum" class="hint hint-sm mb-0">Durum yükleniyor…</div>
+          <div class="row-plain gap-7 mt-9">
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="save"></i> Kaydet
+            </button>
+            <button type="button" id="btnHcTest" class="btn btn-secondary">
+              <i data-lucide="send"></i> Test sinyali gönder
+            </button>
+            <button type="button" id="btnHcSil" class="btn btn-secondary">
+              <i data-lucide="trash-2"></i> URL'leri kaldır
+            </button>
+          </div>
+        </form>
+      </div>
+      </div>
+      <div class="ayar-bolum is-hidden" data-ayar-bolum="borsa" id="ayarBolum-borsa" role="tabpanel">
+      <!-- 62.7 Ayarlar › Borsa: Borsa hesapları sayfasından taşınan bir kez yapılan işler — demo API anahtarı (borsa.js anahtarCiz),
+           işlem dökümü + CSV (hesaplar.js dokumCiz), canlı hesap (katlı; sunucu config.canliIzin !== true iken reddeder — borsa.js canliCiz). -->
+      <div class="glass-panel panel-pad-lg page-narrow mb-5" id="ayarBorsa">
+        <h2 class="page-title-sm mb-3"><i class="tone-primary" data-lucide="landmark"></i> Borsa</h2>
+        <details class="hs-kat" id="anahtarKat">
+          <summary>Demo hesap API anahtarı</summary>
+          <div class="hs-kat-ic exchange-box" id="exchangeKeysBox"></div>
+        </details>
+        <!-- Ö16 / denetim A-01: canlı hesap yolu katlı; sunucu config.canliIzin !== true iken canlı bağlantıyı reddeder. -->
+        <details class="hs-kat mt-3" id="canliParaKat">
+          <summary>Canlı hesap — en erken 5 Ocak 2027, dokuz şart sağlanınca</summary>
+          <div class="hs-kat-ic exchange-box" id="canliParaKutu"></div>
+        </details>
+      </div>
+      </div>
+      <div class="ayar-bolum is-hidden" data-ayar-bolum="bilgisayar" id="ayarBolum-bilgisayar" role="tabpanel">
+      <!-- Denetim A-18: "Bu bilgisayar" — rol, acil PIN, telefon jetonu, Telegram komut yoklaması (salt okunur; js/pages/ayarlar.js). -->
+      <div class="glass-panel panel-pad-lg page-narrow mb-5" id="ayarlarBuBilgisayar" aria-live="polite">
+        <h2 class="page-title-sm mb-3"><i class="tone-primary" data-lucide="monitor"></i> Bu bilgisayar</h2>
+        <p class="hint mb-0">Yükleniyor…</p>
+      </div>
+      </div>
+      <div class="ayar-bolum is-hidden" data-ayar-bolum="guncelleme" id="ayarBolum-guncelleme" role="tabpanel">
+      <div class="glass-panel panel-pad-lg page-narrow" id="ayarlarGuncellemeKart" aria-live="polite">
+        <h2 class="page-title-sm mb-3"><i class="tone-primary" data-lucide="refresh-cw"></i> Otomatik güncelleme</h2>
+        <div id="ayarlarGuncelleme"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+      </div>
+      <!-- 68.1 (PLAN-TASIMA F3): taşıma dosyası, araştırma eklentisi, USB yedeği, eski yedekten geri yükleme — js/pages/tasima.js. -->
+      <div class="ayar-bolum is-hidden" data-ayar-bolum="yedek" id="ayarBolum-yedek" role="tabpanel">
+        <div class="ts-kok" id="tasimaKok" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+      </div>
+
+    </section>
+
+    <!-- ARŞİV: artık kullanılmayan bölümler (kod silinmedi). -->
+    <section id="tab-arsiv" class="tab-content" role="tabpanel" aria-label="Arşiv" data-alt-sayfalar="genel emekli">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-muted" data-lucide="archive"></i> Arşiv
+        </h2>
+      </div>
+      <p class="hint mb-7 max-w-prose">
+        Bu bölümler artık kullanılmıyor; geri dönmek gerekirse diye duruyorlar. Menüde: Genel · Kâğıt test · Kâğıt test riski · Emekli botlar.
+      </p>
+
+      <!-- 62.9: Stratejiler listesinden çıkan elenenler (js/pages/stratejiler.js arsivCiz). Kâğıt test, riski, Pine ve defter üstteki Arşiv menüsünde. -->
+      <div data-alt="genel">
+      <h3 class="bolum-baslik">Eski stratejiler</h3>
+      <p class="hint hint-sm mb-3 max-w-prose">Testte elenen stratejiler. Ayrıntısını görmek için tıklayın; backtestte kıyas için Backtest › Gelişmiş › "arşivdekileri de göster".</p>
+      <div class="glass-panel strat-liste mb-9" id="arsivStratListe" aria-label="Eski stratejiler"><p class="hint mb-0">Yükleniyor…</p></div>
+
+
+      <!-- Elle emir: araştırma modunda kilitli (kabuk.js KILITLI #exchangeStatusBox / #exchangePreviewBox). -->
+      <h3 class="bolum-baslik">Elle emir</h3>
+      <details class="glass-panel hs-kat mb-9" id="elleEmirKat">
+        <summary>Botlardan bağımsız tek emir (demo hesap)</summary>
+        <div class="hs-kat-ic exchange-box" id="exchangeStatusBox"></div>
+        <div class="hs-kat-ic exchange-box" id="exchangePreviewBox"></div>
+      </details>
+
+      </div>
+      <!-- Emekli botlar (Donchian, Kalkan) — salt okunur kartlar (js/pages/borsa.js). -->
+      <div data-alt="emekli">
+      <h3 class="bolum-baslik">Donchian trend botu</h3>
+      <!-- Kartı borsa.js (botKutusu) doldurur. -->
+      <div class="glass-panel exchange-box mb-9" id="arsivDonchianKutu"><p class="hint mb-0">Yükleniyor…</p></div>
+
+      <!-- Karar Ö17 / denetim A-16: Kalkan botu salt okunur kart (borsa.js kalkanCiz, GET /api/kalkan/durum). -->
+      <h3 class="bolum-baslik">Kalkan botu</h3>
+      <div class="glass-panel exchange-box mb-9" id="arsivKalkanKutu"><p class="hint mb-0">Yükleniyor…</p></div>
+
+      </div>
+      <div data-alt="genel">
+      <h3 class="bolum-baslik">İzleme listesi taraması</h3>
+      <div class="glass-panel panel-pad mb-7">
+        <p class="hint hint-sm mb-5">Tarama, <a href="#/arastirma/backtest">Backtest</a> formundaki tarih aralığını, zaman dilimini ve piyasayı kullanır.</p>
+        <!-- Denetim A-29: emekli bölüm ikincil (gri) düğme kullanır. -->
+        <button type="button" id="btnScanWatchlist" class="btn btn-secondary" title="İzleme listesindeki her varlık × her aktif/aday strateji; sıralama örneklem dışı">
+          <i data-lucide="globe"></i> İzleme listesini tara (en iyi 5)
+        </button>
+      </div>
+      <!-- Multi-Asset Watchlist Top 5 Scanner Panel -->
+      <div id="watchlistPanel" class="glass-panel panel-pad mb-9 is-hidden">
+        <h3 class="card-title mb-7 tone-success">
+          <i data-lucide="trophy"></i> İzleme listesi taraması — en iyi 5 (sıralama örneklem dışı: ilk %70'te optimize, son %30'da ölçüldü)
+        </h3>
+        <div class="table-container">
+          <table id="tblWatchlistResults" class="tablo-kart tablo-siralanabilir">
+            <thead>
+              <tr>
+                <th data-sirasiz>Sıra</th>
+                <th>Varlık</th>
+                <th>Strateji</th>
+                <th>Skor</th>
+                <th>Kâr %</th>
+                <th>Kazanma %</th>
+                <th>Sharpe</th>
+                <th>En büyük düşüş</th>
+                <th data-sirasiz>İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      </div>
+    </section>
+
+    <!-- KİTAPÇIK (63.4): kendi başına tam HTML kitapçıklar (public/kitapcik/) — liste (#ktpListe, js/pages/kitapcik.js KITAPCIKLAR)
+         ve seçilen kitapçık aynı kökenli iframe'de (#ktpCerceve, tam yükseklik) + "Yeni sekmede aç". İçerik panelde değiştirilmez. -->
+    <section id="tab-kitapcik" class="tab-content" role="tabpanel" aria-label="Kitapçık">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="book-marked"></i> Kitapçık
+        </h2>
+      </div>
+      <p class="hint mb-3 max-w-prose">Botlarımızı tanımak için okunacak kitapçıklar. Kitapçığın kendi menüsü ve açık/koyu düğmesi var; büyük ekranda okumak için <strong>Yeni sekmede aç</strong>.</p>
+      <div class="ktp-liste mb-3" id="ktpListe"></div>
+      <div class="glass-panel ktp-okuyucu is-hidden" id="ktpOkuyucu">
+        <div class="ktp-ust">
+          <h3 class="card-title mb-0" id="ktpBaslik">Kitapçık</h3>
+          <a class="btn btn-secondary ktp-yeni-sekme" id="ktpYeniSekme" href="kitapcik/bot-stratejileri.html" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Yeni sekmede aç</a>
+        </div>
+        <iframe class="ktp-cerceve" id="ktpCerceve" title="Kitapçık"></iframe>
+      </div>
+    </section>
+
+    <!-- KILAVUZ (60.4): panel içi kullanım kılavuzu (js/pages/kilavuz.js, içerik public/kilavuz/).
+         Arama, içindekiler, bölüm başına Markdown + ekran görüntüleri. Güncel tutma: scripts/kilavuz-testi.js. -->
+    <section id="tab-kilavuz" class="tab-content" role="tabpanel" aria-label="Kılavuz">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="book-open"></i> Kılavuz
+        </h2>
+        <div class="kl-arama-kap">
+          <input type="search" id="klArama" class="form-control kl-arama" aria-label="Kılavuzda ara" placeholder="Kılavuzda ara (ör. acil fren, demo, liste)" autocomplete="off">
+        </div>
+      </div>
+      <p class="hint mb-5 max-w-prose"><span id="klSurum">Kılavuz</span> · Her ekranın başlığındaki <strong>? Kılavuz</strong> bağlantısı o ekranın bölümünü açar.</p>
+      <div class="kl-izgara">
+        <nav class="kl-yan" aria-label="Kılavuz içindekiler">
+          <button type="button" class="btn btn-secondary kl-icindekiler-dugme" id="btnKlIcindekiler" aria-expanded="false" aria-controls="klIcindekiler">İçindekiler</button>
+          <div class="kl-icindekiler" id="klIcindekiler"></div>
+        </nav>
+        <article class="glass-panel panel-pad-lg kl-icerik" id="klIcerik" aria-live="polite">
+          <p class="hint mb-0">Yükleniyor…</p>
+        </article>
+      </div>
+    </section>
+
+  </main>
+    </div>
+  </div>
+
+  <!-- Telefon/tablet alt çubuğu (K-G): Ana · Portföy · Botlar · Sinyaller · Menü. Öğe bölümde yanar (data-rota-menu);
+       "Menü" yan menüyü çekmece olarak açar (js/pages/kabuk.js) — bütün bölümler oradan. -->
+  <nav class="alt-cubuk" id="altCubuk" aria-label="Hızlı menü">
+    <a class="alt-cubuk-ogesi" href="#/ana" data-rota-menu="ana"><i data-lucide="house"></i><span>Ana</span></a>
+    <a class="alt-cubuk-ogesi" href="#/portfoy" data-rota-menu="portfoy"><i data-lucide="pie-chart"></i><span>Portföy</span></a>
+    <a class="alt-cubuk-ogesi" href="#/botlar" data-rota-menu="botlar"><i data-lucide="bot"></i><span>Botlar</span></a>
+    <a class="alt-cubuk-ogesi" href="#/sinyaller" data-rota-menu="sinyaller"><i data-lucide="radar"></i><span>Sinyaller</span></a>
+    <button type="button" class="alt-cubuk-ogesi" id="btnMenu" aria-expanded="false" aria-controls="yanMenu"><i data-lucide="menu"></i><span>Menü</span><span class="menu-rozet badge badge-danger is-hidden" data-tarama-rozet></span></button>
+  </nav>
+
+  <!-- Gösterge katmanı app.js'ten ÖNCE yüklenir: app.js başlarken
+       ChartIndicators ve IndicatorUI global'lerini kullanıyor. -->
+  <!-- Çekirdek ÖNCE: `indicatorUI.js` ve `app.js` `AG.api` / `AG.dom`
+       üzerinden çalışıyor, bunlar tanımlı değilken yüklenirlerse ilk
+       istekte patlarlar (bkz. `PLAN-MOTOR.md` §8, P2). -->
+  <script src="js/core/dom.js?v=68.3"></script>
+  <script src="js/core/format.js?v=68.3"></script>
+  <!-- Yeni panel F4: portföy ölçütleri (saf; Sharpe, düşüş, sağlık puanı) — js/pages/pano.js kullanır. -->
+  <script src="js/core/olcut.js?v=68.3"></script>
+  <script src="js/core/paraPlan.js?v=68.3"></script>
+  <script src="js/core/api.js?v=68.3"></script>
+  <script src="js/core/bildirim.js?v=68.3"></script>
+  <script src="js/core/ilerleme.js?v=68.3"></script>
+  <script src="js/core/tablo.js?v=68.3"></script>
+  <script src="js/core/rota.js?v=68.3"></script>
+  <script src="js/core/sozluk.js?v=68.3"></script>
+  <script src="js/core/md.js?v=68.3"></script>
+  <script src="js/core/grafik.js?v=68.3"></script>
+  <script src="js/core/pwa.js?v=68.3"></script>
+  <!-- Sayfa modülleri: çekirdekten SONRA, app.js'ten ÖNCE. -->
+  <script src="js/pages/dock.js?v=68.3"></script>
+  <script src="js/pages/bots.js?v=68.3"></script>
+  <script src="js/pages/backtest.js?v=68.3"></script>
+  <script src="js/pages/backtestIs.js?v=68.3"></script>
+  <script src="js/pages/backtestEkran.js?v=68.3"></script>
+  <script src="js/pages/seciciler.js?v=68.3"></script>
+  <script src="js/pages/analiz.js?v=68.3"></script>
+  <!-- Borsa hesapları (62.7): sekme = hesap (hesaplar.js) + Ayarlar › Borsa (anahtar, döküm, canlı hesap) + Arşiv (elle emir, kâğıt test) ve
+       emir/işlem tabloları (Pusula P3). İkisi de kendi kendine başlar, #tab-exchange kaplarını doldurur. -->
+  <script src="js/pages/borsa.js?v=68.3"></script>
+  <script src="js/pages/hesaplar.js?v=68.3"></script>
+  <script src="js/pages/arastirma.js?v=68.3"></script>
+  <script src="js/pages/stratejiler.js?v=68.3"></script>
+  <script src="js/pages/bindirme.js?v=68.3"></script>
+  <script src="js/pages/bindirmeIslem.js?v=68.3"></script>
+  <script src="js/pages/ileri.js?v=68.3"></script>
+  <script src="js/pages/tarama.js?v=68.3"></script>
+  <script src="js/pages/listeler.js?v=68.3"></script>
+  <script src="js/pages/dikkat.js?v=68.3"></script>
+  <script src="js/pages/izle.js?v=68.3"></script>
+  <script src="js/pages/defter.js?v=68.3"></script>
+  <script src="js/pages/arastirmaOzet.js?v=68.3"></script>
+  <script src="js/pages/gunluk.js?v=68.3"></script>
+  <script src="js/pages/bildirimMerkezi.js?v=68.3"></script>
+  <script src="js/pages/raporlar.js?v=68.3"></script>
+  <script src="js/pages/tasima.js?v=68.3"></script>
+  <script src="js/pages/kurulum.js?v=68.3"></script>
+  <script src="js/pages/kurulumDenetimi.js?v=68.3"></script>
+  <script src="js/pages/botPerformans.js?v=68.3"></script>
+  <script src="js/pages/gunlukArsiv.js?v=68.3"></script>
+  <!-- 63.2: Veri ekranı — özet + kullanana göre gruplar (js/pages/veri.js). -->
+  <script src="js/pages/veri.js?v=68.3"></script>
+  <!-- 63.3: Sinyaller ekranı — bugün sistem ne diyor (js/pages/sinyaller.js). -->
+  <script src="js/pages/sinyaller.js?v=68.3"></script>
+  <script src="js/pages/pine.js?v=68.3"></script>
+  <script src="js/pages/kurCevirici.js?v=68.3"></script>
+  <!-- 64.8: sunucuya yazma + kuyruk ortak parçası (Portföyüm ve İşlem defterim kullanır) — portfoyum.js'ten ÖNCE. -->
+  <script src="js/pages/evKuyruk.js?v=68.3"></script>
+  <script src="js/pages/portfoyum.js?v=68.3"></script>
+  <script src="js/pages/portfoyumRapor.js?v=68.3"></script>
+  <script src="js/pages/islemDefteri.js?v=68.3"></script>
+  <script src="js/pages/tasarimci.js?v=68.3"></script>
+  <script src="js/pages/modelPortfoy.js?v=68.3"></script>
+  <!-- Yeni panel F4: Pano · Varlıklar · Hedefim · Takvim + üst çubuk Ben/Anıl/Tümü · $/₺/Gizli (portfoy.js çağırır). -->
+  <script src="js/pages/paraEkle.js?v=68.3"></script>
+  <script src="js/pages/pano.js?v=68.3"></script>
+  <script src="js/pages/portfoy.js?v=68.3"></script>
+  <script src="js/pages/kabuk.js?v=68.3"></script>
+  <script src="js/pages/botDil.js?v=68.3"></script>
+  <script src="js/pages/hisseYapilari.js?v=68.3"></script>
+  <script src="js/pages/botlar.js?v=68.3"></script>
+  <script src="js/pages/anasayfa.js?v=68.3"></script>
+  <script src="js/pages/ayarlar.js?v=68.3"></script>
+  <script src="js/pages/kitapcik.js?v=68.3"></script>
+  <script src="js/pages/kilavuz.js?v=68.3"></script>
+  <script src="chartIndicators.js?v=68.3"></script>
+  <script src="indicatorUI.js?v=68.3"></script>
+  <script src="app.js?v=68.3"></script>
+  <!-- app.js parçaları (Pusula P6): aynı küresel kapsam, app.js'ten HEMEN SONRA. -->
+  <script src="js/app/riskEkrani.js?v=68.3"></script>
+  <script src="js/app/olaylar.js?v=68.3"></script>
+  <script src="js/app/backtestAnaliz.js?v=68.3"></script>
+</body>
+</html>

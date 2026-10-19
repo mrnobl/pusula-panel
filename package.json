@@ -1,0 +1,59 @@
+{
+  "name": "trade-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "supervise": "scripts\\start-bot.cmd",
+    "defter": "node scripts/defter.js",
+    "defter:denetle": "node scripts/defter.js denetle",
+    "defter:sonraki": "node scripts/defter.js sonraki",
+    "dikkat:envanter": "node scripts/dikkat-f0-envanter.js",
+    "tarama:gunluk": "node scripts/tarama-gunluk.js",
+    "evren:esik": "node scripts/evren-esik-sabitle.js",
+    "yedek": "node scripts/yedek.js",
+    "canli-kapilar": "node scripts/canli-kapilar.js",
+    "guncelle": "node scripts/guncelle.js",
+    "tasarimci:hazirla": "node scripts/tasarimci-hazirla.js",
+    "tasarimci:tik": "node scripts/tasarimci-tik.js",
+    "veri:guncelle": "node scripts/veri-guncelle.js",
+    "ileri:izle": "node scripts/ileri-izle.js",
+    "ileri:rapor": "node scripts/ileri-rapor.js",
+    "golge3d:izle": "node scripts/zaman-dilimi-golge.js",
+    "golge3d:rapor": "node scripts/zaman-dilimi-golge.js --rapor",
+    "telefon": "node scripts/telefon.js",
+    "acil-pin": "node scripts/telefon-kur.js pin",
+    "telefon-jeton": "node scripts/telefon-kur.js jeton",
+    "ev-baglanti": "node scripts/ev-baglanti.js",
+    "sunucu-baglanti": "node scripts/ev-baglanti.js",
+    "gelistirme-jeton": "node scripts/gelistirme-jeton.js",
+    "tarama": "node scripts/tarama.js",
+    "kilavuz:esitle": "node -e \"require('fs').copyFileSync('EVDE-GECIS-PUSULA.md','public/kilavuz/bolumler/kurulum.md'); console.log('kurulum.md = EVDE-GECIS-PUSULA.md')\"",
+    "veri-tasi": "node scripts/veri-tasi.js",
+    "tasima-olustur": "node scripts/tasima.js olustur",
+    "tasima-ice-aktar": "node scripts/tasima.js ice-aktar",
+    "eklenti-olustur": "node scripts/tasima.js eklenti-olustur",
+    "eklenti-yukle": "node scripts/tasima.js eklenti-yukle",
+    "yedek-sifre": "node scripts/tasima.js yedek-sifre",
+    "kur": "node scripts/kur.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ccxt": "^4.5.71",
+    "express": "^5.2.1",
+    "qrcode-terminal": "^0.12.0",
+    "technicalindicators": "^3.1.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0"
+  }
+}

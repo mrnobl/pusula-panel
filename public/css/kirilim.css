@@ -1,0 +1,400 @@
+/**
+ * KIRILIM — panelin TÜM ekran genişliği kuralları (Pusula P5, PLAN-PANEL-PUSULA §3 / §6)
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Eskiden yedi ayrı kırılım (560 · 640 · 760 · 900 · 1000 · 1023 · 1100 px)
+ * dört dosyaya dağılmıştı; bir ekranın telefonda nasıl göründüğünü bulmak için
+ * hepsine bakmak gerekiyordu. Artık İKİ kırılım, TEK dosya:
+ *
+ *   ≥ 1024 px  MASAÜSTÜ  sol menü, kompakt yoğunluk (bu dosyada kural yok — varsayılan)
+ *   ≤ 1023 px  TABLET    sol menü gizli, altta gezinme çubuğu (+ "Diğer"), ızgaralar tek sütun,
+ *                        tablolar satır → kart (`.tablo-kart`, js/core/tablo.js; 60.2'den beri tablette de)
+ *   ≤  640 px  TELEFON   FERAH: gövde yazısı ≥ 15 px, dokunma hedefi ≥ 44 px, kart iki sütun
+ *
+ * Değerler `tokens.css` `--bp-tel` / `--bp-masa` ile aynı (CSS medya sorgusu
+ * değişken okuyamaz). Denetim (`scripts/panel-mobil-testi.js`): başka bir CSS
+ * dosyasında ya da başka bir değerde `@media (…width…)` olursa kırmızı.
+ *
+ * Yükleme sırası: tokens → styles → layout → components → KIRILIM → utilities.
+ * Bileşen kuralını ezebilmesi için bileşenlerden sonra; tek amaçlı yardımcılar
+ * (`.is-hidden`, `.mb-3` …) yine en sonda kazanır.
+ */
+
+/* ═══ TABLET + TELEFON (≤ 1023 px) ═════════════════════════════════════════ */
+@media (max-width: 1023px) {
+  /* Araştırma defteri hikâye kartı: dört adım alt alta; teknik alanlar tek sütun. */
+  .df-hikaye { grid-template-columns: minmax(0, 1fr); }
+  .df-kv { grid-template-columns: minmax(0, 1fr); }
+  /* Bildirimler: satır iki sıraya iner (ad tam genişlik; önem · son gönderim · aç alt satırda). */
+  .bm-satir { grid-template-columns: minmax(0, 1fr) auto 56px; }
+  .bm-satir .bm-ad { grid-column: 1 / -1; }
+  .bm-bas { display: none; }
+  .rp-modeller { grid-template-columns: minmax(0, 1fr); }
+  .rp-hazirla { margin-left: 0; }
+  .kr-iki { grid-template-columns: minmax(0, 1fr); }
+  /* 68.1 Yedek ve taşıma: şifre çiftleri ve kurulum seçimleri alt alta. */
+  .ts-iki, .kr-secimler { grid-template-columns: minmax(0, 1fr); }
+  .ts-kv { grid-template-columns: minmax(0, 1fr); }
+  /* ── Kabuk (yeni panel F2): yan menü → soldan açılan ÇEKMECE (alt çubuktaki "Menü"), altta 5 öğe ── */
+  .kabuk { display: block; }
+  .yan-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 120;
+    width: min(300px, 86vw);
+    height: auto;
+    transform: translateX(-102%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--shadow-2);
+  }
+  body.menu-acik .yan-menu { transform: none; }
+  body.menu-acik { overflow: hidden; }
+  .menu-perde { display: block; position: fixed; inset: 0; z-index: 110; background: var(--overlay); }
+  .menu-perde[hidden] { display: none; }
+  .yan-menu-kapat {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--dokunma);
+    height: var(--dokunma);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .yan-menu-kapat:hover { background: var(--surface-2); color: var(--text-strong); }
+  .menu-ogesi, .menu-alt { min-height: var(--dokunma); }
+
+  /* İçerik alt çubuğun altında kalmasın. */
+  body { padding-bottom: calc(var(--alt-cubuk-h) + env(safe-area-inset-bottom, 0px) + var(--sp-2)); }
+
+  .alt-cubuk {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    height: calc(var(--alt-cubuk-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--surface-1);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+  }
+
+  /* Bildirimler alt çubuğun üstünde açılır (altında kalıp okunmaz olmasın). */
+  .toast-region { bottom: calc(var(--alt-cubuk-h) + env(safe-area-inset-bottom, 0px) + var(--sp-2)); }
+
+  .bant-yuvasi { padding: 0 var(--sp-3); }
+
+  .navbar { flex-wrap: wrap; row-gap: var(--sp-1); }
+
+  /* Portföy (F4): üçlü / ikili kart ızgarası tek sütun; takvim ve zaman çizelgesi sıkışır. */
+  .pn-uclu, .pn-ikili { grid-template-columns: minmax(0, 1fr); }
+  .pn-akis li { grid-template-columns: 80px 10px minmax(0, 1fr); }
+  .pn-akis li > .p-rozet { grid-column: 3; justify-self: start; }
+  .pn-gun { min-height: 48px; padding: 4px; }
+  /* 67.4: dar grafikte uç etiketleri ezilir — son değerler gösterimde (çizginin adının yanında) yazar. */
+  .pn-uc-etiket { display: none; }
+  /* 67.4: ısı haritası hücresi telefonda büyük yazıyla (fs-sm) "+28,6" sığsın — kap yana kaydırılır. */
+  .pn-isi { grid-template-columns: 40px repeat(13, minmax(50px, 1fr)); min-width: 720px; }
+
+  /* ── Izgaralar tek sütuna (minmax(0,1fr): içerik sayfayı taşıramasın) ── */
+  .grid-1-2,
+  .grid-2-1,
+  .grid-14-1,
+  .grid-190-1,
+  .grid-2,
+  .exchange-grid,
+  .strat-layout,
+  .pf-kurucu-duzen,
+  .ts-kurucu-duzen,
+  .pn-izgara { grid-template-columns: minmax(0, 1fr); }
+  .grid-4,
+  .grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ana-izgara { grid-template-columns: minmax(0, 1fr); grid-template-areas: "yapilacak" "portfoy" "sistem" "botlar"; }
+
+  .pn-liste-kutu { max-height: none; }
+  .bt-alt-sekme { margin-left: 0; width: 100%; }
+
+  /* Gösterge havuzu sayfası (indicators.html): tek sütun, katalog yapışkan değil. */
+  .gh-main { grid-template-columns: minmax(0, 1fr); }
+  .gh-catalog { position: static; max-height: 45vh; }
+
+  /* ── TABLO → KART (js/core/tablo.js — her hücre data-etiket taşır) ─────────
+     TABLET DAHİL (60.2): 641–1023 px'te geniş tablolar (8–15 sütun) kutusunda yatay kayıyordu; tablet
+     alt çubuk/tek sütun düzeniyle zaten "mobil" — tablolar da karta döner. Başlık satırı gizli; her
+     satır bir kart, hücrenin üstünde sütun adı; tablette kartta ≥ 10rem'lik sütunlar (768 px'te 3–4),
+     telefonda iki sütun (aşağıda). İlk hücre ve birden çok sütunu kaplayan hücre (boş durum) tam
+     genişlik. Sıralanabilir tabloda başlık yerine üstte "Sırala" seçicisi (.tablo-sirala-cubuk). */
+  .tablo-kart { min-width: 0; }
+  .tablo-kart thead { display: none; }
+  .tablo-kart,
+  .tablo-kart tbody,
+  .tablo-kart tfoot { display: block; width: 100%; }
+  .tablo-kart tr {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+    gap: var(--sp-2) var(--sp-3);
+    padding: var(--sp-3);
+    margin-bottom: var(--sp-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+  }
+  .tablo-kart tfoot tr { background: var(--surface-2); }
+  .tablo-kart td,
+  .tablo-kart tbody th,
+  .tablo-kart tfoot th {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;   /* uzun kelime önce heceden (lang="tr"), en son harften bölünür */
+  }
+  .tablo-kart tr:hover td { background: transparent; }
+  .tablo-kart td::before {
+    content: attr(data-etiket);
+    font-family: var(--font-family);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--text-muted);
+  }
+  .tablo-kart td:not([data-etiket])::before,
+  .tablo-kart td[data-etiket=""]::before { content: none; }
+  .tablo-kart td:first-child,
+  .tablo-kart td[colspan] { grid-column: 1 / -1; }
+  /* İlk sütun başlıksızsa (seçim kutusu, sıra işareti) kimlik sütunu ikincidir — o da tam genişlik: uzun varlık adı
+     ("Telefonaktiebolaget", "GLOBALFOUNDRIES") yarım kartta kelime ortasından bölünüyordu (60.2 ölçümü, portföy 360/390 px). */
+  .tablo-kart td:first-child[data-etiket=""] + td { grid-column: 1 / -1; }
+  /* Rozet/etiket kartta sarar: tek satırlık rozet ("güncel · kendi zamanlaması", nowrap) dar kartta kutuyu yatay
+     kaydırıyordu (portföy veri tablosu 360–768 px). */
+  .tablo-kart td > * { max-width: 100%; }
+  .tablo-kart :is(.pf-rozet, .badge, .tag) { white-space: normal; }
+  .tablo-kart td:empty { display: none; }
+  /* Düğmeli hücre (İptal, Kapat, Yükle/Sil …) kartın altında tam genişlik. */
+  .tablo-kart td:has(button),
+  .tablo-kart td.hs-eylem,
+  .tablo-kart td.hs-sebep { grid-column: 1 / -1; }
+  .tablo-kart td:has(button) { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+  .tablo-kart td:has(button)::before { flex-basis: 100%; }
+  .tablo-kart td[data-etiket=""]:has(button)::before,
+  .tablo-kart td:not([data-etiket]):has(button)::before { display: none; }
+  .tablo-kart tr.hs-acik { background: var(--surface-2); }
+  .tablo-kart tr.hs-acik td { background: transparent; }
+
+  .tablo-sirala-cubuk {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+  .tablo-sirala-cubuk select { flex: 1 1 auto; min-width: 0; min-height: var(--dokunma); }   /* tablet de dokunmatik */
+
+  /* Liste kaydı coin satırı (60.3): masaüstünde tek satır 6 alan → tablette 3 sütun. */
+  .tarama-coin-satir { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--border); }
+
+  /* ── Kılavuz (60.4): içindekiler katlanır, dokunma ≥ 44 px ── */
+  .kl-izgara { grid-template-columns: minmax(0, 1fr); }
+  .kl-yan { position: static; max-height: none; overflow: visible; }
+  .kl-icindekiler-dugme { display: inline-flex; justify-content: center; width: 100%; min-height: var(--dokunma); }
+  .kl-icindekiler { display: none; margin-top: var(--sp-2); }
+  .kl-icindekiler.is-acik { display: block; }
+  .kl-ic-bag { display: flex; align-items: center; min-height: var(--dokunma); }
+  .kl-ac { min-height: var(--dokunma); }
+  .kl-arama-kap { flex-basis: 100%; max-width: none; }
+  .kl-alt-gezinme .btn,
+  .kl-yeni-kart .btn,
+  .kl-arama { min-height: var(--dokunma); }
+  /* Kılavuz tabloları metin ağırlıklı: kartta her hücre tam genişlik (yarım hücrede kelimeler bölünüyordu). */
+  .kl-tablo.tablo-kart td { grid-column: 1 / -1; }
+  /* 60.8 Portföyüm: dağılım + kur kartı alt alta; üst çubuk düğmeleri dokunma hedefi. */
+  .pm-iki { grid-template-columns: minmax(0, 1fr); }
+  /* 62.4 Portföy: özet şeridi ve iki sütun bloklar alt alta */
+  .pm-ozet-serit, .mp-iki { grid-template-columns: minmax(0, 1fr); }
+  /* 62.6 Botlar: başlık düğmeleri alta */
+  .bot-bas { grid-template-columns: auto minmax(0, 1fr); }
+  .bot-bas-dugme { grid-column: 1 / -1; justify-content: flex-start; }
+  .ust-dugme { min-height: var(--dokunma); min-width: var(--dokunma); justify-content: center; }
+  /* 63.4 Kitapçık: okuyucu alt çubuğun üstünde biter; düğme dokunma hedefi. */
+  .ktp-okuyucu { padding: var(--sp-2); }
+  .ktp-cerceve { height: calc(100vh - var(--alt-cubuk-h) - 6rem); height: calc(100dvh - var(--alt-cubuk-h) - 6rem); min-height: 26rem; }
+  .ktp-kart, .ktp-yeni-sekme { min-height: var(--dokunma); }
+}
+
+/* ═══ TELEFON (≤ 640 px) — FERAH ═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* 61.2 Portföyüm hesap grupları: masaüstü sabit sütun düzeni telefonda kart görünümünü bozmasın. */
+  .pm-grup table { table-layout: auto; }
+  .pm-grup th:nth-child(1), .pm-grup th:nth-child(8) { width: auto; }
+  /* Portföy alt sekmeleri (61.0, D6): telefonda dar dolgu + sağ kenarda solma — kaydırılabildiği görünsün. */
+  .pf-alt-sekme { padding: var(--sp-2) var(--sp-2); }
+  /* 62.3 Model portföyler: üç model seçici telefonda alt alta. */
+  .mp-secici { grid-template-columns: minmax(0, 1fr); }
+  /* 67.3 Para ekle planı: alanlar tam genişlik; düzeltme kutuları ikişer; kural seçicisi kartta sarılır. */
+  .pe-tutar-alan, .pe-tutar-kutu, .pe-hesap, .pe-tarih, .pe-bul .p-alan { width: 100%; min-width: 0; }
+  .pe-duzelt .p-alan { width: calc(50% - var(--sp-2)); }
+  .pe-sat-kutu .pe-islem-ana { font-size: var(--fs-md); }
+  .pf-alt-sekmeler { -webkit-mask-image: linear-gradient(to right, black 82%, transparent); mask-image: linear-gradient(to right, black 82%, transparent); padding-right: var(--sp-6); }
+  /* ── Yazı: tüm ölçek rem — kök %125 → ölçeğin her basamağı ×1,25 (§4a/5 "telefonda ferah"):
+     etiket/form/künye (--fs-sm) 12 → 15 px, tablo/gövde (--fs-base) 13 → 16,25 px, düğme ve sayfa
+     metni (--fs-md) 14 → 17,5 px. Boşluklar px, değişmez. ── */
+  html { font-size: 125%; }
+  /* En küçük basamak (--fs-xs) ×1,25 = 13,75 px — gövde yazısı için az (P5 sınaması: ipucu paragrafları,
+     küçük düğmeler, portföy tablo hücreleri, rozetler 13,75 px kalıyordu). Telefonda --fs-xs kullanan
+     HER seçici bir basamak büyür (--fs-sm = 15 px). Liste `panel-mobil-testi.js` ile tutulur: CSS'te
+     `font-size: var(--fs-xs)` yazan yeni bir seçici buraya eklenmezse kırmızı. Tek istisna alt
+     çubuğun simge altı etiketi (`.alt-cubuk-ogesi`, 5 öğe 360 px'e sığmalı; gövde yazısı değil). */
+  .hint, .hint-lg, .hint-micro, .hint-size, .an-hint, .note-line, .mono-note-sm, .mono-pre,
+  .kv-label, .metric-label, .stat-title, .brand-text span, .check-label-xs, .ratio-legend, .tag,
+  .preview-legend, .trace-summary,
+  .btn-sm, .btn-tag, .btn-tier, .btn-tier-sm, .btn-tier-xs, .btn-strat, .btn-nav-xs, .btn-nav-sm, .btn-xxs,
+  .control-xxs, .table-dense, .pick-list-sm, .param-desc, .param-range, .catalog-group, .wl-status, .run-dot,
+  .liq-note, .lev-badge, .badge, .mode-badge, .dock-badge, .pf-rozet, .pf-kucuk, .pf-alan > span,
+  .eylem-aciklama, .hs-alt, .hs-kaynak, .pn-oge-alt, .pn-p-alt, .strat-grup-baslik, .strat-satir-alt, .kur-kaynak, .pm-gun-sira, .pn-isi-hucre,
+  .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .df-adim-baslik, .kr-no { font-size: var(--fs-sm); }
+  /* F4: iki sütunlu gösterge şeridinde büyük tutar bölünmesin ($4.114,2 | 0). */
+  .p-gosterge-deger { font-size: var(--fs-lg); overflow-wrap: normal; }
+  .p-dugme-simge, .p-dugme-simge.p-dugme-kucuk { width: var(--dokunma); }
+  /* 60.8: üst çubuk "Kur" ve "?" düğmeleri telefonda yalnız simge (dokunma hedefi --dokunma). */
+  .ust-dugme-yazi { display: none; }
+  .kur-satir { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .kur-satir .kur-miktar { grid-column: 1 / -1; }
+  code { font-size: 1em; }
+  /* utilities.css bu dosyadan SONRA yüklenir; tek amaçlı .text-xs onu ezmesin diye :root ile. */
+  :root .text-xs { font-size: var(--fs-sm); }
+  /* Girdiler ≥ 16 px: iOS Safari daha küçük yazılı alana odaklanınca sayfayı yakınlaştırır.
+     :is() özgüllüğü (0,1,0) ve yukarıdaki listeden SONRA — .control-xxs / .control-sm gibi küçültücüleri ezer. */
+  :is(.form-control, select, input, textarea) { font-size: max(16px, var(--fs-sm)); }
+  /* Uzun büyük harfli tek kelime dar kutuyu taşırmasın — ve KELİME ORTASINDAN da bölünmesin (60.2 ölçümü:
+     Hesaplar 360 px'te iki sütunlu sayı kartının başlığı 136 px, "GERÇEKLEŞMEMİŞ" büyük harf + harf aralığıyla
+     ~150 px → "GERÇEKLEŞMEMİ|Ş"). Telefonda başlık olağan yazımla (büyük harf ve harf aralığı yalnız masaüstünün
+     kompakt üslubu): "Gerçekleşmemiş" 15 px'te ~116 px, sığar. Yine sığmayan olursa önce heceden (hyphens,
+     lang="tr" destekleyen tarayıcıda), en son harften böler — taşmaz. */
+  .stat-title { flex-wrap: wrap; text-transform: none; letter-spacing: 0; }
+  .stat-title > span { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+  /* İçerikten genişlik alan seçici (w-auto, uzun strateji adı) ekranı taşırmasın. */
+  select, .form-control { max-width: 100%; }
+  .row > *, .row-between > *, .console-bar > *, .console-assets > * { min-width: 0; max-width: 100%; }
+
+  .main-container { padding: 0 var(--sp-3); margin-top: var(--sp-2); }
+  .navbar { padding: var(--sp-2) var(--sp-3); }
+  .brand-text span:not(.brand-ad) { display: none; }
+
+  .grid-3,
+  .grid-4,
+  .grid-6,
+  .pf-kiyas-ikili { grid-template-columns: minmax(0, 1fr); }
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: var(--sp-2); }
+  .stat-card { padding: var(--sp-2) var(--sp-3); }
+  .stat-value { font-size: var(--fs-lg); }
+
+  /* Dar ekranda satırlar kırılır: başlık + denetim yan yana sığmıyorsa alta iner. */
+  .row,
+  .row-between,
+  .row-split,
+  .row-plain,
+  .row-end,
+  .toolbar { flex-wrap: wrap; }
+  /* Düğme yazısı sığmazsa düğmenin içinde alt satıra iner — kenarından taşmaz (P5 sınaması: backtest
+     "Bu ayarları bota yükle" 390 px'te düğmenin dışına taşıyordu). */
+  .btn { white-space: normal; text-align: center; }
+
+  .dock-content-area,
+  .console-bar,
+  .console-assets { padding: var(--sp-2); }
+  .chart-canvas { height: 300px; }
+  .chart-canvas-tall,
+  .preview-canvas { height: 320px; }
+  .toast-region { right: var(--sp-2); width: calc(100vw - 2 * var(--sp-2)); }
+  .pf-sayi-girdi { width: 4.5rem; }
+  .halka { width: 148px; height: 148px; }
+
+  /* ── Dokunma hedefi ≥ 44 px (--dokunma). Görünüm aynı, yalnız yükseklik/genişlik. ── */
+  .btn,
+  .form-control,
+  select,
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="password"],
+  input[type="search"],
+  summary,
+  .alt-menu-ogesi,
+  .theme-toggle,
+  .eylem-ogesi,
+  .yapilacak-baglanti,
+  .pf-alt-sekme,
+  .bt-alt-sekme > *,
+  .dock-tab,
+  .p-dugme, .p-secici > button, .p-sekme, .p-cip, .p-alan input, .p-alan select,
+  .wl-remove { min-height: var(--dokunma); }
+  .btn { padding: var(--sp-2) var(--sp-3); }
+  /* Tek simge/karakterli düğmeler (‹ › × ✓) kare: en az 44 px genişlik. */
+  .btn,
+  .theme-toggle,
+  .toast-close,
+  .wl-remove { min-width: var(--dokunma); }
+  .wl-remove { display: inline-flex; align-items: center; justify-content: center; }
+  .toast-close { min-height: var(--dokunma); }
+  .alt-menu-ogesi { display: inline-flex; align-items: center; }
+  summary { display: flex; align-items: center; }
+  input[type="checkbox"],
+  input[type="radio"] { width: 20px; height: 20px; }
+  /* Onay kutusunun basılan alanı etiketinin tamamı (P5 sınaması: .check-label / .pick-chip 22–32 px idi). */
+  label:has(> input[type="checkbox"]),
+  label:has(> input[type="radio"]) { align-items: center; min-height: var(--dokunma); }
+  /* Logo bağlantısı, gösterge kataloğu öğeleri, tek başına duran bağlantılar ("Gösterge havuzu ↗"). */
+  .brand,
+  .catalog-item { align-items: center; min-height: var(--dokunma); }
+  .catalog-item { display: flex; }
+  /* Gösterge çıktısının renk seçicisi (18 px kare) — telefonda 44 px. */
+  .color-swatch { width: var(--dokunma); height: var(--dokunma); }
+  a.no-underline:not(.btn):not(.brand) { display: inline-flex; align-items: center; min-height: var(--dokunma); }
+  /* "?" açıklama düğmesi göründüğü kadar küçük kalır (metnin yanında), basılan alan 44 px. */
+  .yardim-isareti { position: relative; width: 22px; height: 22px; }
+  .yardim-isareti::after { content: ""; position: absolute; inset: -11px; }
+  /* Açıklama balonu 22 px'lik "?"nin altında açılır (panel denetimi B). */
+  .yardim-balon { margin-top: 30px; }
+
+  .bot-kart-eylemler { margin-left: 0; width: 100%; }
+  .eylem-liste { left: 0; right: auto; width: min(320px, calc(100vw - 48px)); }
+  .eylem-ogesi { padding: var(--sp-3) var(--sp-2); }
+  .yapilacak-baglanti { padding: var(--sp-3); }
+
+  /* ── TABLO → KART: kart düzeni tablet bloğunda (≤ 1023 px); telefonda kart iki sütun. ── */
+  .tablo-kart tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Matris (ısı haritası, korelasyon): kart olmaz, kendi kutusunda yatay kayar — daha sık hücre. */
+  .tablo-matris th,
+  .tablo-matris td { padding: 4px 6px; }
+
+  .borsa-saglik { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+  /* Liste kaydı coin satırı: telefonda iki sütun. */
+  .tarama-coin-satir { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* ── Kılavuz (60.4) ── */
+  .kl-icerik { padding: var(--sp-4); }
+  .kl-sekil-tel { max-width: 100%; }
+}
+
+/* panel denetimi A */
+/* A-25 / A-26: dar ekranda bantlar tek satır (dokununca açılır — js/pages/kabuk.js bantlariBirlestir), yeni sürüm kartı kısa. */
+@media (max-width: 640px) {
+  .arastirma-bandi { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  .arastirma-bandi.bant-acik { white-space: normal; overflow: visible; }
+
+  .kur-birim { min-width: 0; }
+}

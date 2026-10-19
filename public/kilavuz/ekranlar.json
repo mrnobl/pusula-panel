@@ -1,0 +1,7216 @@
+{
+  "aciklama": "Kılavuz ekran görüntüsü tanımları. ELLE yazılan: kimlik, rota, genislik, kaydir, once, isaretler (secici + etiket), maske. ÜRETİLEN (npm run kilavuz:ekran yazar, elle değiştirmeyin): uretim. İşaret numarası listedeki sıradır (1'den). Seçici panelde bulunamazsa üretici HATA verir; kaynak değişince test görüntüyü BAYAT sayar.",
+  "ortak": {
+    "masaustu": {
+      "genislik": 1400,
+      "yukseklik": 900,
+      "olcek": 1
+    },
+    "telefon": {
+      "genislik": 390,
+      "yukseklik": 844,
+      "olcek": 2
+    },
+    "maske": [
+      "#inpTgChatId",
+      "#inpTgToken",
+      "#inpHcUrl",
+      "#inpHcSunucuUrl",
+      "#inpTestnetKey",
+      "#inpTestnetSecret",
+      "#inpLiveKey",
+      "#inpLiveSecret",
+      "#borsaPanel .borsa-sayilar .stat-value",
+      ".borsa-sekme-bakiye",
+      "#arsivKagitKok .borsa-sayilar .stat-value"
+    ]
+  },
+  "ekranlar": [
+    {
+      "kimlik": "ana-1400",
+      "rota": "ana",
+      "genislik": 1400,
+      "yukseklik": 1350,
+      "yeniKart": true,
+      "isaretler": [
+        {
+          "secici": "#anaYeniSurum",
+          "etiket": "Bu sürümde yeni: ince şerit (bir kez görünür)"
+        },
+        {
+          "secici": "#anaYapilacaklar",
+          "etiket": "Yapman gerekenler: yalnız senin işlerin, en üstte"
+        },
+        {
+          "secici": "#anaPortfoy",
+          "etiket": "Portföyüm: toplam, bu ay, Pano bağlantısı"
+        },
+        {
+          "secici": "#anaSistem",
+          "etiket": "Sistem: veri, bot hesapları, sürüm ışıkları"
+        },
+        {
+          "secici": "#anaBotSagligi",
+          "etiket": "Botlar: durum, hesap değeri, başlangıçtan, son karar, koruma stopu"
+        },
+        {
+          "secici": "#btnKilavuzUst",
+          "etiket": "? Kılavuz: açık ekranın kılavuz bölümü"
+        }
+      ],
+      "uretim": {
+        "dosya": "ana-1400.webp",
+        "en": 1400,
+        "boy": 1350,
+        "bayt": 65610,
+        "olcek": 1,
+        "ozet": "26c919eac624ce39922e0986bf9624391598c22d28334774755fda8db85ef6f6",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#anaYeniSurum",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 96
+          },
+          {
+            "secici": "#anaYapilacaklar",
+            "x": 260,
+            "y": 239,
+            "w": 1128,
+            "h": 167
+          },
+          {
+            "secici": "#anaPortfoy",
+            "x": 260,
+            "y": 413,
+            "w": 749,
+            "h": 184
+          },
+          {
+            "secici": "#anaSistem",
+            "x": 1017,
+            "y": 413,
+            "w": 371,
+            "h": 184
+          },
+          {
+            "secici": "#anaBotSagligi",
+            "x": 260,
+            "y": 605,
+            "w": 1128,
+            "h": 305
+          },
+          {
+            "secici": "#btnKilavuzUst",
+            "x": 1264,
+            "y": 15,
+            "w": 76,
+            "h": 40
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ana-390",
+      "rota": "ana",
+      "genislik": 390,
+      "isaretler": [
+        {
+          "secici": "#anaYapilacaklar",
+          "etiket": "Yapman gerekenler (telefonda da en üstte)"
+        },
+        {
+          "secici": "#altCubuk [data-rota-menu=\"sinyaller\"]",
+          "etiket": "Alt çubuk: Ana · Portföy · Botlar · Sinyaller"
+        },
+        {
+          "secici": "#btnMenu",
+          "etiket": "Menü: yan menünün aynısı (bütün bölümler ve Kılavuz)"
+        }
+      ],
+      "uretim": {
+        "dosya": "ana-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 61698,
+        "olcek": 2,
+        "ozet": "62d0862e9d789be5b5905e1e4c201d67ea4bb41c1dc1603ded49ecd7af2ea3c4",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#anaYapilacaklar",
+            "x": 8,
+            "y": 186,
+            "w": 374,
+            "h": 423
+          },
+          {
+            "secici": "#altCubuk [data-rota-menu=\"sinyaller\"]",
+            "x": 230,
+            "y": 781,
+            "w": 86,
+            "h": 61
+          },
+          {
+            "secici": "#btnMenu",
+            "x": 308,
+            "y": 781,
+            "w": 80,
+            "h": 61
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "diger-390",
+      "rota": "ana",
+      "genislik": 390,
+      "yukseklik": 1100,
+      "once": [
+        {
+          "tikla": "#btnMenu"
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-menu=\"arastirma\"] > .menu-ust",
+          "etiket": "Araştırma"
+        },
+        {
+          "secici": "#yanMenu [data-menu=\"bilgi\"] > .menu-ust",
+          "etiket": "Bilgi: Kılavuz ve Kitapçık"
+        }
+      ],
+      "uretim": {
+        "dosya": "diger-390.webp",
+        "en": 780,
+        "boy": 2200,
+        "bayt": 32276,
+        "olcek": 2,
+        "ozet": "16d50cc6142d45b8365b6273e360ec9af1fd09ccccfc23f19e54268dd0bfcbd1",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-menu=\"arastirma\"] > .menu-ust",
+            "x": 8,
+            "y": 480,
+            "w": 283,
+            "h": 50
+          },
+          {
+            "secici": "#yanMenu [data-menu=\"bilgi\"] > .menu-ust",
+            "x": 8,
+            "y": 853,
+            "w": 283,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kurulum-1400",
+      "rota": "kurulum",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#kurulumAdimlar",
+          "sure": 30000
+        },
+        {
+          "degerJs": "(function(){var K=AG.pages.kurulum;return AG.api.kurulum.durum().then(function(k){K._durum.kAyarla(Object.assign({},k,{onayli:false,onay:null}));K._durum.isaret.add('tavsiye-degil');K._durum.aktifAyarla(1);K._ciz.ciz();});})()"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#kurulumAdimlar",
+          "etiket": "Sekiz adım; tamamlananlar ✓"
+        },
+        {
+          "secici": "#kurulumAdim .kr-onaylar",
+          "etiket": "Dört onay — işaretlenmeden devam edilmez, bot başlatılamaz"
+        },
+        {
+          "secici": "#btnKrOnayla",
+          "etiket": "Onaylıyorum, devam et"
+        }
+      ],
+      "uretim": {
+        "dosya": "kurulum-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 66652,
+        "olcek": 1,
+        "ozet": "5f2cccec0865db0620961e2f56ab435d0f47651074f9cbf2e2187cff6c221bf2",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#kurulumAdimlar",
+            "x": 260,
+            "y": 138,
+            "w": 248,
+            "h": 417
+          },
+          {
+            "secici": "#kurulumAdim .kr-onaylar",
+            "x": 543,
+            "y": 385,
+            "w": 806,
+            "h": 172
+          },
+          {
+            "secici": "#btnKrOnayla",
+            "x": 1161,
+            "y": 582,
+            "w": 188,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kurulum-tasi-1400",
+      "rota": "kurulum",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/tasima.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#kurulumAdimlar",
+          "sure": 30000
+        },
+        {
+          "degerJs": "(function(){var K=AG.pages.kurulum;return AG.api.kurulum.durum().then(function(k){K._durum.kAyarla(k);K._durum.yontemAyarla('tasi');K._durum.aktifAyarla(0);K._ciz.ciz();});})()"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#btnKrTasi",
+          "etiket": "Başka bilgisayardan taşı"
+        },
+        {
+          "secici": "#tsIceDosya",
+          "etiket": "Taşıma dosyası ya da USB yedeği"
+        },
+        {
+          "secici": "#tsIceYol",
+          "etiket": "ya da bu bilgisayardaki tam yolu"
+        },
+        {
+          "secici": "#tsIceSec",
+          "etiket": "Dosyayı aç → şifre → önizleme → taşı"
+        }
+      ],
+      "uretim": {
+        "dosya": "kurulum-tasi-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 66158,
+        "olcek": 1,
+        "ozet": "14ebbe6232dfc72092da6699210b8ff1f62a0d069374a8a8dd7b6a4d210ffe84",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btnKrTasi",
+            "x": 948,
+            "y": 302,
+            "w": 401,
+            "h": 101
+          },
+          {
+            "secici": "#tsIceDosya",
+            "x": 543,
+            "y": 471,
+            "w": 806,
+            "h": 41
+          },
+          {
+            "secici": "#tsIceYol",
+            "x": 543,
+            "y": 542,
+            "w": 806,
+            "h": 41
+          },
+          {
+            "secici": "#tsIceSec",
+            "x": 1242,
+            "y": 588,
+            "w": 107,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-hizli-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmHizliKat"
+        },
+        {
+          "degerJs": "document.getElementById('inpPmHSembol').value='TSLA'"
+        },
+        {
+          "tikla": "#btnPmHBul"
+        },
+        {
+          "bekleSecici": "#pmHAday",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pmHizli",
+      "isaretler": [
+        {
+          "secici": "#pmHizli .pm-sekmeler",
+          "etiket": "Tür: Hisse / ETF · Fon · Kripto · Altın · Nakit · Diğer"
+        },
+        {
+          "secici": "#inpPmHSembol",
+          "etiket": "Sembol ya da şirket adı (BIST için .IS gerekmez)"
+        },
+        {
+          "secici": "#btnPmHBul",
+          "etiket": "Bul: ad, borsa, para birimi ve son fiyat gelir"
+        },
+        {
+          "secici": "#pmHAday",
+          "etiket": "Bulunan hisse"
+        },
+        {
+          "secici": "#selPmHHesap",
+          "etiket": "Hesap: var olan hesaplardan (para birimine uyan kendiliğinden seçilir)"
+        },
+        {
+          "secici": "#btnPmHEkle",
+          "etiket": "Ekle"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-hizli-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 65526,
+        "olcek": 1,
+        "ozet": "ecf0eba941fcc80b558759eec6a14ed9d973d60f2da39fb50aa850c01b6f886a",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pmHizli .pm-sekmeler",
+            "x": 277,
+            "y": 139,
+            "w": 1094,
+            "h": 22
+          },
+          {
+            "secici": "#inpPmHSembol",
+            "x": 277,
+            "y": 189,
+            "w": 410,
+            "h": 21
+          },
+          {
+            "secici": "#btnPmHBul",
+            "x": 687,
+            "y": 178,
+            "w": 46,
+            "h": 32
+          },
+          {
+            "secici": "#pmHAday",
+            "x": 277,
+            "y": 210,
+            "w": 440,
+            "h": 41
+          },
+          {
+            "secici": "#selPmHHesap",
+            "x": 277,
+            "y": 275,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#btnPmHEkle",
+            "x": 277,
+            "y": 357,
+            "w": 51,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-yeni-hesap-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/portfoyum.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmYeniHesapKat"
+        },
+        {
+          "degerJs": "document.getElementById('inpPmYKurum').value = 'Örnek Banka'; document.getElementById('inpPmYAd').value = 'Vadeli TL'; const s = document.getElementById('selPmYTur'); s.value = 'tr-banka'; s.dispatchEvent(new Event('change')); const p = document.getElementById('selPmYPara'); p.value = 'TRY'; p.dispatchEvent(new Event('change')); document.getElementById('pmYFaizKat').open = true"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pmYeniHesapKat",
+      "isaretler": [
+        {
+          "secici": "#inpPmYKurum",
+          "etiket": "Kurum adı: varsa listeden, yoksa kendiliğinden eklenir"
+        },
+        {
+          "secici": "#inpPmYAd",
+          "etiket": "Hesap adı"
+        },
+        {
+          "secici": "#selPmYTur",
+          "etiket": "Tür ve para birimi"
+        },
+        {
+          "secici": "#pmYFaizKat",
+          "etiket": "Banka / TL hesabında isteğe bağlı vadeli mevduat"
+        },
+        {
+          "secici": "#btnPmYHesapAc",
+          "etiket": "Hesabı aç (üst çubukta seçili portföye bağlanır)"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-yeni-hesap-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 72536,
+        "olcek": 1,
+        "ozet": "4065a5266c16a9edd7c1e0a98d93ca710201edc5d0c908d778d3f8a0f6abef1e",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#inpPmYKurum",
+            "x": 277,
+            "y": 219,
+            "w": 179,
+            "h": 25
+          },
+          {
+            "secici": "#inpPmYAd",
+            "x": 460,
+            "y": 219,
+            "w": 179,
+            "h": 25
+          },
+          {
+            "secici": "#selPmYTur",
+            "x": 643,
+            "y": 219,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#pmYFaizKat",
+            "x": 277,
+            "y": 284,
+            "w": 1094,
+            "h": 160
+          },
+          {
+            "secici": "#btnPmYHesapAc",
+            "x": 277,
+            "y": 444,
+            "w": 79,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-varlik-ekle-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/portfoyum.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmHizliKat"
+        },
+        {
+          "tikla": "#btnPmHSekme-fon"
+        },
+        {
+          "bekleSecici": "#inpPmHKod",
+          "sure": 10000
+        },
+        {
+          "degerJs": "document.getElementById('inpPmHKod').value = 'AFT'; document.getElementById('pmKuralKat').open = true"
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "kaydir": "#pmHizli",
+      "isaretler": [
+        {
+          "secici": "#btnPmHSekme-fon",
+          "etiket": "Fon (TEFAS): kod yazılır, ad ve fiyat TEFAS'tan"
+        },
+        {
+          "secici": "#inpPmHKod",
+          "etiket": "Fon kodu"
+        },
+        {
+          "secici": "#selPmHHesap",
+          "etiket": "Var olan hesap"
+        },
+        {
+          "secici": "#inpPmHTarih",
+          "etiket": "Alış tarihi (varsayılan dün = gün sonu bakiyesi)"
+        },
+        {
+          "secici": "#pmKuralKutusu",
+          "etiket": "Açılış kuralı"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-varlik-ekle-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 80310,
+        "olcek": 1,
+        "ozet": "ae4ffce50c5058224855f11cd53fd4beb71776f155e709f2d4f8fc0fb6f11ad3",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btnPmHSekme-fon",
+            "x": 362,
+            "y": 139,
+            "w": 93,
+            "h": 22
+          },
+          {
+            "secici": "#inpPmHKod",
+            "x": 277,
+            "y": 189,
+            "w": 179,
+            "h": 21
+          },
+          {
+            "secici": "#selPmHHesap",
+            "x": 460,
+            "y": 185,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#inpPmHTarih",
+            "x": 1009,
+            "y": 185,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#pmKuralKutusu",
+            "x": 277,
+            "y": 327,
+            "w": 1094,
+            "h": 75
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-varlik-ekle-390",
+      "rota": "portfoy/hesaplar",
+      "genislik": 390,
+      "dosyalar": [
+        "js/pages/portfoyum.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmHizliKat"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pmHizliKat",
+      "isaretler": [
+        {
+          "secici": "#pmHizli .pm-sekmeler",
+          "etiket": "Varlık türü sekmeleri telefonda alt alta sarılır"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-varlik-ekle-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 62794,
+        "olcek": 2,
+        "ozet": "e94f2be206043dfffd3cfb82404f24485859cd666686f2f8f8aa786ba91e662c",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pmHizli .pm-sekmeler",
+            "x": 25,
+            "y": 459,
+            "w": 340,
+            "h": 138
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kayit-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "yukseklik": 1700,
+      "once": [
+        {
+          "bekleSecici": "#pnPortfoyKart table",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pnPortfoyKart",
+          "etiket": "Portföyler: hesap hangi portföyün, toplama dahil mi; yeni portföy"
+        },
+        {
+          "secici": "#pmKayitUst .pf-dugmeler",
+          "etiket": "+ Varlık ekle · + Yeni hesap · CSV · işlem defteri · hedef dağılım · fiyatları yenile"
+        },
+        {
+          "secici": "#pmYeniHesapKat > summary",
+          "etiket": "Yeni hesap (kurum adıyla) ve Varlık ekle — katlı"
+        },
+        {
+          "secici": "#pmHesapKartlari .pm-hesap-kart",
+          "etiket": "Hesap kartı: varlıklar, model etiketi, Sat / Düzenle / Kaldır"
+        },
+        {
+          "secici": "#pmHesapKartlari .pm-hf",
+          "etiket": "+ işlem: alış, satış, temettü, para yatırma/çekme — tarihi geriye alınabilir"
+        }
+      ],
+      "uretim": {
+        "dosya": "kayit-1400.webp",
+        "en": 1400,
+        "boy": 1700,
+        "bayt": 112648,
+        "olcek": 1,
+        "ozet": "3e3c37a520f9fe81e2fcd5865553b87ed53cd2327af773d8c9b945b41fe2e786",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnPortfoyKart",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 673
+          },
+          {
+            "secici": "#pmKayitUst .pf-dugmeler",
+            "x": 629,
+            "y": 840,
+            "w": 738,
+            "h": 32
+          },
+          {
+            "secici": "#pmYeniHesapKat > summary",
+            "x": 261,
+            "y": 954,
+            "w": 1126,
+            "h": 52
+          },
+          {
+            "secici": "#pmHesapKartlari .pm-hesap-kart",
+            "x": 260,
+            "y": 1072,
+            "w": 1128,
+            "h": 326
+          },
+          {
+            "secici": "#pmHesapKartlari .pm-hf",
+            "x": 281,
+            "y": 1320,
+            "w": 1086,
+            "h": 57
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoy-ad-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/pano.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pnPortfoyAdlari table",
+          "sure": 30000
+        },
+        {
+          "tikla": "#btnPnAd-ben"
+        },
+        {
+          "bekleSecici": "#pnPortfoyAd",
+          "sure": 10000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "kaydir": "#pnPortfoyKart",
+      "isaretler": [
+        {
+          "secici": "#pnPortfoyAdlari",
+          "etiket": "Portföyler: değer, hesap sayısı, Adını değiştir"
+        },
+        {
+          "secici": "#pnPortfoyAd",
+          "etiket": "Yeni ad (Enter kaydeder, Esc vazgeçer)"
+        },
+        {
+          "secici": "#btnPnAdKaydet",
+          "etiket": "Kaydet: üst çubuk ve raporlar yeni adı gösterir"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoy-ad-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 67214,
+        "olcek": 1,
+        "ozet": "8c3bce4985268608ab9fdcdac27389a0f0e285955b3d2b50caf0164f5fd923db",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnPortfoyAdlari",
+            "x": 279,
+            "y": 165,
+            "w": 1090,
+            "h": 147
+          },
+          {
+            "secici": "#pnPortfoyAd",
+            "x": 289,
+            "y": 234,
+            "w": 402,
+            "h": 41
+          },
+          {
+            "secici": "#btnPnAdKaydet",
+            "x": 1221,
+            "y": 224,
+            "w": 69,
+            "h": 36
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-defter-1400",
+      "rota": "portfoy/islem-defteri",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pnDefterKaynak button",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#pmDefter",
+          "sure": 30000
+        },
+        {
+          "tikla": "#pnDefterKaynak button:nth-child(2)"
+        },
+        {
+          "bekleSecici": "#pnDefterYatirim #tblPmDefter",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmDefter"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pnDefterKaynak",
+      "isaretler": [
+        {
+          "secici": "#pnDefterKaynak",
+          "etiket": "Kaynak: Kripto / FX · Yatırım (Portföyüm) · Bot"
+        },
+        {
+          "secici": "#pmDefter > summary",
+          "etiket": "İşlem defteri katlı (varsayılan kapalı) — kayıt sayısı başlıkta"
+        },
+        {
+          "secici": "#pmDefterSuzgec",
+          "etiket": "Süzgeç: hesap, tür, varlık, tarih"
+        },
+        {
+          "secici": "#lnkPmCsv",
+          "etiket": "CSV dışa aktar"
+        },
+        {
+          "secici": "#tblPmDefter",
+          "etiket": "İşlem defteri (iptal edilen üstü çizili; \"İptal et\" = ters kayıt)"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-defter-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 82556,
+        "olcek": 1,
+        "ozet": "81b9aa894543fca797e96c77145b1838ccb2a1bff720762acf331633bec53514",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnDefterKaynak",
+            "x": 260,
+            "y": 83,
+            "w": 1128,
+            "h": 46
+          },
+          {
+            "secici": "#pmDefter > summary",
+            "x": 261,
+            "y": 134,
+            "w": 1126,
+            "h": 53
+          },
+          {
+            "secici": "#pmDefterSuzgec",
+            "x": 277,
+            "y": 195,
+            "w": 1094,
+            "h": 121
+          },
+          {
+            "secici": "#lnkPmCsv",
+            "x": 277,
+            "y": 284,
+            "w": 179,
+            "h": 33
+          },
+          {
+            "secici": "#tblPmDefter",
+            "x": 277,
+            "y": 317,
+            "w": 1094,
+            "h": 581
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-form-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmFormKat"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pmFormKat",
+      "isaretler": [
+        {
+          "secici": "#pmFormKat > summary",
+          "etiket": "Diğer işlemler: transfer, faiz, ücret, bölünme"
+        },
+        {
+          "secici": "#selPmFTur",
+          "etiket": "İşlem türü (açılış bakiyesi artık \"Varlık ekle\"de)"
+        },
+        {
+          "secici": "#pmGunSiraKat",
+          "etiket": "Aynı gün sırası (isteğe bağlı)"
+        },
+        {
+          "secici": "#btnPmIslemKaydet",
+          "etiket": "Kaydet"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-form-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 64384,
+        "olcek": 1,
+        "ozet": "7dad5388418476380478751d6519ed21c4514b856967ca6b4a72ad175b0694b0",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pmFormKat > summary",
+            "x": 261,
+            "y": 483,
+            "w": 1126,
+            "h": 53
+          },
+          {
+            "secici": "#selPmFTur",
+            "x": 277,
+            "y": 603,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#pmGunSiraKat",
+            "x": 277,
+            "y": 680,
+            "w": 1094,
+            "h": 28
+          },
+          {
+            "secici": "#btnPmIslemKaydet",
+            "x": 277,
+            "y": 709,
+            "w": 65,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-mevduat-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/portfoyum.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "[id^=\"btnPmFaizDegistir-\"]",
+          "sure": 30000
+        },
+        {
+          "tikla": "[id^=\"btnPmFaizDegistir-\"]"
+        },
+        {
+          "bekleSecici": "[id^=\"pmFaizForm-\"]",
+          "sure": 10000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "kaydir": ".pm-hesap-kart:has([id^=\"pmFaizForm-\"])",
+      "isaretler": [
+        {
+          "secici": "[id^=\"pmHesapFaiz-\"]",
+          "etiket": "Vadeli mevduat özeti: oran, vade, stopaj, sıradaki faiz, eklenen vadeler"
+        },
+        {
+          "secici": "[id^=\"pmFaizForm-\"] .pf-form-izgara",
+          "etiket": "Yeni ayar: oran, vade, stopaj, başladığı gün, yenile"
+        },
+        {
+          "secici": "[id^=\"btnPmFaizKaydet-\"]",
+          "etiket": "Kaydet"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-mevduat-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 68316,
+        "olcek": 1,
+        "ozet": "48920d630774ae8e754a8d804c31b0c7bcd2ffbef6d1f790094c4097b0de75e9",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "[id^=\"pmHesapFaiz-\"]",
+            "x": 281,
+            "y": 359,
+            "w": 1086,
+            "h": 24
+          },
+          {
+            "secici": "[id^=\"pmFaizForm-\"] .pf-form-izgara",
+            "x": 293,
+            "y": 419,
+            "w": 1062,
+            "h": 110
+          },
+          {
+            "secici": "[id^=\"btnPmFaizKaydet-\"]",
+            "x": 293,
+            "y": 576,
+            "w": 65,
+            "h": 28
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-elle-fiyat-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/portfoyum.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "degerJs": "const b = document.querySelector('[id^=\"btnPmFiyatGir-\"]') || document.querySelector('[id^=\"btnPmFiyatDuzelt-\"]'); const m = b && b.closest('details'); if (m) m.open = true; b.click()"
+        },
+        {
+          "bekleSecici": "#pmFiyatForm",
+          "sure": 10000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "kaydir": ".pm-hesap-kart:has(#pmFiyatForm)",
+      "isaretler": [
+        {
+          "secici": ".pm-hesap-kart:has(#pmFiyatForm) .pm-eylem",
+          "etiket": "\"Fiyat gir\" (elle / fiyatsız / bayat) ya da \"⋯ › Fiyatı düzelt\""
+        },
+        {
+          "secici": "#pmFiyatForm",
+          "etiket": "Tarih + birim fiyat → Kaydet"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-elle-fiyat-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 58260,
+        "olcek": 1,
+        "ozet": "7d5b2dfff52d73abf10a0abd220e6a778d30fc0682dba473aa65df225a6acdd1",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": ".pm-hesap-kart:has(#pmFiyatForm) .pm-eylem",
+            "x": 1204,
+            "y": 186,
+            "w": 163,
+            "h": 57
+          },
+          {
+            "secici": "#pmFiyatForm",
+            "x": 281,
+            "y": 341,
+            "w": 1086,
+            "h": 103
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-hedef-1400",
+      "rota": "portfoy/hesaplar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pmHesapKartlari table",
+          "sure": 30000
+        },
+        {
+          "ac": "#pmHedefKat"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#pmHedefKat",
+      "isaretler": [
+        {
+          "secici": "#selPmHedefDuzey",
+          "etiket": "Düzey: sınıf ya da tek tek varlık"
+        },
+        {
+          "secici": "#tblPmHedef",
+          "etiket": "Şu anki ağırlık ve hedef %"
+        },
+        {
+          "secici": "#btnPmHedefBuAy",
+          "etiket": "Model hedefi yalnız \"Bu ay yapılacaklar\"dan"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-hedef-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 57858,
+        "olcek": 1,
+        "ozet": "6bd884686e11c248c9199aa7324a385b84c9ef5877fa9787b9c4ca82ac3f3f59",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#selPmHedefDuzey",
+            "x": 277,
+            "y": 468,
+            "w": 179,
+            "h": 27
+          },
+          {
+            "secici": "#tblPmHedef",
+            "x": 277,
+            "y": 531,
+            "w": 1094,
+            "h": 248
+          },
+          {
+            "secici": "#btnPmHedefBuAy",
+            "x": 377,
+            "y": 808,
+            "w": 257,
+            "h": 41
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-rapor-1400",
+      "rota": "portfoy/rapor",
+      "genislik": 1400,
+      "yukseklik": 2200,
+      "once": [
+        {
+          "bekleSecici": "#tblPrStres",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblPrKorelasyon",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#prUst .pr-secici",
+          "etiket": "Ay ve hesap seçimi (varsayılan: son biten ay)"
+        },
+        {
+          "secici": "#prAySayilar",
+          "etiket": "Seçili ay: değer, para girişi, piyasa etkisi, üç getiri"
+        },
+        {
+          "secici": "#prBasSayilar",
+          "etiket": "Başlangıçtan"
+        },
+        {
+          "secici": "#prEtkileyen",
+          "etiket": "Ayın en çok kazandıran / kaybettiren varlıkları"
+        },
+        {
+          "secici": "#tblPrStres",
+          "etiket": "Kötü senaryolar: doğrudan pay ↔ geçmiş ilişkiyle (beta)"
+        },
+        {
+          "secici": "#tblPrKorelasyon",
+          "etiket": "Sınıflar arası korelasyon"
+        }
+      ],
+      "kaydir": "#prUst",
+      "uretim": {
+        "dosya": "portfoyum-rapor-1400.webp",
+        "en": 1400,
+        "boy": 2200,
+        "bayt": 141500,
+        "olcek": 1,
+        "ozet": "70a2f2819530ecddc15807efe822b774b5cf67c1d8441192c20b37d57e54d0ba",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#prUst .pr-secici",
+            "x": 903,
+            "y": 472,
+            "w": 464,
+            "h": 51
+          },
+          {
+            "secici": "#prAySayilar",
+            "x": 294,
+            "y": 607,
+            "w": 1060,
+            "h": 117
+          },
+          {
+            "secici": "#prBasSayilar",
+            "x": 294,
+            "y": 787,
+            "w": 1060,
+            "h": 99
+          },
+          {
+            "secici": "#prEtkileyen",
+            "x": 260,
+            "y": 920,
+            "w": 1128,
+            "h": 406
+          },
+          {
+            "secici": "#tblPrStres",
+            "x": 281,
+            "y": 1405,
+            "w": 1086,
+            "h": 364
+          },
+          {
+            "secici": "#tblPrKorelasyon",
+            "x": 281,
+            "y": 1973,
+            "w": 1086,
+            "h": 225
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoyum-rapor-390",
+      "rota": "portfoy/rapor",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#tblPrStres",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "kaydir": "#prUst",
+      "isaretler": [
+        {
+          "secici": "#prAySayilar",
+          "etiket": "Ayın sayıları telefonda alt alta"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoyum-rapor-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 41028,
+        "olcek": 2,
+        "ozet": "7aafc60266e1f027168259464cf92594bff28d638f38d0546195ff3499ee83bb",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#prAySayilar",
+            "x": 42,
+            "y": 597,
+            "w": 306,
+            "h": 340
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "islem-defterim-1400",
+      "rota": "portfoy/islem-defteri",
+      "genislik": 1400,
+      "yukseklik": 1900,
+      "once": [
+        {
+          "bekleSecici": "#idfKutular",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#idfGrafikKap svg",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblIdfIslem",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pnDefterKaynak",
+          "etiket": "Kaynak seçici: Kripto / FX (varsayılan) · Yatırım · Bot"
+        },
+        {
+          "secici": "#idfUst .idf-secici",
+          "etiket": "Hesap seçimi, yenile, tutarları gizle"
+        },
+        {
+          "secici": "#idfKutular",
+          "etiket": "Sayılar: net, gerçekleşen, ücret, fonlama, kazanma oranı, kâr faktörü, düşüş"
+        },
+        {
+          "secici": "#idfGrafik",
+          "etiket": "Birikimli kâr/zarar ve tepeden düşüş"
+        },
+        {
+          "secici": "#idfAylik",
+          "etiket": "Aylık kâr/zarar: çubuklar + yıl × ay tablosu"
+        }
+      ],
+      "uretim": {
+        "dosya": "islem-defterim-1400.webp",
+        "en": 1400,
+        "boy": 1900,
+        "bayt": 106688,
+        "olcek": 1,
+        "ozet": "d0789ea16d54ce0bfbccbe93d13c4c53b68e601e513894a7924c56f02a0d1c56",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnDefterKaynak",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 46
+          },
+          {
+            "secici": "#idfUst .idf-secici",
+            "x": 1033,
+            "y": 209,
+            "w": 334,
+            "h": 51
+          },
+          {
+            "secici": "#idfKutular",
+            "x": 281,
+            "y": 302,
+            "w": 1086,
+            "h": 222
+          },
+          {
+            "secici": "#idfGrafik",
+            "x": 260,
+            "y": 1037,
+            "w": 1128,
+            "h": 762
+          },
+          {
+            "secici": "#idfAylik",
+            "x": 260,
+            "y": 1800,
+            "w": 1128,
+            "h": 98
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "islem-defterim-sembol-1400",
+      "rota": "portfoy/islem-defteri",
+      "genislik": 1400,
+      "yukseklik": 1600,
+      "once": [
+        {
+          "bekleSecici": "#idfKutular",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#idfGrafikKap svg",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblIdfIslem",
+          "sure": 30000
+        },
+        {
+          "tikla": "#tblIdfSembol .idf-sembol"
+        },
+        {
+          "bekleSecici": "#idfFiyat h4",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "kaydir": "#idfSemboller",
+      "isaretler": [
+        {
+          "secici": "#tblIdfSembol",
+          "etiket": "Sembollere göre: işlem, kazanma, net, kâr faktörü, en büyük kayıp"
+        },
+        {
+          "secici": "#idfFiyat",
+          "etiket": "Sembole tıkla: fiyat grafiği + alım ▲ / satım ▼"
+        },
+        {
+          "secici": "#idfYon",
+          "etiket": "Uzun / kısa ve tutma süresi"
+        }
+      ],
+      "uretim": {
+        "dosya": "islem-defterim-sembol-1400.webp",
+        "en": 1400,
+        "boy": 1600,
+        "bayt": 120052,
+        "olcek": 1,
+        "ozet": "058e354d3dde1e96fa7c40c78be4e8e300c39e29d3e3a5f79c2e79fc99a75d8d",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tblIdfSembol",
+            "x": 281,
+            "y": 136,
+            "w": 1086,
+            "h": 482
+          },
+          {
+            "secici": "#idfFiyat",
+            "x": 281,
+            "y": 661,
+            "w": 1086,
+            "h": 354
+          },
+          {
+            "secici": "#idfYon",
+            "x": 260,
+            "y": 1036,
+            "w": 1128,
+            "h": 364
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "islem-defterim-yukle-1400",
+      "rota": "portfoy/islem-defteri",
+      "genislik": 1400,
+      "yukseklik": 1500,
+      "once": [
+        {
+          "bekleSecici": "#idfKutular",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#idfGrafikKap svg",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblIdfIslem",
+          "sure": 30000
+        },
+        {
+          "degerJs": "const g = (d) => new Date(Date.now() - d * 864e5).toISOString().slice(0, 19).replace('T', ' '); const satir = ['User ID,Order ID,Time,Trade Type,Symbol,Action,Amount,Trading Unit,Filled Price,PnL,Fee,Fee Unit', '1,5001,' + g(3) + ',Spot,SOL-USDT,Buy,5,SOL,150,0,-0.75,USDT', '1,5002,' + g(2) + ',Spot,SOL-USDT,Sell,5,SOL,156,0,-0.78,USDT', '1,5003,' + g(2) + ',Perpetual,BTC-USDT-SWAP,Open long,0.01,BTC,64000,0,-0.32,USDT']; AG.api.islemDefteri.onizle({ hesap: 'a1', dosyaAdi: 'okx-trading-history.csv', icerik: btoa(satir.join(String.fromCharCode(10))) }).then(r => { AG.pages.islemDefteri._durum.onizlemeAyarla({ govde: null, sonuc: r }); AG.pages.islemDefteri._ciz.onizlemeCiz(); })"
+        },
+        {
+          "bekleSecici": "#idfOnizlemeKutu",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "kaydir": "#idfHesaplar",
+      "isaretler": [
+        {
+          "secici": "#idfHesaplar .idf-hesaplar",
+          "etiket": "Hesaplar: MT sunucu saat farkı, OKX salt okuma anahtarı"
+        },
+        {
+          "secici": "#idfYukleForm",
+          "etiket": "Dosya yükle: hesap + dosya → Önizle"
+        },
+        {
+          "secici": "#idfOnizlemeKutu",
+          "etiket": "Önizleme: satır, çift, tarih aralığı, semboller → Kaydet"
+        },
+        {
+          "secici": "#tblIdfYukleme",
+          "etiket": "Yükleme geçmişi (Geri al)"
+        }
+      ],
+      "uretim": {
+        "dosya": "islem-defterim-yukle-1400.webp",
+        "en": 1400,
+        "boy": 1500,
+        "bayt": 124514,
+        "olcek": 1,
+        "ozet": "2bffb3c532a9f0b2b632450930ec1799781b866d26f490b023f43ab5bb2287a6",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#idfHesaplar .idf-hesaplar",
+            "x": 281,
+            "y": 136,
+            "w": 1086,
+            "h": 487
+          },
+          {
+            "secici": "#idfYukleForm",
+            "x": 281,
+            "y": 728,
+            "w": 1086,
+            "h": 51
+          },
+          {
+            "secici": "#idfOnizlemeKutu",
+            "x": 281,
+            "y": 823,
+            "w": 1086,
+            "h": 420
+          },
+          {
+            "secici": "#tblIdfYukleme",
+            "x": 281,
+            "y": 1317,
+            "w": 1086,
+            "h": 181
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "islem-defterim-390",
+      "rota": "portfoy/islem-defteri",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#idfKutular",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#idfGrafikKap svg",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblIdfIslem",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "kaydir": "#idfUst",
+      "isaretler": [
+        {
+          "secici": "#idfKutular",
+          "etiket": "Sayılar telefonda alt alta"
+        }
+      ],
+      "uretim": {
+        "dosya": "islem-defterim-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 60920,
+        "olcek": 2,
+        "ozet": "902b7ff8154ef805868c6df1f011ce05d3bcc24434763bb588e15bdc6310cff2",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#idfKutular",
+            "x": 29,
+            "y": 525,
+            "w": 332,
+            "h": 411
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kur-cevirici-1400",
+      "rota": "portfoy/pano",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-pano .p-serit",
+          "sure": 30000
+        },
+        {
+          "tikla": "#btnKurCevirici"
+        },
+        {
+          "bekleSecici": ".kur-pencere .kur-liste li",
+          "sure": 20000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#btnKurCevirici",
+          "etiket": "Kur düğmesi (her ekranda)"
+        },
+        {
+          "secici": ".kur-pencere .kur-satir",
+          "etiket": "Miktar ve birimler"
+        },
+        {
+          "secici": ".kur-pencere .kur-liste",
+          "etiket": "Son kurlar: kaynak ve saat"
+        }
+      ],
+      "uretim": {
+        "dosya": "kur-cevirici-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 44814,
+        "olcek": 1,
+        "ozet": "3d2e784fe3d64e0f8eecf9306c2281a0d43084cfa140f09eae33c11f2eec0a53",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btnKurCevirici",
+            "x": 1199,
+            "y": 15,
+            "w": 65,
+            "h": 40
+          },
+          {
+            "secici": ".kur-pencere .kur-satir",
+            "x": 437,
+            "y": 256,
+            "w": 526,
+            "h": 23
+          },
+          {
+            "secici": ".kur-pencere .kur-liste",
+            "x": 437,
+            "y": 319,
+            "w": 526,
+            "h": 268
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "buay-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-kart",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#hisseKart-qqq .mp-buay",
+      "isaretler": [
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-kart-ust",
+          "etiket": "Bu ay: durum ve yapılacak iş"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .table-container",
+          "etiket": "Emir tablosu: hesap, sembol, yön, adet, tahmini fiyat, tutar"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-primary",
+          "etiket": "Uyguladım: Portföyüm'e tek onayla kayıt"
+        }
+      ],
+      "uretim": {
+        "dosya": "buay-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 91224,
+        "olcek": 1,
+        "ozet": "af987ced21c7dae9a7b517756080a3dcfcc90cde6b1d21964c417cb244ec4d1c",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-kart-ust",
+            "x": 298,
+            "y": 98,
+            "w": 1052,
+            "h": 28
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .table-container",
+            "x": 298,
+            "y": 288,
+            "w": 1052,
+            "h": 371
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-primary",
+            "x": 298,
+            "y": 731,
+            "w": 93,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "buay-emir-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-kart",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#hisseKart-qqq .mp-buay",
+      "isaretler": [
+        {
+          "secici": "#hisseKart-qqq .mp-buay .table-container",
+          "etiket": "Emir tablosu"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-ayrinti > summary",
+          "etiket": "Ayrıntı: kararın künyesi ve notlar (katlı)"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-secondary",
+          "etiket": "Bu ay atla (neden yazılır)"
+        }
+      ],
+      "uretim": {
+        "dosya": "buay-emir-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 90934,
+        "olcek": 1,
+        "ozet": "32dd93c860d7d6c1ac96f37e11fbae39d056f27290d2e391117a3a52598cf88e",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#hisseKart-qqq .mp-buay .table-container",
+            "x": 298,
+            "y": 288,
+            "w": 1052,
+            "h": 371
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-ayrinti > summary",
+            "x": 298,
+            "y": 693,
+            "w": 1052,
+            "h": 28
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-secondary",
+            "x": 391,
+            "y": 731,
+            "w": 89,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "buay-uygula-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-primary",
+          "sure": 30000
+        },
+        {
+          "tikla": "#hisseKart-qqq .mp-buay .ts-emir-kart > .pf-dugmeler .btn-primary",
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-form"
+        },
+        {
+          "tikla": "#hisseKart-qqq .mp-buay .ts-form .pf-dugmeler .btn-secondary",
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-form .ts-onizleme",
+          "sure": 20000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "kaydir": "#hisseKart-qqq .mp-buay .ts-form",
+      "isaretler": [
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-form .table-container",
+          "etiket": "Satırlar önceden dolu: işaret, adet, gerçekleşen fiyat, ücret düzenlenir"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-form .pf-form-izgara",
+          "etiket": "İşlem tarihi"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-form .ts-onizleme",
+          "etiket": "Önizleme: Portföyüm denetiminden geçti, henüz yazılmadı"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay .ts-form .pf-dugmeler .ts-onay-dugme",
+          "etiket": "Onayla: tek seferde Portföyüm'e yaz"
+        }
+      ],
+      "uretim": {
+        "dosya": "buay-uygula-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 73506,
+        "olcek": 1,
+        "ozet": "88ad00e4dcb543108082f86cd89a16cfc84b79a2b95090c1c767813ed60baf3d",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-form .table-container",
+            "x": 311,
+            "y": 161,
+            "w": 1026,
+            "h": 398
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-form .pf-form-izgara",
+            "x": 311,
+            "y": 559,
+            "w": 1026,
+            "h": 51
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-form .ts-onizleme",
+            "x": 311,
+            "y": 642,
+            "w": 1026,
+            "h": 256
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay .ts-form .pf-dugmeler .ts-onay-dugme",
+            "x": 372,
+            "y": 610,
+            "w": 211,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "buay-sermaye-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#btnTsSermaye",
+          "sure": 30000
+        },
+        {
+          "tikla": "#tsAyarlar > summary"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#tsSermayeKap",
+      "isaretler": [
+        {
+          "secici": "#tsSermayeKap .pf-form-izgara",
+          "etiket": "Model sermayesi: gerçek tutar (yalnız bu bilgisayarda)"
+        },
+        {
+          "secici": "#chkTsKesirli",
+          "etiket": "Kesirli hisse ayarı (varsayılan kapalı)"
+        },
+        {
+          "secici": "#btnTsSermaye",
+          "etiket": "Kaydet (yalnız bu bilgisayarda)"
+        }
+      ],
+      "uretim": {
+        "dosya": "buay-sermaye-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 77812,
+        "olcek": 1,
+        "ozet": "fc87f96bfa17685b03b1411d0947ae983b17ee8a376b0bacb0e626b732f29ab4",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tsSermayeKap .pf-form-izgara",
+            "x": 281,
+            "y": 518,
+            "w": 1086,
+            "h": 59
+          },
+          {
+            "secici": "#chkTsKesirli",
+            "x": 281,
+            "y": 588,
+            "w": 21,
+            "h": 11
+          },
+          {
+            "secici": "#btnTsSermaye",
+            "x": 281,
+            "y": 629,
+            "w": 120,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tasarimci-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "once": [
+        {
+          "tikla": "#pfAlt-tasarimci"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekleSecici": "#tblTsKollar",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfLabBaslik",
+          "etiket": "Portföy laboratuvarı (araştırma aracı)"
+        },
+        {
+          "secici": "#pfLabIleri",
+          "etiket": "İleri araştırma katı: Strateji karışımı · Varyasyon"
+        },
+        {
+          "secici": "#tsKurucu .pf-dugmeler",
+          "etiket": "Karışım kurucusu"
+        }
+      ],
+      "uretim": {
+        "dosya": "tasarimci-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 77416,
+        "olcek": 1,
+        "ozet": "c3b2029543665ce11d6412e945d874c658c518a5da064a0760ae4bd0d3a50f6e",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfLabBaslik",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 25
+          },
+          {
+            "secici": "#pfLabIleri",
+            "x": 260,
+            "y": 199,
+            "w": 1128,
+            "h": 47
+          },
+          {
+            "secici": "#tsKurucu .pf-dugmeler",
+            "x": 281,
+            "y": 458,
+            "w": 612,
+            "h": 54
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tasarimci-kurucu-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "kaydir": "#tsKurucu",
+      "once": [
+        {
+          "tikla": "#pfAlt-tasarimci"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekleSecici": "#tblTsKollar",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#tsKurucu .pf-dugmeler",
+          "etiket": "Şablonlar: kabul edilmiş birleşimler"
+        },
+        {
+          "secici": "#tblTsKollar",
+          "etiket": "Kollar ve ağırlıklar"
+        },
+        {
+          "secici": "#tsEtiket",
+          "etiket": "Etiket: kabul edilmiş şablon / ölçülmemiş birleşim"
+        },
+        {
+          "secici": "#btnTsRisk",
+          "etiket": "Riski dene (yalnız bu bilgisayarda)"
+        },
+        {
+          "secici": "#tsHalka",
+          "etiket": "Hedef dağılım halkası (kol / varlık)"
+        }
+      ],
+      "uretim": {
+        "dosya": "tasarimci-kurucu-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 75002,
+        "olcek": 1,
+        "ozet": "e58d71fcc93ba74e7ed94576ae80ff541abfd34a3f8b30edd6608a9fabfbbf53",
+        "genel": "9bfe5744dc2669860dc8067711b0a38d176606d41ea649f085cbc0a5001ea895",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tsKurucu .pf-dugmeler",
+            "x": 281,
+            "y": 202,
+            "w": 612,
+            "h": 54
+          },
+          {
+            "secici": "#tblTsKollar",
+            "x": 281,
+            "y": 259,
+            "w": 612,
+            "h": 111
+          },
+          {
+            "secici": "#tsEtiket",
+            "x": 281,
+            "y": 430,
+            "w": 612,
+            "h": 33
+          },
+          {
+            "secici": "#btnTsRisk",
+            "x": 281,
+            "y": 463,
+            "w": 82,
+            "h": 32
+          },
+          {
+            "secici": "#tsHalka",
+            "x": 918,
+            "y": 90,
+            "w": 470,
+            "h": 375
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tasarimci-risk-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "kaydir": "#tsRisk",
+      "once": [
+        {
+          "tikla": "#pfAlt-tasarimci"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekleSecici": "#btnTsRisk",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        },
+        {
+          "tikla": "#btnTsRisk"
+        },
+        {
+          "bekleSecici": "#tsRiskGrafik svg",
+          "sure": 180000
+        },
+        {
+          "bekle": 1200
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#tsRiskDonem",
+          "etiket": "Dönem etiketi: ortak dönem, ölçülmüş künye değil"
+        },
+        {
+          "secici": "#tsRisk .ts-sayilar",
+          "etiket": "CAGR, en büyük düşüş, Sharpe, oynaklık, en kötü yıl"
+        },
+        {
+          "secici": "#tsRiskGrafik",
+          "etiket": "Birleşik eğri, kıyaslar, kriz dönemleri, düşüş şeridi"
+        }
+      ],
+      "uretim": {
+        "dosya": "tasarimci-risk-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 77632,
+        "olcek": 1,
+        "ozet": "eb79d287cf36d199bd50838bea47cf48de29f76a3714032f17ac45fd986eedf9",
+        "genel": "9bfe5744dc2669860dc8067711b0a38d176606d41ea649f085cbc0a5001ea895",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tsRiskDonem",
+            "x": 281,
+            "y": 185,
+            "w": 1086,
+            "h": 49
+          },
+          {
+            "secici": "#tsRisk .ts-sayilar",
+            "x": 281,
+            "y": 248,
+            "w": 1086,
+            "h": 70
+          },
+          {
+            "secici": "#tsRiskGrafik",
+            "x": 281,
+            "y": 325,
+            "w": 1086,
+            "h": 392
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tasarimci-katalog-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "kaydir": "#tsKatalog",
+      "once": [
+        {
+          "tikla": "#pfAlt-tasarimci"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekleSecici": "#tsKatalog .ts-kart",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#tsSuzgec-model",
+          "etiket": "Süzgeç: modeller, katalog, kıyaslar, RED, tümü"
+        },
+        {
+          "secici": "#tsKatalog .ts-kart",
+          "etiket": "Strateji kartı: künye, kabul, rozet, kırılganlık"
+        }
+      ],
+      "uretim": {
+        "dosya": "tasarimci-katalog-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 118960,
+        "olcek": 1,
+        "ozet": "fafb59def192c7b6b0f9330021206de859857b9a47e1cdc80b860ee336fe53e5",
+        "genel": "9bfe5744dc2669860dc8067711b0a38d176606d41ea649f085cbc0a5001ea895",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tsSuzgec-model",
+            "x": 281,
+            "y": 431,
+            "w": 164,
+            "h": 46
+          },
+          {
+            "secici": "#tsKatalog .ts-kart",
+            "x": 281,
+            "y": 491,
+            "w": 359,
+            "h": 407
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "model-portfoy-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "yukseklik": 1900,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .bot-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#hisseGrafik-qqq svg",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#hisseKart-qqq .mp-buay .ts-kart",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfModelSecici",
+          "etiket": "Model seçici: Nasdaq M10 · BIST M10 · %50 QQQ + %50 Hücum"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-bas",
+          "etiket": "Model ve kuralı"
+        },
+        {
+          "secici": "#hisseKart-qqq .bot-sayilar",
+          "etiket": "Botun sanal hesabı: getiri, kıyas, düşüş, değer, nakit"
+        },
+        {
+          "secici": "#hisseKart-qqq .mp-buay",
+          "etiket": "Bu ay: kendi hesabında yapılacak emirler + Uyguladım"
+        },
+        {
+          "secici": "#hisseGrafik-qqq",
+          "etiket": "Grafik: canlı ↔ geçmiş (backtest)"
+        },
+        {
+          "secici": "#hisseKz-qqq",
+          "etiket": "Hisse bazında kâr / zarar"
+        }
+      ],
+      "uretim": {
+        "dosya": "model-portfoy-1400.webp",
+        "en": 1400,
+        "boy": 1900,
+        "bayt": 142080,
+        "olcek": 1,
+        "ozet": "d97bd0aa434bdd3d979a003cb0802913e497f0549ed74b6c2a2eeb731f2e3569",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfModelSecici",
+            "x": 260,
+            "y": 138,
+            "w": 464,
+            "h": 46
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-bas",
+            "x": 281,
+            "y": 205,
+            "w": 1086,
+            "h": 93
+          },
+          {
+            "secici": "#hisseKart-qqq .bot-sayilar",
+            "x": 281,
+            "y": 340,
+            "w": 1086,
+            "h": 83
+          },
+          {
+            "secici": "#hisseKart-qqq .mp-buay",
+            "x": 281,
+            "y": 430,
+            "w": 1086,
+            "h": 767
+          },
+          {
+            "secici": "#hisseGrafik-qqq",
+            "x": 294,
+            "y": 1259,
+            "w": 638,
+            "h": 361
+          },
+          {
+            "secici": "#hisseKz-qqq",
+            "x": 962,
+            "y": 1250,
+            "w": 392,
+            "h": 246
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "model-havuz-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .bot-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblHisseHavuz-qqq",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#tblHissePoz-qqq",
+      "isaretler": [
+        {
+          "secici": "#tblHissePoz-qqq",
+          "etiket": "Botun elindekiler"
+        },
+        {
+          "secici": "#hisseHavuzOzet-qqq",
+          "etiket": "Sıradaki kararda çıkacak ve girecek (bugünkü veriyle)"
+        },
+        {
+          "secici": "#tblHisseHavuz-qqq",
+          "etiket": "Aday havuzu: sıra, son 12 ay, durum"
+        }
+      ],
+      "uretim": {
+        "dosya": "model-havuz-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 94624,
+        "olcek": 1,
+        "ozet": "4c2c224df19c979d51e9cce276adcf173619ac4108537a16ad5dd5b32447c1b8",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tblHissePoz-qqq",
+            "x": 294,
+            "y": 84,
+            "w": 638,
+            "h": 371
+          },
+          {
+            "secici": "#hisseHavuzOzet-qqq",
+            "x": 962,
+            "y": 84,
+            "w": 392,
+            "h": 48
+          },
+          {
+            "secici": "#tblHisseHavuz-qqq",
+            "x": 962,
+            "y": 133,
+            "w": 392,
+            "h": 547
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "model-izleme-1400",
+      "rota": "portfoy/nasdaq",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-qqq .bot-sayilar",
+          "sure": 30000
+        },
+        {
+          "ac": "#pfModelIzlemeKat"
+        },
+        {
+          "bekleSecici": "#tblMpOzet",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "kaydir": "#pfModelIzlemeKat",
+      "isaretler": [
+        {
+          "secici": "#pfModelIzlemeKat > summary",
+          "etiket": "Ayrıntılı izleme (katlı, her model sekmesinin altında)"
+        },
+        {
+          "secici": "#tblMpOzet",
+          "etiket": "Üç model yan yana: endeks, getiri, düşüş, kıyaslar"
+        }
+      ],
+      "uretim": {
+        "dosya": "model-izleme-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 66572,
+        "olcek": 1,
+        "ozet": "2bb10b00fe630819ac5db94d7c52c9817b83457fbc50ae1608660d405fc9e905",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfModelIzlemeKat > summary",
+            "x": 261,
+            "y": 89,
+            "w": 1126,
+            "h": 48
+          },
+          {
+            "secici": "#tblMpOzet",
+            "x": 298,
+            "y": 252,
+            "w": 1100,
+            "h": 128
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "model-bist-1400",
+      "rota": "portfoy/bist",
+      "genislik": 1400,
+      "yukseklik": 1500,
+      "once": [
+        {
+          "bekleSecici": "#hisseKart-bist .bot-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#tblHisseHavuz-bist",
+          "sure": 30000
+        },
+        {
+          "bekle": 1200
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfModelSecici",
+          "etiket": "Model seçici (BIST Momentum 10 seçili)"
+        },
+        {
+          "secici": "#hisseKart-bist .mp-bas",
+          "etiket": "Kural: en çok işlem gören 30 BIST hissesinden en güçlü 10"
+        },
+        {
+          "secici": "#hisseKart-bist .bot-sayilar",
+          "etiket": "Başlangıçtan getiri, BIST 30 kıyası, düşüş, değer, nakit"
+        }
+      ],
+      "uretim": {
+        "dosya": "model-bist-1400.webp",
+        "en": 1400,
+        "boy": 1500,
+        "bayt": 107800,
+        "olcek": 1,
+        "ozet": "3df538ea4bc0633d80cb7dc3d00ef229c7e30eaaff3174a5389cebdcb303449e",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfModelSecici",
+            "x": 260,
+            "y": 138,
+            "w": 464,
+            "h": 46
+          },
+          {
+            "secici": "#hisseKart-bist .mp-bas",
+            "x": 281,
+            "y": 205,
+            "w": 1086,
+            "h": 93
+          },
+          {
+            "secici": "#hisseKart-bist .bot-sayilar",
+            "x": 281,
+            "y": 389,
+            "w": 1086,
+            "h": 98
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "pano-1400",
+      "rota": "portfoy",
+      "genislik": 1400,
+      "yukseklik": 1250,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-pano .p-serit",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#pfYeni-pano .pn-radar",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "maske": [
+        "#pfYeni-pano .pn-bot-satiri .p-sayi"
+      ],
+      "isaretler": [
+        {
+          "secici": "#ustGorunum",
+          "etiket": "Görünüm: portföy (Ben / Anıl / … / Tümü) ve para ($ / ₺ / Gizli) — bütün Portföy sayfalarında"
+        },
+        {
+          "secici": "#pfYeni-pano .p-serit",
+          "etiket": "Gösterge şeridi: toplam değer (kapsamıyla), bu yıl, başlangıçtan, en derin düşüş, Sharpe, oynaklık"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-radar",
+          "etiket": "Portföy sağlığı: altı eksen, 0–100"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-halka-duzen",
+          "etiket": "Dağılım: Sınıf / Hesap / Para — altında dilimler ve içindeki varlıklar (portföy payıyla)"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-uclu > .p-kart:nth-child(3)",
+          "etiket": "Yapman gerekenler (bu portföy) → Hedefim"
+        }
+      ],
+      "uretim": {
+        "dosya": "pano-1400.webp",
+        "en": 1400,
+        "boy": 1250,
+        "bayt": 86030,
+        "olcek": 1,
+        "ozet": "d1fdfb41437603c252baf16852bc3a22e9018cbbdce588d1d2bc544b46fe6bba",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ustGorunum",
+            "x": 949,
+            "y": 12,
+            "w": 250,
+            "h": 46
+          },
+          {
+            "secici": "#pfYeni-pano .p-serit",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 212
+          },
+          {
+            "secici": "#pfYeni-pano .pn-radar",
+            "x": 279,
+            "y": 406,
+            "w": 335,
+            "h": 213
+          },
+          {
+            "secici": "#pfYeni-pano .pn-halka-duzen",
+            "x": 656,
+            "y": 421,
+            "w": 335,
+            "h": 458
+          },
+          {
+            "secici": "#pfYeni-pano .pn-uclu > .p-kart:nth-child(3)",
+            "x": 1015,
+            "y": 354,
+            "w": 373,
+            "h": 568
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "pano-grafik-1400",
+      "rota": "portfoy/pano",
+      "genislik": 1400,
+      "yukseklik": 1250,
+      "kaydir": "#pfYeni-pano .pn-genis",
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-pano .pn-genis",
+          "sure": 30000
+        },
+        {
+          "tikla": "#pfYeni-pano .pn-cipler .p-cip:nth-child(5)"
+        },
+        {
+          "bekle": 1500
+        },
+        {
+          "tikla": "#pfYeni-pano .pn-cipler .p-cip:nth-child(4)"
+        },
+        {
+          "bekle": 2000
+        }
+      ],
+      "maske": [
+        "#pfYeni-pano .pn-bot-satiri .p-sayi"
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfYeni-pano .pn-cipler",
+          "etiket": "Kıyas çipleri: QQQ, BTC, TÜFE, BIST 30, TL mevduat, Dolar"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-grafik",
+          "etiket": "Getiri (100 tabanlı); çizgi ucunda son değer (×kat ya da %)"
+        },
+        {
+          "secici": "#pnKiyasAciklama",
+          "etiket": "Her kıyasın ne ölçtüğü"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-isi",
+          "etiket": "Aylık getiri (%): hücrede yüzde, Yıl sütunu"
+        },
+        {
+          "secici": "#pfYeni-pano .pn-dusus",
+          "etiket": "Düşüş (tepeden) ve toparlanma"
+        }
+      ],
+      "uretim": {
+        "dosya": "pano-grafik-1400.webp",
+        "en": 1400,
+        "boy": 1250,
+        "bayt": 106226,
+        "olcek": 1,
+        "ozet": "08c00ed799fce22937215f112ca25ae93df4db77e1d19bf053975a9dfbc9cf5f",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfYeni-pano .pn-cipler",
+            "x": 279,
+            "y": 660,
+            "w": 1090,
+            "h": 36
+          },
+          {
+            "secici": "#pfYeni-pano .pn-grafik",
+            "x": 279,
+            "y": 696,
+            "w": 1090,
+            "h": 228
+          },
+          {
+            "secici": "#pnKiyasAciklama",
+            "x": 279,
+            "y": 950,
+            "w": 1090,
+            "h": 124
+          },
+          {
+            "secici": "#pfYeni-pano .pn-isi",
+            "x": 279,
+            "y": 1147,
+            "w": 709,
+            "h": 52
+          },
+          {
+            "secici": "#pfYeni-pano .pn-dusus",
+            "x": 1030,
+            "y": 1147,
+            "w": 339,
+            "h": 101
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "pano-390",
+      "rota": "portfoy",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-pano .p-serit",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "maske": [
+        "#pfYeni-pano .pn-bot-satiri .p-sayi"
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfYeni-pano .p-serit",
+          "etiket": "Göstergeler telefonda alt alta"
+        }
+      ],
+      "uretim": {
+        "dosya": "pano-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 59540,
+        "olcek": 2,
+        "ozet": "cca5625156b5de3c8843014b52193e3fcf586f48270740fc96113dad8a83dfdd",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfYeni-pano .p-serit",
+            "x": 8,
+            "y": 194,
+            "w": 374,
+            "h": 617
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "pano-isi-390",
+      "rota": "portfoy/pano",
+      "genislik": 390,
+      "dosyalar": [
+        "js/pages/pano.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#pnIsi",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "kaydir": "#pfYeni-pano .pn-ikili",
+      "isaretler": [
+        {
+          "secici": "#pnIsi",
+          "etiket": "Aylık getiri: hücrede yüzde; telefonda yana kaydırılır"
+        }
+      ],
+      "uretim": {
+        "dosya": "pano-isi-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 79378,
+        "olcek": 2,
+        "ozet": "87de40b624d061d66b02c5274faada249bfcbd76b3ca737b30f3eb755bd41c42",
+        "genel": "a21da0ed75d86da50de6351f58c74302a458060c1976c4029d0d5143b170c84d",
+        "surum": "67.4",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnIsi",
+            "x": 27,
+            "y": 587,
+            "w": 336,
+            "h": 57
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "varliklar-1400",
+      "rota": "portfoy/varliklar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-varliklar .p-tablo-kap",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfYeni-varliklar .p-secici",
+          "etiket": "Süzgeç: Açık / Kapanmış / Hepsi"
+        },
+        {
+          "secici": "#pfYeni-varliklar .p-tablo-kap",
+          "etiket": "Elde olanlar: adet, ortalama maliyet, fiyat, değer, K/Z, gerçekleşen, pay"
+        }
+      ],
+      "uretim": {
+        "dosya": "varliklar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 68376,
+        "olcek": 1,
+        "ozet": "9b729fb0a06452e91010b220cc1af3322b31e991cb88bd09571551b7ba4a135d",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfYeni-varliklar .p-secici",
+            "x": 1165,
+            "y": 155,
+            "w": 204,
+            "h": 46
+          },
+          {
+            "secici": "#pfYeni-varliklar .p-tablo-kap",
+            "x": 279,
+            "y": 205,
+            "w": 1090,
+            "h": 360
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "hedefim-1400",
+      "rota": "portfoy/hedefim",
+      "genislik": 1400,
+      "yukseklik": 1200,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-hedefim .pn-secenekler",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfYeni-hedefim .p-kart-vurgu",
+          "etiket": "Hedef ne demek? ve bu portföyün kayıtlı hedefi"
+        },
+        {
+          "secici": "#pfYeni-hedefim .pn-secenekler",
+          "etiket": "1 · Hedefini seç: modelden hazır ya da kendin gir"
+        }
+      ],
+      "uretim": {
+        "dosya": "hedefim-1400.webp",
+        "en": 1400,
+        "boy": 1200,
+        "bayt": 90408,
+        "olcek": 1,
+        "ozet": "aec7a6b7abb3020c4d3cf1ca96376ee52eb54867db53d1e0d434a921351d1041",
+        "genel": "8254771948978c3e70a4f7002cc6ccb258ed2d088e1c8452d4043c243db8ca5d",
+        "surum": "67.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfYeni-hedefim .p-kart-vurgu",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 147
+          },
+          {
+            "secici": "#pfYeni-hedefim .pn-secenekler",
+            "x": 279,
+            "y": 516,
+            "w": 1090,
+            "h": 74
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "para-ekle-1400",
+      "rota": "portfoy/hedefim",
+      "genislik": 1400,
+      "yukseklik": 2500,
+      "dosyalar": [
+        "js/pages/paraEkle.js",
+        "js/pages/pano.js",
+        "js/pages/portfoy.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#btnPnParaEkle",
+          "sure": 30000
+        },
+        {
+          "tikla": "#btnPnParaEkle"
+        },
+        {
+          "bekleSecici": "#pePara",
+          "sure": 20000
+        },
+        {
+          "degerJs": "const i = document.getElementById('pePara'); i.value = '60000'; i.dispatchEvent(new Event('change'))"
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "degerJs": "const tr = [...document.querySelectorAll('#pfYeni-hedefim .p-tablo tr')].find(x => /^GLD/.test((x.cells[0] || {}).textContent || '')); tr.querySelector('.p-secici button').click()"
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "degerJs": "const tr = [...document.querySelectorAll('#pfYeni-hedefim .p-tablo tr')].find(x => /^GLD/.test((x.cells[0] || {}).textContent || '')); const i = tr.querySelector('.pe-girdi'); i.value = '60'; i.dispatchEvent(new Event('change'))"
+        },
+        {
+          "bekleSecici": "#peSatKutu",
+          "sure": 20000
+        },
+        {
+          "bekleSecici": "#peBotKart table",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pePara",
+          "etiket": "1 · Eklenecek para: ₺ ya da $ (yalnız dağılım değişecekse 0)"
+        },
+        {
+          "secici": "#pfYeni-hedefim .pe-satir-sat",
+          "etiket": "Satış satırı turuncu: satıştan sonra elinde kaç adet kalmalı"
+        },
+        {
+          "secici": "#pePlanDurum",
+          "etiket": "Durum: satış gerekiyorsa turuncu ve hisse adları"
+        },
+        {
+          "secici": "#peSatKutu",
+          "etiket": "Önce sat: kaç adet sat → satıştan sonra elinde kaç adet kalmalı"
+        },
+        {
+          "secici": "#btnPeKaydet",
+          "etiket": "Aldım, işlemleri kaydet (Vazgeç hiçbir şey yazmaz)"
+        },
+        {
+          "secici": "#peBotKart",
+          "etiket": "Portföy botları ne tutuyor (en altta; öneri değil)"
+        },
+        {
+          "secici": "#btnPeGecmis",
+          "etiket": "Bu dağılımı geçmişte dene: laboratuvarda simüle eder"
+        }
+      ],
+      "uretim": {
+        "dosya": "para-ekle-1400.webp",
+        "en": 1400,
+        "boy": 2500,
+        "bayt": 138304,
+        "olcek": 1,
+        "ozet": "ade3095f7d7dacc040550b650c0898ead05f2039fe1d15f38f9310a21bf855da",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pePara",
+            "x": 279,
+            "y": 377,
+            "w": 200,
+            "h": 41
+          },
+          {
+            "secici": "#pfYeni-hedefim .pe-satir-sat",
+            "x": 279,
+            "y": 635,
+            "w": 1090,
+            "h": 67
+          },
+          {
+            "secici": "#pePlanDurum",
+            "x": 1109,
+            "y": 862,
+            "w": 279,
+            "h": 130
+          },
+          {
+            "secici": "#peSatKutu",
+            "x": 279,
+            "y": 1211,
+            "w": 1090,
+            "h": 252
+          },
+          {
+            "secici": "#btnPeKaydet",
+            "x": 279,
+            "y": 1721,
+            "w": 188,
+            "h": 44
+          },
+          {
+            "secici": "#peBotKart",
+            "x": 260,
+            "y": 1798,
+            "w": 1128,
+            "h": 700
+          },
+          {
+            "secici": "#btnPeGecmis",
+            "x": 697,
+            "y": 1721,
+            "w": 209,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "para-ekle-390",
+      "rota": "portfoy/hedefim",
+      "genislik": 390,
+      "dosyalar": [
+        "js/pages/paraEkle.js",
+        "js/pages/pano.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#btnPnParaEkle",
+          "sure": 30000
+        },
+        {
+          "tikla": "#btnPnParaEkle"
+        },
+        {
+          "bekleSecici": "#pePara",
+          "sure": 20000
+        },
+        {
+          "degerJs": "const i = document.getElementById('pePara'); i.value = '60000'; i.dispatchEvent(new Event('change'))"
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "degerJs": "const tr = [...document.querySelectorAll('#pfYeni-hedefim .p-tablo tr')].find(x => /^GLD/.test((x.cells[0] || {}).textContent || '')); tr.querySelector('.p-secici button').click()"
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "degerJs": "const tr = [...document.querySelectorAll('#pfYeni-hedefim .p-tablo tr')].find(x => /^GLD/.test((x.cells[0] || {}).textContent || '')); const i = tr.querySelector('.pe-girdi'); i.value = '60'; i.dispatchEvent(new Event('change'))"
+        },
+        {
+          "bekleSecici": "#peSatKutu",
+          "sure": 20000
+        },
+        {
+          "bekleSecici": "#peBotKart table",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "kaydir": "#peSatKutu",
+      "isaretler": [
+        {
+          "secici": "#peSatKutu",
+          "etiket": "Telefonda: önce sat, elde kalacak adet"
+        }
+      ],
+      "uretim": {
+        "dosya": "para-ekle-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 75516,
+        "olcek": 2,
+        "ozet": "12d52cceea4cb79d52bd2bdeb7b05cc30759847f9574f17fff58f692ec1136eb",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#peSatKutu",
+            "x": 27,
+            "y": 236,
+            "w": 336,
+            "h": 503
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "takvim-1400",
+      "rota": "portfoy/takvim",
+      "genislik": 1400,
+      "yukseklik": 1200,
+      "once": [
+        {
+          "bekleSecici": "#pfYeni-takvim .pn-takvim",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfYeni-takvim .pn-ay-gezin",
+          "etiket": "Ayın toplamı ve ay değiştir (‹ ›)"
+        },
+        {
+          "secici": "#pfYeni-takvim .pn-takvim",
+          "etiket": "Günlük K/Z takvimi (para giriş/çıkışı ayıklanmış)"
+        }
+      ],
+      "uretim": {
+        "dosya": "takvim-1400.webp",
+        "en": 1400,
+        "boy": 1200,
+        "bayt": 70414,
+        "olcek": 1,
+        "ozet": "2245cfff56f252a4845deb0734113abc7d7117aaca54f37d8ed7fd1e055615d6",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfYeni-takvim .pn-ay-gezin",
+            "x": 1213,
+            "y": 155,
+            "w": 156,
+            "h": 36
+          },
+          {
+            "secici": "#pfYeni-takvim .pn-takvim",
+            "x": 279,
+            "y": 195,
+            "w": 1090,
+            "h": 335
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "rapor-olcut-1400",
+      "rota": "portfoy/rapor",
+      "genislik": 1400,
+      "yukseklik": 1100,
+      "once": [
+        {
+          "bekleSecici": "#pnOlcutKart table",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pnOlcutKart",
+          "etiket": "Risk ve getiri ölçütleri: portföy · QQQ · BTC aynı dönemde"
+        }
+      ],
+      "uretim": {
+        "dosya": "rapor-olcut-1400.webp",
+        "en": 1400,
+        "boy": 1100,
+        "bayt": 78782,
+        "olcek": 1,
+        "ozet": "e9bc276d9eb83d331c06b7ceedb8a7c538554b9957921b674541bb54e1983705",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pnOlcutKart",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 838
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tasarimci-390",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 390,
+      "once": [
+        {
+          "tikla": "#pfAlt-tasarimci"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekleSecici": "#tblTsKollar",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfLabBaslik",
+          "etiket": "Portföy laboratuvarı (telefonda)"
+        }
+      ],
+      "uretim": {
+        "dosya": "tasarimci-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 87706,
+        "olcek": 2,
+        "ozet": "b71a17cbd69703a114c8daa26e6c136735739eafbebaef6840c3f80a676a8066",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfLabBaslik",
+            "x": 8,
+            "y": 221,
+            "w": 374,
+            "h": 52
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "portfoy-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "once": [
+        {
+          "tikla": "#pfAlt-kurucu"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfLabBaslik",
+          "etiket": "Laboratuvar: Araştırma › Portföy laboratuvarı ile açılır"
+        },
+        {
+          "secici": "#pfAlt-kurucu",
+          "etiket": "Kurucu: varlık seç, ağırlık ver"
+        },
+        {
+          "secici": "#pfAlt-sonuc",
+          "etiket": "Sonuç: simülasyon çıktısı"
+        },
+        {
+          "secici": "#pfLabIleriDugme",
+          "etiket": "İleri araştırma: Strateji karışımı · Varyasyon (katlı)"
+        },
+        {
+          "secici": "#pfKatArama",
+          "etiket": "Varlık kataloğunda ara"
+        }
+      ],
+      "uretim": {
+        "dosya": "portfoy-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 83970,
+        "olcek": 1,
+        "ozet": "3a285fd1a8a8913b632c8f127f36d6a6f556e20f604574873d6beafef9cc6e06",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfLabBaslik",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 25
+          },
+          {
+            "secici": "#pfAlt-kurucu",
+            "x": 268,
+            "y": 164,
+            "w": 79,
+            "h": 38
+          },
+          {
+            "secici": "#pfAlt-sonuc",
+            "x": 343,
+            "y": 164,
+            "w": 72,
+            "h": 38
+          },
+          {
+            "secici": "#pfLabIleriDugme",
+            "x": 506,
+            "y": 164,
+            "w": 141,
+            "h": 38
+          },
+          {
+            "secici": "#pfKatArama",
+            "x": 281,
+            "y": 320,
+            "w": 211,
+            "h": 25
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "laboratuvar-ileri-1400",
+      "rota": "arastirma/laboratuvar",
+      "genislik": 1400,
+      "once": [
+        {
+          "tikla": "#pfAlt-kurucu"
+        },
+        {
+          "bekle": 300
+        },
+        {
+          "tikla": "#pfLabIleriDugme"
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#pfLabSekmeler",
+          "etiket": "Ana sekmeler: Kurucu · Sonuç · Karşılaştır"
+        },
+        {
+          "secici": "#pfLabIleri",
+          "etiket": "İleri araştırma: Strateji karışımı · Varyasyon"
+        },
+        {
+          "secici": "#pfSerbestKap",
+          "etiket": "Katalogda yoksa: Yahoo'da bul, geçmişi indir, ekle"
+        }
+      ],
+      "uretim": {
+        "dosya": "laboratuvar-ileri-1400.webp",
+        "en": 1400,
+        "boy": 1500,
+        "bayt": 131682,
+        "olcek": 1,
+        "ozet": "1f7a28ec0a403449eda0abfc9444ce3484947a1ace483207f424d712363bd9de",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pfLabSekmeler",
+            "x": 260,
+            "y": 164,
+            "w": 1128,
+            "h": 39
+          },
+          {
+            "secici": "#pfLabIleri",
+            "x": 260,
+            "y": 199,
+            "w": 1128,
+            "h": 47
+          },
+          {
+            "secici": "#pfSerbestKap",
+            "x": 281,
+            "y": 1097,
+            "w": 426,
+            "h": 22
+          }
+        ]
+      },
+      "yukseklik": 1500
+    },
+    {
+      "kimlik": "botlar-1400",
+      "rota": "botlar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#botKart-hucum .bot-bas",
+          "sure": 30000
+        },
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"botlar/hucum\"]",
+          "etiket": "Bot yan menüden seçilir: Hücum · Denge"
+        },
+        {
+          "secici": "#botGorunumler",
+          "etiket": "Görünümler: Genel · Hesap · İşlemler · Yönetim"
+        },
+        {
+          "secici": "#botKart-hucum .bot-bas-metin",
+          "etiket": "Durum, hesap türü, kural ve son karar"
+        },
+        {
+          "secici": "#botKart-hucum .bot-bas-dugme",
+          "etiket": "Durdur / Başlat ve Acil fren"
+        },
+        {
+          "secici": "#botSayilar-hucum",
+          "etiket": "Hesap değeri, başlangıçtan, BTC al-tut, düşüş"
+        },
+        {
+          "secici": "#botGrafikKip-hucum",
+          "etiket": "Grafik: Canlı ↔ Geçmiş (backtest)"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 73354,
+        "olcek": 1,
+        "ozet": "e95a4c4c4e4e99a9b32facddc5204948a7f4afa1acb8aaa26aa4422150c930bf",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"botlar/hucum\"]",
+            "x": 8,
+            "y": 216,
+            "w": 231,
+            "h": 42
+          },
+          {
+            "secici": "#botGorunumler",
+            "x": 260,
+            "y": 218,
+            "w": 1128,
+            "h": 36
+          },
+          {
+            "secici": "#botKart-hucum .bot-bas-metin",
+            "x": 353,
+            "y": 275,
+            "w": 856,
+            "h": 71
+          },
+          {
+            "secici": "#botKart-hucum .bot-bas-dugme",
+            "x": 1213,
+            "y": 275,
+            "w": 154,
+            "h": 33
+          },
+          {
+            "secici": "#botSayilar-hucum",
+            "x": 281,
+            "y": 380,
+            "w": 1086,
+            "h": 113
+          },
+          {
+            "secici": "#botGrafikKip-hucum",
+            "x": 1064,
+            "y": 605,
+            "w": 290,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "botlar-eylem-1400",
+      "rota": "botlar/hucum/yonetim",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#tblAyarBotlar",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#botGorunumler [data-bot-gorunum=\"yonetim\"]",
+          "etiket": "Yönetim görünümü"
+        },
+        {
+          "secici": "#selBotMod-hucum",
+          "etiket": "Hesap türü (yalnız bot durmuşken)"
+        },
+        {
+          "secici": "#selBotKucuk-hucum",
+          "etiket": "Küçük hesap kipi"
+        },
+        {
+          "secici": "#tblAyarBotlar tr:last-child td:nth-child(2)",
+          "etiket": "Kontroller: deneme, borsayla karşılaştır, acil freni dene"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-eylem-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 62114,
+        "olcek": 1,
+        "ozet": "64c727658a0aad948e6eac76815934c8327e067f8cdb71b2c8238ed5fd338548",
+        "genel": "9bfe5744dc2669860dc8067711b0a38d176606d41ea649f085cbc0a5001ea895",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botGorunumler [data-bot-gorunum=\"yonetim\"]",
+            "x": 478,
+            "y": 138,
+            "w": 86,
+            "h": 46
+          },
+          {
+            "secici": "#selBotMod-hucum",
+            "x": 475,
+            "y": 302,
+            "w": 878,
+            "h": 33
+          },
+          {
+            "secici": "#selBotKucuk-hucum",
+            "x": 475,
+            "y": 470,
+            "w": 154,
+            "h": 33
+          },
+          {
+            "secici": "#tblAyarBotlar tr:last-child td:nth-child(2)",
+            "x": 465,
+            "y": 555,
+            "w": 898,
+            "h": 45
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "botlar-390",
+      "rota": "botlar",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#botKart-hucum .bot-bas",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#botGorunumler",
+          "etiket": "Görünümler"
+        },
+        {
+          "secici": "#botKart-hucum .btn-danger",
+          "etiket": "Acil durdur (acil PIN + DURDUR)"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 65458,
+        "olcek": 2,
+        "ozet": "be540f01b155f2f0947dc8a45c731e498e3fd97d8a7a520f1cea069bf9792e9d",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botGorunumler",
+            "x": 8,
+            "y": 322,
+            "w": 374,
+            "h": 42
+          },
+          {
+            "secici": "#botKart-hucum .btn-danger",
+            "x": 123,
+            "y": 676,
+            "w": 113,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "raporlar-1400",
+      "rota": "raporlar",
+      "genislik": 1400,
+      "yukseklik": 1500,
+      "once": [
+        {
+          "bekleSecici": "#raporSayilar",
+          "sure": 30000
+        },
+        {
+          "ac": "#raporBotlar details"
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#raporUst",
+          "etiket": "Günlük · Haftalık · Aylık · Yıllık, rapor dönemi, şimdi hazırla"
+        },
+        {
+          "secici": "#raporSayilar",
+          "etiket": "Dört sayı: değer değişimi, işlem, gerçekleşen K/Z, dikkat"
+        },
+        {
+          "secici": "#raporBotlar",
+          "etiket": "Botlar ve işlemleri"
+        },
+        {
+          "secici": "#raporEmirler",
+          "etiket": "Model emirleri"
+        },
+        {
+          "secici": "#raporModeller",
+          "etiket": "Portföy botlarının tercihleri"
+        }
+      ],
+      "uretim": {
+        "dosya": "raporlar-1400.webp",
+        "en": 1400,
+        "boy": 1500,
+        "bayt": 90328,
+        "olcek": 1,
+        "ozet": "c8bb60ea563022176e54bfbb96b239dfaaa009b483d0b78243d8278d0ed2f0b8",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#raporUst",
+            "x": 260,
+            "y": 178,
+            "w": 1128,
+            "h": 52
+          },
+          {
+            "secici": "#raporSayilar",
+            "x": 260,
+            "y": 265,
+            "w": 1128,
+            "h": 142
+          },
+          {
+            "secici": "#raporBotlar",
+            "x": 260,
+            "y": 407,
+            "w": 1128,
+            "h": 342
+          },
+          {
+            "secici": "#raporEmirler",
+            "x": 260,
+            "y": 749,
+            "w": 1128,
+            "h": 223
+          },
+          {
+            "secici": "#raporModeller",
+            "x": 260,
+            "y": 973,
+            "w": 1128,
+            "h": 227
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "raporlar-aylik-1400",
+      "rota": "raporlar",
+      "genislik": 1400,
+      "yukseklik": 1300,
+      "once": [
+        {
+          "bekleSecici": "#raporSayilar",
+          "sure": 30000
+        },
+        {
+          "degerJs": "[...document.querySelectorAll('#raporUst .p-secici button')].find(b => b.textContent === 'Aylık').click()"
+        },
+        {
+          "bekleSecici": "#raporSayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#raporUst .p-secici",
+          "etiket": "Aylık seçili (ayın 1'i 09:00 sonrası geçen ay)"
+        },
+        {
+          "secici": ".rp-baslik",
+          "etiket": "Aylık rapor — ay adı"
+        },
+        {
+          "secici": "#raporSayilar",
+          "etiket": "Ay boyunca değer değişimi, işlem, K/Z"
+        }
+      ],
+      "uretim": {
+        "dosya": "raporlar-aylik-1400.webp",
+        "en": 1400,
+        "boy": 1300,
+        "bayt": 77118,
+        "olcek": 1,
+        "ozet": "7d6a258f78cae0242dd7612daae3b701fdb9f6509a8be2287e3f18154aee9898",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#raporUst .p-secici",
+            "x": 260,
+            "y": 181,
+            "w": 257,
+            "h": 46
+          },
+          {
+            "secici": ".rp-baslik",
+            "x": 260,
+            "y": 230,
+            "w": 1128,
+            "h": 31
+          },
+          {
+            "secici": "#raporSayilar",
+            "x": 260,
+            "y": 265,
+            "w": 1128,
+            "h": 142
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "hesaplar-1400",
+      "rota": "botlar/hucum/hesap",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#borsaPanel .bot-durum-buyuk",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "maske": [
+        "#botHesapBinance td",
+        "#botHesapBinance .sayi"
+      ],
+      "isaretler": [
+        {
+          "secici": "#botGorunumler [data-bot-gorunum=\"hesap\"]",
+          "etiket": "Hesap görünümü: botun borsadaki hesabı"
+        },
+        {
+          "secici": "#borsaPanel .bot-durum-buyuk",
+          "etiket": "Bağlantı durumu"
+        },
+        {
+          "secici": "#borsaPanel .borsa-sayilar",
+          "etiket": "Bakiye, açık pozisyon, bekleyen emir, ücret"
+        },
+        {
+          "secici": "#borsaPanel .bot-blok",
+          "etiket": "Sağlık kutuları"
+        },
+        {
+          "secici": "#botHesapBinance",
+          "etiket": "Binance bakiyesi: Binance'in kendi alanları"
+        }
+      ],
+      "uretim": {
+        "dosya": "hesaplar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 50008,
+        "olcek": 1,
+        "ozet": "56a272c1d2746bae30db179e73dc55dcc488bbe0604714c0c48453006a29c76d",
+        "genel": "fbfa37a4ed84c962111a6c477b197f29c0288c57b3e47dc37f5e5fee9cf67a38",
+        "surum": "67.2",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botGorunumler [data-bot-gorunum=\"hesap\"]",
+            "x": 326,
+            "y": 138,
+            "w": 73,
+            "h": 46
+          },
+          {
+            "secici": "#borsaPanel .bot-durum-buyuk",
+            "x": 1270,
+            "y": 215,
+            "w": 97,
+            "h": 29
+          },
+          {
+            "secici": "#borsaPanel .borsa-sayilar",
+            "x": 281,
+            "y": 347,
+            "w": 1086,
+            "h": 83
+          },
+          {
+            "secici": "#borsaPanel .bot-blok",
+            "x": 281,
+            "y": 438,
+            "w": 1086,
+            "h": 116
+          },
+          {
+            "secici": "#botHesapBinance",
+            "x": 260,
+            "y": 575,
+            "w": 1128,
+            "h": 91
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "hesaplar-tablo-1400",
+      "rota": "botlar/hucum/hesap",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#borsaGorunum-gecmis",
+          "sure": 30000
+        },
+        {
+          "tikla": "#borsaGorunum-gecmis"
+        },
+        {
+          "bekleSecici": "#tblBorsaGecmis",
+          "sure": 15000
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#borsaGorunum-gecmis",
+          "etiket": "Geçmiş işlemler"
+        },
+        {
+          "secici": "#tblBorsaGecmis",
+          "etiket": "Son 30 gün: coin, işlem, kimin, tutar, ücret, kâr/zarar"
+        },
+        {
+          "secici": "#borsaPanel .hs-toplam",
+          "etiket": "Toplam"
+        }
+      ],
+      "yukseklik": 1600,
+      "uretim": {
+        "dosya": "hesaplar-tablo-1400.webp",
+        "en": 1400,
+        "boy": 1600,
+        "bayt": 90928,
+        "olcek": 1,
+        "ozet": "6694bf60317303b3db96b2b5366bbf8cbb078ebd76afed7f63c5d5251f4619a0",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#borsaGorunum-gecmis",
+            "x": 1239,
+            "y": 451,
+            "w": 115,
+            "h": 32
+          },
+          {
+            "secici": "#tblBorsaGecmis",
+            "x": 294,
+            "y": 483,
+            "w": 1060,
+            "h": 446
+          },
+          {
+            "secici": "#borsaPanel .hs-toplam",
+            "x": 294,
+            "y": 929,
+            "w": 411,
+            "h": 25
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "hesaplar-anahtar-1400",
+      "rota": "ayarlar/borsa",
+      "genislik": 1400,
+      "once": [
+        {
+          "ac": "#anahtarKat"
+        },
+        {
+          "bekle": 300
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"ayarlar/borsa\"]",
+          "etiket": "Ayarlar › Bağlantılar"
+        },
+        {
+          "secici": "#anahtarKat > summary",
+          "etiket": "Demo hesap API anahtarı"
+        },
+        {
+          "secici": "#inpTestnetKey",
+          "etiket": "Anahtar alanları (görüntüde gizli)"
+        },
+        {
+          "secici": "#exchangeKeysBox .btn-primary",
+          "etiket": "Anahtarları kaydet"
+        },
+        {
+          "secici": "#canliParaKat > summary",
+          "etiket": "Canlı hesap (2027'ye kadar kilitli)"
+        }
+      ],
+      "uretim": {
+        "dosya": "hesaplar-anahtar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 43274,
+        "olcek": 1,
+        "ozet": "60a32d5afb89f6ab4974a3bf4fd1557e91f8d951ff0c055f2a3805940582486e",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"ayarlar/borsa\"]",
+            "x": 8,
+            "y": 641,
+            "w": 231,
+            "h": 41
+          },
+          {
+            "secici": "#anahtarKat > summary",
+            "x": 445,
+            "y": 195,
+            "w": 758,
+            "h": 53
+          },
+          {
+            "secici": "#inpTestnetKey",
+            "x": 461,
+            "y": 375,
+            "w": 359,
+            "h": 39
+          },
+          {
+            "secici": "#exchangeKeysBox .btn-primary",
+            "x": 461,
+            "y": 418,
+            "w": 159,
+            "h": 42
+          },
+          {
+            "secici": "#canliParaKat > summary",
+            "x": 445,
+            "y": 476,
+            "w": 758,
+            "h": 52
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "hesaplar-390",
+      "rota": "botlar/hucum/hesap",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#borsaPanel .bot-durum-buyuk",
+          "sure": 30000
+        },
+        {
+          "bekle": 1000
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#botGorunumler",
+          "etiket": "Görünümler (Hesap seçili)"
+        },
+        {
+          "secici": "#borsaPanel .bot-durum-buyuk",
+          "etiket": "Bağlantı durumu"
+        }
+      ],
+      "uretim": {
+        "dosya": "hesaplar-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 49534,
+        "olcek": 2,
+        "ozet": "2427a40661dba6805445fb1918c1cd76630c7bc4f57b9c16100a89fbda2ed49d",
+        "genel": "fbfa37a4ed84c962111a6c477b197f29c0288c57b3e47dc37f5e5fee9cf67a38",
+        "surum": "67.2",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botGorunumler",
+            "x": 8,
+            "y": 186,
+            "w": 374,
+            "h": 52
+          },
+          {
+            "secici": "#borsaPanel .bot-durum-buyuk",
+            "x": 29,
+            "y": 340,
+            "w": 111,
+            "h": 34
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "stratejiler-1400",
+      "rota": "arastirma/stratejiler",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-menu=\"arastirma\"]",
+          "etiket": "Araştırma: Stratejiler · Backtest · Veri ve izleme listesi · Gösterge havuzu · Pine · Portföy laboratuvarı · Araştırma defteri"
+        },
+        {
+          "secici": "#stratListe",
+          "etiket": "Çalışan botlar · Adaylar · katlı \"Geçti, kullanılmıyor\""
+        },
+        {
+          "secici": "#btnStratBacktest",
+          "etiket": "Backtest'te aç"
+        }
+      ],
+      "uretim": {
+        "dosya": "stratejiler-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 82056,
+        "olcek": 1,
+        "ozet": "735b53cda68c7b3126a9a83b23384d48c0bac61eaff4dccb87394f551226583f",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-menu=\"arastirma\"]",
+            "x": 8,
+            "y": 374,
+            "w": 231,
+            "h": 329
+          },
+          {
+            "secici": "#stratListe",
+            "x": 260,
+            "y": 182,
+            "w": 328,
+            "h": 320
+          },
+          {
+            "secici": "#btnStratBacktest",
+            "x": 1216,
+            "y": 210,
+            "w": 151,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "backtest-1400",
+      "rota": "arastirma/backtest",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#btStrategy",
+          "etiket": "Strateji"
+        },
+        {
+          "secici": "#btSymbol",
+          "etiket": "Coin"
+        },
+        {
+          "secici": "#btTimeframe",
+          "etiket": "Zaman dilimi"
+        },
+        {
+          "secici": "#btStart",
+          "etiket": "Tarih aralığı"
+        },
+        {
+          "secici": "#btGelismis > summary",
+          "etiket": "Gelişmiş: borsa, piyasa, sermaye, test türü, arşivdeki stratejiler"
+        }
+      ],
+      "yukseklik": 1000,
+      "uretim": {
+        "dosya": "backtest-1400.webp",
+        "en": 1400,
+        "boy": 1000,
+        "bayt": 74388,
+        "olcek": 1,
+        "ozet": "50dcf02e3978e57b7226ce633a07ddc1ef06ec789757b1f116737b5ed5fa0613",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btStrategy",
+            "x": 281,
+            "y": 247,
+            "w": 333,
+            "h": 41
+          },
+          {
+            "secici": "#btSymbol",
+            "x": 281,
+            "y": 318,
+            "w": 333,
+            "h": 41
+          },
+          {
+            "secici": "#btTimeframe",
+            "x": 281,
+            "y": 389,
+            "w": 333,
+            "h": 41
+          },
+          {
+            "secici": "#btStart",
+            "x": 281,
+            "y": 503,
+            "w": 166,
+            "h": 41
+          },
+          {
+            "secici": "#btGelismis > summary",
+            "x": 282,
+            "y": 836,
+            "w": 331,
+            "h": 85
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "backtest-sonuc-1400",
+      "rota": "arastirma/backtest",
+      "genislik": 1400,
+      "bekle": 3500,
+      "once": [
+        {
+          "degerJs": "document.getElementById('btStrategy').value = 'hucum'; document.getElementById('btStrategy').dispatchEvent(new Event('change', { bubbles: true }))"
+        },
+        {
+          "bekle": 600
+        },
+        {
+          "degerJs": "document.getElementById('btTimeframe').value = '1d'; document.getElementById('btTimeframe').dispatchEvent(new Event('change', { bubbles: true }))"
+        },
+        {
+          "degerJs": "[...document.querySelectorAll('#tab-backtest .btn-tag')].find(b => b.textContent.trim() === '3 yıl').click()"
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "tikla": "#btnRunBacktest"
+        },
+        {
+          "bekleSecici": "#btBindirmeEk:not(.is-hidden) details",
+          "sure": 180000
+        },
+        {
+          "bekleSecici": "#btOzetSayilar:not(.is-hidden)",
+          "sure": 30000
+        },
+        {
+          "bekle": 2500
+        }
+      ],
+      "kaydir": "#btBindirmeEk",
+      "isaretler": [
+        {
+          "secici": "#btBindirmeEk details > summary",
+          "etiket": "Hücum/Denge: botun tamamı (Kalkan kolu ×3 dahil) — aç/kapat"
+        },
+        {
+          "secici": "#btOzetSayilar",
+          "etiket": "Beş ana sayı: getiri, al-tut farkı, Sharpe, en büyük düşüş, işlem"
+        },
+        {
+          "secici": "#btAnaGrafik",
+          "etiket": "Ana grafik: özsermaye, olası sıralamalar bandı, kriz dönemleri"
+        }
+      ],
+      "uretim": {
+        "dosya": "backtest-sonuc-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 80476,
+        "olcek": 1,
+        "ozet": "c5fa59fb198e4a662b66a22f3a04410a8b230cccb9ab4a1ff13aa224b5339bad",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btBindirmeEk details > summary",
+            "x": 681,
+            "y": 225,
+            "w": 673,
+            "h": 49
+          },
+          {
+            "secici": "#btOzetSayilar",
+            "x": 668,
+            "y": 340,
+            "w": 699,
+            "h": 169
+          },
+          {
+            "secici": "#btAnaGrafik",
+            "x": 668,
+            "y": 517,
+            "w": 699,
+            "h": 381
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "izleme-1400",
+      "rota": "arastirma/izleme",
+      "genislik": 1400,
+      "yukseklik": 1500,
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"arastirma/izleme\"]",
+          "etiket": "Araştırma › Veri ve izleme listesi"
+        },
+        {
+          "secici": "#selExchangeProvider",
+          "etiket": "Piyasa verisi: borsa"
+        },
+        {
+          "secici": "#selMarketType",
+          "etiket": "Piyasa tipi"
+        },
+        {
+          "secici": "#inpAddWatchlistSymbol",
+          "etiket": "İzleme listesine sembol ekle"
+        }
+      ],
+      "uretim": {
+        "dosya": "izleme-1400.webp",
+        "en": 1400,
+        "boy": 1500,
+        "bayt": 74534,
+        "olcek": 1,
+        "ozet": "d34ef01f858ce1a5b0dfd83602b4f499d5dcb0fecc4c320a3b451ddf77829aa6",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"arastirma/izleme\"]",
+            "x": 8,
+            "y": 518,
+            "w": 231,
+            "h": 41
+          },
+          {
+            "secici": "#selExchangeProvider",
+            "x": 445,
+            "y": 278,
+            "w": 373,
+            "h": 41
+          },
+          {
+            "secici": "#selMarketType",
+            "x": 830,
+            "y": 278,
+            "w": 373,
+            "h": 41
+          },
+          {
+            "secici": "#inpAddWatchlistSymbol",
+            "x": 445,
+            "y": 554,
+            "w": 182,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kagit-1400",
+      "rota": "arsiv/kagit",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#cardEquity",
+          "etiket": "Kâğıt test hesabı kartları"
+        },
+        {
+          "secici": "#dashSelectStrategy",
+          "etiket": "Strateji"
+        },
+        {
+          "secici": "#multiSymbolCheckboxes",
+          "etiket": "Semboller"
+        },
+        {
+          "secici": "#btnSaveMultiSymbols",
+          "etiket": "Kâğıt botları başlat"
+        },
+        {
+          "secici": "#arsivKagitKok",
+          "etiket": "Kâğıt test hesabı: pozisyonlar, emirler, geçmiş"
+        }
+      ],
+      "yukseklik": 1700,
+      "uretim": {
+        "dosya": "kagit-1400.webp",
+        "en": 1400,
+        "boy": 1700,
+        "bayt": 92188,
+        "olcek": 1,
+        "ozet": "dc61b08da45914e96ea62113dff40c7f3614b51080652472c19196a5eeb7f810",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#cardEquity",
+            "x": 277,
+            "y": 675,
+            "w": 188,
+            "h": 32
+          },
+          {
+            "secici": "#dashSelectStrategy",
+            "x": 492,
+            "y": 796,
+            "w": 319,
+            "h": 38
+          },
+          {
+            "secici": "#multiSymbolCheckboxes",
+            "x": 301,
+            "y": 896,
+            "w": 1049,
+            "h": 69
+          },
+          {
+            "secici": "#btnSaveMultiSymbols",
+            "x": 301,
+            "y": 1009,
+            "w": 161,
+            "h": 39
+          },
+          {
+            "secici": "#arsivKagitKok",
+            "x": 260,
+            "y": 214,
+            "w": 1128,
+            "h": 378
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kagit-risk-1400",
+      "rota": "arsiv/kagit-risk",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#rkEquity",
+          "etiket": "Kâğıt hesabın risk özeti"
+        },
+        {
+          "secici": "#yanMenu [data-rota=\"arsiv/kagit-risk\"]",
+          "etiket": "Arşiv › Kâğıt test riski"
+        }
+      ],
+      "uretim": {
+        "dosya": "kagit-risk-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 66144,
+        "olcek": 1,
+        "ozet": "68a264babbeb63e66eaad6e2d7138f46947820ade33b5576ec7f64ea918f637f",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#rkEquity",
+            "x": 277,
+            "y": 223,
+            "w": 151,
+            "h": 30
+          },
+          {
+            "secici": "#yanMenu [data-rota=\"arsiv/kagit-risk\"]",
+            "x": 8,
+            "y": 721,
+            "w": 231,
+            "h": 41
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "pine-1400",
+      "rota": "arastirma/pine",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#pineKaynak",
+          "etiket": "Betiği buraya yapıştırın"
+        },
+        {
+          "secici": "#btnPineDenetle",
+          "etiket": "Denetle (kaydetmez)"
+        },
+        {
+          "secici": "#btnPineKaydet",
+          "etiket": "Kaydet"
+        },
+        {
+          "secici": "#btnPineYeni",
+          "etiket": "Yeni betik"
+        }
+      ],
+      "uretim": {
+        "dosya": "pine-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 47376,
+        "olcek": 1,
+        "ozet": "606defd7e2a197997b734c1c4a09c8126f140c36ef2079105a0d017ae36738bc",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#pineKaynak",
+            "x": 597,
+            "y": 267,
+            "w": 770,
+            "h": 340
+          },
+          {
+            "secici": "#btnPineDenetle",
+            "x": 1195,
+            "y": 197,
+            "w": 89,
+            "h": 42
+          },
+          {
+            "secici": "#btnPineKaydet",
+            "x": 1283,
+            "y": 197,
+            "w": 84,
+            "h": 42
+          },
+          {
+            "secici": "#btnPineYeni",
+            "x": 487,
+            "y": 197,
+            "w": 60,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "coin-tarama-1400",
+      "rota": "tarama",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#btnTaramaSimdi",
+          "etiket": "Şimdi tara"
+        },
+        {
+          "secici": "#tblTarama",
+          "etiket": "Coin tablosu (bayraklar)"
+        },
+        {
+          "secici": "#tblTarama tbody tr button",
+          "etiket": "Ayrıntı"
+        }
+      ],
+      "uretim": {
+        "dosya": "coin-tarama-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 77376,
+        "olcek": 1,
+        "ozet": "2ed49bd9b7a32211d7762a892faf19d0fd70eb234c988c0666d669a80cd867f1",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btnTaramaSimdi",
+            "x": 260,
+            "y": 138,
+            "w": 126,
+            "h": 42
+          },
+          {
+            "secici": "#tblTarama",
+            "x": 281,
+            "y": 410,
+            "w": 1086,
+            "h": 488
+          },
+          {
+            "secici": "#tblTarama tbody tr button",
+            "x": 1294,
+            "y": 462,
+            "w": 63,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "dikkat-listesi-1400",
+      "rota": "tarama/kacin",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#selDikkatKip",
+          "etiket": "Resmî / deneme kaydı"
+        },
+        {
+          "secici": "#dikkatSayilar",
+          "etiket": "Bugünkü sayılar"
+        },
+        {
+          "secici": "#dikkatFiltre",
+          "etiket": "KAÇIN / yeni / yetersiz veri"
+        },
+        {
+          "secici": "#dikkatKarne",
+          "etiket": "Kendimizi denetleme (karne)"
+        }
+      ],
+      "yukseklik": 3000,
+      "uretim": {
+        "dosya": "dikkat-listesi-1400.webp",
+        "en": 1400,
+        "boy": 3000,
+        "bayt": 166342,
+        "olcek": 1,
+        "ozet": "a2c21e075e3c67187a94871a007155a312bc8d706f2c6d88c69cfadcac2e32a5",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#selDikkatKip",
+            "x": 260,
+            "y": 138,
+            "w": 232,
+            "h": 44
+          },
+          {
+            "secici": "#dikkatSayilar",
+            "x": 260,
+            "y": 306,
+            "w": 1128,
+            "h": 82
+          },
+          {
+            "secici": "#dikkatFiltre",
+            "x": 754,
+            "y": 413,
+            "w": 613,
+            "h": 44
+          },
+          {
+            "secici": "#dikkatKarne",
+            "x": 281,
+            "y": 1564,
+            "w": 1086,
+            "h": 356
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "izle-listesi-1400",
+      "rota": "tarama/izle",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#selIzleKip",
+          "etiket": "Resmî / deneme kaydı"
+        },
+        {
+          "secici": "#izleSayilar",
+          "etiket": "Bugünkü sayılar"
+        },
+        {
+          "secici": "#izleTablo",
+          "etiket": "İZLE listesi (boşken nedeni)"
+        },
+        {
+          "secici": "#izlePuan",
+          "etiket": "Puan listesi (gölge)"
+        },
+        {
+          "secici": "#izleOnIzleme",
+          "etiket": "Ön izleme karnesi"
+        }
+      ],
+      "yukseklik": 1300,
+      "uretim": {
+        "dosya": "izle-listesi-1400.webp",
+        "en": 1400,
+        "boy": 1300,
+        "bayt": 78008,
+        "olcek": 1,
+        "ozet": "26f4cdfb0d01a5683258179305fd974313282e801ca65544c6453144c40b6b91",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#selIzleKip",
+            "x": 260,
+            "y": 138,
+            "w": 232,
+            "h": 44
+          },
+          {
+            "secici": "#izleSayilar",
+            "x": 260,
+            "y": 322,
+            "w": 1128,
+            "h": 82
+          },
+          {
+            "secici": "#izleTablo",
+            "x": 281,
+            "y": 473,
+            "w": 1086,
+            "h": 40
+          },
+          {
+            "secici": "#izlePuan",
+            "x": 281,
+            "y": 591,
+            "w": 1086,
+            "h": 24
+          },
+          {
+            "secici": "#izleOnIzleme",
+            "x": 281,
+            "y": 779,
+            "w": 1086,
+            "h": 220
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "listeler-1400",
+      "rota": "tarama/listeler",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#inpListeTarih",
+          "etiket": "Liste tarihi"
+        },
+        {
+          "secici": "#tab-listeler input[id$=\"_sembol\"]",
+          "etiket": "Coin sembolü"
+        },
+        {
+          "secici": "#tab-listeler select[id$=\"_durum\"]",
+          "etiket": "seçildi / elendi"
+        },
+        {
+          "secici": "#inpListeToplu",
+          "etiket": "Toplu ekle (her satıra bir coin)"
+        },
+        {
+          "secici": "#btnListeKaydet",
+          "etiket": "Listeyi kaydet"
+        }
+      ],
+      "uretim": {
+        "dosya": "listeler-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 57526,
+        "olcek": 1,
+        "ozet": "1a9705431b3712f24da089b994e11ff0af9cd6530971289d87a9a917984b50ae",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#inpListeTarih",
+            "x": 281,
+            "y": 335,
+            "w": 541,
+            "h": 41
+          },
+          {
+            "secici": "#tab-listeler input[id$=\"_sembol\"]",
+            "x": 281,
+            "y": 546,
+            "w": 151,
+            "h": 39
+          },
+          {
+            "secici": "#tab-listeler select[id$=\"_durum\"]",
+            "x": 432,
+            "y": 544,
+            "w": 151,
+            "h": 41
+          },
+          {
+            "secici": "#inpListeToplu",
+            "x": 281,
+            "y": 645,
+            "w": 1086,
+            "h": 75
+          },
+          {
+            "secici": "#btnListeKaydet",
+            "x": 1218,
+            "y": 724,
+            "w": 149,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "listeler-kayit-1400",
+      "rota": "tarama/listeler",
+      "genislik": 1400,
+      "kaydir": "#tblListeler",
+      "isaretler": [
+        {
+          "secici": "#tblListeler",
+          "etiket": "Kayıtlar"
+        },
+        {
+          "secici": "#tblListeler tbody .btn-primary",
+          "etiket": "Değerlendir"
+        },
+        {
+          "secici": "#tblListeler tbody .btn-secondary",
+          "etiket": "Düzeltme ekle"
+        }
+      ],
+      "uretim": {
+        "dosya": "listeler-kayit-1400.webp",
+        "en": 1400,
+        "boy": 1400,
+        "bayt": 62196,
+        "olcek": 1,
+        "ozet": "710883a1ccfee21bd6760b11511791e4c1884f8e8dbe2f97f061f71904949fee",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#tblListeler",
+            "x": 281,
+            "y": 844,
+            "w": 1086,
+            "h": 108
+          },
+          {
+            "secici": "#tblListeler tbody .btn-primary",
+            "x": 1203,
+            "y": 881,
+            "w": 89,
+            "h": 32
+          },
+          {
+            "secici": "#tblListeler tbody .btn-secondary",
+            "x": 1203,
+            "y": 913,
+            "w": 102,
+            "h": 32
+          }
+        ]
+      },
+      "yukseklik": 1400
+    },
+    {
+      "kimlik": "listeler-390",
+      "rota": "tarama/listeler",
+      "genislik": 390,
+      "isaretler": [
+        {
+          "secici": "#listeZincir",
+          "etiket": "Zincir göstergesi"
+        },
+        {
+          "secici": "#inpListeTarih",
+          "etiket": "Yeni liste formu"
+        }
+      ],
+      "uretim": {
+        "dosya": "listeler-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 71976,
+        "olcek": 2,
+        "ozet": "54136ccac4c62acbb13d485741bfc49adf833de93c02afd925fcabaa9c507362",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#listeZincir",
+            "x": 8,
+            "y": 186,
+            "w": 374,
+            "h": 54
+          },
+          {
+            "secici": "#inpListeTarih",
+            "x": 29,
+            "y": 562,
+            "w": 332,
+            "h": 50
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "defter-1400",
+      "rota": "arastirma/defter",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#defterSayilar",
+          "etiket": "Sayaçlar (tıklayınca süzer)"
+        },
+        {
+          "secici": "#defterYaklasan",
+          "etiket": "Hükmü yaklaşanlar"
+        },
+        {
+          "secici": "#defterAileler",
+          "etiket": "Aile sayacı"
+        }
+      ],
+      "uretim": {
+        "dosya": "defter-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 97202,
+        "olcek": 1,
+        "ozet": "037a92a14902e08776de284670789e271dd8e1c0b088f836c0dddccb7ed234bd",
+        "genel": "ff4eedcf679eba2e1d29cd73efa6a2d3d1cd5522ce4eeae4930e99fef8144349",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#defterSayilar",
+            "x": 260,
+            "y": 260,
+            "w": 1128,
+            "h": 186
+          },
+          {
+            "secici": "#defterYaklasan",
+            "x": 260,
+            "y": 451,
+            "w": 562,
+            "h": 447
+          },
+          {
+            "secici": "#defterAileler",
+            "x": 826,
+            "y": 451,
+            "w": 562,
+            "h": 447
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "defter-kayit-1400",
+      "rota": "arastirma/defter",
+      "genislik": 1400,
+      "kaydir": "#defterSuzgecSayi",
+      "isaretler": [
+        {
+          "secici": "#inpDefterAra",
+          "etiket": "Ara"
+        },
+        {
+          "secici": "#selDefterDurum",
+          "etiket": "Durum süzgeci"
+        },
+        {
+          "secici": "#selDefterAile",
+          "etiket": "Aile süzgeci"
+        },
+        {
+          "secici": "#tblDefter tbody .btn-secondary",
+          "etiket": "Aç (tüm alanlar)"
+        }
+      ],
+      "uretim": {
+        "dosya": "defter-kayit-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 126886,
+        "olcek": 1,
+        "ozet": "b5a4d2d7c3a80b06ce1d488841c02d5e63c09d46ed5cddda21d44546bdb203e1",
+        "genel": "ff4eedcf679eba2e1d29cd73efa6a2d3d1cd5522ce4eeae4930e99fef8144349",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#inpDefterAra",
+            "x": 281,
+            "y": 138,
+            "w": 281,
+            "h": 39
+          },
+          {
+            "secici": "#selDefterDurum",
+            "x": 562,
+            "y": 137,
+            "w": 139,
+            "h": 41
+          },
+          {
+            "secici": "#selDefterAile",
+            "x": 701,
+            "y": 137,
+            "w": 547,
+            "h": 41
+          },
+          {
+            "secici": "#tblDefter tbody .btn-secondary",
+            "x": 1315,
+            "y": 223,
+            "w": 42,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "defter-hikaye-1400",
+      "rota": "arastirma/defter",
+      "genislik": 1400,
+      "kaydir": "#defterAyrinti",
+      "once": [
+        {
+          "bekleSecici": "#tblDefter tbody tr",
+          "sure": 30000
+        },
+        {
+          "tikla": "#tblDefter tbody tr"
+        },
+        {
+          "bekleSecici": "#defterAyrinti .df-hikaye",
+          "sure": 10000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#defterAyrinti .df-hikaye",
+          "etiket": "Dört adım: ne denendi · neyle kıyaslandı · ne çıktı · sonuç ve ders"
+        },
+        {
+          "secici": "#defterAyrinti .df-nerede",
+          "etiket": "Nerede: plan belgesi, betikler, commit"
+        },
+        {
+          "secici": "#defterAyrinti .df-teknik > summary",
+          "etiket": "Kayıttaki teknik metin (katlı)"
+        }
+      ],
+      "uretim": {
+        "dosya": "defter-hikaye-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 100312,
+        "olcek": 1,
+        "ozet": "40dfd6ac0d9160b6619935d535e529434a2f07a078f4bab3bc3586b2da22ebd5",
+        "genel": "ff4eedcf679eba2e1d29cd73efa6a2d3d1cd5522ce4eeae4930e99fef8144349",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#defterAyrinti .df-hikaye",
+            "x": 281,
+            "y": 467,
+            "w": 1086,
+            "h": 281
+          },
+          {
+            "secici": "#defterAyrinti .df-nerede",
+            "x": 281,
+            "y": 756,
+            "w": 1086,
+            "h": 25
+          },
+          {
+            "secici": "#defterAyrinti .df-teknik > summary",
+            "x": 281,
+            "y": 802,
+            "w": 1086,
+            "h": 28
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "defter-390",
+      "rota": "arastirma/defter",
+      "genislik": 390,
+      "isaretler": [
+        {
+          "secici": "#defterSayilar",
+          "etiket": "Sayaçlar"
+        }
+      ],
+      "uretim": {
+        "dosya": "defter-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 69414,
+        "olcek": 2,
+        "ozet": "585d34a672f743041a0ad3a03021e0402f4322246447522a3c5fefa4e88773bd",
+        "genel": "ff4eedcf679eba2e1d29cd73efa6a2d3d1cd5522ce4eeae4930e99fef8144349",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#defterSayilar",
+            "x": 8,
+            "y": 406,
+            "w": 374,
+            "h": 424
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "arastirma-ozet-1400",
+      "rota": "arastirma/ozet",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#arOzetKok .p-serit",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#arOzetKok .p-serit",
+          "etiket": "Dört sayı: toplam deneme, kabul, red, süren"
+        },
+        {
+          "secici": "#arOzetKok .pn-ikili",
+          "etiket": "Hükmü yaklaşanlar · en çok denenen aileler"
+        },
+        {
+          "secici": "#arOzetKok .pn-cipler",
+          "etiket": "Kısa yollar"
+        }
+      ],
+      "yukseklik": 1350,
+      "uretim": {
+        "dosya": "arastirma-ozet-1400.webp",
+        "en": 1400,
+        "boy": 1350,
+        "bayt": 111434,
+        "olcek": 1,
+        "ozet": "73e41d046537416a3a46437c3398e0e9d8e120a3b3576845b7ce782d9a73cc78",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#arOzetKok .p-serit",
+            "x": 260,
+            "y": 138,
+            "w": 1128,
+            "h": 125
+          },
+          {
+            "secici": "#arOzetKok .pn-ikili",
+            "x": 260,
+            "y": 263,
+            "w": 1128,
+            "h": 500
+          },
+          {
+            "secici": "#arOzetKok .pn-cipler",
+            "x": 260,
+            "y": 1137,
+            "w": 1128,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "tarama-ayarlari-1400",
+      "rota": "tarama/ayarlar",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#btnTaramaCoinEkle",
+          "etiket": "Coin ekle"
+        },
+        {
+          "secici": "#tab-tarama-ayar tbody .btn-sm",
+          "etiket": "Düzelt"
+        },
+        {
+          "secici": "#tab-tarama-ayar tbody .btn-outline-danger",
+          "etiket": "Çıkar"
+        },
+        {
+          "secici": "#btnTaramaZincir",
+          "etiket": "Zinciri doğrula"
+        }
+      ],
+      "uretim": {
+        "dosya": "tarama-ayarlari-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 87404,
+        "olcek": 1,
+        "ozet": "40378cdfc3e59ec592b4ec5781a619fab90825f6b54517b20fac256284bac97b",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#btnTaramaCoinEkle",
+            "x": 1270,
+            "y": 265,
+            "w": 97,
+            "h": 33
+          },
+          {
+            "secici": "#tab-tarama-ayar tbody .btn-sm",
+            "x": 1351,
+            "y": 337,
+            "w": 47,
+            "h": 32
+          },
+          {
+            "secici": "#tab-tarama-ayar tbody .btn-outline-danger",
+            "x": 1351,
+            "y": 369,
+            "w": 47,
+            "h": 32
+          },
+          {
+            "secici": "#btnTaramaZincir",
+            "x": 260,
+            "y": 138,
+            "w": 153,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-test-1400",
+      "rota": "ileri",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriDurum table",
+          "sure": 30000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-menu=\"ileri\"]",
+          "etiket": "İleri test alt sayfaları: Genel bakış ve her test"
+        },
+        {
+          "secici": "#ileriDurum",
+          "etiket": "Testler: durum ve karar günü (ada tıklayınca testin sayfası)"
+        },
+        {
+          "secici": "#ileriTakvim",
+          "etiket": "Karar takvimi"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-test-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 62820,
+        "olcek": 1,
+        "ozet": "44c6cb6b89e1e4cdcf88960261684beaeafd822e57ed80737730015eb7f4143e",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-menu=\"ileri\"]",
+            "x": 8,
+            "y": 334,
+            "w": 231,
+            "h": 226
+          },
+          {
+            "secici": "#ileriDurum",
+            "x": 260,
+            "y": 194,
+            "w": 1128,
+            "h": 282
+          },
+          {
+            "secici": "#ileriTakvim",
+            "x": 260,
+            "y": 476,
+            "w": 1128,
+            "h": 250
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-cbdr-1400",
+      "rota": "ileri/cbdr",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriCbdr .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriCbdr .ana-sayilar",
+          "etiket": "İşlem sayısı, ortalama R, sıradaki gün"
+        },
+        {
+          "secici": "#ileriCbdr .ileri-hukum",
+          "etiket": "Karar günü ve ölçüt"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-cbdr-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 57926,
+        "olcek": 1,
+        "ozet": "e4aaff8a26f1ec32758e66669fa0ce3c47cd62621eb015f343781d8d1a9b9f72",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileriCbdr .ana-sayilar",
+            "x": 281,
+            "y": 294,
+            "w": 1086,
+            "h": 99
+          },
+          {
+            "secici": "#ileriCbdr .ileri-hukum",
+            "x": 281,
+            "y": 393,
+            "w": 1086,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-cbdr-390",
+      "rota": "ileri/cbdr",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#ileriCbdr .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriCbdr .ana-sayilar",
+          "etiket": "İşlem sayısı, ortalama R, sıradaki gün"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-cbdr-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 83242,
+        "olcek": 2,
+        "ozet": "e0f6ae3765ebc1f30d5cd8eeb2c8fa9006a5b4fe8831ada19ae5c56a7d5809c8",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileriCbdr .ana-sayilar",
+            "x": 29,
+            "y": 556,
+            "w": 332,
+            "h": 286
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-876-1400",
+      "rota": "ileri/876",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileri876 .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileri876 .ana-sayilar",
+          "etiket": "Bu ayın sepeti, bu ay, birlikte − Hücum"
+        },
+        {
+          "secici": "#ileri876 .ileri-hukum",
+          "etiket": "Rapor günü ve vazgeçme kuralı"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-876-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 53890,
+        "olcek": 1,
+        "ozet": "171dcc7218ca3d6a1f6780450785678db137d7c78f0d0425bb959ad1d8e65396",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileri876 .ana-sayilar",
+            "x": 281,
+            "y": 294,
+            "w": 1086,
+            "h": 82
+          },
+          {
+            "secici": "#ileri876 .ileri-hukum",
+            "x": 281,
+            "y": 375,
+            "w": 1086,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-876-390",
+      "rota": "ileri/876",
+      "genislik": 390,
+      "once": [
+        {
+          "bekleSecici": "#ileri876 .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileri876 .ana-sayilar",
+          "etiket": "Bu ayın sepeti ve getiriler"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-876-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 87210,
+        "olcek": 2,
+        "ozet": "bc8f3eac5dd57e7358f0d995616b51e59d9dee51d6af5bcf7654a32e974d9530",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileri876 .ana-sayilar",
+            "x": 29,
+            "y": 582,
+            "w": 332,
+            "h": 260
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-demo-1400",
+      "rota": "botlar/hucum/yonetim",
+      "genislik": 1400,
+      "kaydir": "#botKabulSureci",
+      "once": [
+        {
+          "bekleSecici": "#ileriDemoRapor",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriDemoKabul .bot-durum-buyuk",
+          "etiket": "Demo kabul durumu (Botlar › Hücum › Yönetim)"
+        },
+        {
+          "secici": "#ileriDemoRapor .dk-rapor-asama",
+          "etiket": "Gün N / 63, ara rapor ve hüküm günleri"
+        },
+        {
+          "secici": "#ileriDemoRapor",
+          "etiket": "Kabul raporu: ölçütler ve prova günlüğü"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-demo-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 62044,
+        "olcek": 1,
+        "ozet": "e395739a69d3febf3260ba46584be70690860194bd23c6a8a952d2c37db70af0",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileriDemoKabul .bot-durum-buyuk",
+            "x": 1138,
+            "y": 347,
+            "w": 229,
+            "h": 29
+          },
+          {
+            "secici": "#ileriDemoRapor .dk-rapor-asama",
+            "x": 294,
+            "y": 629,
+            "w": 1060,
+            "h": 28
+          },
+          {
+            "secici": "#ileriDemoRapor",
+            "x": 281,
+            "y": 584,
+            "w": 1086,
+            "h": 170
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-demo-390",
+      "rota": "botlar/hucum/yonetim",
+      "genislik": 390,
+      "kaydir": "#ileriDemoRapor",
+      "once": [
+        {
+          "bekleSecici": "#ileriDemoRapor",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriDemoRapor",
+          "etiket": "Kabul raporu (telefonda tablolar kart olur)"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-demo-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 80006,
+        "olcek": 2,
+        "ozet": "c819bd5aad24423c90d95db1b067bfdb7fa7cc5e283d1683c3ec2d7097d8a783",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileriDemoRapor",
+            "x": 29,
+            "y": 236,
+            "w": 332,
+            "h": 375
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "botlar-islemler-1400",
+      "rota": "botlar/hucum/islemler",
+      "genislik": 1400,
+      "yukseklik": 1300,
+      "once": [
+        {
+          "bekleSecici": "#botIslemSekmeler button",
+          "sure": 30000
+        },
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#botGorunumler [data-bot-gorunum=\"islemler\"]",
+          "etiket": "İşlemler görünümü"
+        },
+        {
+          "secici": "#chartTimeframeSelect",
+          "etiket": "Zaman dilimi (varsayılan 1d) ve mum sayısı"
+        },
+        {
+          "secici": "#tvChartContainer",
+          "etiket": "Coin grafiği: ▲ alış · ▼ satış · ● kademeli alım"
+        },
+        {
+          "secici": "#botIslemSekmeler",
+          "etiket": "Açık pozisyonlar · Bekleyen emirler · İşlem geçmişi · Pozisyon büyüklüğü"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-islemler-1400.webp",
+        "en": 1400,
+        "boy": 1300,
+        "bayt": 65658,
+        "olcek": 1,
+        "ozet": "528d16d1c5aa5927177a5108d5fc7d8f148718db09c252ee8d39e7d88308f9c5",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botGorunumler [data-bot-gorunum=\"islemler\"]",
+            "x": 395,
+            "y": 138,
+            "w": 87,
+            "h": 46
+          },
+          {
+            "secici": "#chartTimeframeSelect",
+            "x": 1103,
+            "y": 205,
+            "w": 71,
+            "h": 33
+          },
+          {
+            "secici": "#tvChartContainer",
+            "x": 281,
+            "y": 300,
+            "w": 1086,
+            "h": 388
+          },
+          {
+            "secici": "#botIslemSekmeler",
+            "x": 281,
+            "y": 729,
+            "w": 1086,
+            "h": 37
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "botlar-pozisyon-buyuklugu-1400",
+      "rota": "botlar/hucum/islemler",
+      "genislik": 1400,
+      "kaydir": "#botIslemSekmeler",
+      "once": [
+        {
+          "bekleSecici": "#botIslemSekmeler button",
+          "sure": 30000
+        },
+        {
+          "tikla": "[data-bot-sekme=\"performans\"]"
+        },
+        {
+          "bekleSecici": "#portfoyKolGrafik",
+          "sure": 20000
+        },
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "[data-bot-sekme=\"performans\"]",
+          "etiket": "Pozisyon büyüklüğü (eski adı Dağılım geçmişi)"
+        },
+        {
+          "secici": "#portfoyKolGrafik",
+          "etiket": "Her bölümün açık pozisyon büyüklüğü (USDT) — kâr/zarar değil"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-pozisyon-buyuklugu-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 58104,
+        "olcek": 1,
+        "ozet": "55f919186b951e46263aade9f1d1772f3e70a45b716afa8375c659ca933aed53",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "[data-bot-sekme=\"performans\"]",
+            "x": 654,
+            "y": 569,
+            "w": 157,
+            "h": 37
+          },
+          {
+            "secici": "#portfoyKolGrafik",
+            "x": 281,
+            "y": 650,
+            "w": 1086,
+            "h": 248
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ileri-hucum-1400",
+      "rota": "ileri/hucum-denge",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriHucumDenge .bot-durum-buyuk",
+          "sure": 30000
+        },
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriHucumDenge .bot-durum-buyuk",
+          "etiket": "Durum: eşiğin altında / uyarı / alarm"
+        },
+        {
+          "secici": "#ileriG-hucum-denge",
+          "etiket": "En derin düşüş grafikleri ve yan denemeler"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-hucum-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 76236,
+        "olcek": 1,
+        "ozet": "db98b974cf7d59bbb43e7613fd44d8fad27c3f0d9afbc432895e7d9067c6515e",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ileriHucumDenge .bot-durum-buyuk",
+            "x": 1250,
+            "y": 215,
+            "w": 117,
+            "h": 29
+          },
+          {
+            "secici": "#ileriG-hucum-denge",
+            "x": 260,
+            "y": 459,
+            "w": 1128,
+            "h": 265
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "sinyaller-1400",
+      "rota": "sinyaller",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#snlKurallar table",
+          "etiket": "Uygulanan kurallar: bugün ne diyor, karara uzaklık, sıradaki karar"
+        },
+        {
+          "secici": "#snlSepet > summary",
+          "etiket": "Coin sepeti — coin coin (katlı)"
+        },
+        {
+          "secici": "#snlGolge table",
+          "etiket": "Gölge kurallar (yalnız izleniyor)"
+        }
+      ],
+      "once": [
+        {
+          "bekleSecici": "#snlKurallar table",
+          "sure": 30000
+        },
+        {
+          "bekleSecici": "#snlGolge table",
+          "sure": 20000
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "yukseklik": 1050,
+      "uretim": {
+        "dosya": "sinyaller-1400.webp",
+        "en": 1400,
+        "boy": 1050,
+        "bayt": 88792,
+        "olcek": 1,
+        "ozet": "3d2706de8293a5214dae2ebc2e36e785cd0a9468d401c3ea4351770a02dabd94",
+        "genel": "f5298d20d05c7f4c28a393411622944937b9ab9681fee2edd2bb01bc8ff935dc",
+        "surum": "65.0",
+        "tarih": "2026-10-18",
+        "isaretler": [
+          {
+            "secici": "#snlKurallar table",
+            "x": 233,
+            "y": 250,
+            "w": 1134,
+            "h": 390
+          },
+          {
+            "secici": "#snlSepet > summary",
+            "x": 229,
+            "y": 674,
+            "w": 1142,
+            "h": 28
+          },
+          {
+            "secici": "#snlGolge table",
+            "x": 233,
+            "y": 828,
+            "w": 1134,
+            "h": 124
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "sinyaller-ayrinti-1400",
+      "rota": "sinyaller",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#snlSepetIc table",
+          "etiket": "Coin sepeti coin coin: açık pencere, en yakın çıkış / giriş"
+        },
+        {
+          "secici": "#snlM10Ic table",
+          "etiket": "Nasdaq M10 sıralamasının sınırı"
+        }
+      ],
+      "once": [
+        {
+          "bekleSecici": "#snlSepetIc table",
+          "sure": 30000
+        },
+        {
+          "ac": "#snlSepet"
+        },
+        {
+          "ac": "#snlM10"
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "yukseklik": 1300,
+      "kaydir": "#snlSepet",
+      "uretim": {
+        "dosya": "sinyaller-ayrinti-1400.webp",
+        "en": 1400,
+        "boy": 1300,
+        "bayt": 96750,
+        "olcek": 1,
+        "ozet": "7488f4c754536e925d90f7cf0fb7386a143dc8dfcf557e1907cc81a749668f48",
+        "genel": "f5298d20d05c7f4c28a393411622944937b9ab9681fee2edd2bb01bc8ff935dc",
+        "surum": "65.0",
+        "tarih": "2026-10-18",
+        "isaretler": [
+          {
+            "secici": "#snlSepetIc table",
+            "x": 229,
+            "y": 242,
+            "w": 1142,
+            "h": 516
+          },
+          {
+            "secici": "#snlM10Ic table",
+            "x": 229,
+            "y": 859,
+            "w": 1142,
+            "h": 229
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "gosterge-havuzu-1400",
+      "sayfa": "indicators.html",
+      "genislik": 1400,
+      "bekle": 4000,
+      "dosyalar": [
+        "indicators.html",
+        "indicators-page.js",
+        "indicatorUI.js"
+      ],
+      "isaretler": [
+        {
+          "secici": "#inpSearch",
+          "etiket": "Ara: ad, grup ya da açıklama içinde"
+        },
+        {
+          "secici": "#catalogList",
+          "etiket": "Gruplar ve göstergeler (sayı = gruptaki gösterge)"
+        },
+        {
+          "secici": "#detailHeader",
+          "etiket": "Nedir · nasıl okunur · çıktılar"
+        },
+        {
+          "secici": "#detailParams",
+          "etiket": "Parametreler (Türkçe ad; üzerine gelince kod adı)"
+        },
+        {
+          "secici": "#btnRun",
+          "etiket": "Hesapla: gerçek veride önizleme"
+        }
+      ],
+      "uretim": {
+        "dosya": "gosterge-havuzu-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 73394,
+        "olcek": 1,
+        "ozet": "1e0b114d321e8108dc8aba8a3a45eefd77f5ff4132c56bb4db5a831e70597ec5",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#inpSearch",
+            "x": 25,
+            "y": 117,
+            "w": 282,
+            "h": 25
+          },
+          {
+            "secici": "#catalogList",
+            "x": 25,
+            "y": 142,
+            "w": 282,
+            "h": 756
+          },
+          {
+            "secici": "#detailHeader",
+            "x": 345,
+            "y": 97,
+            "w": 1026,
+            "h": 145
+          },
+          {
+            "secici": "#detailParams",
+            "x": 345,
+            "y": 246,
+            "w": 1026,
+            "h": 123
+          },
+          {
+            "secici": "#btnRun",
+            "x": 658,
+            "y": 394,
+            "w": 84,
+            "h": 37
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "veri-1400",
+      "rota": "veri",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#veriGrup-bot",
+          "sure": 20000
+        },
+        {
+          "ac": "#veriGrup-bot"
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-menu=\"veri\"]",
+          "etiket": "Veri alt sayfaları: Kaynaklar · Coin tarama kaynakları · Günlük arşiv"
+        },
+        {
+          "secici": "#veriOzet",
+          "etiket": "Üç büyük durum"
+        },
+        {
+          "secici": "#veriGrup-bot summary",
+          "etiket": "Kullanana göre grup (sorunlu grup açık gelir)"
+        }
+      ],
+      "uretim": {
+        "dosya": "veri-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 70844,
+        "olcek": 1,
+        "ozet": "49b11aeb740b1f60be4371f045cb5f37b9bc442edc837bf7237de3fdc562ce96",
+        "genel": "a3ba18ddb188b12d482ecba30754cc4169de2b9225641af6ae0cde463752d654",
+        "surum": "67.5",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-menu=\"veri\"]",
+            "x": 8,
+            "y": 532,
+            "w": 231,
+            "h": 154
+          },
+          {
+            "secici": "#veriOzet",
+            "x": 260,
+            "y": 178,
+            "w": 1128,
+            "h": 82
+          },
+          {
+            "secici": "#veriGrup-bot summary",
+            "x": 277,
+            "y": 274,
+            "w": 1094,
+            "h": 28
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "veri-dikkat-1400",
+      "rota": "veri/tarama",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#veriDikkat table",
+          "sure": 30000
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#veriDikkat > p",
+          "etiket": "Terimler ve özet"
+        },
+        {
+          "secici": "#veriDikkat thead",
+          "etiket": "Kaynak · çalışıyor mu · bozulursa ne kaybolur"
+        }
+      ],
+      "uretim": {
+        "dosya": "veri-dikkat-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 30502,
+        "olcek": 1,
+        "ozet": "7cdf6d90d5570c5990781015a245548a6faab4fa56b410f5b66827c63e47f65b",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#veriDikkat > p",
+            "x": 277,
+            "y": 263,
+            "w": 603,
+            "h": 25
+          },
+          {
+            "secici": "#veriDikkat thead",
+            "x": 277,
+            "y": 296,
+            "w": 1094,
+            "h": 38
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "veri-arsiv-1400",
+      "rota": "veri/arsiv",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#veriGrupArsivOzet",
+          "etiket": "Günlük arşiv"
+        },
+        {
+          "secici": "#veriArsiv",
+          "etiket": "Son kayıt günü, kesintisiz gün, zincir, kaynak sayıları"
+        }
+      ],
+      "uretim": {
+        "dosya": "veri-arsiv-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 29146,
+        "olcek": 1,
+        "ozet": "ec797d02ab9e515c5fa675b6fa1ebf0fbad8eb2c206db009ca260e29dee127fc",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#veriGrupArsivOzet",
+            "x": 277,
+            "y": 191,
+            "w": 1094,
+            "h": 28
+          },
+          {
+            "secici": "#veriArsiv",
+            "x": 277,
+            "y": 263,
+            "w": 1094,
+            "h": 525
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "gunluk-1400",
+      "rota": "gunluk",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#tblGunluk",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#gunlukOzet",
+          "etiket": "Son 24 saat: hata · uyarı · olay · sunucu açık"
+        },
+        {
+          "secici": "#gunlukSuzgec",
+          "etiket": "Süz: seviye, kaynak, zaman, arama; CSV"
+        },
+        {
+          "secici": "#tblGunluk",
+          "etiket": "Kayıtlar: zaman · seviye · kaynak · ne oldu"
+        }
+      ],
+      "uretim": {
+        "dosya": "gunluk-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 71716,
+        "olcek": 1,
+        "ozet": "99780671ef44ce243d929856b9e8103061c41b9f2b78cdd949043a91c33560ef",
+        "genel": "f863ea44e0a650556dcd582edfcaadfd8a7e15fd2d5b3ee0999545f9569b7f98",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#gunlukOzet",
+            "x": 260,
+            "y": 162,
+            "w": 1128,
+            "h": 125
+          },
+          {
+            "secici": "#gunlukSuzgec",
+            "x": 260,
+            "y": 287,
+            "w": 1128,
+            "h": 70
+          },
+          {
+            "secici": "#tblGunluk",
+            "x": 279,
+            "y": 409,
+            "w": 1090,
+            "h": 489
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "bildirim-1400",
+      "rota": "bildirimler",
+      "genislik": 1400,
+      "yukseklik": 1300,
+      "once": [
+        {
+          "bekleSecici": "#bildirimTurler .bm-satir",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#bildirimTelegram",
+          "etiket": "Telegram bağlı mı (bağlantı ayarları Ayarlar › Bildirimler)"
+        },
+        {
+          "secici": "#bildirimTurler",
+          "etiket": "Türler: ne zaman gelir · önem · son gönderim · açık/kapalı"
+        },
+        {
+          "secici": "#bildirimGecmis",
+          "etiket": "Son gönderilenler ve sonucu"
+        },
+        {
+          "secici": "#btnBildirimDeneme",
+          "etiket": "Deneme mesajı"
+        }
+      ],
+      "uretim": {
+        "dosya": "bildirim-1400.webp",
+        "en": 1400,
+        "boy": 1300,
+        "bayt": 78320,
+        "olcek": 1,
+        "ozet": "a060c3e0e9744311940f3b9726fbad3d7f48f0e845b75c3cedfb111601e4f20a",
+        "genel": "907f0809668754132ae8472561125053ef4462380a5f8167f445594ab0281084",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#bildirimTelegram",
+            "x": 260,
+            "y": 184,
+            "w": 130,
+            "h": 30
+          },
+          {
+            "secici": "#bildirimTurler",
+            "x": 260,
+            "y": 220,
+            "w": 812,
+            "h": 1078
+          },
+          {
+            "secici": "#bildirimGecmis",
+            "x": 1080,
+            "y": 220,
+            "w": 308,
+            "h": 182
+          },
+          {
+            "secici": "#btnBildirimDeneme",
+            "x": 1202,
+            "y": 178,
+            "w": 186,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-1400",
+      "rota": "ayarlar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#tblAyarBotOzet",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"ayarlar/botlar\"]",
+          "etiket": "Ayarlar'ın beş alt sayfası"
+        },
+        {
+          "secici": "#tblAyarBotOzet",
+          "etiket": "Botlar (özet): salt okunur"
+        },
+        {
+          "secici": "#tblAyarBotOzet tbody tr:first-child a",
+          "etiket": "Yönet → botun Yönetim görünümü"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 37250,
+        "olcek": 1,
+        "ozet": "9658384a7c85b69cabe5a353932eeac1f50b9e907875cd5a79b9bad9c100daf7",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"ayarlar/botlar\"]",
+            "x": 8,
+            "y": 690,
+            "w": 231,
+            "h": 42
+          },
+          {
+            "secici": "#tblAyarBotOzet",
+            "x": 285,
+            "y": 219,
+            "w": 1078,
+            "h": 105
+          },
+          {
+            "secici": "#tblAyarBotOzet tbody tr:first-child a",
+            "x": 1214,
+            "y": 257,
+            "w": 67,
+            "h": 26
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-telegram-1400",
+      "rota": "ayarlar/bildirimler",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#txtPortfoyTelegram",
+          "etiket": "Telegram'ın bugünkü durumu"
+        },
+        {
+          "secici": "#chkTgEnabled",
+          "etiket": "Etkinleştir"
+        },
+        {
+          "secici": "#inpTgToken",
+          "etiket": "Bot token (görüntüde gizli)"
+        },
+        {
+          "secici": "#inpTgChatId",
+          "etiket": "Chat ID (görüntüde gizli)"
+        },
+        {
+          "secici": "#btnTestTg",
+          "etiket": "Test mesajı gönder"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-telegram-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 67396,
+        "olcek": 1,
+        "ozet": "18e385db9e2cfbf1cad8037df165edb24d377b3a89e054242bf36f29226d9f0e",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#txtPortfoyTelegram",
+            "x": 445,
+            "y": 203,
+            "w": 758,
+            "h": 25
+          },
+          {
+            "secici": "#chkTgEnabled",
+            "x": 445,
+            "y": 247,
+            "w": 26,
+            "h": 25
+          },
+          {
+            "secici": "#inpTgToken",
+            "x": 445,
+            "y": 302,
+            "w": 758,
+            "h": 39
+          },
+          {
+            "secici": "#inpTgChatId",
+            "x": 445,
+            "y": 393,
+            "w": 758,
+            "h": 39
+          },
+          {
+            "secici": "#btnTestTg",
+            "x": 611,
+            "y": 663,
+            "w": 181,
+            "h": 42
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-saglik-1400",
+      "rota": "ayarlar/bildirimler",
+      "genislik": 1400,
+      "kaydir": "#formSaglik",
+      "isaretler": [
+        {
+          "secici": "#inpHcUrl",
+          "etiket": "Bot ping adresi"
+        },
+        {
+          "secici": "#inpHcSunucuUrl",
+          "etiket": "Sunucu kalp atışı adresi"
+        },
+        {
+          "secici": "#txtHcDurum",
+          "etiket": "Durum"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-saglik-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 73370,
+        "olcek": 1,
+        "ozet": "2353d2ee8a294e3a812d2d7f8d0983aa7ae2502940d8a1dd427a8d538e50f247",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#inpHcUrl",
+            "x": 445,
+            "y": 705,
+            "w": 758,
+            "h": 39
+          },
+          {
+            "secici": "#inpHcSunucuUrl",
+            "x": 445,
+            "y": 774,
+            "w": 758,
+            "h": 39
+          },
+          {
+            "secici": "#txtHcDurum",
+            "x": 445,
+            "y": 866,
+            "w": 758,
+            "h": 25
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-guncelleme-1400",
+      "rota": "ayarlar/guncelleme",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ayGuncDurum",
+          "sure": 20000
+        },
+        {
+          "bekle": 300
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"ayarlar/guncelleme\"]",
+          "etiket": "Ayarlar › Güncelleme"
+        },
+        {
+          "secici": "#ayarlarGuncellemeKart",
+          "etiket": "Çalışan sürüm ve son kontrolün sonucu"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-guncelleme-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 34106,
+        "olcek": 1,
+        "ozet": "716e613561ed4f889d433bafb3720c2469a01b82f50132ae8ab781ece6b898b8",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"ayarlar/guncelleme\"]",
+            "x": 8,
+            "y": 711,
+            "w": 231,
+            "h": 41
+          },
+          {
+            "secici": "#ayarlarGuncellemeKart",
+            "x": 420,
+            "y": 138,
+            "w": 808,
+            "h": 157
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "yedek-tasima-1400",
+      "rota": "ayarlar/yedek",
+      "genislik": 1400,
+      "dosyalar": [
+        "js/pages/tasima.js"
+      ],
+      "once": [
+        {
+          "bekleSecici": "#tsOlusturKart",
+          "sure": 20000
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"ayarlar/yedek\"]",
+          "etiket": "Ayarlar › Yedek ve taşıma"
+        },
+        {
+          "secici": "#tsSifre",
+          "etiket": "Şifre (iki kez) — gizli bilgiler bununla şifrelenir"
+        },
+        {
+          "secici": "#tsArastirma",
+          "etiket": "Araştırma verileri — varsayılan kapalı"
+        },
+        {
+          "secici": "#tsSunucu",
+          "etiket": "Sunucu bağlantısı — varsayılan kapalı"
+        },
+        {
+          "secici": "#btnTsOlustur",
+          "etiket": "Taşıma dosyası oluştur"
+        }
+      ],
+      "uretim": {
+        "dosya": "yedek-tasima-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 77188,
+        "olcek": 1,
+        "ozet": "4ce132dffefe3357a5f552af649ffd0cad864c3eded76ff72cdc11d8ea3c0e4d",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"ayarlar/yedek\"]",
+            "x": 8,
+            "y": 866,
+            "w": 231,
+            "h": 32
+          },
+          {
+            "secici": "#tsSifre",
+            "x": 279,
+            "y": 272,
+            "w": 443,
+            "h": 41
+          },
+          {
+            "secici": "#tsArastirma",
+            "x": 279,
+            "y": 339,
+            "w": 30,
+            "h": 30
+          },
+          {
+            "secici": "#tsSunucu",
+            "x": 279,
+            "y": 392,
+            "w": 30,
+            "h": 30
+          },
+          {
+            "secici": "#btnTsOlustur",
+            "x": 983,
+            "y": 494,
+            "w": 186,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "arsiv-1400",
+      "rota": "arsiv",
+      "genislik": 1400,
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-menu=\"arsiv\"]",
+          "etiket": "Arşiv: Genel · Kâğıt test · Kâğıt test riski · Emekli botlar"
+        },
+        {
+          "secici": "#arsivStratListe",
+          "etiket": "Eski stratejiler"
+        },
+        {
+          "secici": "#elleEmirKat > summary",
+          "etiket": "Elle emir (katlı)"
+        },
+        {
+          "secici": "#btnScanWatchlist",
+          "etiket": "İzleme listesi taraması"
+        }
+      ],
+      "yukseklik": 1700,
+      "uretim": {
+        "dosya": "arsiv-1400.webp",
+        "en": 1400,
+        "boy": 1700,
+        "bayt": 70786,
+        "olcek": 1,
+        "ozet": "b06f529addc42362fb63f104600855e64f6d5bb08be282a6989a52281fad7080",
+        "genel": "9bfe5744dc2669860dc8067711b0a38d176606d41ea649f085cbc0a5001ea895",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-menu=\"arsiv\"]",
+            "x": 8,
+            "y": 610,
+            "w": 231,
+            "h": 191
+          },
+          {
+            "secici": "#arsivStratListe",
+            "x": 260,
+            "y": 266,
+            "w": 1128,
+            "h": 913
+          },
+          {
+            "secici": "#elleEmirKat > summary",
+            "x": 261,
+            "y": 1228,
+            "w": 1126,
+            "h": 52
+          },
+          {
+            "secici": "#btnScanWatchlist",
+            "x": 281,
+            "y": 1390,
+            "w": 247,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "arsiv-emekli-1400",
+      "rota": "arsiv/emekli",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekle": 1500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#arsivDonchianKutu",
+          "etiket": "Donchian trend botu (salt okunur)"
+        },
+        {
+          "secici": "#arsivKalkanKutu",
+          "etiket": "Kalkan botu (salt okunur)"
+        }
+      ],
+      "uretim": {
+        "dosya": "arsiv-emekli-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 51606,
+        "olcek": 1,
+        "ozet": "19e0b3a9ad4f1be779e0204bbcb3ffb582b330deeaca31bf95c9c1bdbc041a28",
+        "genel": "12dc212d1c2e3c082a8f984e4107ec86bf8f91d443493a0f8c63bd7c4c62d04f",
+        "surum": "66.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#arsivDonchianKutu",
+            "x": 260,
+            "y": 222,
+            "w": 1128,
+            "h": 290
+          },
+          {
+            "secici": "#arsivKalkanKutu",
+            "x": 260,
+            "y": 561,
+            "w": 1128,
+            "h": 236
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kitapcik-1400",
+      "rota": "kitapcik",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ktpListe .ktp-kart",
+          "etiket": "Kitapçık listesi (seçili kart vurgulu)"
+        },
+        {
+          "secici": "#ktpYeniSekme",
+          "etiket": "Yeni sekmede aç"
+        },
+        {
+          "secici": "#ktpCerceve",
+          "etiket": "Kitapçık panelin içinde (kendi menüsü ve tema düğmesiyle)"
+        }
+      ],
+      "uretim": {
+        "dosya": "kitapcik-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 78736,
+        "olcek": 1,
+        "ozet": "7ed1d5bc74b42c74dbcbab50aef4b2eb0010a4c8b04b20e57448525e4439db56",
+        "genel": "3a82ce44133e4ccfeb0529b8a369abf11c0fb60a828d2a2f547d1ca85101b1c6",
+        "surum": "67.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ktpListe .ktp-kart",
+            "x": 260,
+            "y": 178,
+            "w": 373,
+            "h": 93
+          },
+          {
+            "secici": "#ktpYeniSekme",
+            "x": 1205,
+            "y": 399,
+            "w": 170,
+            "h": 42
+          },
+          {
+            "secici": "#ktpCerceve",
+            "x": 273,
+            "y": 445,
+            "w": 1102,
+            "h": 453
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kitapcik-390",
+      "rota": "kitapcik",
+      "genislik": 390,
+      "once": [
+        {
+          "bekle": 2500
+        }
+      ],
+      "kaydir": "#ktpOkuyucu",
+      "isaretler": [
+        {
+          "secici": "#ktpYeniSekme",
+          "etiket": "Yeni sekmede aç"
+        },
+        {
+          "secici": "#ktpCerceve",
+          "etiket": "Kitapçık (kendi içinde kayar)"
+        }
+      ],
+      "uretim": {
+        "dosya": "kitapcik-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 55322,
+        "olcek": 2,
+        "ozet": "2b66984aa6d3fef78d8254f8db471d1e792b9670866c35036557e129261ac89d",
+        "genel": "3a82ce44133e4ccfeb0529b8a369abf11c0fb60a828d2a2f547d1ca85101b1c6",
+        "surum": "67.0",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#ktpYeniSekme",
+            "x": 180,
+            "y": 165,
+            "w": 193,
+            "h": 52
+          },
+          {
+            "secici": "#ktpCerceve",
+            "x": 17,
+            "y": 221,
+            "w": 356,
+            "h": 621
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kilavuz-1400",
+      "rota": "kilavuz",
+      "genislik": 1400,
+      "bekle": 2500,
+      "isaretler": [
+        {
+          "secici": "#klArama",
+          "etiket": "Arama"
+        },
+        {
+          "secici": "#klIcindekiler",
+          "etiket": "İçindekiler"
+        },
+        {
+          "secici": "#klIcerik",
+          "etiket": "Bölüm"
+        }
+      ],
+      "uretim": {
+        "dosya": "kilavuz-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 89948,
+        "olcek": 1,
+        "ozet": "86a70818f99bfc909393d51faa5498e965f4bc4da528af8d816308d384e6b473",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#klArama",
+            "x": 260,
+            "y": 138,
+            "w": 456,
+            "h": 42
+          },
+          {
+            "secici": "#klIcindekiler",
+            "x": 260,
+            "y": 212,
+            "w": 264,
+            "h": 686
+          },
+          {
+            "secici": "#klIcerik",
+            "x": 536,
+            "y": 212,
+            "w": 852,
+            "h": 686
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kilavuz-390",
+      "rota": "kilavuz",
+      "genislik": 390,
+      "bekle": 2500,
+      "isaretler": [
+        {
+          "secici": "#klArama",
+          "etiket": "Arama"
+        },
+        {
+          "secici": "#btnKlIcindekiler",
+          "etiket": "İçindekiler (dokununca açılır)"
+        }
+      ],
+      "uretim": {
+        "dosya": "kilavuz-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 78722,
+        "olcek": 2,
+        "ozet": "506fe99cd7e0248bb1d7803dcf4243a155eeb5c896c4636d0cf9cea7c9dc97bc",
+        "genel": "701523b967e8bad238fe8213f5d514674532f5ccacf11f29b44dbd813d17ea5b",
+        "surum": "68.1",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#klArama",
+            "x": 8,
+            "y": 186,
+            "w": 374,
+            "h": 52
+          },
+          {
+            "secici": "#btnKlIcindekiler",
+            "x": 8,
+            "y": 297,
+            "w": 374,
+            "h": 52
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kurulum-denetimi-1400",
+      "rota": "kurulum-denetimi",
+      "genislik": 1400,
+      "yukseklik": 1250,
+      "once": [
+        {
+          "bekleSecici": "#kurulumDenetimiKok .kd-satir",
+          "sure": 40000
+        },
+        {
+          "degerJs": "AG.pages.kurulumDenetimi._ciz({\"success\":true,\"kademe\":\"yerel\",\"rol\":\"kullanici\",\"surum\":\"68.3\",\"zaman\":\"2026-10-20T09:00:00.000Z\",\"veri\":{\"kok\":\"C:\\\\Pusula-Veri\"},\"ozet\":{\"iyi\":14,\"uyari\":1,\"kotu\":1,\"bilgi\":2},\"maddeler\":[{\"id\":\"surum\",\"grup\":\"Program\",\"baslik\":\"Sürüm\",\"durum\":\"iyi\",\"ayrinti\":\"Pusula 68.3\",\"onar\":null},{\"id\":\"isaret\",\"grup\":\"Program\",\"baslik\":\"Kurulum işareti\",\"durum\":\"iyi\",\"ayrinti\":\"PUSULA-KURULUM.json: kullanıcı kurulumu · 2026-10-20\",\"onar\":null},{\"id\":\"node\",\"grup\":\"Program\",\"baslik\":\"Node.js\",\"durum\":\"iyi\",\"ayrinti\":\"v24.21.0 · taşınabilir (program klasöründe)\",\"onar\":null},{\"id\":\"paketler\",\"grup\":\"Program\",\"baslik\":\"Paketler (node_modules)\",\"durum\":\"iyi\",\"ayrinti\":\"5 paket hazır\",\"onar\":null},{\"id\":\"port\",\"grup\":\"Program\",\"baslik\":\"Panel portu\",\"durum\":\"bilgi\",\"ayrinti\":\"http://127.0.0.1:3000\",\"onar\":null},{\"id\":\"veri\",\"grup\":\"Veri\",\"baslik\":\"Veri yeri\",\"durum\":\"iyi\",\"ayrinti\":\"C:\\\\Pusula-Veri · yeni düzen (tür klasörleri) · 5/5 tür klasörü\",\"onar\":null},{\"id\":\"jeton\",\"grup\":\"Veri\",\"baslik\":\"Panel / telefon jetonu\",\"durum\":\"iyi\",\"ayrinti\":\"var (telefon-jeton.json)\",\"onar\":null},{\"id\":\"git\",\"grup\":\"Güncelleme\",\"baslik\":\"Git ve uzak depo\",\"durum\":\"iyi\",\"ayrinti\":\"git version 2.56.0.windows.2 · uzak: https://github.com/…/pusula-panel.git · HEAD 4f2c9a1\",\"onar\":null},{\"id\":\"gorev-autostart\",\"grup\":\"Görevler\",\"baslik\":\"PusulaBot — Otomatik açılış (oturum açılınca Pusula başlar)\",\"durum\":\"iyi\",\"ayrinti\":\"son çalışma 2026-10-20 08:58 · oturum açıkken\",\"onar\":null},{\"id\":\"gorev-bekci\",\"grup\":\"Görevler\",\"baslik\":\"PusulaBekci — Bekçi (10 dakikada bir: kapandıysa yeniden başlatır)\",\"durum\":\"iyi\",\"ayrinti\":\"son çalışma 2026-10-20 08:55 · sonraki 2026-10-20 09:05 · oturum açıkken\",\"onar\":null},{\"id\":\"gorev-dikkat\",\"grup\":\"Görevler\",\"baslik\":\"PusulaDikkatArsiv — Coin tarama günlük arşivi (gece)\",\"durum\":\"iyi\",\"ayrinti\":\"henüz çalışmadı · sonraki 2026-10-21 03:30 · oturum açıkken\",\"onar\":null},{\"id\":\"gorev-guncelleme\",\"grup\":\"Görevler\",\"baslik\":\"PusulaGuncelle — Otomatik güncelleme (12:00)\",\"durum\":\"iyi\",\"ayrinti\":\"henüz çalışmadı · sonraki 2026-10-20 12:00 · oturum açıkken\",\"onar\":null},{\"id\":\"gorev-yedek\",\"grup\":\"Görevler\",\"baslik\":\"PusulaYedek — Günlük yedek (05:30)\",\"durum\":\"kotu\",\"ayrinti\":\"kurulu değil\",\"onar\":\"gorev-yedek\"},{\"id\":\"gorev-yedek-usb\",\"grup\":\"Görevler\",\"baslik\":\"PusulaYedekUSB — Haftalık USB yedeği (pazar 06:00, F: sürücüsü)\",\"durum\":\"bilgi\",\"ayrinti\":\"kurulu değil (bu kurulum türünde beklenmez)\",\"onar\":null},{\"id\":\"kisayol\",\"grup\":\"Görevler\",\"baslik\":\"Kısayollar (masaüstü + Başlat menüsü)\",\"durum\":\"iyi\",\"ayrinti\":\"masaüstü: var · Başlat menüsü: var\",\"onar\":null},{\"id\":\"uyku\",\"grup\":\"Bilgisayar\",\"baslik\":\"Uyku ayarı (prize bağlıyken)\",\"durum\":\"uyari\",\"ayrinti\":\"30 dakika sonra uyur — uykudayken botlar çalışmaz\",\"onar\":\"uyku\"},{\"id\":\"yol\",\"grup\":\"Bilgisayar\",\"baslik\":\"Kullanıcı PATH (taşınabilir Node / Git)\",\"durum\":\"iyi\",\"ayrinti\":\"tamam\",\"onar\":null}]})"
+        },
+        {
+          "bekle": 600
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"kurulum-denetimi\"]",
+          "etiket": "Sistem › Kurulum denetimi"
+        },
+        {
+          "secici": "#kdOzet",
+          "etiket": "Özet: kaç eksik / uyarı, kurulum türü, sürüm"
+        },
+        {
+          "secici": "[data-kimlik=\"gorev-yedek\"] .kd-onar",
+          "etiket": "Kırmızı satırda Onar — yalnız o adımı yeniden kurar"
+        },
+        {
+          "secici": "[data-kimlik=\"uyku\"]",
+          "etiket": "Uyku ayarı: uykudayken botlar çalışmaz"
+        }
+      ],
+      "uretim": {
+        "dosya": "kurulum-denetimi-1400.webp",
+        "en": 1400,
+        "boy": 1250,
+        "bayt": 80492,
+        "olcek": 1,
+        "ozet": "787771097e00249e6e194fea8173ca39e5df08900227633d8335aaa07d022107",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"kurulum-denetimi\"]",
+            "x": 8,
+            "y": 650,
+            "w": 231,
+            "h": 46
+          },
+          {
+            "secici": "#kdOzet",
+            "x": 260,
+            "y": 194,
+            "w": 1128,
+            "h": 91
+          },
+          {
+            "secici": "[data-kimlik=\"gorev-yedek\"] .kd-onar",
+            "x": 1313,
+            "y": 977,
+            "w": 54,
+            "h": 32
+          },
+          {
+            "secici": "[data-kimlik=\"uyku\"]",
+            "x": 281,
+            "y": 1170,
+            "w": 1086,
+            "h": 41
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "bot-performans-1400",
+      "rota": "botlar",
+      "genislik": 1400,
+      "yukseklik": 1150,
+      "kaydir": "#botPerformans",
+      "once": [
+        {
+          "bekleSecici": "#botPerformans",
+          "sure": 30000
+        },
+        {
+          "degerJs": "AG.pages.botPerformans.goster()"
+        },
+        {
+          "bekleSecici": "#botPerformansKart[open] .bp-kart",
+          "sure": 20000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#botPerformansKart .bp-ozet",
+          "etiket": "Botlarımızın gerçekleşmiş sonuçları (yeni kurulumda açık)"
+        },
+        {
+          "secici": "#botPerformansKart [data-kimlik=\"hucum\"] .bp-grafik",
+          "etiket": "Demo hesap eğrisi (başlangıç = 100) ve BTC al-tut (kesikli)"
+        },
+        {
+          "secici": "#botPerformansKart .bp-uyari",
+          "etiket": "Geçmiş sonuç geleceği göstermez — yalnız yüzde / endeks"
+        }
+      ],
+      "uretim": {
+        "dosya": "bot-performans-1400.webp",
+        "en": 1400,
+        "boy": 1150,
+        "bayt": 88334,
+        "olcek": 1,
+        "ozet": "66376d96a7e84c9b771645cb2a8d66aa97e45708a885f4a1fd5579a22c04d870",
+        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
+        "surum": "68.3",
+        "tarih": "2026-10-19",
+        "isaretler": [
+          {
+            "secici": "#botPerformansKart .bp-ozet",
+            "x": 281,
+            "y": 104,
+            "w": 1086,
+            "h": 28
+          },
+          {
+            "secici": "#botPerformansKart [data-kimlik=\"hucum\"] .bp-grafik",
+            "x": 294,
+            "y": 299,
+            "w": 243,
+            "h": 89
+          },
+          {
+            "secici": "#botPerformansKart .bp-uyari",
+            "x": 281,
+            "y": 767,
+            "w": 1086,
+            "h": 25
+          }
+        ]
+      }
+    }
+  ]
+}

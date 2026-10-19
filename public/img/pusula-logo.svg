@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Pusula logosu — rüzgâr gülü (PLAN-PANEL-PUSULA §4a/3): 4 ana kol koyu yeşil
+       (#1F6F63, gölge yarısı #15544B), 4 ara yön altın (#C98A2B). 32 px ve altında
+       yalnız 4 kol kullanılır (panel başlığındaki satır içi SVG). -->
+  <g fill="#C98A2B">
+    <path transform="rotate(45 32 32)" d="M32 11 35 29 32 32 29 29Z"/>
+    <path transform="rotate(135 32 32)" d="M32 11 35 29 32 32 29 29Z"/>
+    <path transform="rotate(225 32 32)" d="M32 11 35 29 32 32 29 29Z"/>
+    <path transform="rotate(315 32 32)" d="M32 11 35 29 32 32 29 29Z"/>
+  </g>
+  <path fill="#1F6F63" d="M32 3 27 27 32 32Z"/><path fill="#15544B" d="M32 3 37 27 32 32Z"/>
+  <path fill="#1F6F63" d="M61 32 37 27 32 32Z"/><path fill="#15544B" d="M61 32 37 37 32 32Z"/>
+  <path fill="#1F6F63" d="M32 61 37 37 32 32Z"/><path fill="#15544B" d="M32 61 27 37 32 32Z"/>
+  <path fill="#1F6F63" d="M3 32 27 37 32 32Z"/><path fill="#15544B" d="M3 32 27 27 32 32Z"/>
+  <circle cx="32" cy="32" r="2.2" fill="#F5F3EE"/>
+</svg>

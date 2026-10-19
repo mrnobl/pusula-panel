@@ -1,0 +1,26 @@
+# Bağımlılıklar
+node_modules/
+
+# Çalışma verisi: mum önbelleği, cüzdan durumu, loglar, gizli anahtarlar.
+# `data/secrets.json` özellikle burada — API anahtarı asla depoya girmez.
+data/
+
+# Yedek anlık görüntüleri
+*.zip
+
+# Araştırma defteri atomik yazımının geçici dosyası (lib/defter.js; yarıda kalırsa)
+kayitlar/*.tmp
+config.json.yedek
+config.json.tmp
+config.json.bozuk-*.bak
+
+# 68.0 veri yeri (npm run veri-tasi yazar; bu bilgisayara özel)
+veri-yeri.json
+veri-yeri.json.*.tmp
+
+# 68.3 kurulum programı (PLAN-TASIMA F4): taşınabilir çalışma zamanları, kurulum işareti, derleme ağacı — kuruluma özel
+/node/
+/git/
+PUSULA-KURULUM.json
+/kurulum/surum.json
+/yapi/

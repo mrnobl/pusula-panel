@@ -1,0 +1,497 @@
+{
+  "surum": "68.3",
+  "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
+  "bolumler": [
+    { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
+    { "id": "kurulum-programi", "baslik": "Kurulum programı (yeni bilgisayar)", "grup": "Başlangıç", "dosya": "bolumler/kurulum-programi.md" },
+    { "id": "kurulum", "baslik": "Sunucuya kurulum", "grup": "Başlangıç", "dosya": "bolumler/kurulum.md" },
+    { "id": "telefon", "baslik": "Telefondan açmak", "grup": "Başlangıç", "dosya": "bolumler/telefon.md" },
+    { "id": "gorevler", "baslik": "Sık görevler (adım adım)", "grup": "Başlangıç", "dosya": "bolumler/gorevler.md" },
+    { "id": "kurulum-sihirbazi", "baslik": "Kurulum sihirbazı", "grup": "Başlangıç", "rota": "kurulum", "dosya": "bolumler/kurulum-sihirbazi.md", "dosyalar": ["js/pages/kurulum.js"] },
+    { "id": "yedek-tasima", "baslik": "Yedek ve taşıma", "grup": "Başlangıç", "dosya": "bolumler/yedek-tasima.md", "dosyalar": ["js/pages/tasima.js"] },
+    { "id": "kullanim-sartlari", "baslik": "Kullanım şartları ve risk bildirimi", "grup": "Başlangıç", "dosya": "bolumler/kullanim-sartlari.md" },
+
+    { "id": "ana", "baslik": "Ana sayfa", "grup": "Ekranlar", "rota": "ana", "dosya": "bolumler/ana.md", "dosyalar": ["js/pages/anasayfa.js", "js/pages/botDil.js"] },
+    { "id": "portfoy", "baslik": "Portföy", "grup": "Ekranlar", "rota": "portfoy", "dosya": "bolumler/portfoy.md", "dosyalar": ["js/pages/portfoy.js", "js/pages/tasarimci.js", "js/pages/modelPortfoy.js", "js/pages/portfoyum.js", "js/pages/portfoyumRapor.js", "js/pages/islemDefteri.js", "js/pages/evKuyruk.js", "js/pages/kurCevirici.js", "js/pages/hisseYapilari.js"] },
+    { "id": "tasarimci", "baslik": "Bu ay kartı ve strateji karışımı", "grup": "Ekranlar", "rota": "arastirma/laboratuvar", "dosya": "bolumler/tasarimci.md", "arastirma": true },
+    { "id": "model-portfoy", "baslik": "Modeller (model portföyler)", "grup": "Ekranlar", "dosya": "bolumler/model-portfoy.md" },
+    { "id": "portfoyum", "baslik": "Hesaplar ve kayıtlar (gerçek portföy)", "grup": "Ekranlar", "dosya": "bolumler/portfoyum.md" },
+    { "id": "portfoyum-rapor", "baslik": "Rapor (aylık karne, kötü senaryolar, korelasyon)", "grup": "Ekranlar", "dosya": "bolumler/portfoyum-rapor.md" },
+    { "id": "islem-defterim", "baslik": "İşlem defteri (kendi kripto ve FX işlemlerin)", "grup": "Ekranlar", "dosya": "bolumler/islem-defterim.md" },
+    { "id": "kur-cevirici", "baslik": "Kur çevirici", "grup": "Ekranlar", "dosya": "bolumler/kur-cevirici.md" },
+    { "id": "botlar", "baslik": "Botlar", "grup": "Ekranlar", "rota": "botlar", "dosya": "bolumler/botlar.md", "dosyalar": ["js/pages/botlar.js", "js/pages/botDil.js", "js/pages/bindirmeIslem.js", "js/pages/bindirme.js", "js/pages/botPerformans.js"] },
+    { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js"] },
+    { "id": "hesaplar", "baslik": "Bot hesabı (Botlar › Hesap)", "grup": "Ekranlar", "dosya": "bolumler/hesaplar.md", "dosyalar": ["js/pages/hesaplar.js", "js/pages/borsa.js"] },
+
+    { "id": "arastirma-ozet", "baslik": "Araştırma özeti", "grup": "Araştırma", "rota": "arastirma/ozet", "dosya": "bolumler/arastirma-ozet.md", "dosyalar": ["js/pages/arastirmaOzet.js"], "arastirma": true },
+    { "id": "stratejiler", "baslik": "Stratejiler", "grup": "Araştırma", "rota": "arastirma/stratejiler", "dosya": "bolumler/stratejiler.md", "dosyalar": ["js/pages/stratejiler.js", "js/pages/arastirma.js"], "arastirma": true },
+    { "id": "backtest", "baslik": "Backtest", "grup": "Araştırma", "rota": "arastirma/backtest", "dosya": "bolumler/backtest.md", "dosyalar": ["js/pages/backtestEkran.js", "js/pages/backtestIs.js", "js/pages/backtest.js", "js/pages/seciciler.js"], "arastirma": true },
+    { "id": "izleme", "baslik": "Veri ve izleme listesi", "grup": "Araştırma", "rota": "arastirma/izleme", "dosya": "bolumler/izleme.md", "arastirma": true },
+    { "id": "coin-tarama", "baslik": "Coin tarama", "grup": "Araştırma", "rota": "tarama", "dosya": "bolumler/coin-tarama.md", "dosyalar": ["js/pages/tarama.js"] },
+    { "id": "dikkat-listesi", "baslik": "Dikkat listesi", "grup": "Araştırma", "rota": "tarama/kacin", "dosya": "bolumler/dikkat-listesi.md", "dosyalar": ["js/pages/dikkat.js"] },
+    { "id": "izle-listesi", "baslik": "İzle listesi", "grup": "Araştırma", "rota": "tarama/izle", "dosya": "bolumler/izle-listesi.md", "dosyalar": ["js/pages/izle.js"] },
+    { "id": "listeler", "baslik": "Listeler", "grup": "Araştırma", "rota": "tarama/listeler", "dosya": "bolumler/listeler.md", "dosyalar": ["js/pages/listeler.js"] },
+    { "id": "tarama-ayarlari", "baslik": "Tarama ayarları", "grup": "Araştırma", "rota": "tarama/ayarlar", "dosya": "bolumler/tarama-ayarlari.md", "dosyalar": ["js/pages/tarama.js"] },
+
+    { "id": "ileri-test", "baslik": "İleri test", "grup": "Diğer ekranlar", "rota": "ileri", "dosya": "bolumler/ileri-test.md", "dosyalar": ["js/pages/ileri.js"] },
+    { "id": "sinyaller", "baslik": "Sinyaller", "grup": "Diğer ekranlar", "rota": "sinyaller", "dosya": "bolumler/sinyaller.md", "dosyalar": ["js/pages/sinyaller.js"] },
+    { "id": "gosterge-havuzu", "baslik": "Gösterge havuzu", "grup": "Diğer ekranlar", "dosya": "bolumler/gosterge-havuzu.md", "arastirma": true },
+    { "id": "veri", "baslik": "Veri", "grup": "Diğer ekranlar", "rota": "veri", "dosya": "bolumler/veri.md", "dosyalar": ["js/pages/veri.js", "js/pages/portfoy.js"] },
+    { "id": "gunluk", "baslik": "Günlükler", "grup": "Diğer ekranlar", "rota": "gunluk", "dosya": "bolumler/gunluk.md", "dosyalar": ["js/pages/gunluk.js"] },
+    { "id": "bildirimler", "baslik": "Bildirimler", "grup": "Diğer ekranlar", "rota": "bildirimler", "dosya": "bolumler/bildirimler.md", "dosyalar": ["js/pages/bildirimMerkezi.js"] },
+    { "id": "kurulum-denetimi", "baslik": "Kurulum denetimi", "grup": "Diğer ekranlar", "rota": "kurulum-denetimi", "dosya": "bolumler/kurulum-denetimi.md", "dosyalar": ["js/pages/kurulumDenetimi.js"] },
+    { "id": "ayarlar", "baslik": "Ayarlar", "grup": "Diğer ekranlar", "rota": "ayarlar", "dosya": "bolumler/ayarlar.md", "dosyalar": [] },
+    { "id": "arsiv", "baslik": "Arşiv", "grup": "Diğer ekranlar", "rota": "arsiv", "dosya": "bolumler/arsiv.md", "dosyalar": ["js/pages/borsa.js"] },
+    { "id": "kagit-test", "baslik": "Kâğıt test", "grup": "Diğer ekranlar", "rota": "arsiv/kagit", "dosya": "bolumler/kagit-test.md", "dosyalar": ["js/pages/bots.js", "js/pages/dock.js"] },
+    { "id": "kagit-risk", "baslik": "Kâğıt test riski", "grup": "Diğer ekranlar", "rota": "arsiv/kagit-risk", "dosya": "bolumler/kagit-risk.md", "dosyalar": ["js/app/riskEkrani.js"] },
+    { "id": "pine", "baslik": "Pine betikleri", "grup": "Diğer ekranlar", "rota": "arastirma/pine", "dosya": "bolumler/pine.md", "dosyalar": ["js/pages/pine.js"], "arastirma": true },
+    { "id": "defter", "baslik": "Araştırma defteri", "grup": "Diğer ekranlar", "rota": "arastirma/defter", "dosya": "bolumler/defter.md", "dosyalar": ["js/pages/defter.js"], "arastirma": true },
+    { "id": "kitapcik", "baslik": "Kitapçık", "grup": "Diğer ekranlar", "rota": "kitapcik", "dosya": "bolumler/kitapcik.md", "dosyalar": ["js/pages/kitapcik.js", "kitapcik/bot-stratejileri.html", "kitapcik/ict-kitabi.html", "kitapcik/ict-modelleri.html", "kitapcik/grafik-stilleri.html", "kitapcik/strateji-kitaplari.html"], "arastirma": true },
+    { "id": "kilavuz-kullanimi", "baslik": "Kılavuzu kullanmak", "grup": "Diğer ekranlar", "rota": "kilavuz", "dosya": "bolumler/kilavuz-kullanimi.md", "dosyalar": ["js/pages/kilavuz.js", "js/core/md.js"] },
+
+    { "id": "sss", "baslik": "Sık sorulanlar", "grup": "Başvuru", "dosya": "bolumler/sss.md" },
+    { "id": "sozluk", "baslik": "Sözlük", "grup": "Başvuru", "dosya": "bolumler/sozluk.md" },
+    { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
+  ],
+  "surumler": [
+    {
+      "surum": "68.3", "tarih": "2026-10-20",
+      "yeni": [
+        "Kurulum programı: Pusula-Kurulum.exe ile yeni bir Windows bilgisayara tek dosyayla kurulum — yönetici izni istemez; Node.js, Git ve paketler içinde. Görevler, kısayollar, veri klasörü (C:\\Pusula-Veri), telefon jetonu ve uyku ayarı kendiliğinden; sonunda kurulum sihirbazı açılır. Kaldırınca verilerin silinmez.",
+        "Sistem › Kurulum denetimi: görevler, kısayollar, veri yeri, güncelleme deposu, sürüm, telefon jetonu ve uyku ayarı tek sayfada yeşil / kırmızı; kırmızı satırda Onar.",
+        "Botlarımızın gerçekleşmiş sonuçları: yeni kurulumda Botlar ve Ana sayfada Hücum / Denge demo hesap eğrisi (BTC al-tut kıyaslı) ve model portföylerin kâğıt hesabı — yalnız yüzde, tutar ve bakiye yok.",
+        "Yeni kurulum bomboş açılır: önceden yüklü fiyat ya da grafik yok, ihtiyaç olunca indirilir; araştırma kitapçıkları ve araştırma verileri dağıtımda yok (araştırma eklentisiyle gelir)."
+      ]
+    },
+    {
+      "surum": "68.2", "tarih": "2026-10-20",
+      "yeni": [
+        "Hücum: aynı çalışmada verilip birkaç saniyede dolan giriş emri artık botu yanlışlıkla durdurmuyor (çalışma sonu kontrolünden önce dolumlar okunur, fark sürerse durur)."
+      ]
+    },
+    {
+      "surum": "68.1", "tarih": "2026-10-20",
+      "yeni": [
+        "Taşıma dosyası: Ayarlar › Yedek ve taşıma › Taşıma dosyası oluştur — portföy, işlem defteri, bot kayıtları, ileri test kayıtları ve ayarlar tek dosyaya; anahtarlar, jetonlar ve PIN senin şifrenle şifreli. Araştırma ve sunucu bağlantısı kutuları varsayılan kapalı.",
+        "Kurulum sihirbazının ilk adımında Başka bilgisayardan taşı: dosya, şifre, önizleme, taşı. Hedefte kişisel veri varsa üzerine yazılmaz; taşınan botlar kendiliğinden başlamaz (önce mutabakat, sonra Başlat).",
+        "Araştırma eklentisi: araştırma verilerini ayrı bir dosyayla başka bilgisayarına taşı. Eklenti yüklü olmayan yeni kurulumda Araştırma menüsü görünmez; bugünkü kurulumlarda her şey yerinde.",
+        "USB yedeği aynı biçime geçebilir: yedek şifresini bir kez kaydedince haftalık USB yedeği .pusula dosyası yazar. Şifre kaydedilene kadar eski biçimde sürer."
+      ]
+    },
+    {
+      "surum": "68.0", "tarih": "2026-10-19",
+      "yeni": [
+        "Veri yeri programdan ayrılabilir: yeni komut npm run veri-tasi (önce --deneme ile plan) veriyi C:\\Pusula-Veri'ye (ya da --hedef ile seçtiğiniz yere) kopyalar, her dosyayı doğrular ve türlerine göre beş klasöre ayırır (kişisel, gizli, araştırma, önbellek, bu bilgisayara özel). Eski data klasörü olduğu gibi kalır; geri dönüş için veri-yeri.json silinir.",
+        "Var olan kurulumda hiçbir şey değişmez: komut verilmedikçe Pusula eskisi gibi data klasörünü kullanır (sunucu dahil).",
+        "Ayarlar ikiye ayrıldı: program varsayılanı (config.varsayilan.json, kişisel bilgi yok) + sizin ayarınız (ayarlar.json, yalnız farklı olanlar). İlk kayda kadar eski config.json okunur — davranış aynı."
+      ]
+    },
+    {
+      "surum": "67.5", "tarih": "2026-10-19",
+      "yeni": [
+        "Demo kabul raporu: çökme sayımı düzeltildi (oturum kapanışında node'un açılamaması sayılmaz, 1 dakika içindeki ardışık kapanmalar tek olay, sistem kapanışı ayrı bilgi satırı); verilmeyen emir oranı yalnız kaydın tutulduğu günlerle; getiri / düşüş / oynaklık bandı botun kendi değerinden. Kartta botun durması, alarm ve çökme olayları katlı \"Ayrıntı\" altında; verilmeyen emir satırında bilinen model–canlı farkı notu.",
+        "Botlar › Hücum: BTC ayağı koruma stopundan bilerek hariç (demo kararı) — artık \"Koruma stopu eksik\" denmez, pozisyon satırında \"bilerek stopsuz\" rozeti.",
+        "Botlar › Hücum › İşlemler: \"Dağılım geçmişi\" sekmesinin adı \"Pozisyon büyüklüğü\" — her bölümün açık pozisyon büyüklüğü (USDT), kâr/zarar değildir; altında bölüm başına son değer ve döneme göre değişim.",
+        "Günlük › Raporlar: Aylık (ayın 1'i 09:00 sonrası, geçen ay) ve Yıllık (1 Ocak, geçen yıl) raporlar; ikisi de Telegram'a gider. Kaçırılan dönem sonradan arşive yazılır.",
+        "Telegram: geliştirme bilgisayarı komut yoklaması ve gönderim yapmaz (sunucudaki yoklamayla çakışma — \"409\" — biter). Sunucuda değişiklik yok.",
+        "Araştırma › Portföy laboratuvarı: \"Olsaydı planı\" kaldırıldı (eski adres Kurucu'ya gider; eski karar günlüğü Karşılaştır altında arşiv). Ana sekmeler Kurucu · Sonuç · Karşılaştır; Strateji karışımı ve Varyasyon \"İleri araştırma\" katında. Kurucu'da katalogda olmayan hisse Yahoo'dan bulunup eklenir.",
+        "Portföy › Hedefim › Para ekle: \"Bu dağılımı geçmişte dene\" — planın hedef payları laboratuvarda geçmişte simüle edilir."
+      ]
+    },
+    {
+      "surum": "67.4", "tarih": "2026-10-19",
+      "yeni": [
+        "Pano › Dağılım: halkanın altında dilim listesi — her dilimde içindeki varlıklar portföy içindeki paylarıyla (ör. Hisse %10,8 — PYPL %4,1 · ASTS %3,2); nakitte para birimleri.",
+        "Pano › Değer · getiri: çizgilerin ucunda son değer (×4,16 ya da +%31,6) ve altında her kıyasın ne ölçtüğü (TL mevduat = TCMB 1 aya kadar ortalama faiz, stopaj sonrası, her ay yenilenir — üst sınır).",
+        "Pano › Aylık getiri: hücrelerde yüzde ve Yıl sütunu; telefonda yana kaydırılır. Bot hesapları satırı Pano'dan kaldırıldı (Botlar sayfasında).",
+        "Hesaplar: ayrı \"Yeni hesap\" kartı (kurum adıyla, isteğe bağlı vadeli mevduat); \"Varlık ekle\" sekmeli: Hisse / ETF · Fon (TEFAS) · Kripto · Altın · Nakit · Diğer — elinde zaten olan her şey buradan.",
+        "Hesaplar: vadeli mevduat faizi ve elle fiyat hesap kartında; işlem defteri katlı (varsayılan kapalı); \"Diğer işlemler\" yalnız transfer, faiz, ücret, bölünme; Gelişmiş'te yalnız adlar ve hesap kapatma."
+      ]
+    },
+    {
+      "surum": "67.3", "tarih": "2026-10-19",
+      "yeni": [
+        "Portföy › Hedefim › Para ekle ve dağılımı değiştir: eklenecek parayı (₺ ya da $) ve her hissenin kuralını (Sabit % / Oranını koru) yaz; hangi hisseden kaç adet alıp satacağını hesaplar.",
+        "Satış gerekiyorsa ne kadar satılacağı ve satıştan sonra elinde kaç adet kalması gerektiği büyük ve vurgulu yazılır; liste kopyalanabilir.",
+        "Aldım, işlemleri kaydet: para yatırma, satışlar ve alışlar seçili portföyün hesabına tek seferde yazılır (önce gerçek adet ve fiyat düzeltilebilir). Vazgeç hiçbir şey yazmaz.",
+        "Planlayıcının altında portföy botlarının tuttuğu hisseler (Nasdaq / BIST Momentum 10, %50 QQQ + %50 Hücum); + Plana ekle ile Sabit %5 gelir.",
+        "Portföy › Hesaplar: portföylerin adı değiştirilebilir (Adını değiştir)."
+      ]
+    },
+    {
+      "surum": "67.2", "tarih": "2026-10-19",
+      "yeni": [
+        "Portföy: Hisse ekle ve Düzenle'de alış tarihi girilir ve değiştirilir.",
+        "Pano'daki getiri artık alış fiyatından ölçülür; yeni eklenen portföylerde 0 görünmez."
+      ]
+    },
+    {
+      "surum": "67.1", "tarih": "2026-10-19",
+      "yeni": [
+        "Telegram bildirimleri sadeleşti: bot · ne oldu başlığı, kısa açıklama, uyarılarda Ne yapmalı satırı, Türkçe sayı ve kısa saat.",
+        "Kurulum sihirbazı artık zorunlu değil: tamamlanmadıysa her girişte üstte uyarı şeridi çıkar (Şimdilik geç).",
+        "Araştırma kitapçıkları dağıtım paketine de giriyor."
+      ]
+    },
+    {
+      "surum": "67.0", "tarih": "2026-10-19",
+      "yeni": [
+        "Araştırma defteri: her kayıt sade bir hikâye — ne denendi, neyle kıyaslandı, ne çıktı, sonuç ve ders; kısaltmalar açılır, bütün yazılar sola yaslı.",
+        "Günlük › Raporlar: her sabah dünün günlük raporu, pazartesi haftalık rapor — botların kâr/zararı ve işlemleri, model emirleri, portföy botlarının tercihleri; özeti Telegram'a gider.",
+        "Sistem › Bildirimler: Telegram'a giden her bildirim türü tek listede, aç/kapat ve son gönderilenler (acil durum kapatılamaz).",
+        "Sistem › Günlükler: botların, verinin ve sunucunun her olayı tek biçimde, 30 gün; süz, ara, CSV. Ana sayfa Sistem kartında günlük ışığı.",
+        "Bilgi › Kurulum sihirbazı: yeni kurulumda riskler ve kullanım şartları onayı, Binance demo, Telegram, telefon, acil durdurma, ilk deneme."
+      ]
+    },
+    {
+      "surum": "66.0", "tarih": "2026-10-19",
+      "yeni": [
+        "Yeni panel: koyu tema, iki seviyeli yan menü (Günlük · İzleme · Araştırma · Sistem); üst çubukta kırıntı, Kur, Kılavuz, tema ve bot çalışırken Acil durdur; telefonda alt çubuk Ana · Portföy · Botlar · Sinyaller · Menü.",
+        "Portföy yeniden: Pano · Hesaplar · Varlıklar · İşlem defteri · Hedefim · Modeller · Takvim ve akış · Rapor. Üst çubukta Ben / Anıl / Tümü ve $ / ₺ / Gizli seçicisi (eski \"Tutarları gizle\" ve $/₺ düğmeleri kalktı). Her hesap bir portföye bağlanır ve toplama dahil olup olmadığı seçilir; Binance/OKX bakiyesi Pano toplamına girer.",
+        "Botlar: her botta Genel · Hesap · İşlemler · Yönetim. Eski Borsa hesapları sayfası Hesap görünümünde, Ayarlar › Botlar eylemleri Yönetim'de; Ayarlar'da salt okunur bot özeti.",
+        "Ana sayfa: Yapman gerekenler en üstte, sonra Portföyüm ve Sistem, sonra Botlar. Araştırma yeni Özet sayfasıyla açılır; İleri test, Veri ve Arşiv alt sayfalara bölündü.",
+        "Sayılar her yerde Türkçe biçimde: $1.234,56 ve %12,35."
+      ]
+    },
+    {
+      "surum": "65.0", "tarih": "2026-10-18",
+      "yeni": [
+        "İşlem defterim: Binance salt okuma bağlantısı. Binance hesap kartına API Key + Secret Key girip \"Anahtarı dene ve kaydet\": spot işlemlerinin bütün geçmişi, vadeli işlemler ve fonlama her gün kendiliğinden gelir — Binance'ten dosya indirmek gerekmez.",
+        "Yalnız \"Okumayı etkinleştir\" izni açık anahtar kabul edilir; işlem, vadeli, marjin, çekim, aktarım ya da başka herhangi bir izin açıksa anahtar reddedilir ve kaydedilmez. Kayıtta vadeli okuma bir kez denenir; Binance kabul etmezse kartta açıkça yazar.",
+        "İlk eşitlemede spot için bütün çiftler taranır; birkaç eşitlemeye bölünür, kartta \"spot tam tarama: 412 / 1630 çift\" gibi ilerleme yazar. Daha önce yüklediğin Binance dosyalarındaki işlemler iki kez sayılmaz."
+      ]
+    },
+    {
+      "surum": "64.9", "tarih": "2026-10-17",
+      "yeni": [
+        "İleri test sayfasında yeni kart: 876 gölge — Hücum %90 + TVL long/short %10. Geçmiş testte yalnız en derin düşüş sınırını aştığı için elenen 876 kuralı, emirsiz gölge olarak Hücum simülasyonuyla birlikte izlenir; kuruluşlar 1 Kasım ve 1 Aralık 2026, rapor 1 Ocak 2027.",
+        "Kartta bu ayın sepeti (long/short sayısı), bu ay ve başlangıçtan beri getiri, birlikte ↔ yalnız Hücum, vazgeçme kuralı (876 düşüşü −%20 ya da birlikte düşüş Hücum'dan 3 puan kötü → gölge durur). İki ay istatistiksel kanıt değildir; para ve emir yok.",
+        "Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (herkese açık Binance ve DefiLlama verisi); sunucuda ayrıca bir şey kurmanız gerekmez."
+      ]
+    },
+    {
+      "surum": "64.8", "tarih": "2026-10-16",
+      "yeni": [
+        "Portföyüm ve İşlem defterim'in tek yeri sunucu: geliştirme bilgisayarı ikisini de sunucudan okur; yazma jetonuyla (Kurulum › Adım 25) orada girilen kayıt sunucuya gönderilir.",
+        "Sunucu kapalıysa değişiklik geliştirme bilgisayarında sırayla bekler ve sunucu açılınca kendiliğinden gider (Kuyruk bölümü: Şimdi gönder, Kuyruktan çıkar); aynı değişiklik iki kez uygulanmaz.",
+        "OKX salt okuma anahtarı her bilgisayarda ayrı: geliştirme bilgisayarında Şimdi eşitle satırları sunucuya yollar (otomatik eşitleme yalnız sunucuda). Geliştirme bilgisayarındaki eski Portföyüm kayıtları için bir kezlik \"sunucuya taşı\" kartı (önce kuru deneme)."
+      ]
+    },
+    {
+      "surum": "64.7", "tarih": "2026-10-16",
+      "yeni": [
+        "Portföy › İşlem defterim (yeni sekme, Rapor'un yanında): kendi kripto ve FX işlemlerin tek yerde — OKX (dosya ya da salt okuma bağlantısı, her gün kendiliğinden), Binance geçmişi (CSV) ve MetaTrader 4/5 raporları (HTML). Botlar ve Portföyüm'den ayrı.",
+        "Net kâr/zarar (gerçekleşen − ücret + fonlama + swap), birikimli kâr/zarar ve tepeden düşüş grafikleri, aylık çubuklar ve yıl × ay tablosu, sembol tablosu (kazanma oranı, kâr faktörü, en büyük kayıp), uzun/kısa ve MetaTrader tutma süresi, süzgeçli işlem listesi; sembole tıklayınca fiyat grafiği üstünde alım/satım işaretleri.",
+        "Dosya yüklerken önce önizleme (satır, tarih aralığı, semboller, çift ve hatalı satırlar), sonra Kaydet; aynı satır iki kez eklenmez; yanlış yükleme Geri al ile etkisiz olur (silinmez). OKX anahtarı yalnız Read izinliyse kabul edilir. Yükleme yalnız sunucudan; telefondan ve bu bilgisayardan yalnız bakılır."
+      ]
+    },
+    {
+      "surum": "64.6", "tarih": "2026-10-16",
+      "yeni": [
+        "Tek yer: Binance bakiyesi bölümünde yalnız bakiye dökümü kaldı; pozisyonlar, bekleyen emirler ve işlem geçmişi yalnız grafiğin altındaki İşlemler panelinde.",
+        "İşlemler › Açık pozisyonlar Binance Positions sütunlarıyla (Size, Entry, Break-even, Mark, Liq., Margin, PNL, ROI, kaldıraç); Bekleyen emirler Temel (Basic) ve Koşullu (Conditional) ayrı; İşlem geçmişi Binance Trade History alanlarıyla (ücret, rol Maker/Taker, gerçekleşen kâr).",
+        "Düzeltme: XRP teminatı 2,86 / 20x (açık alış emrinin teminatı pozisyona katılıyordu, 4,29 / 13x görünüyordu).",
+        "Düzeltme: Kullanılabilir Binance'in Avbl sayısının kendisidir; birkaç kuruşluk zaman farkı artık \"EŞLEŞMİYOR\" alarmı vermez."
+      ]
+    },
+    {
+      "surum": "64.5", "tarih": "2026-10-15",
+      "yeni": [
+        "Botlar › Hücum'da yeni Binance bakiyesi bölümü: Binance'in kendi alanlarıyla cüzdan bakiyesi, gerçekleşmemiş K/Z, marj bakiyesi (= hesap değeri), pozisyon teminatı, açık emir teminatı ve kullanılabilir (Binance \"Avbl\") — her biri Binance'teki adıyla. \"Kullanılabilir = Marj bakiyesi − Pozisyon teminatı − Emir teminatı\" denklemi ve \"Binance ile eşleşiyor\" denetimi; sayfa açıkken 12 sn'de bir yenilenir.",
+        "Hesap değeri kutusunun altında Binance \"Avbl\" değeri yazar. Örnek: 4.888,84 + 58,52 + 1,43 = 4.948,79 → hesap değeri 4.949.",
+        "Hesapta botun sermaye tavanından fazla para varsa grafik, Başlangıçtan ve En derin düşüş botun kendi sermayesi üstünden (bot değeri = tavan + hesaptaki değişim); kutuda \"bot sermayesi 1.000 $ (tavan) — hesap 4.949 $\" yazar. Önceden bu durumda çizgi düz 1,00 kalıyordu."
+      ]
+    },
+    {
+      "surum": "64.4", "tarih": "2026-10-15",
+      "yeni": [
+        "İleri test › Demo kabul kartında Kabul raporu: 20 ölçütün tablosu (değer · durum · kısa not), Gün N / 63 ile 30. gün ara rapor ve 63. gün hüküm tarihleri, kayıtların başladığı gün ve prova günlüğü durumu. 63. güne kadar genel hüküm yok; ölçütler \"… bandında\" yazılır.",
+        "Rapor sunucudaki bot kayıtlarından dolar (bu bilgisayarda \"Gün 0 henüz yok\"). Maliyet ölçütünün referans fiyatları için sunucuda bir kez komut satırında node scripts/demo-kabul-rapor.js --ag."
+      ]
+    },
+    {
+      "surum": "64.3", "tarih": "2026-10-15",
+      "yeni": [
+        "Araştırma › Coin tarama › İzle: dikkat listesinde temiz, en az 3 veri ailesi olan, kategorisinde kazandığı ücrete göre ucuz (P/F en düşük %20) ve holder sayısı 30 günde artan coinler — her gece en çok 15. Yanında eşit ağırlıklı puan listesi (gölge), girenler/çıkanlar ve ısınma dönemi için ön izleme karnesi.",
+        "Listenin işe yarayıp yaramadığı önceden yazılmış kuralla 12 aylık pencerede rastgele sepetlere karşı ölçülür; sonuç hüküm gününe kadar gösterilmez. İlk liste ≈ 30 kayıt günü sonra çıkar (holder 30 günlük değişimi gerekir)."
+      ]
+    },
+    {
+      "surum": "64.2", "tarih": "2026-10-15",
+      "yeni": [
+        "Portföy › Rapor: seçtiğin ayın karnesi (ay başı → ay sonu, para girişi, piyasa etkisi, zaman ve para ağırlıklı getiri, TL enflasyon hariç), en çok etkileyenler, kötü senaryolar (doğrudan pay ↔ beta) ve sınıflar arası korelasyon.",
+        "Vadeli mevduat faizi otomatik: oran, vade, stopaj, vade başlangıcı ve yenile bilgisiyle biten vadelerin net faizi kendiliğinden eklenir; silinen bir daha eklenmez."
+      ]
+    },
+    {
+      "surum": "64.1", "tarih": "2026-10-15",
+      "yeni": [
+        "Araştırma › Coin tarama › Dikkat: her gece yüzlerce coin kendiliğinden taranır; 16 kuraldan biri tutan coin dikkat listesine girer. Listeye giren her coin ve 3 rastgele kontrol coini 90 gün izlenir; karne listenin ve her kuralın gerçekten işe yarayıp yaramadığını gösterir.",
+        "Tarama ayarları: dikkat listesine yeni giren coinler için Telegram bildirimi (varsayılan açık)."
+      ]
+    },
+    {
+      "surum": "64.0", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: Strateji kitapları genişletildi — Anti, A/D Market Buster, Kratter momentum açığa satışı, Kuepper trend ve ortalama sistemleri, Woods ve Bible formasyonları, Damir eğik çizgi ve değer alanı, Volman FPAS kurulumları, işlem yönetimi kuralları, günlük kayıp limiti ve Steenbarger hipotezleri (Kitapçık › Strateji kitapları)."
+      ]
+    },
+    {
+      "surum": "63.9", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: Strateji kitapları eklendi — Connors & Raschke, Kratter, Kuepper, price action kitapları, Volman ve psikoloji kitaplarının kuralları: anlatım ve 7 piyasada test (Kitapçık › Strateji kitapları)."
+      ]
+    },
+    {
+      "surum": "63.8", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: Grafik stilleri eklendi — harmonik, Elliott, formasyonlar, mumlar, DeMark, Wyckoff, seviyeler ve trend göstergeleri: anlatım ve 7 piyasada test (Kitapçık › Grafik stilleri)."
+      ]
+    },
+    {
+      "surum": "63.7", "tarih": "2026-10-15",
+      "yeni": [
+        "İleri test: EUR/USD CBDR gölge testi — ICT \"CBDR ile Londra girişi\" kuralı 15 Ekim 2026'dan itibaren her iş günü kayıt altında (emir yok): işlem sayısı, ortalama R, sıradaki günün durumu ve limit seviyesi, birikimli R grafiği; ara kontrol 15 Nisan 2027, karar 15 Ekim 2027."
+      ]
+    },
+    {
+      "surum": "63.6", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: ICT Kitabı eklendi — ICT'nin bütün kavramları ve 23 modeli kitap gibi; forex (DXY pariteleri) ve Nasdaq 100 üzerinde backtest (Kitapçık › ICT Kitabı)."
+      ]
+    },
+    {
+      "surum": "63.5", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: ICT modelleri eklendi — ICT kavramları, 16 alım satım modeli, gerçek işlem grafikleri ve BTC / EUR/USD backtest sonuçları (Kitapçık › ICT modelleri)."
+      ]
+    },
+    {
+      "surum": "63.4", "tarih": "2026-10-15",
+      "yeni": [
+        "Kitapçık: bot stratejileri panelde — elimizdeki her botun alım satım kuralı, grafikleri ve backtest sonucu; menüde Kitapçık (telefonda Diğer). Panelin içinde tam yükseklikte açılır, \"Yeni sekmede aç\" ile ayrı sekmede."
+      ]
+    },
+    {
+      "surum": "63.3", "tarih": "2026-10-14",
+      "yeni": [
+        "Sinyaller: \"bugün sistem ne diyor\" — uygulanan kurallar tek tabloda (BTC trendi · coin sepeti · Nasdaq M10 · dengeleme bandı · BIST M10 gri): bugünkü karar, karara uzaklık çubuğu, sıradaki karar, kim uyguluyor.",
+        "Coin sepeti coin coin ve Nasdaq M10 sıralamasının sınırı katlı tablolarda; gölge kurallar (Bollinger'li, 3 günlük, yatay piyasa filtresi) bugün ne derdi. Gösterge havuzu Araştırma › Strateji testi'ne taşındı."
+      ]
+    },
+    {
+      "surum": "63.2", "tarih": "2026-10-14",
+      "yeni": [
+        "Veri: üstte üç büyük durum (bot ve portföy verisi · coin tarama kaynakları · günlük arşiv); altta kullanana göre katlı gruplar (Botlar · Portföy ve modeller · Araştırma · Coin tarama · Arşiv) — sorunsuz grup kapalı, sorunlu grup açık.",
+        "Her kaynakta \"kim kullanıyor\" etiketleri (Hücum, Denge, Portföyüm, Nasdaq M10…). Coin tarama kaynaklarında sade terimler (piyasa havası, yeni coin bulma, uzak dur kontrolü…), yedeği olan satır gri \"yedek var — kayıp yok\"."
+      ]
+    },
+    {
+      "surum": "63.1", "tarih": "2026-10-14",
+      "yeni": [
+        "İleri test: ara rapor notu sayfa başında bir kez; karar takvimi (bütün karar ve kontrol günleri); grafikler — Hücum ve Denge simülasyonunun en derin düşüşü (uyarı/alarm eşik çizgileri), Bollinger (mevcut ↔ Bollinger'li), yan denemeler, demo uygulama sapması.",
+        "Kartlar sade: tek cümle, büyük durum, iki ana sayı, karar günü, ayrıntı katlı. Terimler: gölge → simülasyon, p95/p99 → uyarı/alarm eşiği, D3 range vetosu → yatay piyasa filtresi, Hücum-S → 1000 $'lık Hücum."
+      ]
+    },
+    {
+      "surum": "63.0", "tarih": "2026-10-14",
+      "yeni": [
+        "Ayarlar beş sekme: Botlar · Bildirimler (Telegram + Sağlık sinyali) · Borsa · Bu bilgisayar · Güncelleme. Açılış her zaman Botlar; adres sekmeyi taşır; güncelleme onay beklerken sekmede \"onay\" rozeti, Ana sayfadaki iş satırı doğrudan bu sekmeyi açar.",
+        "Piyasa verisi ve İzleme listesi Araştırma › Strateji testi › Veri ve izleme listesi'ne taşındı (botları etkilemezler). Bu bilgisayar etiketleri tek satır; hesap türü açıklamasında \"canlı hesap\"."
+      ]
+    },
+    {
+      "surum": "62.9", "tarih": "2026-10-14",
+      "yeni": [
+        "Araştırma üç grup: Strateji testi (Stratejiler · Backtest) · Portföy laboratuvarı (artık Araştırma içinde açılır) · Coin tarama (Tarama · Listeler · Ayarlar). Kâğıt test, Kâğıt test riski, Pine ve Araştırma defteri Arşiv'e taşındı.",
+        "Stratejiler: çalışan botlar, adaylar ve katlı \"Geçti, kullanılmıyor\"; elenenler Arşiv › Eski stratejiler. Backtest formu sade: strateji, coin, zaman dilimi, tarih; borsa, piyasa, sermaye, test türü ve arşivdeki stratejiler Gelişmiş'te."
+      ]
+    },
+    {
+      "surum": "62.8", "tarih": "2026-10-14",
+      "yeni": [
+        "Ana sayfa: dört kart. En üstte geniş Botlar kartı (durum, hesap değeri, başlangıçtan getiri + BTC, son karar, koruma stopu, ne yapmalı); altında Portföyüm · Modeller (tek satır + ışık) · Sistem (veri, borsa hesapları, sürüm ışıkları).",
+        "Yapman gerekenler en altta: yalnız senin elinle yapacağın işler, aynı iş tek satır (\"2 modelin bu ayki emirleri Midas'a girilmedi\"). Coin tarama notları ve veri hataları ana sayfadan çıktı (ilgili sayfada ve Sistem ışığında)."
+      ]
+    },
+    {
+      "surum": "62.7", "tarih": "2026-10-14",
+      "yeni": [
+        "Hesaplar → Borsa hesapları: sekme = hesap (Binance demo · Denge kâğıt · Canlı hesap kilitli). Sekmede bakiye ve sağlık ışığı; panelde büyük durum rozeti, \"Ne oldu? / Ne yapmalı\", sağlık kutuları (borsaya bağlı, kayıtlar borsayla aynı, saat doğru, koruma stopları), açık pozisyonlar · bekleyen emirler · geçmiş işlemler.",
+        "Demo API anahtarı, işlem dökümü (CSV) ve canlı hesap bölümü Ayarlar › Borsa'da; elle emir ve eski kâğıt test hesabı Arşiv'de. Telefon alt çubuğunda Hesaplar yerine Hesaplarım (Portföy). Panelde \"gerçek para\" yerine \"canlı hesap\"."
+      ]
+    },
+    {
+      "surum": "62.6", "tarih": "2026-10-14",
+      "yeni": [
+        "Botlar: sekme = bot. Hücum ve Denge kendi sekmesinde tam genişlik: büyük durum, son karar, getiri sayıları, grafik (canlı ↔ geçmiş), para nerede, coin bazında kâr/zarar, aylık getiri; altında yalnız o botun coin grafiği ve işlemleri.",
+        "Başlıkta yalnız Durdur/Başlat ve Acil fren; hesap türü, para yatırdım, şimdi çalıştır ve kontroller Ayarlar › Botlar'da. Sade terimler: coin sepeti, simülasyon, BTC oranı, koruma stopu, teminat. Göstergeler düğmesi kaldırıldı."
+      ]
+    },
+    {
+      "surum": "62.5", "tarih": "2026-10-14",
+      "yeni": [
+        "Hücum: gece gelen \"marj kipi cross yapılamadı (-4067)\" yanlış alarmı giderildi — semboller zaten çapraz ×20 ise istek atılmıyor; açık emir varken gelen -4067'de kip okunup çaprazsa hata sayılmıyor (bot kodu: sunucuda onayla kurulur)."
+      ]
+    },
+    {
+      "surum": "62.4", "tarih": "2026-10-14",
+      "yeni": [
+        "Portföy: sekme = model. Portföyüm (şahsi portföyün kendi sayfası: grafik, hesap hesap performans, 6 kıyas, kâr/zarar, aylık getiri) · Nasdaq M10 · BIST M10 · %50 QQQ + %50 Hücum (her birinde Bu ay kartı ve Uyguladım) · Hesaplarım.",
+        "Hesaplarım'da her hesabın altında + işlem (alış, satış, temettü, para yatırma/çekme; geçmiş tarih). Üstte her sekmede özet şeridi ve USD/TL düğmesi."
+      ]
+    },
+    {
+      "surum": "62.3", "tarih": "2026-10-13",
+      "yeni": [
+        "Portföy sadeleşti: dört sekme — Portföyüm (yalnız bakılır: grafik, dağılım, varlıklar) · Model portföyler (botların portföyü) · Bu ay yapılacaklar · Kayıt (hesap, hisse, işlem girişi).",
+        "Model portföyler: her modelin kuralı düz Türkçe, geçmiş (backtest) grafiği, eldeki hisseler ve aday havuzu — sıradaki kararda hangi hisse çıkar, hangisi girer. Laboratuvar artık Araştırma › Portföy laboratuvarı'nda."
+      ]
+    },
+    {
+      "surum": "62.2", "tarih": "2026-10-13",
+      "yeni": [
+        "Bu ay (%50 QQQ + %50 Hücum): Binance'ten ABD'ye aktarımda QQQ alışı 'aktarım ulaşınca' işaretli; Uyguladım'da aktarımın ulaşan tutarı (masraf otomatik düşer).",
+        "BIST 2027 bayramları Diyanet ilanıyla doğrulandı. Telefonda bir kez yeniden giriş gerekebilir (oturum artık sunucuda da 30 gün)."
+      ]
+    },
+    {
+      "surum": "62.1", "tarih": "2026-10-13",
+      "yeni": [
+        "Botlar: Eylemler › Para yatırdım / çektim (bot hesaba eklenen/çekilen parayı kazanç/kayıp saymaz). Demo ölçümünde BTC payı artık doğru hesaplanır.",
+        "Portföyüm: hesaplar arası nakit transferde Ulaşan tutar (masraf otomatik düşer). Sunucu: bekçi görevi (kurulum adım 24)."
+      ]
+    },
+    {
+      "surum": "62.0", "tarih": "2026-10-13",
+      "yeni": [
+        "Sunucu: Pusula'yı durdur bot işini bitirmesini 2 dakikaya kadar bekler; açılamayan Pusula artan aralıklarla dener ve Telegram'a haber verir; portföy tasarımcısı ve gece veri güncellemesi hataları Telegram'a gider.",
+        "Kurulum adım 24: gerçek paradan önce bilgisayar ayarları (uyku, Windows güncelleme saatleri, klasör izinleri)."
+      ]
+    },
+    {
+      "surum": "61.9", "tarih": "2026-10-13",
+      "yeni": [
+        "Botlar: gerçek para modu eklendi ama yalnız tüm şartlar sağlanınca seçilebilir (en erken 5 Ocak 2027, G1–G9 yazılı onayı, sermaye üst sınırı). Şimdilik Eylemler menüsünde neyin eksik olduğu yazar.",
+        "Gerçek parada %40 hesap kaybında bot kendini acil durdurur (%30'da uyarı)."
+      ]
+    },
+    {
+      "surum": "61.8", "tarih": "2026-10-13",
+      "yeni": [
+        "Sunucu: her gün otomatik yedek (Kurulum adım 20), internet yokken gidemeyen Telegram uyarıları sonra gönderilir, açılışta internet yoksa bot kendisi yeniden bağlanır, dış IP değişince haber.",
+        "Güncelleme: kurulumdan sonra 8 dk kararlılık denetimi; botun karar saatinde (02:50–04:30) kurulum ve yeniden başlatma yapılmaz."
+      ]
+    },
+    {
+      "surum": "61.7", "tarih": "2026-10-13",
+      "yeni": [
+        "İşlem grafiği: yalnız vadelide olan coinler (ör. 1000PEPE) artık çizilir. Bu bilgisayar bot ve işlem ekranlarını sunucudaki panelden canlı okuyabilir (Kurulum adım 23).",
+        "Bot güvenliği: reddedilen emirler alarm verir, aynı anda iki çalışma olmaz, bozuk durum dosyası botu durdurur, kaldıraç ×20 ayarlanır, saatlik bekçi."
+      ]
+    },
+    {
+      "surum": "61.6", "tarih": "2026-10-13",
+      "yeni": [
+        "Bu ay emir listesi: komisyon ve açılış tamponu hesapta, Uyguladım'da ücret dolu; BIST her zaman tam adet; sermaye girdiğiniz gün başlangıç.",
+        "Ana sayfa: uygulanmayan emirler ve 837 bant aşımı için uyarı. Otomatik güncelleme daha sıkı (sunucu ve güvenlik değişiklikleri onaylı)."
+      ]
+    },
+    {
+      "surum": "61.5", "tarih": "2026-10-13",
+      "yeni": [
+        "Hisse yapıları: BIST alım-satımları komisyonsuz (Midas). Bu ay › Ayarlar › Kesirli hisse işaretlenince ABD hisseleri kesirli adetle alınır."
+      ]
+    },
+    {
+      "surum": "61.4", "tarih": "2026-10-13",
+      "yeni": [
+        "Botlar: üç hisse yapısının (Nasdaq M10, BIST M10, %50 QQQ + %50 Hücum) kâğıt hesabı — sermayenizle tam adet alım-satım, Midas komisyonu, elde tutulanlar, işlem geçmişi, neden bu hisseler.",
+        "Telefondan güncelleme: Ayarlar › Bu bilgisayar › Şimdi kontrol et / Güncellemeyi kur (acil PIN + GÜNCELLE)."
+      ]
+    },
+    {
+      "surum": "61.3", "tarih": "2026-10-13",
+      "yeni": [
+        "Sunucu her gün 12:00'de yeni sürümü kendisi kurar (panel değişiklikleri); bot kodu değiştiyse Telegram haber verir, Ayarlar › Bu bilgisayar'dan siz kurarsınız.",
+        "Yeni sürüm açılmazsa eski sürüme kendiliğinden döner."
+      ]
+    },
+    {
+      "surum": "61.2", "tarih": "2026-10-12",
+      "yeni": [
+        "Portföy › Portföyüm: \"Hisse ekle\" kutusu — sembolü yaz, Bul, adet, Ekle. Kurum, hesap ve varlık arkada kendiliğinden açılır; BIST için .IS gerekmez.",
+        "Varlıklarım hesaplara göre gruplu; satırda Düzenle ve Kaldır."
+      ]
+    },
+    {
+      "surum": "61.1", "tarih": "2026-10-11",
+      "yeni": [
+        "Portföy › Bu ay: en üstte her model için \"bu ay ne yapacağım\" satırı; alım listesinde para nakitte daha az kalır.",
+        "Portföy › Model izleme: modelin gerçek portföyünüzden ne kadar ve neden ayrıştığını gösterir.",
+        "Portföy › Tasarımcı: denediğiniz bir birleşimi kaydedip izleyebilirsiniz (ölçülmemiş — gerçek emir yok).",
+        "Ekrandaki \"?\" işaretine dokununca açıklama hemen yanında açılır; sözlük çok genişledi."
+      ]
+    },
+    {
+      "surum": "61.0", "tarih": "2026-10-10",
+      "yeni": [
+        "Portföy alt sekmeleri: Tasarımcı · Bu ay · Model izleme · Portföyüm · Laboratuvar ▸ — ekran \"Bu ay\" ile açılır; Laboratuvar sekmeleri yerinde.",
+        "Bu ay: üç model portföyün (%50 QQQ + %50 Hücum, Nasdaq Momentum 10, BIST Momentum 10) bu ayki kararları ve alınacak hisseler.",
+        "Tasarımcı: ölçülmüş stratejilerin listesi, karar takvimi ve kendi birleşiminizi denemek için kurucu.",
+        "Model izleme: üç model + QQQ, BTC, XU030, EW-BIST30 100 tabanlı; getiri, düşüş, karar günlüğü. 2026-10-12 açılışında başlıyor.",
+        "Ana sayfa portföy özeti artık Portföyüm ve model portföylerden; yapılacaklarda \"ay sonu liste hazır\"."
+      ]
+    },
+    {
+      "surum": "60.8", "tarih": "2026-10-09",
+      "yeni": [
+        "Portföy › Portföyüm (ilk alt sekme): gerçek portföyünüzü elle kaydedin — kurum, hesap, varlık, açılış bakiyesi ve işlem defteri (alış, satış, temettü, faiz, para yatırma/çekme, transfer, bölünme, ücret).",
+        "Her varlık kendi para biriminde (maliyet ve K/Z dahil); toplam USD ve TL, zaman ağırlıklı getiri (gün/ay/yıl) ve en yüksekten düşüş; dağılım halkası (iç hedef, dış gerçek).",
+        "Hedef dağılımı siz girersiniz (sınıf ya da varlık; toplam %100); Laboratuvar kararından içe almak isteğe bağlı. Uygulama planı \"Portföyüm'den doldur\" ile gerçek tutarları alır.",
+        "Kayıt silinmez: yanlış işlem \"İptal et\" ile ters kayıtla iptal edilir. CSV dışa ve önizlemeli içe aktarım. Telefondan yalnız görüntüleme.",
+        "Kur çevirici (üst çubukta \"Kur\"): USD, TRY, EUR, GBP, gram altın, BTC — kaynak ve saatiyle. Üst çubukta \"?\" Kılavuz: her ekrandan o ekranın bölümü."
+      ]
+    },
+    {
+      "surum": "60.7", "tarih": "2026-10-09",
+      "yeni": [
+        "Veri ekranında yeni tablo: Dikkat listesi kaynakları — her ücretsiz kaynağın son sınaması (HTTP, gecikme), son 30 gün başarı oranı ve kota kullanımı.",
+        "\"Bozulursa üretilemez\" sütunu: bir kaynak düşerse hangi bayrağın hiç üretilemeyeceği, hangisinin başka kaynakla süreceği.",
+        "Kaynak envanteri betiği: node scripts/dikkat-f0-envanter.js (anahtar gereken kaynaklar \"anahtar gerekli\" diye işaretlenir; ücretli hiçbir şey yok).",
+        "Dikkat listesi v1 ön kaydı yazıldı (deneme 780–790; Araştırma › Defter'de ACIK). Henüz liste üretilmiyor."
+      ]
+    },
+    {
+      "surum": "60.6", "tarih": "2026-10-09",
+      "yeni": [
+        "Araştırma › Defter: deneme sayacının kanonik kaydı (kayitlar/denemeler.jsonl) — her ön kayıtlı deneme bir numara, aile, hipotez, plan, holdout, sonuç ve hüküm tarihiyle.",
+        "Sayaç kartları, hükmü yaklaşanlar (kalan gün), aile sayacı, arama ve süzgeç; satırı açınca tüm alanlar.",
+        "Numara çakışması ve boşluk kodla denetlenir; hata varsa ekranın üstünde kırmızı bant (npm run defter:denetle).",
+        "Yeni kayıt yalnız sunucudan: sonraki boş numarayı önerir (npm run defter:sonraki)."
+      ]
+    },
+    {
+      "surum": "60.5", "tarih": "2026-10-09",
+      "yeni": [
+        "Telefondan YALNIZ izleme ve acil durdurma: telefondan gelen her istekte bot başlatma/durdurma, ayar, emir ve backtest kapalı.",
+        "Botlar ekranında telefondan kırmızı \"Acil durdur\": acil PIN ve DURDUR yazmayı ister (PIN sunucuda: npm run acil-pin).",
+        "Dışarıdan güvenli erişim: Tailscale (ücretsiz) ile https adres; npm run telefon-jeton -- --adres ... karekod verir.",
+        "Uygulama olarak yükleme (PWA): telefonda Ana ekrana ekle; sunucuya ulaşılamazsa \"son görülen\" bandı."
+      ]
+    },
+    {
+      "surum": "60.4", "tarih": "2026-10-08",
+      "yeni": [
+        "Panel içi Kılavuz: menüde (telefonda Diğer'de) ve her ekranın başlığında \"? Kılavuz\" bağlantısı.",
+        "Her ekran için ne işe yarar, adım adım görevler, alanların anlamı, uyarılar; numaralı işaretli ekran görüntüleri.",
+        "Kılavuzda arama, sözlük, sık sorulanlar ve sunucuya kurulum adımları.",
+        "Bu kart: her yeni sürümde neyin değiştiğini Ana sayfada bir kez gösterir."
+      ]
+    },
+    { "surum": "60.3", "tarih": "2026-10-08", "yeni": ["Araştırma › Coin tarama, Listeler, Tarama ayarları: günlük zincir üstü kayıt ve tarih damgalı liste kaydı."] },
+    { "surum": "60.2", "tarih": "2026-10-08", "yeni": ["Telefondan erişim (npm run telefon), tablo sıralama, tablette kart görünümü."] },
+    { "surum": "60.1", "tarih": "2026-10-08", "yeni": ["Temizlik: panel kodu parçalara ayrıldı, ölü kod silindi."] },
+    { "surum": "60.0", "tarih": "2026-10-07", "yeni": ["Mobil: telefonda ferah görünüm, tablolar karta döner, tek tip ilerleme ve hata kutusu."] }
+  ]
+}

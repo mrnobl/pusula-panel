@@ -1,0 +1,233 @@
+// LuxAlgo Sigmoid Transition Trailing Stop gostergesinden turetilmistir.
+// Lisans: CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/
+// Sigmoid TS ozgun kodu (c) LuxAlgo. Bollinger kademeli cikis katmani eklentidir.
+
+//@version=6
+strategy("Sigmoid TS Bollinger Kademeli Cikis", "SigmoidBB", overlay = true, initial_capital = 10000, default_qty_type = strategy.percent_of_equity, default_qty_value = 20, commission_type = strategy.commission.percent, commission_value = 0.15, process_orders_on_close = true, calc_on_every_tick = false)
+
+// GIRISLER
+gTS = "Sigmoid Trailing Stop"
+atrLengthInput = input.int(100, "ATR periyodu", minval = 1, group = gTS)
+atrMultInput = input.float(3.0, "ATR carpani", minval = 0.1, step = 0.1, group = gTS)
+sigLengthInput = input.int(20, "Sigmoid uzunlugu bar", minval = 2, group = gTS)
+sigAmpMultInput = input.float(3.0, "Sigmoid genligi ATR", minval = 0.1, step = 0.1, group = gTS)
+minDistMultInput = input.float(0.5, "Minimum mesafe ATR", minval = 0.0, step = 0.1, group = gTS)
+
+gBB = "Bollinger"
+bbLengthInput = input.int(20, "BB periyodu", minval = 2, group = gBB)
+bbStdDevInput = input.float(2.0, "BB sapma carpani", minval = 0.1, step = 0.1, group = gBB)
+requireClose = input.bool(false, "Bandi kapanisla teyit et", group = gBB)
+
+gEntry = "Giris"
+entryMode = input.string("flip", "Giris bicimi", options = ["flip", "pullback", "bandFade"], group = gEntry)
+
+gExit = "Kademeli Cikis"
+tp1Pct = input.float(0.30, "Birinci kademe orani", minval = 0, maxval = 1, step = 0.05, group = gExit)
+tp2Pct = input.float(0.30, "Ikinci kademe orani", minval = 0, maxval = 1, step = 0.05, group = gExit)
+tp3Pct = input.float(0.20, "Ucuncu kademe orani", minval = 0, maxval = 1, step = 0.05, group = gExit)
+feePct = input.float(0.15, "Tek yon komisyon yuzde", minval = 0, step = 0.01, group = gExit)
+minTpCostMult = input.float(2.0, "Maliyet kapisi komisyon kati", minval = 0, step = 0.5, group = gExit)
+hardTakeProfit = input.float(30.0, "Yedek sabit TP yuzde", minval = 0.1, step = 1, group = gExit)
+
+gExt = "Ekstrem Sapma"
+extremeZ = input.float(2.8, "Esik z", minval = 0.5, maxval = 4.2, step = 0.1, group = gExt)
+extremeExitPct = input.float(0.40, "Cikis orani", minval = 0, maxval = 0.95, step = 0.05, group = gExt)
+
+gViz = "Gorunum"
+showBands = input.bool(true, "Bollinger bantlari", group = gViz)
+showMarkers = input.bool(true, "Islem isaretleri", group = gViz)
+showTable = input.bool(true, "Durum tablosu", group = gViz)
+showWarn = input.bool(true, "Ayar uyarilari", group = gViz)
+
+// SIGMOID
+clamp(float v, float lo, float hi) => math.min(math.max(v, lo), hi)
+
+sigmoid(float t) =>
+    float x = -6.0 + 12.0 * clamp(t, 0.0, 1.0)
+    float sMin = 1.0 / (1.0 + math.exp(6.0))
+    float sMax = 1.0 / (1.0 + math.exp(-6.0))
+    (1.0 / (1.0 + math.exp(-x)) - sMin) / (sMax - sMin)
+
+// TRAILING STOP
+float atr = ta.atr(atrLengthInput)
+
+var float trailingStop = na
+var int direction = 1
+var bool isAdjusting = false
+var int sigCounter = 0
+var float startLevel = na
+var float targetOffset = 0.0
+
+float upperBandTs = high + atrMultInput * atr
+float lowerBandTs = low - atrMultInput * atr
+
+bool flipUp = false
+bool flipDown = false
+
+if na(trailingStop) or na(atr)
+    trailingStop := direction == 1 ? lowerBandTs : upperBandTs
+else
+    if direction == 1
+        if close < trailingStop
+            direction := -1
+            trailingStop := upperBandTs
+            isAdjusting := false
+            sigCounter := 0
+            flipDown := true
+    else
+        if close > trailingStop
+            direction := 1
+            trailingStop := lowerBandTs
+            isAdjusting := false
+            sigCounter := 0
+            flipUp := true
+
+float currentDist = direction == 1 ? close - trailingStop : trailingStop - close
+float kDist = atrMultInput * (atr > 0 ? atr : 1.0)
+float minDist = minDistMultInput * (atr > 0 ? atr : 1.0)
+
+if not isAdjusting and currentDist > kDist
+    isAdjusting := true
+    sigCounter := 0
+    startLevel := trailingStop
+    targetOffset := sigAmpMultInput * atr
+
+if isAdjusting
+    sigCounter := sigCounter + 1
+    float sf = sigmoid(float(sigCounter) / float(sigLengthInput))
+    float candidate = direction == 1 ? startLevel + targetOffset * sf : startLevel - targetOffset * sf
+    float newDist = direction == 1 ? close - candidate : candidate - close
+    bool bitti = newDist < minDist or sigCounter >= sigLengthInput
+    float yeni = direction == 1 ? math.max(trailingStop, candidate) : math.min(trailingStop, candidate)
+    isAdjusting := not bitti
+    trailingStop := bitti ? trailingStop : yeni
+
+// BOLLINGER
+float basis = ta.sma(close, bbLengthInput)
+float sd = ta.stdev(close, bbLengthInput)
+float bbUp = basis + bbStdDevInput * sd
+float bbLo = basis - bbStdDevInput * sd
+float zScore = sd > 0 ? (close - basis) / sd : 0.0
+
+// ISLEM DURUMU
+var int tpDone = 0
+var bool extremeDone = false
+var float qtyAtEntry = 0.0
+
+bool flat = strategy.position_size == 0
+
+if flat
+    tpDone := 0
+    extremeDone := false
+    qtyAtEntry := 0.0
+
+if not flat and qtyAtEntry == 0.0
+    qtyAtEntry := strategy.position_size
+
+float roundTrip = feePct * 2.0
+float gate = roundTrip * minTpCostMult
+float profitPct = flat ? 0.0 : (close - strategy.position_avg_price) / strategy.position_avg_price * 100.0
+bool costGate = profitPct >= gate
+
+// GIRIS
+bool modeFlip = entryMode == "flip"
+bool modePull = entryMode == "pullback"
+bool wantFlip = modeFlip and flipUp
+bool wantPull = modePull and low <= basis and close > basis
+bool wantFade = not modeFlip and not modePull and low <= bbLo
+bool wantEntry = wantFlip or wantPull or wantFade
+
+float targetDistPct = (bbUp - close) / close * 100.0
+float stopDistPct = (close - trailingStop) / close * 100.0
+bool targetOk = targetDistPct >= gate
+bool warmOk = not na(atr) and bar_index > atrLengthInput
+bool canEnter = flat and direction == 1 and wantEntry and stopDistPct > 0 and targetOk and warmOk
+bool gateBlocked = flat and direction == 1 and wantEntry and not targetOk
+
+if canEnter
+    strategy.entry("L", strategy.long)
+
+// CIKISLAR
+float hardTp = flat ? na : strategy.position_avg_price * (1 + hardTakeProfit / 100.0)
+
+if not flat
+    strategy.exit("TS", "L", stop = trailingStop, limit = hardTp)
+
+bool trendExit = not flat and direction == -1
+
+if trendExit
+    strategy.close("L", comment = "TS trend donusu")
+
+bool extFire = not flat and not extremeDone and zScore >= extremeZ and costGate
+float extQty = extFire and strategy.position_size > 0 ? math.min(95.0, extremeExitPct * qtyAtEntry / strategy.position_size * 100.0) : 0.0
+
+if extFire and extQty > 0
+    strategy.close("L", qty_percent = extQty, comment = "Ekstrem sapma")
+
+if extFire
+    extremeDone := true
+
+bool bandHit = requireClose ? close >= bbUp : high >= bbUp
+bool tpFire = not flat and bandHit and costGate and tpDone < 3
+float tpFrac = tpDone == 0 ? tp1Pct : tpDone == 1 ? tp2Pct : tp3Pct
+float tpQty = tpFire and tpFrac > 0 and strategy.position_size > 0 ? math.min(95.0, tpFrac * qtyAtEntry / strategy.position_size * 100.0) : 0.0
+string tpAd = "Kademe " + str.tostring(tpDone + 1)
+
+if tpFire and tpQty > 0
+    strategy.close("L", qty_percent = tpQty, comment = tpAd)
+
+if tpFire
+    tpDone := tpDone + 1
+
+bool stopTouch = not flat and low <= trailingStop
+
+// CIZIM
+plot(direction == 1 ? trailingStop : na, "TS boga", color.new(color.teal, 0), 2, plot.style_linebr)
+plot(direction == -1 ? trailingStop : na, "TS ayi", color.new(color.red, 0), 2, plot.style_linebr)
+plot(showBands ? bbUp : na, "BB ust", color.new(color.gray, 40))
+plot(showBands ? basis : na, "BB orta", color.new(color.gray, 70))
+plot(showBands ? bbLo : na, "BB alt", color.new(color.gray, 40))
+
+plotshape(showMarkers and canEnter, title = "Giris", style = shape.triangleup, location = location.belowbar, color = color.new(color.teal, 0), size = size.tiny)
+plotshape(showMarkers and tpFire, title = "Kademeli TP", style = shape.square, location = location.abovebar, color = color.new(color.aqua, 0), size = size.tiny)
+plotshape(showMarkers and extFire, title = "Ekstrem", style = shape.circle, location = location.abovebar, color = color.new(color.orange, 0), size = size.tiny)
+plotshape(showMarkers and trendExit, title = "Trend donusu", style = shape.triangledown, location = location.abovebar, color = color.new(color.red, 0), size = size.tiny)
+plotshape(showMarkers and stopTouch, title = "Stop dokunusu", style = shape.xcross, location = location.abovebar, color = color.new(color.red, 30), size = size.tiny)
+plotshape(showMarkers and gateBlocked, title = "Girilmedi", style = shape.circle, location = location.belowbar, color = color.new(color.gray, 30), size = size.tiny)
+
+// DURUM TABLOSU
+var table durum = table.new(position.top_right, 2, 6, border_width = 1)
+
+string yonMetni = direction == 1 ? "BOGA" : "AYI"
+color yonRenk = direction == 1 ? color.green : color.red
+string gecisMetni = isAdjusting ? "yaklasiyor" : "durgun"
+string stopMetni = str.tostring(math.abs(stopDistPct), "#.##")
+string zMetni = str.tostring(zScore, "#.##")
+string kademeMetni = str.tostring(tpDone) + " / 3"
+string kapiMetni = str.tostring(gate, "#.##")
+
+if showTable and barstate.islast
+    table.cell(durum, 0, 0, "Yon", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 0, yonMetni, text_color = yonRenk, text_size = size.tiny)
+    table.cell(durum, 0, 1, "Stop mesafesi", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 1, stopMetni, text_size = size.tiny)
+    table.cell(durum, 0, 2, "Sapma z", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 2, zMetni, text_size = size.tiny)
+    table.cell(durum, 0, 3, "Kademe", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 3, kademeMetni, text_size = size.tiny)
+    table.cell(durum, 0, 4, "Gecis", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 4, gecisMetni, text_size = size.tiny)
+    table.cell(durum, 0, 5, "Maliyet kapisi", text_color = color.gray, text_size = size.tiny)
+    table.cell(durum, 1, 5, kapiMetni, text_size = size.tiny)
+
+// AYAR UYARILARI
+string w1 = sigAmpMultInput < atrMultInput ? "UYARI sigAmp kucuk. Gecis tetikleyen mesafeyi kapatamaz, stop fiyattan uzaklasir. " : ""
+string w2 = extremeZ > 4.25 ? "UYARI extremeZ cok yuksek. BB tavani yaklasik 4.25, kural tetiklenmez. " : ""
+string w3 = tp1Pct + tp2Pct + tp3Pct > 1.0 ? "UYARI kademe oranlari toplami 1 asiyor, kosucu kalmaz. " : ""
+string uyariMetni = w1 + w2 + w3
+
+var label uyariEtiketi = na
+
+if showWarn and barstate.islast and str.length(uyariMetni) > 0
+    label.delete(uyariEtiketi)
+    uyariEtiketi := label.new(x = bar_index, y = high, text = uyariMetni, style = label.style_label_down, color = color.red, textcolor = color.white, size = size.small)

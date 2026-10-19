@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Pusula sekme ikonu: yeşil kare içinde beyaz 4 kol (PLAN-PANEL-PUSULA §4a/3). -->
+  <rect width="64" height="64" rx="14" fill="#1F6F63"/>
+  <g transform="translate(32 32) scale(0.82) translate(-32 -32)">
+    <path fill="#FFFFFF" d="M32 3 27 27 32 32Z"/><path fill="#CFE5DF" d="M32 3 37 27 32 32Z"/>
+    <path fill="#FFFFFF" d="M61 32 37 27 32 32Z"/><path fill="#CFE5DF" d="M61 32 37 37 32 32Z"/>
+    <path fill="#FFFFFF" d="M32 61 37 37 32 32Z"/><path fill="#CFE5DF" d="M32 61 27 37 32 32Z"/>
+    <path fill="#FFFFFF" d="M3 32 27 37 32 32Z"/><path fill="#CFE5DF" d="M3 32 27 27 32 32Z"/>
+  </g>
+</svg>

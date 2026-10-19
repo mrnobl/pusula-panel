@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>Gösterge Havuzu · Pusula</title>
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Yazı tipleri YEREL (IBM Plex, public/vendor/fonts/) — CDN yok. -->
+  <link rel="stylesheet" href="css/yazitipi.css">
+
+  <!-- Yerel, sürümü sabit (5.2.1) — bkz. index.html. -->
+  <script src="vendor/lightweight-charts.standalone.production.js"></script>
+  <!-- Sıra ÖNEMLİ: tokens önce (bkz. index.html), yeni sınıflar sonra. -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/kirilim.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <script src="js/core/tema.js?v=68.3"></script>
+
+  <!-- Sayfa yerleşimi (gh-*) components.css'te, dar ekran kuralı css/kirilim.css'te (Pusula P5). -->
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="row row-wrap gap-7">
+      <strong class="title-md">📐 Gösterge Havuzu</strong>
+      <span class="hint hint-micro" id="poolSummary">yükleniyor…</span>
+      <a href="index.html#/arastirma/stratejiler" class="btn btn-secondary btn-nav-sm no-underline">← Pusula</a>
+    </div>
+    <div class="navbar-actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Temayı değiştir">
+        <span class="theme-icon-dark" aria-hidden="true">☀</span>
+        <span class="theme-icon-light" aria-hidden="true">☾</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="gh-main">
+
+    <!-- Sol: katalog -->
+    <section class="glass-panel gh-catalog">
+      <label for="inpSearch" class="hint-size">Gösterge ara</label>
+      <input type="text" id="inpSearch" class="form-control control-search mb-3" placeholder="Ara: rsi, likidite, vwap…">
+      <div class="scroll-y flex-1" id="catalogList"></div>
+    </section>
+
+    <!-- Sağ: seçili gösterge -->
+    <section class="gh-detail">
+
+      <div class="glass-panel card-pad-lg">
+        <div id="detailHeader"></div>
+        <div class="mt-5" id="detailParams"></div>
+
+        <div class="row-plain items-end row-wrap gap-4 mt-6">
+          <div class="form-group m-0">
+            <label for="selSym" class="hint-size">Sembol</label>
+            <select id="selSym" class="form-control control-tiny"></select>
+          </div>
+          <div class="form-group m-0">
+            <label for="selTf" class="hint-size">Zaman dilimi</label>
+            <select id="selTf" class="form-control control-tiny">
+              <option value="1m">1 dakika</option><option value="5m">5 dakika</option><option value="15m">15 dakika</option><option value="30m">30 dakika</option>
+              <option value="1h" selected>1 saat</option><option value="4h">4 saat</option><option value="1d">1 gün</option>
+            </select>
+          </div>
+          <div class="form-group m-0">
+            <label for="inpBars" class="hint-size">Mum sayısı</label>
+            <input type="number" id="inpBars" class="form-control control-tiny field-w90" value="500" min="50" max="5000" step="50">
+          </div>
+          <button type="button" id="btnRun" class="btn btn-primary btn-calc">Hesapla</button>
+          <button type="button" id="btnSavePreset" class="btn btn-secondary btn-calc">Ayarı kaydet</button>
+          <span class="hint hint-lg" id="runStatus"></span>
+        </div>
+      </div>
+
+      <div class="glass-panel card-pad-lg">
+        <div class="title-base mb-3">Gerçek veri üzerinde önizleme</div>
+        <div class="preview-canvas" id="previewChart"></div>
+        <div class="preview-legend" id="previewLegend"></div>
+      </div>
+
+      <div class="glass-panel card-pad-lg">
+        <div class="title-base mb-3">Çıktılar (son barlar)</div>
+        <div class="table-container scroll-box">
+          <table class="dock-table table-dense tablo-kart" id="outputTable"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <div class="glass-panel card-pad-lg">
+        <div class="title-base mb-3">Kayıtlı ayarlar</div>
+        <div class="tone-muted hint-sm" id="presetList"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Çekirdek ÖNCE — bkz. index.html'deki not. -->
+  <script src="js/core/dom.js?v=68.3"></script>
+  <script src="js/core/format.js?v=68.3"></script>
+  <script src="js/core/api.js?v=68.3"></script>
+  <script src="js/core/bildirim.js?v=68.3"></script>
+  <script src="js/core/tablo.js?v=68.3"></script>
+  <script src="chartIndicators.js?v=68.3"></script>
+  <script src="indicatorUI.js?v=68.3"></script>
+  <script src="indicators-page.js?v=68.3"></script>
+</body>
+</html>

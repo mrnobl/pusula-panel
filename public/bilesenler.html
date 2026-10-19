@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pusula · Bileşenler</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Yeni panel bileşen ailesi (`p-`, PLAN-PANEL-YENI §6 / F1) örnek sayfası: her bileşen bir kez,
+       panelle AYNI stil sırası. Tema düğmesi ile iki tema denetlenir. Veri yok; sayılar örnek. -->
+  <link rel="stylesheet" href="css/yazitipi.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/kirilim.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <script src="js/core/tema.js?v=68.3"></script>
+  <script src="vendor/lucide.min.js"></script>
+</head>
+<body class="bl-sayfa">
+  <main class="bl-govde">
+    <header class="p-kart-bas">
+      <div>
+        <p class="p-kart-alt bl-ust-yol">Pusula › Bilgi</p>
+        <h1 class="p-kart-baslik bl-baslik">Bileşenler</h1>
+      </div>
+      <button class="p-dugme" type="button" data-theme-toggle><i data-lucide="sun-moon"></i> Tema</button>
+    </header>
+
+    <section class="bl-bolum" aria-labelledby="b-gosterge">
+      <h2 id="b-gosterge" class="bl-bolum-ad">Gösterge şeridi</h2>
+      <div class="p-serit">
+        <div class="p-gosterge"><p class="p-gosterge-etiket"><span>Toplam değer</span></p><p class="p-gosterge-deger">$12.480,55</p><p class="p-gosterge-alt">hisse + kripto + nakit</p></div>
+        <div class="p-gosterge"><p class="p-gosterge-etiket"><span>Bu yıl · TWR</span></p><p class="p-gosterge-deger p-pos">+%8,42</p><p class="p-gosterge-alt">QQQ +%12,1 · BTC +%31,0</p></div>
+        <div class="p-gosterge"><p class="p-gosterge-etiket"><span>En derin düşüş</span></p><p class="p-gosterge-deger p-neg">−%14,9</p><p class="p-gosterge-alt">tepe → dip · 61 gün</p></div>
+        <div class="p-gosterge"><p class="p-gosterge-etiket"><span>Sharpe · 1Y</span><span class="p-yeni">yeni</span></p><p class="p-gosterge-deger">0,91</p><p class="p-gosterge-alt">getiri ÷ oynaklık</p></div>
+      </div>
+    </section>
+
+    <section class="bl-bolum" aria-labelledby="b-dugme">
+      <h2 id="b-dugme" class="bl-bolum-ad">Düğme · seçici · çip</h2>
+      <div class="p-kart bl-satirlar">
+        <div class="bl-satir">
+          <button class="p-dugme p-dugme-ana" type="button"><i data-lucide="plus"></i> İşlem ekle</button>
+          <button class="p-dugme" type="button">İçe aktar</button>
+          <button class="p-dugme p-dugme-sessiz" type="button">Vazgeç</button>
+          <button class="p-dugme p-dugme-tehlike" type="button"><i data-lucide="octagon-x"></i> Acil durdur</button>
+          <button class="p-dugme" type="button" disabled>Kapalı</button>
+          <button class="p-dugme p-dugme-simge" type="button" aria-label="Kılavuz"><i data-lucide="circle-help"></i></button>
+        </div>
+        <div class="bl-satir">
+          <button class="p-dugme p-dugme-ana p-dugme-kucuk" type="button">Uyguladım</button>
+          <button class="p-dugme p-dugme-kucuk" type="button">Ayrıntı</button>
+          <button class="p-dugme p-dugme-sessiz p-dugme-kucuk" type="button">Gizle</button>
+          <button class="p-dugme p-dugme-simge p-dugme-kucuk" type="button" aria-label="Önceki ay"><i data-lucide="chevron-left"></i></button>
+        </div>
+        <div class="bl-satir">
+          <div class="p-secici" role="group" aria-label="Para birimi">
+            <button type="button" aria-pressed="true">$</button><button type="button" aria-pressed="false">₺</button><button type="button" aria-pressed="false">Gizli</button>
+          </div>
+          <div class="p-secici" role="group" aria-label="Portföy">
+            <button type="button" aria-pressed="false">Ben</button><button type="button" aria-pressed="true">Anıl</button><button type="button" aria-pressed="false">Tümü</button>
+          </div>
+          <button class="p-cip" type="button" aria-pressed="true">Binance</button>
+          <button class="p-cip" type="button" aria-pressed="false">OKX</button>
+          <button class="p-cip" type="button" aria-pressed="false">Bot</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bl-bolum" aria-labelledby="b-sekme">
+      <h2 id="b-sekme" class="bl-bolum-ad">Sekme · rozet · ışık</h2>
+      <div class="p-kart bl-satirlar">
+        <div class="p-sekmeler" role="tablist" aria-label="Örnek sekmeler">
+          <button class="p-sekme" role="tab" type="button" aria-selected="true">Analiz</button>
+          <button class="p-sekme" role="tab" type="button" aria-selected="false">Liste</button>
+          <button class="p-sekme" role="tab" type="button" aria-selected="false">İçe aktar</button>
+        </div>
+        <div class="bl-satir">
+          <span class="p-rozet">elle</span>
+          <span class="p-rozet p-rozet-pos">API ✓ bugün</span>
+          <span class="p-rozet p-rozet-neg">bağlantı yok</span>
+          <span class="p-rozet p-rozet-warn">53 gün önce</span>
+          <span class="p-rozet p-rozet-info">kâğıt</span>
+          <span class="p-rozet p-rozet-vurgu">demo</span>
+          <span class="p-yeni">yeni</span>
+        </div>
+        <div class="bl-satir">
+          <span class="bl-isik"><span class="p-isik p-isik-pos"></span> Bot çalışıyor</span>
+          <span class="bl-isik"><span class="p-isik p-isik-warn"></span> Veri 2 saat eski</span>
+          <span class="bl-isik"><span class="p-isik p-isik-neg"></span> Yedek başarısız</span>
+          <span class="bl-isik"><span class="p-isik"></span> Kapalı</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="bl-bolum" aria-labelledby="b-bant">
+      <h2 id="b-bant" class="bl-bolum-ad">Bant (tek yuva)</h2>
+      <div class="bl-satirlar">
+        <div class="p-bant"><p class="p-bant-metin">"Tümü" görünümündesin: yalnız okunur. Kayıt girmek için Ben ya da Anıl'ı seç.</p></div>
+        <div class="p-bant p-bant-uyari"><p class="p-bant-metin">Ben için hedef henüz seçilmedi.</p><a class="p-dugme p-dugme-kucuk" href="#">Hedefim</a></div>
+        <div class="p-bant p-bant-tehlike"><p class="p-bant-metin">Acil fren devrede — bot yeni emir açmıyor.</p><button class="p-dugme p-dugme-kucuk" type="button">Ayrıntı</button></div>
+      </div>
+    </section>
+
+    <section class="bl-bolum" aria-labelledby="b-tablo">
+      <h2 id="b-tablo" class="bl-bolum-ad">Kart · tablo</h2>
+      <div class="p-kart">
+        <div class="p-kart-bas"><h3 class="p-kart-baslik">Elde olanlar</h3><span class="p-rozet">örnek</span></div>
+        <div class="p-tablo-kap"><table class="p-tablo">
+          <thead><tr><th>Varlık</th><th>Hesap</th><th class="p-sag">Adet</th><th class="p-sag">Değer</th><th class="p-sag">K/Z</th></tr></thead>
+          <tbody>
+            <tr><td>QQQ</td><td>Midas ABD</td><td class="p-sag p-sayi">4</td><td class="p-sag p-sayi">$2.104,00</td><td class="p-sag p-sayi p-pos">+$96,40</td></tr>
+            <tr><td>BJKAS</td><td>Midas BIST</td><td class="p-sag p-sayi">206,18</td><td class="p-sag p-sayi">₺296,90</td><td class="p-sag p-sayi p-neg">−₺402,11</td></tr>
+            <tr><td>USD nakit</td><td>Midas ABD</td><td class="p-sag p-sayi"></td><td class="p-sag p-sayi">$667,92</td><td class="p-sag p-sayi"></td></tr>
+          </tbody>
+        </table></div>
+        <p class="p-kart-alt">Kart başlığı + tablo; sayılar eş genişlikli, sağa yaslı.</p>
+      </div>
+    </section>
+
+    <section class="bl-bolum" aria-labelledby="b-form">
+      <h2 id="b-form" class="bl-bolum-ad">Alan · anahtar–değer · kart-kat · boş durum</h2>
+      <div class="p-izgara">
+        <div class="p-kart bl-satirlar">
+          <div class="p-alan"><label for="bl-a1">Hesap adı</label><input id="bl-a1" type="text" value="ABD hisseleri"><span class="p-alan-ipucu">Panelde görünen ad.</span></div>
+          <div class="p-alan"><label for="bl-a2">Portföy</label><select id="bl-a2"><option>Ben</option><option>Anıl</option></select></div>
+        </div>
+        <div class="p-kart">
+          <dl class="p-kv"><dt>Kurum</dt><dd>Midas</dd><dt>Tür</dt><dd>Hisse · USD</dd><dt>Son kayıt</dt><dd>26.08.2026</dd><dt>Toplama dahil</dt><dd>evet</dd></dl>
+          <div class="p-kart-kat bl-ust-bosluk">Kart içi katman (kart-kat): ikincil bilgi kutusu.</div>
+        </div>
+        <div class="p-kart">
+          <div class="p-bos">
+            <span class="p-bos-simge"><i data-lucide="target"></i></span>
+            <p class="p-bos-metin">Henüz hedef yok. Bir model seç ya da yüzdeleri kendin gir.</p>
+            <button class="p-dugme p-dugme-ana" type="button">Hedef seç</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>try { lucide.createIcons(); } catch (e) { /* simgesiz de okunur */ }</script>
+</body>
+</html>

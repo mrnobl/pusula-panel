@@ -1,0 +1,143 @@
+{
+  "surum": 2,
+  "tarih": "2026-10-11",
+  "kaynak": "PLAN-PORTFOY-TASARIMCI.md F0; kullanıcı cevapları T1–T5 (ai/01-KARARLAR.md 2026-10-10)",
+  "not": "Bu dosya ilk ileri günden (2026-10-12) ÖNCE commit'lenir; başlangıçtan sonraki getiri görülerek değiştirilemez. Gerçek sermaye tutarı burada YOK — yalnız evdeki PC'de, panelden girilir (K6). Git'e yalnız 100 tabanlı endeks yazılır.",
+  "modeller": [
+    {
+      "id": "m-837",
+      "ad": "%50 QQQ + %50 Hücum",
+      "kaynakDeneme": 837,
+      "kabul": "KABUL (H1, sonradan konmuş ölçüt)",
+      "kollar": [
+        {
+          "kol": "cekirdek",
+          "strateji": "qqq-altut",
+          "agirlik": 0.5,
+          "hesapTuru": "abd-araci",
+          "araciKurum": "Midas"
+        },
+        {
+          "kol": "uydu",
+          "strateji": "hucum",
+          "agirlik": 0.5,
+          "hesapTuru": "binance"
+        }
+      ],
+      "dengeleme": {
+        "kural": "bant",
+        "bantPuan": 0.1,
+        "denetim": "QQQ işlem günü kapanışı",
+        "hedef": 0.5,
+        "aktarimMaliyeti": 0.001,
+        "kayma": 0.0005,
+        "kaynakDeneme": 851
+      },
+      "baslangic": {
+        "ilkUygulamaGunu": "2026-10-12",
+        "ilkKararGunu": "2026-09-30",
+        "endeksTabani": 100
+      },
+      "kiyaslar": [
+        "QQQ",
+        "BTC",
+        "XU030"
+      ]
+    },
+    {
+      "id": "m-qqq-m10",
+      "ad": "Nasdaq Momentum 10",
+      "kaynakDeneme": 830,
+      "kabul": "KABUL (H1, sonradan konmuş ölçüt)",
+      "kollar": [
+        {
+          "kol": "m10",
+          "strateji": "qqq-m10",
+          "agirlik": 1,
+          "hesapTuru": "abd-araci",
+          "araciKurum": "Midas",
+          "kesirliHisse": "dogrulanacak"
+        }
+      ],
+      "kural": "Her ay son NYSE işlem günü kapanışında, o ayın Nasdaq-100 PIT üyeleri içinde 12-1 getirisi en yüksek 10 hisse, eşit ağırlık; ertesi işlem günü açılışında dengeleme; kayma %0,05 (scripts/qqq-momentum.js secim ile birebir).",
+      "baslangic": {
+        "ilkUygulamaGunu": "2026-10-12",
+        "ilkKararGunu": "2026-09-30",
+        "ilkListe": [
+          "SNDK",
+          "MU",
+          "LITE",
+          "WDC",
+          "STX",
+          "AMD",
+          "INTC",
+          "TER",
+          "MRVL",
+          "LRCX"
+        ],
+        "endeksTabani": 100
+      },
+      "kiyaslar": [
+        "QQQ",
+        "BTC"
+      ]
+    },
+    {
+      "id": "m-bist-m10",
+      "ad": "BIST Momentum 10",
+      "kaynakDeneme": 840,
+      "kabul": "KABUL — kırılgan (holdout KTLEV'e bağlı)",
+      "kollar": [
+        {
+          "kol": "m10",
+          "strateji": "bist-m10",
+          "agirlik": 1,
+          "hesapTuru": "bist-araci",
+          "araciKurum": "Midas"
+        }
+      ],
+      "kural": "Her ay son BIST işlem günü kapanışında, PIT vekili ilk 30 (≥ 252 gün, son 63 gün medyan TL hacim) içinde 12-1 getirisi en yüksek 10 hisse, eşit ağırlık; ertesi işlem günü açılışında dengeleme; maliyet %0,15 tek yön (scripts/bist-yenmek-momentum.js ile birebir). Ölçüm USD, TL de gösterilir.",
+      "baslangic": {
+        "ilkUygulamaGunu": "2026-10-12",
+        "ilkKararGunu": "2026-09-30",
+        "ilkListe": [
+          "KTLEV",
+          "EUPWR",
+          "ASTOR",
+          "DSTKF",
+          "TUPRS",
+          "PASEU",
+          "TRALT",
+          "ASELS",
+          "CWENE",
+          "GUBRF"
+        ],
+        "endeksTabani": 100
+      },
+      "kiyaslar": [
+        "XU030",
+        "EW-BIST30",
+        "QQQ",
+        "BTC"
+      ]
+    }
+  ],
+  "yalnizKatalog": [
+    {
+      "id": "hucum-n-d0x3",
+      "kaynakDeneme": 836,
+      "neden": "uygulanamaz (portföy marjı ≥ 110 000 $) ve kırılgan — yalnız bilgi"
+    },
+    {
+      "id": "m-847",
+      "kaynakDeneme": 847,
+      "neden": "başarı Hücum'un; 837 her ölçüde daha iyi"
+    }
+  ],
+  "uygulama": {
+    "uyguladimKaydi": "tek-onay-portfoyum",
+    "telegramBildirimi": "kapali"
+  },
+  "oncekiSurum": "t1-s1.json",
+  "degisiklik": "m-837 dengeleme kuralı: ay-sonu-tam → bant ±10 puan (Hücum payı %40–%60 dışına çıkınca, QQQ işlem günü kapanışı denetimi, tam 50/50). Gerekçe: deneme 851 T2 D KABUL (ön kayıt PLAN-KAVRAM-TESTLERI.md; aktarım 105 → 13, Sharpe/DD aylıkla eşit). İlk ileri günden (2026-10-12) ÖNCE yapıldı; ileri veri görülmedi. Kullanıcı adına karar Ö4 (PLAN-IKI-AY.md)."
+}
