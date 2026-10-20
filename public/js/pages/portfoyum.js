@@ -6,7 +6,10 @@
  * HESAPLARIM (#pfKayitKok): üst düğmeler · 67.4 "Yeni hesap" (katlı; kurum adıyla, isteğe bağlı vadeli mevduat) · "Varlık ekle"
  * (katlı; sekmeler Hisse/ETF · Fon · Kripto · Altın · Nakit · Diğer — hepsi açılış bakiyesi = elimde zaten olan) · hesap kartları
  * (varlıklar, Sat / Düzenle / Kaldır / Fiyat gir, satır içi "+ işlem", "Vadeli mevduat") · diğer işlemler (transfer, faiz, ücret,
- * bölünme) · işlem defteri (katlı, varsayılan kapalı) · hedef · CSV · gelişmiş (adlar, hesap kapatma). İki kap aynı veriyi paylaşır.
+ * bölünme) · işlem defteri (katlı; İşlem defteri › Yatırım'a taşınır ve orada açık) · hedef bağlantısı (68.7: hedef yalnız Hedefim'de) · CSV ·
+ * gelişmiş (adlar, hesap kapatma). İki kap aynı veriyi paylaşır.
+ * 68.7: Hesaplar ve İşlem defteri ÜST ÇUBUKTAKİ KİŞİYE göre — yalnız o kişinin hesap kartları (Tümü: kişi başlıkları altında hepsi),
+ * defter ?portfoy= ile o kişinin işlemleri, hesap seçicide yalnız onun hesapları (kisiDegisti; pano.js seçim değişince çağırır).
  * ═══════════════════════════════════════════════════════════════════════════
  * Gerçek portföyün ELLE kaydı ve izlenmesi (sunucu: lib/portfoyum, uçlar /api/portfoyum/*). Laboratuvar sekmeleri yerinde;
  * bu sekme onların ÖNÜNDE (ilk alt sekme). Kurallar (PLAN-PORTFOYUM §0): yalnız panel (Harcama'ya dokunulmaz), hiçbir bakiye
@@ -16,7 +19,7 @@
  * ay / yıl getirisi TWR, en yüksekten düşüş) · dağılım halkası (iç hedef, dış gerçek, sapma turuncu) + kur çevirici kartı ·
  * varlık tablosu (telefonda kart) · hesap kırılımı (son kayıt + bayat uyarısı) · değer geçmişi grafiği · işlem defteri (ekle
  * formu + katlı "Aynı gün sırası", süzgeç (durum: etkin/iptal/hepsi), tasarımcı paketi özeti, aynı gün sıra rozeti, iptal = ters kayıt,
- * CSV dışa / içe aktarım önizlemeli) · hedef düzenleyici (%100 denetimi; model hedefi Bu ay'dan — Ö11) · kurum / hesap / varlık yönetimi + elle fiyat.
+ * CSV dışa / içe aktarım önizlemeli) · kurum / hesap / varlık yönetimi + elle fiyat.
  *
  * Kurallar: tüm DOM AG.dom.el (innerHTML yok — scripts/panel-denetim.js 5b), tablolar AG.tablo, renkler token sınıfları
  * (inline stil yok), istekler yalnız AG.api.portfoyum. Yazma düğmeleri data-kilit="telefon" (js/pages/kabuk.js kilitler) ve
@@ -80,7 +83,6 @@
   let formTur = 'transfer';
   let formKalem = 'varlik';
   let grafikBirim = 'USD';
-  let hedefTaslak = null;    // { duzey, satirlar: [{anahtar, yuzde}], bant, kaynak }
   let csvSonuc = null;
   const suzgec = { hesap: '', islem: '', varlik: '', bas: '', bit: '', durum: 'etkin' };
   const acikPaketler = new Set();   // geri alınmış tasarımcı paketleri: kayıtları açılanlar
@@ -152,20 +154,6 @@
     }
   }
 
-  /** Hedef düzenleyici denetimi: toplam %100 (±0,01). */
-  function hedefDenetle(satirlar) {
-    const l = (satirlar || []).filter(s => String(s.yuzde == null ? '' : s.yuzde).trim() !== '');
-    let toplam = 0; const hatalar = [];
-    for (const s of l) {
-      const n = Number(String(s.yuzde).replace(',', '.'));
-      if (!Number.isFinite(n) || n < 0 || n > 100) { hatalar.push(`${s.ad || s.anahtar}: 0–100 arası yüzde`); continue; }
-      toplam += n;
-    }
-    if (!l.length) hatalar.push('en az bir ağırlık girin');
-    else if (Math.abs(toplam - 100) > 0.01) hatalar.push(`toplam %${toplam.toFixed(2).replace('.', ',')} — %100 olmalı`);
-    return { toplam, gecerli: hatalar.length === 0, hatalar };
-  }
-
   /** Halka dilimleri: ≤ 7 (küçükler "Diğer"de); AG.pages.anasayfa.halka biçimi { kimlik, ad, hedef, gercek }. */
   function halkaDilimleri(dag) {
     const l = ((dag && dag.dilimler) || []).filter(d => d.gercek > 0 || (d.hedef || 0) > 0).map(d => ({ kimlik: d.anahtar, ad: d.ad, hedef: d.hedef || 0, gercek: d.gercek, asim: d.asim, sapma: d.sapma }));
@@ -173,27 +161,6 @@
     const ust = l.slice(0, 6), alt = l.slice(6);
     ust.push({ kimlik: 'diger', ad: `Diğer (${alt.length})`, hedef: alt.reduce((a, d) => a + d.hedef, 0), gercek: alt.reduce((a, d) => a + d.gercek, 0), asim: false, sapma: null });
     return ust;
-  }
-
-  /** Hedef taslağı: mevcut hedef ya da dağılım anahtarlarından (düzey değişince satırlar o düzeyin anahtarları). */
-  function hedefTaslagiKur(v, duzey) {
-    const h = v && v.hedef;
-    const d = duzey || (h ? h.duzey : 'sinif');
-    const anahtarlar = new Map();
-    const ad = (k) => {
-      if (d === 'sinif') return (v.sabitler && v.sabitler.siniflar[k]) || k;
-      if (k.startsWith('nakit:')) return `${k.slice(6)} nakit`;
-      const x = (v.varliklar || []).find(y => y.id === k); return x ? `${x.sembol} — ${x.ad}` : k;
-    };
-    if (d === 'sinif') {
-      for (const p of (v.degerleme && v.degerleme.pozisyonlar) || []) anahtarlar.set(p.sinif, null);
-      for (const n of (v.degerleme && v.degerleme.nakitler) || []) anahtarlar.set(n.sinif, null);
-    } else {
-      for (const x of v.varliklar || []) anahtarlar.set(x.id, null);
-      for (const n of (v.degerleme && v.degerleme.nakitler) || []) anahtarlar.set('nakit:' + n.para, null);
-    }
-    if (h && h.duzey === d) for (const [k, w] of Object.entries(h.agirliklar)) anahtarlar.set(k, w);
-    return { duzey: d, bant: h ? h.bant : 5, kaynak: 'elle', satirlar: [...anahtarlar.entries()].map(([k, w]) => ({ anahtar: k, ad: ad(k), yuzde: w == null ? '' : String(w) })) };
   }
 
   /* ── Çizim yardımcıları ─────────────────────────────────────────────── */
@@ -363,19 +330,25 @@
     const k = bul('pmDefterTablo');
     if (!k) return;
     try {
-      const r = await api().islemler(suzgec);
+      // 68.7: yalnız üst çubukta seçili kişinin hesapları (Tümü = hepsi)
+      const r = await api().islemler(defterSorgu());
       if (!r || !r.success) throw new Error((r && r.error) || 'yanıt yok');
       defter = r;
       defterTabloCiz();
     } catch (e) { doldur(k, [AG.bildirim.hataKutusu(e.message, { baslik: 'İşlem defteri okunamadı', yeniden: defterYukle })]); }
   }
 
+  /** 68.7: defter isteği = süzgeç + kişi (portfoy); İşlem defteri › Yatırım grafikleri (pano.js) aynı hesap ve tarih süzgecini kullanır. */
+  const defterSorgu = () => ({ ...suzgec, portfoy: gorunumPortfoy() });
+  const analizTazele = (zorla) => { if (AG.pages.pano && AG.pages.pano.yatirimAnaliz) AG.pages.pano.yatirimAnaliz(zorla); };
+
   function defterSuzgecCiz() {
     const k = bul('pmDefterSuzgec');
     if (!k) return;
-    const degis = (a) => (e) => { suzgec[a] = e.target.value; defterYukle(); csvBagCiz(); };
+    const degis = (a) => (e) => { suzgec[a] = e.target.value; defterYukle(); csvBagCiz(); if (a === 'hesap' || a === 'bas' || a === 'bit') analizTazele(); };
+    const kume = kisiHesaplari();
     doldur(k, [el('div', { class: 'pf-form-izgara' }, [
-      alan('Hesap', secici({ id: 'selPmSuzHesap', onchange: degis('hesap') }, [['', 'Tümü']].concat(hesapSecenekleri(false)), suzgec.hesap)),
+      alan('Hesap', secici({ id: 'selPmSuzHesap', onchange: degis('hesap') }, [['', kume ? 'Hepsi' : 'Tümü']].concat(hesapSecenekleri(false).filter(([id]) => !kume || kume.has(id))), suzgec.hesap)),
       alan('Tür', secici({ id: 'selPmSuzTur', onchange: degis('islem') }, [['', 'Tümü']].concat(Object.entries(ISLEM_AD)), suzgec.islem)),
       alan('Varlık', secici({ id: 'selPmSuzVarlik', onchange: degis('varlik') }, [['', 'Tümü']].concat(varlikSecenekleri()), suzgec.varlik)),
       alan('Başlangıç', girdi({ type: 'date', id: 'inpPmSuzBas', onchange: degis('bas') }, suzgec.bas)),
@@ -390,8 +363,8 @@
     const k = bul('pmCsvBag');
     if (!k) return;
     doldur(k, [
-      el('a', { class: 'btn btn-secondary btn-sm no-underline', id: 'lnkPmCsv', href: api().csvYolu(suzgec), download: 'portfoyum-islemler.csv' }, [ikon('download', ''), el('span', { text: ' CSV dışa aktar (süzgeçle)' })]),
-      dugme('Süzgeci temizle', () => { for (const a of Object.keys(suzgec)) suzgec[a] = ''; suzgec.durum = 'etkin'; defterSuzgecCiz(); defterYukle(); }, 'btn-secondary')
+      el('a', { class: 'btn btn-secondary btn-sm no-underline', id: 'lnkPmCsv', href: api().csvYolu(defterSorgu()), download: 'portfoyum-islemler.csv' }, [ikon('download', ''), el('span', { text: ' CSV dışa aktar (süzgeçle)' })]),
+      dugme('Süzgeci temizle', () => { for (const a of Object.keys(suzgec)) suzgec[a] = ''; suzgec.durum = 'etkin'; defterSuzgecCiz(); defterYukle(); analizTazele(); }, 'btn-secondary')
     ]);
   }
 
@@ -649,6 +622,39 @@
     try { g = AG.pages.pano && AG.pages.pano.gorunum ? AG.pages.pano.gorunum().portfoy : null; } catch (e) { g = null; }
     return g && g !== 'tumu' && ((veri && veri.portfoyler) || []).some(p => p.id === g) ? g : 'ben';
   }
+  /** 68.7: üst çubuktaki kişi, "Tümü" dahil (Hesaplar kartları, İşlem defteri süzgeci); bilinmeyen kimlik → 'ben'. */
+  function gorunumPortfoy() {
+    let g = null;
+    try { g = AG.pages.pano && AG.pages.pano.gorunum ? AG.pages.pano.gorunum().portfoy : null; } catch (e) { g = null; }
+    return g === 'tumu' ? 'tumu' : seciliPortfoy();
+  }
+  /** 68.7 (saf): kişinin hesap kimlikleri (Set); 'tumu' → null (bütün hesaplar). Portföyü yazılmamış hesap Ben'in. */
+  function kisiHesapKumesi(hesaplar, pid) {
+    if (pid === 'tumu') return null;
+    return new Set((hesaplar || []).filter(h => (h.portfoy || 'ben') === pid).map(h => h.id));
+  }
+  const kisiHesaplari = () => kisiHesapKumesi(veri && veri.hesaplar, gorunumPortfoy());
+  /**
+   * 68.7 (saf): "Tümü" görünümünde hesap kartları kişi başlıkları altında — sıra portföy listesi (Ben önce), bilinmeyen portföy
+   * kimliği Ben'e düşer; hesabı olmayan kişi listelenmez. l: değerleme hesapları, ham: /ozet hesapları (portfoy alanı).
+   */
+  function hesapGruplari(l, ham, portfoyler) {
+    const pl = (portfoyler && portfoyler.length ? portfoyler : [{ id: 'ben', ad: 'Ben' }]);
+    const bilinen = new Set(pl.map(p => p.id));
+    const pidOf = (h) => { const x = (ham || []).find(z => z.id === h.id); const p = (x && x.portfoy) || 'ben'; return bilinen.has(p) ? p : 'ben'; };
+    return pl.map(p => ({ id: p.id, ad: p.ad, hesaplar: (l || []).filter(h => pidOf(h) === p.id) })).filter(g => g.hesaplar.length);
+  }
+  /**
+   * 68.7: üst çubukta kişi değişti (pano.js ustYuva) — Hesaplar kartları, "Yeni hesap" kartının kişi adı ve İşlem defteri süzgeci
+   * (hesap seçici yalnız o kişinin hesapları) yeniden çizilir, defter o kişinin işlemleriyle yeniden okunur. Sunucuya /ozet gitmez.
+   */
+  function kisiDegisti() {
+    if (!veri) return;
+    const kume = kisiHesaplari();
+    if (suzgec.hesap && kume && !kume.has(suzgec.hesap)) suzgec.hesap = '';
+    yeniHesapOku();   // yazılmış ama gönderilmemiş alanlar yeniden çizimde kaybolmasın
+    yeniHesapCiz(); hesapKartlariCiz(); defterSuzgecCiz(); defterYukle();
+  }
   function yeniHesapCiz() {
     const k = bul('pmYeniHesap');
     if (!k || !veri) return;
@@ -878,57 +884,14 @@
     } catch (e) { AG.bildir(`İçe aktarılmadı: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
   }
 
-  /* ── Hedef dağılım ──────────────────────────────────────────────────── */
-  function hedefCiz() {
-    const k = bul('pmHedef');
-    if (!k || !veri) return;
-    if (!hedefTaslak) hedefTaslak = hedefTaslagiKur(veri);
-    const t = hedefTaslak;
-    const den = hedefDenetle(t.satirlar);
-    const dag = veri.dagilim && veri.dagilim.duzey === t.duzey ? new Map(veri.dagilim.dilimler.map(x => [x.anahtar, x.gercek])) : null;
-    const satirlar = t.satirlar.map((s, i) => el('tr', null, [
-      el('td', { class: 'pf-sola', text: s.ad }),
-      el('td', { class: 'sayi', text: dag ? yuzde(dag.get(s.anahtar) || 0) : '—' }),
-      el('td', null, [girdi({ type: 'text', inputmode: 'decimal', class: 'form-control control-sm pf-sayi-girdi', 'aria-label': `${s.ad} hedef yüzde`, placeholder: '0',
-        oninput: (e) => { t.satirlar[i].yuzde = e.target.value; hedefToplamCiz(); } }, s.yuzde)])
-    ]));
-    doldur(k, [
-      el('div', { class: 'pf-form-izgara' }, [
-        alan('Düzey', secici({ id: 'selPmHedefDuzey', onchange: (e) => { hedefTaslak = hedefTaslagiKur(veri, e.target.value); hedefCiz(); } }, [['sinif', 'Varlık sınıfı'], ['varlik', 'Tek tek varlık']], t.duzey)),
-        alan('Sapma bandı (± puan)', girdi({ id: 'inpPmHedefBant', type: 'text', inputmode: 'decimal', oninput: (e) => { t.bant = e.target.value; } }, String(t.bant)), 'Bu kadar puandan fazla sapan dilim turuncu görünür.')
-      ]),
-      AG.tablo.kutulu({ id: 'tblPmHedef', sinif: 'table-dense pf-tablo', basliklar: [t.duzey === 'sinif' ? 'Sınıf' : 'Varlık', 'Şu an', 'Hedef %'], satirlar }),
-      el('p', { id: 'pmHedefToplam', class: `mt-2 mb-0 ${den.gecerli ? 'pf-toplam-iyi' : 'pf-toplam-kotu'}`, text: `Toplam %${den.toplam.toFixed(2).replace('.', ',')}${den.gecerli ? ' ✓' : ' — %100 olmalı'}` }),
-      el('div', { class: 'pf-dugmeler mt-3' }, [
-        yazmaDugme('Hedefi kaydet', (e) => hedefKaydet(e.currentTarget), 'btn-primary', { id: 'btnPmHedefKaydet' }),
-        el('a', { class: 'btn btn-secondary no-underline', id: 'btnPmHedefBuAy', href: '#/portfoy/nasdaq', title: 'Model portföylerin hedefi model sekmelerinin altındaki Ayarlar › "Portföyüm hedefini güncelle" ile önizlenip kaydedilir (tek uygulama yeri)', text: 'Model hedefini al (model Ayarları)' }),
-        t.kaynak && t.kaynak !== 'elle' ? el('span', { class: 'pf-kucuk', text: `Taslak kaynağı: ${t.kaynak}` }) : null
-      ])
-    ]);
-  }
-
-  function hedefToplamCiz() {
-    const p = bul('pmHedefToplam');
-    if (!p || !hedefTaslak) return;
-    const den = hedefDenetle(hedefTaslak.satirlar);
-    p.className = `mt-2 mb-0 ${den.gecerli ? 'pf-toplam-iyi' : 'pf-toplam-kotu'}`;
-    p.textContent = `Toplam %${den.toplam.toFixed(2).replace('.', ',')}${den.gecerli ? ' ✓' : ' — %100 olmalı'}`;
-  }
-
-  async function hedefKaydet(d) {
-    const t = hedefTaslak;
-    const den = hedefDenetle(t.satirlar);
-    if (!den.gecerli) { AG.bildir(den.hatalar.join(' · '), 'uyari'); return; }
-    const agirliklar = {};
-    for (const s of t.satirlar) { const n = Number(String(s.yuzde).replace(',', '.')); if (String(s.yuzde).trim() !== '' && n > 0) agirliklar[s.anahtar] = n; }
-    AG.dom.mesgul(d, 'Kaydediliyor…');
-    try {
-      const r = await api().hedefKaydet({ duzey: t.duzey, agirliklar, bant: String(t.bant).replace(',', '.'), kaynak: t.kaynak || 'elle' });
-      if (!r || !r.success) { AG.bildir(`Kaydedilmedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 10000 }); return; }
-      AG.bildir('Hedef dağılım kaydedildi (eskisi geçmişte durur).', 'ok');
-      hedefTaslak = null;
-      await yukle(true);
-    } catch (e) { AG.bildir(`Kaydedilmedi: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
+  /* ── Hedef dağılım: 68.7'den beri yalnız Hedefim'de (seçili kişinin hedefi; js/pages/pano.js). Burada tek satır + bağlantı. ── */
+  function hedefBagCiz() {
+    const k = bul('pmHedefBag');
+    if (!k) return;
+    doldur(k, [el('div', { class: 'row-between row-wrap gap-2' }, [
+      el('span', { class: 'hint hint-sm mb-0', text: 'Hedef dağılım (olmasını istediğin oranlar) Hedefim sayfasında, üst çubukta seçili kişi için düzenlenir.' }),
+      el('a', { class: 'btn btn-secondary btn-sm no-underline', id: 'lnkPmHedefim', href: '#/portfoy/hedefim', text: 'Hedefi düzenle → Hedefim' })
+    ])]);
   }
 
   /* ── Gelişmiş (67.4): yalnız adlar (kurum / hesap / varlık) ve hesap kapatma. Kurum ve hesap ekleme "Yeni hesap" kartında,
@@ -1356,17 +1319,24 @@
     el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Son 30 işlem. Hepsi, süzgeç ve düzeltme: Portföy › İşlem defteri.' })] : [el('p', { class: 'hint hint-sm mb-0', text: 'Henüz işlem yok.' })]);
   }
 
-  /** Hesaplarım: hesap başına kart — varlıklar (model etiketi, Düzenle/Kaldır ya da Sat) + satır içi "+ işlem" formu. */
+  /**
+   * Hesaplarım: hesap başına kart — varlıklar (model etiketi, Düzenle/Kaldır ya da Sat) + satır içi "+ işlem" formu.
+   * 68.7: yalnız üst çubukta seçili kişinin hesapları; "Tümü" seçiliyse bütün hesaplar kişi başlıkları altında (hesapGruplari).
+   */
   function hesapKartlariCiz() {
     const k = bul('pmHesapKartlari');
     if (!k || !veri) return;
     const d = veri.degerleme, ham = new Map((veri.hesaplar || []).map(h => [h.id, h]));
-    const l = d.hesaplar || [];
-    if (!l.length) { doldur(k, [el('p', { class: 'hint mb-0', text: 'Henüz hesap yok. Üstteki "Yeni hesap" ile ilk hesabını aç, sonra "Varlık ekle" ile içindekileri gir.' })]); return; }
+    const hepsi = d.hesaplar || [];
+    if (!hepsi.length) { doldur(k, [el('p', { class: 'hint mb-0', text: 'Henüz hesap yok. Üstteki "Yeni hesap" ile ilk hesabını aç, sonra "Varlık ekle" ile içindekileri gir.' })]); return; }
+    const kume = kisiHesaplari();
+    const l = kume ? hepsi.filter(h => kume.has(h.id)) : hepsi;
+    const kisiAd = ((veri.portfoyler || []).find(p => p.id === gorunumPortfoy()) || {}).ad || 'Ben';
+    if (!l.length) { doldur(k, [el('p', { class: 'hint mb-0', id: 'pmKisiBos', text: `${kisiAd} için hesap yok. "Yeni hesap" ile aç (üst çubukta ${kisiAd} seçiliyken açılan hesap ona bağlanır) ya da üstteki Portföyler kartından bir hesabı bu kişiye bağla.` })]); return; }
     const acilislar = veri.acilislar || {};
     const V = varlikHaritasi();
     const tur = (veri.sabitler && veri.sabitler.hesapTurleri) || {};
-    doldur(k, l.map(h => {
+    const kart = (h) => {
       const poz = (d.pozisyonlar || []).filter(p => p.hesap === h.id && Math.abs(p.adet) > 1e-12).sort((a, b) => (b.degerUSD || 0) - (a.degerUSD || 0));
       const nakit = (d.nakitler || []).filter(x => x.hesap === h.id && Math.abs(x.tutar) > 1e-9);
       const satir = (p) => {
@@ -1414,7 +1384,11 @@
         mevduatBolumu(h, hh),
         h.durum === 'kapali' ? null : el('div', { id: `pmHf-${h.id}`, class: 'pm-hf pm-yazma' })
       ]);
-    }));
+    };
+    doldur(k, kume ? l.map(kart) : hesapGruplari(l, veri.hesaplar, veri.portfoyler).flatMap(g => [
+      el('h3', { class: 'pm-kisi-baslik', 'data-portfoy': g.id }, [el('span', { text: g.ad }), el('span', { class: 'pf-kucuk', text: ` · ${g.hesaplar.length} hesap` })]),
+      ...g.hesaplar.map(kart)
+    ]));
     for (const h of l) if (h.durum !== 'kapali') hesapFormCiz(h.id);
   }
 
@@ -1481,7 +1455,6 @@
           yazmaDugme('Geçmiş işlemleri içe aktar (CSV)', ac('pmCsvKat'), 'btn-secondary', { id: 'btnPmCsvAc' }),
           // F6: Portföyüm defteri İşlem defteri › Yatırım'da (pano.js defterAc).
           dugme('İşlem defteri', () => { if (AG.pages.pano && AG.pages.pano.defterAc) AG.pages.pano.defterAc('yatirim'); }, 'btn-secondary', { id: 'btnPmDefterAc' }),
-          dugme('Hedef dağılım', ac('pmHedefKat'), 'btn-secondary', { id: 'btnPmHedefAc' }),
           // F6: eski Portföyüm sayfasının üst düğmeleri (o kap artık gizli) buraya taşındı.
           dugme('Yenile', () => yukle(true), 'btn-secondary', { id: 'btnPmYenile' }),
           yazmaDugme('Fiyatları yenile', (e) => fiyatYenile(e.currentTarget), 'btn-secondary', { id: 'btnPmFiyatYenile', title: 'Yahoo / TEFAS / Binance fiyatlarını ve kurları ağdan tazeler (ücretsiz kaynaklar)' })
@@ -1528,7 +1501,7 @@
         el('summary', { 'data-ikon': 'notebook-pen' }, [el('span', { text: 'İşlem defteri' }), el('span', { id: 'pmDefterSayi', class: 'hint hint-sm mb-0 pm-defter-sayi' })]),
         el('div', { class: 'hs-kat-ic' }, [el('div', { id: 'pmDefterSuzgec' }), el('div', { id: 'pmDefterTablo', class: 'mt-3' })])
       ]),
-      kat('pmHedefKat', 'Hedef dağılım — olmasını istediğin oranlar', 'target', [el('div', { id: 'pmHedef' })], false, 'pm-yazma'),
+      el('div', { id: 'pmHedefBag', class: 'glass-panel panel-pad mt-4' }),
       kat('pmCsvKat', 'Geçmiş işlemleri içe aktar (CSV, önizlemeli)', 'upload', [el('div', { id: 'pmCsv' })], false, 'pm-yazma'),
       kat('pmYonetimKat', 'Gelişmiş: kurum, hesap ve varlık adları · fiyat kodu · hesap kapatma', 'building-2', [el('div', { id: 'pmYonetim' })], false, 'pm-yazma')
     ];
@@ -1560,7 +1533,7 @@
 
   function ciz() {
     if (!veri) return;
-    ustCiz(); bantCiz(); bosDurumCiz(); portfoyumCiz(); kayitUstCiz(); yeniHesapCiz(); hizliCiz(); hesapKartlariCiz(); defterSuzgecCiz(); formCiz(); csvCiz(); hedefCiz(); yonetimCiz();
+    ustCiz(); bantCiz(); bosDurumCiz(); portfoyumCiz(); kayitUstCiz(); yeniHesapCiz(); hizliCiz(); hesapKartlariCiz(); defterSuzgecCiz(); formCiz(); csvCiz(); hedefBagCiz(); yonetimCiz();
     // 67.4: hiç hesap yoksa ilk adım "Yeni hesap" (Varlık ekle de "önce hesap aç" der).
     const yk = bul('pmYeniHesapKat'); if (yk && !(veri.hesaplar || []).some(h => h.durum === 'acik')) yk.open = true;
     gizliUygula();
@@ -1584,13 +1557,13 @@
         const set = (id) => new Set(((on.modeller.find(m => m.id === id) || {}).hedef || []).map(h => String(h.s || '').toUpperCase().replace(/.IS$/, '')).filter(Boolean));
         modelListe = { N10: set('m-qqq-m10'), B10: set('m-bist-m10') };
       }
-      if (hedefTaslak && hedefTaslak.kaynak === 'elle' && !zorla) hedefTaslak = null;
       if (zorla) { hesapGecmis.clear(); kiyasVeri.clear(); }
       ciz();
       // 64.8: geliştirme bilgisayarında bir kezlik "sunucuya taşı" kartı (yalnız taşınmamış yerel kayıt varsa görünür)
       if (veri.yazma && veri.yazma.ev && veri.yazma.acik && AG.evKuyruk) AG.evKuyruk.tasimaKarti(bul('pmTasima'), { onDegisti: () => yukle(true) });
       await Promise.all([defterYukle(), grafikYukle()]);
       sonIslemlerCiz(); grafikCiz();
+      if (zorla) analizTazele(true);   // 68.7: yazmadan sonra İşlem defteri › Yatırım grafikleri de yeniden okunur
     } catch (e) {
       const k = bul('pmOzet');
       if (k) doldur(k, [AG.bildirim.hataKutusu(e.message, { baslik: 'Portföyüm okunamadı', yeniden: () => yukle(true) })]);
@@ -1599,8 +1572,8 @@
 
   AG.pages = AG.pages || {};
   AG.pages.portfoyum = {
-    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, kodDegistir, yahooKodGecerli, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, hedefDenetle, halkaDilimleri, hedefTaslagiKur, FORM_ALANLARI, ISLEM_AD,
-    _ciz: { ustCiz, bantCiz, ozetCiz, ozetSeritCiz, portfoyumCiz, hesapKartlariCiz, hesapFormCiz, kayitUstCiz, hizliCiz, yeniHesapCiz, dagilimCiz, varliklarCiz, hesaplarCiz, defterTabloCiz, formCiz, csvSonucCiz, hedefCiz, yonetimCiz, bosDurumCiz, ciz },
+    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, kodDegistir, yahooKodGecerli, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, halkaDilimleri, kisiHesapKumesi, hesapGruplari, kisiDegisti, defterSuzgec: defterSorgu, FORM_ALANLARI, ISLEM_AD,
+    _ciz: { ustCiz, bantCiz, ozetCiz, ozetSeritCiz, portfoyumCiz, hesapKartlariCiz, hesapFormCiz, kayitUstCiz, hizliCiz, yeniHesapCiz, dagilimCiz, varliklarCiz, hesaplarCiz, defterTabloCiz, formCiz, csvSonucCiz, hedefBagCiz, yonetimCiz, bosDurumCiz, ciz },
     _durum: { veriAyarla: (v) => { veri = v; }, defterAyarla: (d) => { defter = d; }, csvAyarla: (c) => { csvSonuc = c; }, gizli: () => gizli, formTurAyarla: (t, k) => { formTur = t; formKalem = k || 'varlik'; }, hizli: () => hizli, duzenleAyarla: (a) => { duzenlenen = a; }, faizAcAyarla: (h) => { faizAcik = h; }, fiyatAcAyarla: (a) => { fiyatAcik = a; } }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.portfoyum;

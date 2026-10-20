@@ -16,6 +16,9 @@
  *   · TAKVİM VE AKIŞ (#pfYeni-takvim): günlük K/Z takvimi (para girişi K/Z değil) + zaman çizelgesi (işlem, gelir, yaklaşan vade).
  *   · HESAPLAR üstüne "Portföyler" kartı (hesap → portföy, toplama dahil, yeni portföy; ör. eşin hesabı → "Eş" portföyü).
  *   · İŞLEM DEFTERİ kaynak seçici (Kripto / FX · Yatırım · Bot) — Hesaplarım'daki Portföyüm defteri buraya taşınır (§3).
+ *     68.7: Yatırım'da defterin üstünde grafikler (GET /defter-analiz: gerçekleşen K/Z, varlığa göre, gelir, alış/satış/para hareketi)
+ *     seçili kişiye göre, defter açık; Kripto / FX'te başka kişi seçiliyken "borsa hesapları Ben'in" notu. Kişi değişince
+ *     portfoyum.js kisiDegisti (Hesaplar kartları + defter süzgeci).
  *   · RAPOR üstüne "Risk ve getiri ölçütleri" (portföy · QQQ · BTC; js/core/olcut.js).
  * Veri: GET /api/portfoyum/ozet|gecmis?portfoy=, /kiyas, /islemler (60 sn önbellek; yazınca boşalır). Kurallar portfoyum.js ile aynı:
  * DOM yalnız AG.dom, satır içi stil yok (renk sınıftan), yazma düğmeleri data-kilit="telefon".
@@ -29,7 +32,7 @@
   const doldur = (...a) => AG.dom.doldur(...a);
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
-  const OKUMA = new Set(['ozet', 'islemler', 'csvYolu', 'gecmis', 'kiyas', 'rapor', 'kur', 'labGirdi', 'sembolBul', 'csvOnizle', 'fiyatYenile']);
+  const OKUMA = new Set(['ozet', 'islemler', 'csvYolu', 'defterAnaliz', 'gecmis', 'kiyas', 'rapor', 'kur', 'labGirdi', 'sembolBul', 'csvOnizle', 'fiyatYenile']);
   const api = () => (AG.evKuyruk ? AG.evKuyruk.sarmala(AG.api.portfoyum, OKUMA) : AG.api.portfoyum);
   const O = () => AG.olcut;
 
@@ -94,8 +97,8 @@
   // ── Küçük bileşenler (p- ailesi) ──────────────────────────────────────────
   const kart = (ic, ek) => el('section', { class: `p-kart${ek ? ' ' + ek : ''}` }, ic);
   const kartBas = (baslik, sag) => el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: baslik }), sag || null]);
-  const gosterge = (etiket, deger, alt, sinif, yeni) => el('div', { class: 'p-gosterge' }, [
-    el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: etiket }), yeni ? el('span', { class: 'p-yeni', text: 'yeni' }) : null]),
+  const gosterge = (etiket, deger, alt, sinif) => el('div', { class: 'p-gosterge' }, [
+    el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: etiket })]),
     el('p', { class: `p-gosterge-deger${sinif ? ' ' + sinif : ''}`, text: deger }),
     alt ? el('p', { class: 'p-gosterge-alt', text: alt }) : null
   ]);
@@ -154,7 +157,7 @@
     try { const r = await api().islemler({ durum: 'etkin' }); x.islemler = (r && r.islemler) || []; } catch (e) { x.islemler = []; }
     return x.islemler;
   }
-  function tazele() { onbellek.clear(); if (AG.pages.portfoyum) AG.pages.portfoyum.yukle(true); yukle(aktif); }
+  function tazele() { onbellek.clear(); analizOnbellek.clear(); if (AG.pages.portfoyum) AG.pages.portfoyum.yukle(true); yukle(aktif); }
   /** Yazma isteği: başarıda önbelleği boşaltır ve sayfayı yeniden çizer. */
   async function yazma(d, f, basari) {
     if (d) AG.dom.mesgul(d, 'Kaydediliyor…');
@@ -175,7 +178,12 @@
     if (!goster) { doldur(k, []); return; }
     const pl = [...portfoyler.map(p => [p.id, p.ad]), ['tumu', 'Tümü']];
     doldur(k, [
-      secici('Portföy', pl, gorunum.portfoy, (v) => { gorunum.portfoy = v; yaz(gorunum); yukle(aktif); if (aktif === 'rapor' && AG.pages.portfoyumRapor) AG.pages.portfoyumRapor.yukle(true); }),
+      secici('Portföy', pl, gorunum.portfoy, (v) => {
+        gorunum.portfoy = v; yaz(gorunum); yukle(aktif);
+        if (aktif === 'rapor' && AG.pages.portfoyumRapor) AG.pages.portfoyumRapor.yukle(true);
+        // 68.7: Hesaplar kartları ve İşlem defteri (Yatırım) seçili kişiye göre yeniden çizilir
+        if ((aktif === 'hesaplar' || aktif === 'islem-defteri') && AG.pages.portfoyum && AG.pages.portfoyum.kisiDegisti) AG.pages.portfoyum.kisiDegisti();
+      }),
       secici('Para birimi', [['usd', '$'], ['tl', '₺'], ['gizli', 'Gizli']], gorunum.para, (v) => { gorunum.para = v; yaz(gorunum); gizliUygula(); yukle(aktif); })
     ]);
   }
@@ -241,8 +249,8 @@
         gosterge('Bu yıl · TWR', yuzde(g.yil, 1, true), `QQQ ${yuzde(qYil, 1, true)} · BTC ${yuzde(bYil, 1, true)}`, ton(g.yil)),
         gosterge('Başlangıçtan', yuzde(g.tum, 1, true), oz.seriBas ? `ilk kayıt ${AG.fmt.tarih(oz.seriBas)} · QQQ ${yuzde(kiyasTum, 1, true)}` : 'henüz seri yok', ton(g.tum)),
         gosterge('En derin düşüş', yuzde(ol.enDerinDusus, 1), `şu an tepeden ${yuzde(ol.simdiDusus, 1)} · en uzun ${sayiMi(ol.enUzunDususGun) ? ol.enUzunDususGun + ' gün' : '—'}`, ol.enDerinDusus < 0 ? 'p-neg' : ''),
-        gosterge('Sharpe', sayiMi(ol.sharpe) ? tr(ol.sharpe, 2) : '—', sayiMi(ol.sharpe) ? 'getiri ÷ oynaklık (risksiz 0)' : 'en az 30 günlük seri gerekir', '', true),
-        gosterge('Oynaklık · yıllık', yuzde(ol.oynaklik, 1), sayiMi(ol.oynaklik) ? `Sortino ${kucukSayi(ol.sortino)} · Calmar ${kucukSayi(ol.calmar)}` : 'en az 30 günlük seri gerekir', '', true)
+        gosterge('Sharpe', sayiMi(ol.sharpe) ? tr(ol.sharpe, 2) : '—', sayiMi(ol.sharpe) ? 'getiri ÷ oynaklık (risksiz 0)' : 'en az 30 günlük seri gerekir', ''),
+        gosterge('Oynaklık · yıllık', yuzde(ol.oynaklik, 1), sayiMi(ol.oynaklik) ? `Sortino ${kucukSayi(ol.sortino)} · Calmar ${kucukSayi(ol.calmar)}` : 'en az 30 günlük seri gerekir', '')
       ]),
       salt() ? portfoySatirlari(oz) : null,
       borsaSatiri(borsa, oz),
@@ -581,42 +589,68 @@
       el('p', { class: 'pn-metin', text: 'Hedef, paranın nasıl bölünmesini istediğindir — ör. "%50 endeks, %40 kripto, %10 nakit". Getiri hedefi değildir. Fiyatlar oynadıkça bölünme kayar; bu sayfa "olması gereken" ile "şu an olan"ı yan yana koyar ve farkı kapatmak için ne alıp ne satacağını dolar olarak söyler.' }),
       el('p', { class: 'p-kart-alt', text: salt() ? '"Tümü" görünümünde hedef girilmez — bir portföy seç (her portföyün kendi hedefi var).' : h ? `${pAd(gorunum.portfoy)} hedefi: ${h.kaynak || 'elle'} · ${h.duzey === 'sinif' ? 'sınıf' : 'varlık'} düzeyi · sapma bandı ±${h.bant} puan.` : `${pAd(gorunum.portfoy)} için henüz hedef seçilmedi. Aşağıdan birini seç.` })
     ], 'p-kart-vurgu'), kart([
-      kartBas('Para ekle ve dağılımı değiştir', rozet('yeni', 'warn')),
+      kartBas('Para ekle ve dağılımı değiştir'),
       el('p', { class: 'pn-metin', text: 'Portföye para ekleyeceksen ya da hisselerin payını değiştireceksen: hangi hisseden kaç adet alıp satacağını hesaplar, satışta elinde kaç adet kalması gerektiğini söyler; yaptıktan sonra tek düğmeyle kaydeder. Botların tuttuğu hisseler de listede.' }),
       dugme('Planla →', () => { paraEkleAcik = true; yukle('hedefim'); }, 'ana', { id: 'btnPnParaEkle', class: 'p-dugme p-dugme-ana pn-ust-bosluk' })
     ], null)];
-    if (!salt()) parcalar.push(hedefSecKart(h, siniflar));
+    if (!salt()) parcalar.push(hedefSecKart(h, siniflar, oz));
     parcalar.push(farkKart(dag, toplam), islerKart(dag, d, toplam));
     doldur(k, parcalar.filter(Boolean));
     hedefToplamYaz();
   }
 
-  function hedefSecKart(h, siniflar) {
-    const secim = hedefSecim || (h && h.duzey === 'sinif' ? 'kendi' : null);
+  /**
+   * 68.7: varlık düzeyi satırları — bu portföyde tutulanlar önce (değer sırası), sonra kayıtlı hedefte olup elde olmayanlar,
+   * sonra tanımlı diğer varlıklar; nakit 'nakit:<PARA>'. Anahtarlar sunucunun varlık düzeyi hedefiyle aynı (varlık id).
+   */
+  function varlikHedefSatirlari(oz, h) {
+    const d = oz.degerleme || {};
+    const ad = new Map((oz.varliklar || []).map(v => [v.id, v.sembol ? `${v.sembol}${v.ad && v.ad !== v.sembol ? ' — ' + v.ad : ''}` : v.id]));
+    const out = new Map();
+    for (const p of (d.pozisyonlar || []).slice().sort((a, b) => (b.degerUSD || 0) - (a.degerUSD || 0))) if (p.varlik && !out.has(p.varlik)) out.set(p.varlik, { ad: ad.get(p.varlik) || p.sembol || p.varlik, elde: true });
+    for (const n of d.nakitler || []) { const k = 'nakit:' + n.para; if (!out.has(k)) out.set(k, { ad: `${n.para} nakit`, elde: true }); }
+    if (h && h.duzey === 'varlik') for (const k of Object.keys(h.agirliklar || {})) if (!out.has(k)) out.set(k, { ad: k.startsWith('nakit:') ? `${k.slice(6)} nakit` : (ad.get(k) || k), elde: false });
+    for (const [k, a] of ad) if (!out.has(k)) out.set(k, { ad: a, elde: false });
+    return [...out.entries()].map(([anahtar, x]) => ({ anahtar, ...x }));
+  }
+
+  function hedefSecKart(h, siniflar, oz) {
+    const secim = hedefSecim || (h && h.duzey === 'sinif' ? 'kendi' : h && h.duzey === 'varlik' ? 'varlik' : null);
     const kutu = (k, ad, alt) => el('button', { type: 'button', class: 'pn-secenek', 'aria-pressed': secim === k ? 'true' : 'false', onclick: () => { hedefSecim = k; yukle('hedefim'); } },
       [el('strong', { text: ad }), el('span', { class: 'pn-soluk', text: alt })]);
     const hazir = HAZIR_HEDEF.find(z => z.k === secim);
-    const mevcut = h && h.duzey === 'sinif' ? h.agirliklar : {};
-    const girdiler = Object.entries(siniflar).map(([s, ad]) => el('div', { class: 'p-alan pn-hedef-alan' }, [
-      el('label', { for: 'pnHedef-' + s, text: ad }),
-      el('input', { id: 'pnHedef-' + s, type: 'number', min: '0', max: '100', step: '1', inputmode: 'decimal', value: String((hazir ? hazir.agirlik[s] : mevcut[s]) || ''), 'data-sinif': s, oninput: hedefToplamYaz })
-    ]));
+    const varlikDuzey = secim === 'varlik';
+    const mevcut = h && h.duzey === (varlikDuzey ? 'varlik' : 'sinif') ? h.agirliklar : {};
+    const alan = (anahtar, ad, deger, soluk) => el('div', { class: 'p-alan pn-hedef-alan' }, [
+      el('label', { for: 'pnHedef-' + anahtar, text: ad, class: soluk ? 'pn-soluk' : null }),
+      el('input', { id: 'pnHedef-' + anahtar, type: 'number', min: '0', max: '100', step: '0.5', inputmode: 'decimal', value: String(deger || ''), 'data-anahtar': anahtar, oninput: hedefToplamYaz })
+    ]);
+    const girdiler = varlikDuzey
+      ? varlikHedefSatirlari(oz, h).map(r => alan(r.anahtar, r.elde ? r.ad : `${r.ad} (elde yok)`, mevcut[r.anahtar], !r.elde))
+      : Object.entries(siniflar).map(([s, ad]) => alan(s, ad, hazir ? hazir.agirlik[s] : mevcut[s]));
+    const bantDeger = h && h.bant != null ? h.bant : 5;
     return kart([
       kartBas('1 · Hedefini seç'),
-      el('div', { class: 'pn-secenekler' }, [...HAZIR_HEDEF.map(z => kutu(z.k, z.ad, z.alt)), kutu('kendi', 'Kendim gireyim', 'sınıf yüzdeleri')]),
+      el('div', { class: 'pn-secenekler' }, [...HAZIR_HEDEF.map(z => kutu(z.k, z.ad, z.alt)), kutu('kendi', 'Kendim gireyim', 'sınıf yüzdeleri'), kutu('varlik', 'Varlık varlık gireyim', 'hisse / fon / nakit yüzdeleri')]),
       secim ? el('div', { class: 'pn-hedef-form pm-yazma' }, [
         el('div', { class: 'pn-hedef-izgara' }, girdiler),
         el('div', { class: 'pn-hedef-alt' }, [
           el('span', { id: 'pnHedefToplam', class: 'p-sayi', text: '' }),
-          dugme('Hedefi kaydet', (e) => hedefKaydet(e.currentTarget, hazir ? hazir.ad : 'elle'), 'ana', { 'data-kilit': 'telefon', id: 'btnPnHedefKaydet' })
+          el('div', { class: 'p-alan pn-hedef-alan' }, [
+            el('label', { for: 'pnHedefBant', text: 'Sapma bandı (± puan)' }),
+            el('input', { id: 'pnHedefBant', type: 'number', min: '0', max: '50', step: '0.5', inputmode: 'decimal', value: String(bantDeger) })
+          ]),
+          dugme('Hedefi kaydet', (e) => hedefKaydet(e.currentTarget, hazir ? hazir.ad : 'elle', varlikDuzey ? 'varlik' : 'sinif'), 'ana', { 'data-kilit': 'telefon', id: 'btnPnHedefKaydet' })
         ]),
-        el('p', { class: 'p-kart-alt', text: 'Toplam %100 olmalı. Sapma bandı ±5 puan (bandın dışındaki fark "Yapman gerekenler"e düşer). Modellerin hisse listesi Modeller sayfasında.' })
+        el('p', { class: 'p-kart-alt', text: varlikDuzey
+          ? 'Her hisse, fon ve nakit için yüzde girin; boş bırakılan %0 sayılır. Toplam %100 olmalı. Bandın dışındaki fark "Yapman gerekenler"e düşer. Varlık düzeyi hedef sınıf hedefinin yerine geçer.'
+          : 'Toplam %100 olmalı. Bandın dışındaki fark "Yapman gerekenler"e düşer. Modellerin hisse listesi Modeller sayfasında.' })
       ]) : null
     ]);
   }
   function hedefAgirliklari() {
     const ag = {};
-    doc.querySelectorAll('#pfYeni-hedefim input[data-sinif]').forEach(i => { const v = Number(String(i.value).replace(',', '.')); if (Number.isFinite(v) && v > 0) ag[i.getAttribute('data-sinif')] = v; });
+    doc.querySelectorAll('#pfYeni-hedefim input[data-anahtar]').forEach(i => { const v = Number(String(i.value).replace(',', '.')); if (Number.isFinite(v) && v > 0) ag[i.getAttribute('data-anahtar')] = v; });
     return ag;
   }
   function hedefToplamYaz() {
@@ -626,12 +660,14 @@
     k.textContent = `Toplam %${tr(t, 0)}${Math.abs(t - 100) < 0.01 ? ' ✓' : ' — %100 olmalı'}`;
     k.className = `p-sayi ${Math.abs(t - 100) < 0.01 ? 'p-pos' : 'p-neg'}`;
   }
-  function hedefKaydet(d, kaynak) {
+  function hedefKaydet(d, kaynak, duzey = 'sinif') {
     const ag = hedefAgirliklari();
     const t = Object.values(ag).reduce((s, v) => s + v, 0);
     if (Math.abs(t - 100) > 0.01) { if (AG.bildir) AG.bildir(`Ağırlıklar toplamı %${tr(t, 1)} — %100 olmalı.`, 'uyari'); return; }
+    const bk = bul('pnHedefBant'), bant = bk ? Number(String(bk.value).replace(',', '.')) : 5;
+    if (!Number.isFinite(bant) || bant < 0 || bant > 50) { if (AG.bildir) AG.bildir('Sapma bandı 0–50 puan arası olmalı.', 'uyari'); return; }
     hedefSecim = null;
-    yazma(d, () => api().hedefKaydet({ duzey: 'sinif', agirliklar: ag, bant: 5, kaynak, portfoy: gorunum.portfoy }), `${pAd(gorunum.portfoy)} hedefi kaydedildi.`);
+    yazma(d, () => api().hedefKaydet({ duzey, agirliklar: ag, bant, kaynak, portfoy: gorunum.portfoy }), `${pAd(gorunum.portfoy)} hedefi kaydedildi.`);
   }
 
   function farkKart(dag, toplam) {
@@ -809,22 +845,28 @@
   function defterKaynakCiz() {
     const bol = bul('pfBolum-islem-defteri');
     if (!bol) return;
-    let s = bul('pnDefterKaynak'), yatirim = bul('pnDefterYatirim'), botK = bul('pnDefterBot');
+    let s = bul('pnDefterKaynak'), yatirim = bul('pnDefterYatirim'), botK = bul('pnDefterBot'), analiz = bul('pnYatirimAnaliz');
     if (!s) {
       s = el('div', { id: 'pnDefterKaynak', class: 'pn-defter-kaynak' });
       yatirim = el('div', { id: 'pnDefterYatirim', class: 'is-hidden' });
       botK = el('div', { id: 'pnDefterBot', class: 'is-hidden' });
       bol.insertBefore(s, bol.firstChild); bol.appendChild(yatirim); bol.appendChild(botK);
     }
-    // Portföyüm'ün işlem defteri (portfoyum.js #pmDefter) Hesaplar'dan buraya taşınır — tek İşlem defteri (§3).
+    // 68.7: Yatırım grafikleri (yatirimAnalizCiz) defter tablosunun ÜSTÜNDE.
+    if (!analiz) { analiz = el('div', { id: 'pnYatirimAnaliz', class: 'pn-yatirim-analiz' }); yatirim.insertBefore(analiz, yatirim.firstChild); }
+    // Portföyüm'ün işlem defteri (portfoyum.js #pmDefter) Hesaplar'dan buraya taşınır — tek İşlem defteri (§3); 68.7: burada açık.
     const pm = bul('pmDefter');
-    if (pm && pm.parentNode !== yatirim) yatirim.appendChild(pm);
-    doldur(s, [secici('Kaynak', [['kripto', 'Kripto / FX'], ['yatirim', 'Yatırım (Portföyüm)'], ['bot', 'Bot']], defterKaynak, (v) => { defterKaynak = v; defterKaynakCiz(); if (v === 'yatirim' && AG.pages.portfoyum) AG.pages.portfoyum.yukle(); })]);
+    if (pm && pm.parentNode !== yatirim) { yatirim.appendChild(pm); pm.open = true; }
+    // 68.7 (A): borsa hesapları (OKX / Binance / MetaTrader) her zaman Ben'in — başka kişi seçiliyken bunu söyle.
+    const kisi = gorunum.portfoy !== 'ben' && gorunum.portfoy !== 'tumu';
+    doldur(s, [secici('Kaynak', [['kripto', 'Kripto / FX'], ['yatirim', 'Yatırım (Portföyüm)'], ['bot', 'Bot']], defterKaynak, (v) => { defterKaynak = v; defterKaynakCiz(); if (v === 'yatirim' && AG.pages.portfoyum) AG.pages.portfoyum.yukle(); }),
+      defterKaynak === 'kripto' && kisi ? el('div', { id: 'pnDefterBenNotu', class: 'pn-ust-bosluk' }, [bant(`Borsa hesapları (OKX, Binance, MetaTrader) Ben'in — burada ${pAd(gorunum.portfoy)} seçiliyken de Ben'in borsa işlemleri görünür.`, null)]) : null]);
     const kok = bul('pfIslemDefteriKok');
     if (kok) kok.classList.toggle('is-hidden', defterKaynak !== 'kripto');
     yatirim.classList.toggle('is-hidden', defterKaynak !== 'yatirim');
     botK.classList.toggle('is-hidden', defterKaynak !== 'bot');
-    if (defterKaynak === 'yatirim' && !pm) doldur(yatirim, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]);
+    if (defterKaynak === 'yatirim' && !pm) doldur(analiz, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]);
+    if (defterKaynak === 'yatirim') yatirimAnalizCiz();
     if (defterKaynak === 'bot') {
       // F5 (§3): botların işlem dökümü (CSV; eskiden Ayarlar › Borsa) burada — hesap, kimin (Hücum / Denge / Elle / Acil fren), tarih.
       doldur(botK, [kart([kartBas('Bot işlemleri — döküm (CSV)'),
@@ -834,6 +876,176 @@
       const H = AG.pages.hesaplar;
       if (H) Promise.resolve(H.yukle(false)).then(() => H.dokumCiz());
     }
+  }
+
+  // ═══ İŞLEM DEFTERİ › YATIRIM: grafikler (68.7) ═════════════════════════════
+  /*
+   * GET /api/portfoyum/defter-analiz (lib/portfoyum/defterAnaliz.js) — üst çubuktaki kişi + defterin hesap / tarih süzgeci
+   * (portfoyum.js defterSuzgec). Kartlar Kripto / FX defteriyle aynı görünüm (glass-panel, AG.grafik.ana, .idf-cubuk, .pm-aylik):
+   * (a) gerçekleşen K/Z birikimli + aylık + yıl × ay · (b) varlığa (ve hesaba) göre · (c) temettü + faiz · (d) alış / satış, para
+   * hareketi, ücret. Tutarlar seçili $ / ₺ (işlem günü kuruyla); Gizli → ••• ve grafikler bulanık (.pm-gizli .pm-tutar).
+   * Sunucu eski sürümdeyse (uç yok → 404) hata kutusu değil sakin bir ipucu.
+   */
+  const analizOnbellek = new Map();
+  let analizSira = 0;
+  const AY_UC = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  const ayEtiket = (ay) => `${AY_UC[+ay.slice(5, 7) - 1]} ${ay.slice(2, 4)}`;
+  /** Uç yok mu (sunucu 68.7'den eski): doğrudan HTML 404 ya da sunucu bağlantısının "beklenmeyen yanıt (404, …)" iletisi. */
+  const analizYokMu = (m) => /HTTP 404|\(404,/.test(String(m || ''));
+  const bk = () => (birim() === 'TL' ? 'tl' : 'usd');
+  const ikiliT = (o, b = 0) => tutar(o && o.usd, o && o.tl, b);
+  const isaretliT = (o, b = 0) => { const s = ikiliT(o, b), v = o && o[bk()]; return sayiMi(v) && v > 0.004 && !gizli() ? '+' + s : s; };
+  /** Seçili birimde düz sayı → "+$1.234" (Gizli → •••). */
+  const birimSayi = (v, isaretli = true) => (gizli() ? '•••' : !sayiMi(v) ? '—' : `${v < 0 ? '−' : isaretli && v > 0.004 ? '+' : ''}${SIMGE[birim()]}${tr(Math.abs(v), Math.abs(v) >= 100 ? 0 : 2)}`);
+
+  /** Saf: yıl × ay tablosu — aylik [{ ay, … }] + değer(a) → [{ yil, aylar: [12 × sayı|null], toplam }] (yeni yıl üstte). */
+  function yilAyTablosu(aylik, deger) {
+    const m = new Map();
+    for (const a of aylik || []) {
+      const y = a.ay.slice(0, 4), v = deger(a);
+      if (!m.has(y)) m.set(y, { yil: y, aylar: Array(12).fill(null), toplam: 0 });
+      if (sayiMi(v)) { const z = m.get(y); z.aylar[+a.ay.slice(5, 7) - 1] = v; z.toplam += v; }
+    }
+    return [...m.values()].sort((p, q) => (p.yil < q.yil ? 1 : -1));
+  }
+  /** Saf: iki serili (a, b ≥ 0) aylık çubuk modeli — [{ ay, a, b }] → { W, H, tabanY, gruplar: [{ ay, orta, a: {x,y,w,h,v}, b }] } ya da null. */
+  function ikiliCubukModeli(l, W = 720, H = 170) {
+    const v = (l || []).filter(x => sayiMi(x.a) || sayiMi(x.b));
+    const enB = Math.max(0, ...v.map(x => Math.max(x.a || 0, x.b || 0)));
+    if (!v.length || !(enB > 0)) return null;
+    const ust = 8, alt = 22, ic = H - ust - alt, tabanY = ust + ic;
+    const genis = W / v.length, w = Math.max(2, Math.min(18, genis * 0.35));
+    const boy = (d) => (d > 0 ? Math.max(1, ic * d / enB) : 0);
+    return { W, H, tabanY, gruplar: v.map((x, i) => {
+      const orta = i * genis + genis / 2, ha = boy(x.a || 0), hb = boy(x.b || 0);
+      return { ay: x.ay, orta, a: { x: orta - w - 1, y: tabanY - ha, w, h: ha, v: x.a || 0 }, b: { x: orta + 1, y: tabanY - hb, w, h: hb, v: x.b || 0 } };
+    }) };
+  }
+  const svgGenislik = (k) => Math.max(320, Math.round(((k && k.clientWidth) || 760) - 40));
+  /** Ay yazıları (en çok ~12; x(c) çubuğun ortası). */
+  const ayYazilari = (l, x, y) => l.filter((c, i) => l.length <= 14 || i % Math.ceil(l.length / 12) === 0)
+    .map(c => svg('text', { x: x(c).toFixed(1), y, class: 'grf-cubuk-deger', 'text-anchor': 'middle', text: ayEtiket(c.ay) }));
+  /** Tek serili aylık çubuk (artı yeşil, eksi kırmızı) — js/pages/islemDefteri.js aylikCubukModeli. */
+  function cubukSvg(l, etiket, W) {
+    const ID = AG.pages.islemDefteri;
+    const m = ID && ID.aylikCubukModeli ? ID.aylikCubukModeli(l, W, 170) : null;
+    if (!m || !m.cubuklar.some(c => Math.abs(c.v) > 1e-9)) return null;
+    return svg('svg', { class: 'idf-cubuk pm-tutar', viewBox: `0 0 ${m.W} ${m.H}`, role: 'img', 'aria-label': etiket }, [
+      svg('line', { x1: 0, x2: m.W, y1: m.sifirY.toFixed(1), y2: m.sifirY.toFixed(1), class: 'grf-cubuk-sifir' }),
+      ...m.cubuklar.map(c => svg('rect', { x: c.x.toFixed(1), y: c.y.toFixed(1), width: c.w.toFixed(1), height: c.h.toFixed(1), rx: 2, class: c.arti ? 'grf-cubuk-arti' : 'grf-cubuk-eksi' }, [svg('title', { text: `${ayEtiket(c.ay)}: ${birimSayi(c.v)}` })])),
+      ...ayYazilari(m.cubuklar, c => c.x + c.w / 2, m.H - 6)
+    ]);
+  }
+  /** İki serili aylık çubuk + lejant (a: --seri-1, b: --seri-2). */
+  function ikiliSvg(l, adA, adB, etiket, W) {
+    const m = ikiliCubukModeli(l, W, 170);
+    if (!m) return null;
+    const cub = (z, sinif, ad, ay) => svg('rect', { x: z.x.toFixed(1), y: z.y.toFixed(1), width: z.w.toFixed(1), height: z.h.toFixed(1), rx: 2, class: sinif }, [svg('title', { text: `${ayEtiket(ay)} · ${ad}: ${birimSayi(z.v, false)}` })]);
+    return el('div', null, [
+      el('div', { class: 'pn-lejant' }, [el('span', { class: 'pn-lejant-kutu pn-lejant-a', 'aria-hidden': 'true' }), el('span', { text: adA }), el('span', { class: 'pn-lejant-kutu pn-lejant-b', 'aria-hidden': 'true' }), el('span', { text: adB })]),
+      svg('svg', { class: 'idf-cubuk pm-tutar', viewBox: `0 0 ${m.W} ${m.H}`, role: 'img', 'aria-label': etiket }, [
+        svg('line', { x1: 0, x2: m.W, y1: m.tabanY.toFixed(1), y2: m.tabanY.toFixed(1), class: 'grf-cubuk-sifir' }),
+        ...m.gruplar.flatMap(g => [cub(g.a, 'pn-ikili-a', adA, g.ay), cub(g.b, 'pn-ikili-b', adB, g.ay)]),
+        ...ayYazilari(m.gruplar, c => c.orta, m.H - 6)
+      ])
+    ]);
+  }
+  const bolum = (ikonAd, baslik, ic, id) => el('div', { class: 'glass-panel panel-pad mt-4', id }, [el('h3', { class: 'card-title mb-3' }, [el('i', { class: 'tone-primary', 'data-lucide': ikonAd }), el('span', { text: ' ' + baslik })]), ...ic]);
+  const ipucu = (metin) => el('p', { class: 'hint hint-sm mt-2 mb-0', text: metin });
+  const tonT = (o) => { const v = o && o[bk()]; return sayiMi(v) && Math.abs(v) > 1e-9 ? (v > 0 ? 'tone-success' : 'tone-danger') : 'tone-muted'; };
+  const sayiHucre = (metin, sinif) => el('td', { class: `sayi${sinif ? ' ' + sinif : ''}` }, [el('span', { class: 'pm-tutar', text: metin })]);
+  const ikiliTopla = (p, q) => ({ usd: ((p || {}).usd || 0) + ((q || {}).usd || 0), tl: ((p || {}).tl || 0) + ((q || {}).tl || 0) });
+
+  /** Kartlar (yalnız DOM kurar; a = /defter-analiz yanıtı, W = çubuk genişliği). Döndürür { kartlar, kzKap, kzSeri }. */
+  function yatirimKartlari(a, W) {
+    const t = a.toplam || {}, aylik = a.aylik || [], b = bk();
+    // (a) Gerçekleşen K/Z
+    const kzSeri = (a.birikimli || []).map(p => ({ t: p.t, v: p[b] }));
+    const kzKap = el('div', { id: 'pnYaKzGrafik', class: 'pm-tutar' });
+    const kzTablo = yilAyTablosu(aylik.filter(z => z.satis), z => z.gerceklesen[b]);
+    const hucre = (v) => (sayiMi(v) ? sayiHucre(birimSayi(v), v > 1e-9 ? 'tone-success' : v < -1e-9 ? 'tone-danger' : 'tone-muted') : el('td', { class: 'sayi' }));
+    const kutu = (etiket, deger, alt, sinif, sayac) => el('div', { class: 'p-gosterge' }, [el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: etiket })]),
+      el('p', { class: `p-gosterge-deger${sinif ? ' ' + sinif : ''}` }, [el('span', { class: sayac ? null : 'pm-tutar', text: deger })]), alt ? el('p', { class: 'p-gosterge-alt', text: alt }) : null]);
+    const kartA = bolum('line-chart', `Gerçekleşen kâr / zarar — ${pAd(gorunum.portfoy)}`, t.satis ? [
+      el('div', { class: 'p-serit pn-alt-bosluk' }, [
+        kutu('Gerçekleşen (toplam)', isaretliT(t.gerceklesen), `${t.satis} kapanan satış`, tonT(t.gerceklesen)),
+        kutu('Kazanan / kaybeden', `${t.kazanan} / ${t.kaybeden}`, sayiMi(t.kazanmaOrani) ? `kazanma oranı ${yuzde(t.kazanmaOrani, 0)}` : 'kazanma oranı —', null, true),
+        kutu('Temettü + faiz', ikiliT(ikiliTopla(t.temettu, t.faiz)), 'vergi / stopaj sonrası net'),
+        kutu('Ücretler', ikiliT(t.ucret), 'komisyon + ücret / gider')
+      ]),
+      kzKap,
+      el('h4', { class: 'pf-bolum-baslik mt-3', text: 'Aylık gerçekleşen kâr / zarar' }),
+      cubukSvg(aylik.map(z => ({ ay: z.ay, v: z.gerceklesen[b] })), 'Aylık gerçekleşen kâr/zarar çubukları', W),
+      AG.tablo.kutulu({ id: 'tblPnYaAylik', sinif: 'table-dense pf-tablo pm-aylik', basliklar: ['Yıl', ...AY_UC, 'Yıl'],
+        satirlar: kzTablo.map(y => el('tr', null, [el('td', { class: 'fw-semibold', text: y.yil }), ...y.aylar.map(hucre), (() => { const c = hucre(y.toplam); c.classList.add('fw-semibold'); return c; })()])) }),
+      ipucu(`Satış başına FIFO (ilk alınan ilk satılır), satış ücreti düşülmüş; tutar satış gününün kuruyla. Toplam, Varlıklar sayfasındaki gerçekleşen kâr/zararla aynıdır.${t.bilinmeyen ? ` ${t.bilinmeyen} satışta alış maliyeti bilinmiyor — o satışların kârı eksik sayılır.` : ''}`)
+    ] : [el('p', { class: 'hint hint-sm mb-0', text: 'Bu seçimde satış yok — gerçekleşen kâr/zarar satışla doğar.' })], 'pnYaKz');
+    // (b) Varlığa göre sonuç (+ birden çok hesapta hesaba göre)
+    const vl = a.varliklar || [], hl = a.hesaplar || [];
+    const kartB = bolum('list-ordered', 'Varlığa göre sonuç', vl.length ? [
+      AG.tablo.kutulu({ id: 'tblPnYaVarlik', sinif: 'table-dense pf-tablo', siralanabilir: true, basliklar: ['Varlık', 'Gerçekleşen K/Z', 'Temettü', 'Alış', 'Satış', 'Kazanan / kaybeden'],
+        satirlar: vl.map(v => el('tr', null, [
+          el('td', { class: 'pf-sola' }, [el('div', { class: 'fw-semibold', text: v.sembol }), el('div', { class: 'pf-kucuk', text: v.ad || '' })]),
+          sayiHucre(isaretliT(v.gerceklesen), tonT(v.gerceklesen)), sayiHucre(ikiliT(v.gelir)),
+          el('td', { class: 'sayi' }, [el('div', { text: `${v.alisSayisi} alış` }), el('div', { class: 'pf-kucuk pm-tutar', text: ikiliT(v.alis) })]),
+          el('td', { class: 'sayi' }, [el('div', { text: `${v.satisSayisi} satış` }), el('div', { class: 'pf-kucuk pm-tutar', text: ikiliT(v.satisHacmi) })]),
+          el('td', { class: 'sayi', text: v.satisSayisi ? `${v.kazanan} / ${v.kaybeden}${v.bilinmeyen ? ` (${v.bilinmeyen} maliyetsiz)` : ''}` : '—' })
+        ])) }),
+      hl.length > 1 ? el('h4', { class: 'pf-bolum-baslik mt-3', text: 'Hesaba göre' }) : null,
+      hl.length > 1 ? AG.tablo.kutulu({ id: 'tblPnYaHesap', sinif: 'table-dense pf-tablo', basliklar: ['Hesap', 'Gerçekleşen K/Z', 'Temettü + faiz', 'Ücret', 'Yatırma', 'Çekme'],
+        satirlar: hl.map(h => el('tr', null, [el('td', { class: 'pf-sola fw-semibold', text: h.ad }), sayiHucre(isaretliT(h.gerceklesen), tonT(h.gerceklesen)), sayiHucre(ikiliT(h.gelir)),
+          sayiHucre(ikiliT(h.ucret)), sayiHucre(ikiliT(h.yatirma)), sayiHucre(ikiliT(h.cekme))])) }) : null,
+      ipucu('Gerçekleşen = satışlardan doğan kâr/zarar (eldekilerin kâğıt üstü kârı değil). Alış / satış sütununda işlem sayısı ve brüt tutar.')
+    ] : [el('p', { class: 'hint hint-sm mb-0', text: 'Bu seçimde alış, satış ya da temettü yok.' })], 'pnYaVarlik');
+    // (c) Temettü ve faiz geliri
+    const gelirVar = aylik.some(z => Math.abs(z.temettu[b]) > 1e-9 || Math.abs(z.faiz[b]) > 1e-9);
+    const kartC = bolum('coins', 'Temettü ve faiz geliri', gelirVar ? [
+      el('p', { class: 'pn-metin' }, [el('span', { text: 'Temettü / kupon ' }), el('strong', { class: 'pm-tutar', text: ikiliT(t.temettu) }), el('span', { text: ' · faiz ' }), el('strong', { class: 'pm-tutar', text: ikiliT(t.faiz) })]),
+      cubukSvg(aylik.map(z => ({ ay: z.ay, v: z.temettu[b] + z.faiz[b] })), 'Aylık temettü ve faiz geliri çubukları', W),
+      ipucu('Vergi / stopaj sonrası net; otomatik mevduat faizi dahil. Ay, gelirin hesaba geçtiği gün.')
+    ] : [el('p', { class: 'hint hint-sm mb-0', text: 'Bu seçimde temettü ya da faiz yok.' })], 'pnYaGelir');
+    // (d) Alış / satış / para hareketi
+    const hacimVar = aylik.some(z => z.alis[b] > 0 || z.satisHacmi[b] > 0), akisVar = aylik.some(z => z.yatirma[b] > 0 || z.cekme[b] > 0), ucretVar = aylik.some(z => z.ucret[b] > 0);
+    const baslikT = (ad, metin) => el('h4', { class: 'pf-bolum-baslik mt-3' }, [el('span', { text: ad + ' · ' }), el('span', { class: 'pm-tutar', text: metin })]);
+    const kartD = bolum('arrow-left-right', 'Alış / satış / para hareketi', hacimVar || akisVar || ucretVar ? [
+      baslikT('Alış ↔ satış hacmi', `alış ${ikiliT(t.alis)} · satış ${ikiliT(t.satisHacmi)}`),
+      hacimVar ? ikiliSvg(aylik.map(z => ({ ay: z.ay, a: z.alis[b], b: z.satisHacmi[b] })), 'Alış', 'Satış', 'Aylık alış ve satış hacmi', W) : el('p', { class: 'hint hint-sm', text: 'Alış ya da satış yok.' }),
+      baslikT('Para yatırma ↔ çekme', `yatırma ${ikiliT(t.yatirma)} · çekme ${ikiliT(t.cekme)}`),
+      akisVar ? ikiliSvg(aylik.map(z => ({ ay: z.ay, a: z.yatirma[b], b: z.cekme[b] })), 'Yatırma', 'Çekme', 'Aylık para yatırma ve çekme', W) : el('p', { class: 'hint hint-sm', text: 'Para yatırma ya da çekme yok.' }),
+      baslikT('Ücretler', ikiliT(t.ucret)),
+      ucretVar ? cubukSvg(aylik.map(z => ({ ay: z.ay, v: -z.ucret[b] })), 'Aylık ücret ve komisyon çubukları', W) : el('p', { class: 'hint hint-sm', text: 'Ücret yok.' }),
+      ipucu(`Hacim brüt (adet × fiyat). Para hareketi: para yatırma / çekme ve ${gorunum.portfoy === 'tumu' ? 'kayıtlı olmayan hesaplarla' : 'başka kişinin hesabıyla'} nakit transferi; aynı kişinin hesapları arasındaki transfer sayılmaz. Ücret = alış/satış komisyonu + ücret / gider kayıtları.${a.kurEksik ? ` ${a.kurEksik} tutarın o günkü kuru yok — toplamlara girmedi.` : ''}`)
+    ] : [el('p', { class: 'hint hint-sm mb-0', text: 'Bu seçimde alış, satış, para hareketi ya da ücret yok.' })], 'pnYaHareket');
+    return { kartlar: [kartA, kartB, kartC, kartD], kzKap, kzSeri };
+  }
+
+  /** İşlem defteri › Yatırım grafiklerini çiz (önbellek 60 sn; zorla = yeniden oku). portfoyum.js süzgeç değişince çağırır. */
+  async function yatirimAnalizCiz(zorla) {
+    const k = bul('pnYatirimAnaliz');
+    if (!k || aktif !== 'islem-defteri' || defterKaynak !== 'yatirim') return;
+    const sz = AG.pages.portfoyum && AG.pages.portfoyum.defterSuzgec ? AG.pages.portfoyum.defterSuzgec() : {};
+    const f = { portfoy: gorunum.portfoy, hesap: sz.hesap || '', bas: sz.bas || '', bit: sz.bit || '' };
+    const anahtar = JSON.stringify(f), sira = ++analizSira;
+    let o = analizOnbellek.get(anahtar);
+    if (!o || zorla || Date.now() - o.zaman > 60e3) {
+      if (!k.firstChild) doldur(k, [el('p', { class: 'hint mb-0', text: 'Grafikler hazırlanıyor…' })]);
+      let r = null, hata = null;
+      try { r = await api().defterAnaliz(f); if (!r || !r.success) hata = (r && r.error) || 'yanıt yok'; } catch (e) { hata = e.message; }
+      if (sira !== analizSira) return;   // bu arada başka bir seçim istendi
+      if (hata) {
+        doldur(k, [analizYokMu(hata) ? bant('Sunucu 68.7\'ye güncellenince grafikler görünür (gerçekleşen kâr/zarar, varlığa göre sonuç, gelir, alış/satış). Aşağıdaki işlem listesi şimdi de çalışır.', null)
+          : AG.bildirim.hataKutusu(hata, { baslik: 'Grafikler okunamadı', yeniden: () => yatirimAnalizCiz(true) })]);
+        return;
+      }
+      o = { zaman: Date.now(), r };
+      analizOnbellek.set(anahtar, o);
+    }
+    const x = yatirimKartlari(o.r, svgGenislik(k));
+    doldur(k, [el('div', { id: 'pnYatirimKok', class: `pm-kok${gizli() ? ' pm-gizli' : ''}` }, x.kartlar)]);
+    if (x.kzSeri.length > 1 && AG.grafik && AG.grafik.ana) {
+      AG.grafik.ana(x.kzKap, { seri: x.kzSeri, dusus: false, log: false, birim: SIMGE[birim()], etiket: 'Birikimli gerçekleşen K/Z', ad: 'Gerçekleşen kâr/zarar', bicim: (v) => birimSayi(v) });
+    }
+    if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
 
   // ═══ RAPOR: ölçüt kartı ═══════════════════════════════════════════════════
@@ -875,7 +1087,7 @@
         ['Gelecek gelir', 'sıradaki mevduat vadeleri', p.gelecekGelir.length ? p.gelecekGelir.map(z => `${z.hesap} ${AG.fmt.tarih(z.son)}`).join(' · ') : '—']
       ];
       doldur(k, [kart([
-        kartBas(`Risk ve getiri ölçütleri — ${pAd(gorunum.portfoy)} (${birim()})`, rozet('yeni', 'warn')),
+        kartBas(`Risk ve getiri ölçütleri — ${pAd(gorunum.portfoy)} (${birim()})`),
         tablo(['Ölçüt', 'Ne söyler', 'Portföy', 'QQQ', 'BTC'].map((h, i) => el('th', { class: i > 1 ? 'p-sag' : null, text: h })), [
             ...SATIR.map(([ad, ne, f]) => el('tr', null, [el('td', { text: ad }), el('td', { class: 'pn-soluk', text: ne }), el('td', { class: 'p-sag p-sayi', text: f(p) }), el('td', { class: 'p-sag p-sayi', text: f(q) }), el('td', { class: 'p-sag p-sayi', text: f(b) })])),
             ...YAPI.map(([ad, ne, v]) => el('tr', null, [el('td', { text: ad }), el('td', { class: 'pn-soluk', text: ne }), el('td', { class: 'p-sag p-sayi', colspan: '3', text: v })]))
@@ -905,7 +1117,7 @@
   }
 
   AG.pages.pano = {
-    yukle, defterAc, gorunum: () => ({ ...gorunum }), PANO_SAYFA, HAZIR_HEDEF, KIYAS_ACIKLAMA, kiyasGetiri, yapilacaklar, hedefAgirliklari,
+    yukle, defterAc, gorunum: () => ({ ...gorunum }), yatirimAnaliz: yatirimAnalizCiz, yilAyTablosu, ikiliCubukModeli, yatirimKartlari, analizYokMu, PANO_SAYFA, HAZIR_HEDEF, KIYAS_ACIKLAMA, kiyasGetiri, yapilacaklar, hedefAgirliklari, varlikHedefSatirlari,
     dagilimDilimleri, ogeMetni, isiMetni, yilToplamlari, katBicimi, ucGetiriMetni,
     _onbellek: onbellek
   };

@@ -171,7 +171,7 @@
     const satirlar = o.satirlar.map(r => {
       const sat = r.yon === 'sat', al = r.yon === 'al';
       return el('tr', { class: sat ? 'pe-satir-sat' : null }, [
-        el('td', null, [el('strong', { text: r.s + ' ' }), r.yeni ? rozet('yeni', 'vurgu') : null, el('span', { class: 'pn-soluk pn-alt-satir', text: r.ad && r.ad !== r.s ? r.ad : '' })]),
+        el('td', null, [el('strong', { text: r.s + ' ' }), r.yeni ? rozet('eklenecek', 'vurgu') : null, el('span', { class: 'pn-soluk pn-alt-satir', text: r.ad && r.ad !== r.s ? r.ad : '' })]),
         el('td', { class: 'p-sayi' }, [el('span', { text: r.yeni ? 'yok' : adetM(r.elde) + ' adet' }), el('span', { class: 'pn-soluk pn-alt-satir', text: para(r.fiyat, m.B) })]),
         el('td', { class: 'p-sag p-sayi', text: yuzde(r.suanPay) }),
         el('td', null, [secici(`${r.s} kuralı`, [['sabit', 'Sabit %'], ['oran', 'Oranını koru']], r.kural, (v) => kuralYaz(r, v))]),

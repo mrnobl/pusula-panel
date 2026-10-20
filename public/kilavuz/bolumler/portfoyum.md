@@ -8,7 +8,9 @@ Gerçek portföyünün bilgisi **Portföy › Hesaplar**'da girilir: kurumlar, h
 
 ![Portföy › Hesaplar — portföyler, hesap kartları ve + işlem](ekran:kayit-1400)
 
-Yukarıdan aşağıya: **Portföyler** kartı · üst düğmeler · katlı **Yeni hesap** · katlı **Varlık ekle** · **hesap kartları** · katlı **Diğer işlemler** · katlı **Hedef dağılım**, **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş**. Yatırım işlem defteri [İşlem defteri › Yatırım](#/kilavuz/portfoyum/islem-defteri)'dadır. Kur çevirici üst çubuktaki **Kur** düğmesinde ([Kur çevirici](#/kilavuz/kur-cevirici)).
+Yukarıdan aşağıya: **Portföyler** kartı · üst düğmeler · katlı **Yeni hesap** · katlı **Varlık ekle** · **hesap kartları** · katlı **Diğer işlemler** · **Hedef dağılım** satırı (Hedefim'e bağlantı) · katlı **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş**.
+
+Hesap kartları **üst çubukta seçili kişinin** hesaplarıdır (**Ben**, **Fırat**, …); **Tümü** seçiliyken bütün hesaplar kişi başlıkları (portföy adlarıyla) altında sıralanır. Seçim değişince kartlar hemen yenilenir. Hesabı başka kişiye bağlamak: [Portföyler](#/kilavuz/portfoyum/portfoyler). Yatırım işlem defteri [İşlem defteri › Yatırım](#/kilavuz/portfoyum/islem-defteri)'dadır. Kur çevirici üst çubuktaki **Kur** düğmesinde ([Kur çevirici](#/kilavuz/kur-cevirici)).
 
 ## Portföyler: kimin hesabı {#portfoyler}
 
@@ -30,7 +32,7 @@ Kartın üstündeki **portföy listesinde** her portföyün değeri ve hesap say
 
 **Portföy › Hesaplar** sırasıyla:
 
-1. Üstte düğmeler: **+ Varlık ekle** · **+ Yeni hesap** · **Geçmiş işlemleri içe aktar (CSV)** · **İşlem defteri** · **Hedef dağılım** · **Yenile** · **Fiyatları yenile** (her biri ilgili bölümü açıp oraya kaydırır).
+1. Üstte düğmeler: **+ Varlık ekle** · **+ Yeni hesap** · **Geçmiş işlemleri içe aktar (CSV)** · **İşlem defteri** · **Yenile** · **Fiyatları yenile** (her biri ilgili bölümü açıp oraya kaydırır).
 2. Katlı **Yeni hesap** ve **Varlık ekle** ([ayrıntı](#/kilavuz/portfoyum/hisse-ekle)): önce hesap, sonra içindeki varlıklar ve nakit.
 3. **Hesap kartları:** başlıkta hesap adı · kurum · tür · para birimi, sağda değer ve son kayıt günü (30 günden eskiyse turuncu). Tabloda hesabın varlıkları: model etiketi (varlık o modelin son karar listesinde: N10, B10, 837 = QQQ), adet, ortalama alış, son fiyat, değer, kâr/zarar ve düğmeler:
    - **Sat:** kartın altındaki işlem satırını o varlıkla ve adediyle doldurur; adedi/fiyatı düzeltip **Ekle**.
@@ -39,7 +41,7 @@ Kartın üstündeki **portföy listesinde** her portföyün değeri ve hesap say
    - Banka / TL hesabında **Vadeli mevduat** (ya da ayar varsa özeti ve **Değiştir**): otomatik faiz ([ayrıntı](#/kilavuz/portfoyum/mevduat-faizi)).
 4. Her kartın altında **+ işlem** satırı: **Alış, Satış, Temettü, Para yatırma, Para çekme**; varlık, adet, fiyat, ücret (ya da tutar), **tarih**. Geçmiş işlem için tarihi geriye al; Pano'daki grafik ve sayılar o günden itibaren yeniden hesaplanır.
 5. Katlı **Diğer işlemler: transfer, faiz, ücret, bölünme** — hesaplar arası transfer (ulaşan tutar dahil), elle faiz, ücret / gider, bölünme ve **Aynı gün sırası**. Alış, satış, temettü, para giriş/çıkışı da burada seçilebilir ama kolay yolu hesap kartıdır; **açılış bakiyesi burada yoktur** (Varlık ekle'de).
-6. Katlı **Hedef dağılım** (varlık düzeyinde hedef), **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş** (kurum, hesap ve varlık **adları**, Yahoo varlıkta **fiyat kodu** ve **hesap kapatma**).
+6. **Hedef dağılım** satırı: hedef yalnız [Hedefim](#/kilavuz/portfoy/hedefim)'de, seçili kişi için düzenlenir (**Hedefi düzenle → Hedefim**). Katlı **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş** (kurum, hesap ve varlık **adları**, Yahoo varlıkta **fiyat kodu** ve **hesap kapatma**).
 
 ![Diğer işlemler: transfer, faiz, ücret, bölünme](ekran:portfoyum-form-1400)
 
@@ -141,7 +143,26 @@ Ondalık için **virgül** kullanın: `0,125` · `1234,5` · `1.234,56` (nokta b
 
 ![İşlem defteri › Yatırım](ekran:portfoyum-defter-1400)
 
-Hesaplar'a girdiğin işlemlerin defteri **Portföy › İşlem defteri** sayfasında, üstteki kaynak seçicide **Yatırım (Portföyüm)** seçilince görünür. Defter **katlıdır ve varsayılan kapalıdır** (67.4): başlıkta kayıt sayısı yazar, tıklayınca açılır. Hesaplar'daki **İşlem defteri** düğmesi oraya götürür, defteri açar ve kaydırır. Kripto / FX ve Bot kaynakları için: [İşlem defteri](#/kilavuz/islem-defterim).
+Hesaplar'a girdiğin işlemlerin defteri **Portföy › İşlem defteri** sayfasında, üstteki kaynak seçicide **Yatırım (Portföyüm)** seçilince görünür; burada **açıktır** (başlıkta kayıt sayısı). Hesaplar'daki **İşlem defteri** düğmesi oraya götürür ve kaydırır.
+
+Defter **üst çubukta seçili kişiye** göredir: yalnız o kişinin hesaplarındaki işlemler; **Hesap** seçicide yalnız onun hesapları. İki kişi arasındaki transfer ikisinin defterinde de görünür. **Tümü** bütün hesapları gösterir. CSV dışa aktarma da aynı kişi ve süzgeçle. Kripto / FX ve Bot kaynakları için: [İşlem defteri](#/kilavuz/islem-defterim).
+
+### Grafikler {#defter-grafik}
+
+![İşlem defteri › Yatırım — gerçekleşen kâr/zarar ve aylık sonuç](ekran:portfoyum-defter-grafik-1400)
+
+Defterin üstünde dört kart, seçili kişinin (defterde bir hesap ya da tarih aralığı seçtiysen yalnız onun) işlemlerinden:
+
+| Kart | Ne gösterir |
+|---|---|
+| **Gerçekleşen kâr / zarar** | Satışlardan doğan kâr/zarar: birikimli çizgi, aylık çubuk ve yıl × ay tablosu; kapanan satış sayısı, kazanan / kaybeden. Satış başına **FIFO** (ilk alınan ilk satılır), satış ücreti düşülmüş — toplam Varlıklar'daki gerçekleşen kâr/zararla aynıdır |
+| **Varlığa göre sonuç** | Her varlığın gerçekleşen kâr/zararı, temettüsü, alış / satış sayısı ve tutarı; birden çok hesapta **hesaba göre** tablo |
+| **Temettü ve faiz geliri** | Aylık gelir çubukları; vergi / stopaj sonrası net, otomatik mevduat faizi dahil |
+| **Alış / satış / para hareketi** | Aylık alış ↔ satış hacmi, para yatırma ↔ çekme ve ücretler (komisyon + ücret / gider) |
+
+Tutarlar üst çubuktaki **$** ya da **₺** ile, işlem gününün kuruyla çevrilir; **Gizli**'de rakamlar **•••**, grafikler bulanık. Başka kişinin hesabıyla yapılan nakit transferi o kişi için para girişi / çıkışıdır; aynı kişinin hesapları arasındaki transfer sayılmaz. Bu bilgisayar sunucudan okuyorsa ve sunucu daha eski sürümdeyse kartların yerinde "Sunucu 68.7'ye güncellenince grafikler görünür" yazar; defter yine çalışır.
+
+### Kayıtlar {#defter-kayitlar}
 
 Türler: açılış · alış · satış · temettü/kupon · faiz · para yatırma · para çekme · hesaplar arası transfer · bölünme · ücret.
 
@@ -167,17 +188,15 @@ Modeller sayfasındaki **Bu ay** kartının emir listesini aracı kurumda uygula
 - Defterde her uygulama tek satırlık özetle görünür (**"Tasarımcı 2026-10 Nasdaq M10 — 10 kayıt (etkin)"**); **Geri al** ile tamamı iptal edilen paket, Durum süzgeci iptalleri gösterirken tabloda tek satıra iner (**Kayıtları göster** ile açılır).
 - Hisse sizde başka yazımla kayıtlıysa (ör. "ASELS.IS") yeni varlık açılmaz; işlem sizin varlığınıza yazılır.
 - Yanlışsa ya **Modeller › Bu ay › Geri al** (o uygulamanın bütün kayıtları ters kayıtla iptal edilir) ya da burada tek satırı **İptal et**; iptal edilen satır Bu ay listesinde yeniden açılır.
-- **Modeller › Ayarlar › Portföyüm hedefini güncelle**, modellerin hedefini Hesaplar'daki **Hedef dağılım**'a yeni hedef kaydı olarak yazar (kaynak "tasarimci …"); öncekiler geçmişte kalır.
+- **Modeller › Ayarlar › Portföyüm hedefini güncelle**, modellerin hedefini Portföyüm'e yeni hedef kaydı olarak yazar (kaynak "tasarimci …"); öncekiler geçmişte kalır.
 
 ## Hedef dağılım {#hedef}
 
-![Hedef dağılım düzenleyici](ekran:portfoyum-hedef-1400)
-
 **Hedef ve gerçek ne demek?** Hedef, paranın sınıflara (hisse, altın, kripto, TL…) nasıl bölünmesini istediğin orandır — ör. %40 hisse, %25 altın. Gerçek, bugünkü fiyatlarla paranın fiilen nasıl bölündüğüdür. Fiyatlar oynadıkça gerçek hedeften uzaklaşır; fark bandı aşınca alım-satımla hedefe geri getirmek (dengeleme) riskini istediğin seviyede tutar. Bu bir getiri hedefi değildir, ne kadar kazandığını ölçmez — onu Pano'daki getiri sayıları ve grafik gösterir.
 
-Sınıf düzeyinde hedefi en kolay [Hedefim](#/kilavuz/portfoy/hedefim) sayfasından seçersin. Buradaki katlı **Hedef dağılım** düzenleyicisi (Hesaplar › Hedef dağılım) ayrıntılı yoldur: **sınıf** (Endeks/ETF, altın/emtia, fon, kripto, TL nakit…) ya da **tek tek varlık** düzeyinde, toplam %100. Sapma bandını puan olarak verin. Hedef, üst çubukta seçili portföyün hedefidir (Ben ve Anıl ayrı). Eski hedefler geçmişte saklanır.
+Hedef [Hedefim](#/kilavuz/portfoy/hedefim) sayfasında seçilir ve kaydedilir; üst çubukta seçili kişinin hedefidir (Ben ve Fırat ayrı), **Tümü**'de girilmez. Hesaplar'da yalnız **Hedefi düzenle → Hedefim** bağlantısı vardır. Eski hedefler geçmişte saklanır.
 
-Model portföylerin (Nasdaq M10, BIST M10, %50 QQQ + %50 Hücum) hedefini buraya almanın **tek yolu Modeller › Ayarlar › Portföyüm hedefini güncelle**'dir (önizlemeli); **Model hedefini al (model Ayarları)** düğmesi oraya götürür. Laboratuvar kararından içe alma 61.1'de kaldırıldı — Laboratuvar araştırma içindir, gerçek emir ve hedef yalnız Modeller sayfasından gelir.
+Model portföylerin (Nasdaq M10, BIST M10, %50 QQQ + %50 Hücum) hedefini Portföyüm'e almanın **tek yolu Modeller › Ayarlar › Portföyüm hedefini güncelle**'dir (önizlemeli). Laboratuvar kararından içe alma 61.1'de kaldırıldı — Laboratuvar araştırma içindir, gerçek emir ve hedef yalnız Modeller sayfasından gelir.
 
 Laboratuvarın eski **Olsaydı planı** sekmesi ve **Portföyüm'den doldur** düğmesi 67.5'te kaldırıldı. Gerçek portföyün al/sat planı **Portföy › Hedefim › Planla**'dadır; o planı geçmişte denemek için **Bu dağılımı geçmişte dene**.
 

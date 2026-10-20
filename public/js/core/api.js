@@ -134,8 +134,9 @@
   const q = encodeURIComponent;
   const hesaplarSorgu = ({ durum = '', hesap = '', kaynak = '', sembol = '', bas = '', bit = '', sayfa = 1 } = {}) =>
     `durum=${q(durum)}${hesap ? `&hesap=${q(hesap)}` : ''}&kaynak=${q(kaynak)}&sembol=${q(sembol)}&bas=${q(bas)}&bit=${q(bit)}&tz=${q(new Date().getTimezoneOffset())}&sayfa=${q(sayfa)}`;
-  const portfoyumSorgu = ({ hesap = '', islem = '', varlik = '', bas = '', bit = '', durum = '' } = {}) =>
-    `hesap=${q(hesap)}&islem=${q(islem)}&varlik=${q(varlik)}&bas=${q(bas)}&bit=${q(bit)}${durum ? `&durum=${q(durum)}` : ''}`;
+  // 68.7: portfoy = kişi süzgeci (yalnız o kişinin hesapları; 'tumu' / boş = hepsi)
+  const portfoyumSorgu = ({ hesap = '', islem = '', varlik = '', bas = '', bit = '', durum = '', portfoy = '' } = {}) =>
+    `hesap=${q(hesap)}&islem=${q(islem)}&varlik=${q(varlik)}&bas=${q(bas)}&bit=${q(bit)}${durum ? `&durum=${q(durum)}` : ''}${portfoy ? `&portfoy=${q(portfoy)}` : ''}`;
 
   const api = {
     istek,
@@ -275,6 +276,8 @@
       islemler: (f) => al('/api/portfoyum/islemler?' + portfoyumSorgu(f)),
       /** CSV indirme bağlantısı (istek atmaz; <a href download>). */
       csvYolu: (f) => '/api/portfoyum/islemler.csv?' + portfoyumSorgu(f),
+      /** 68.7 İşlem defteri › Yatırım grafikleri (yalnız okuma): portfoy, hesap, bas, bit. */
+      defterAnaliz: ({ portfoy = '', hesap = '', bas = '', bit = '' } = {}) => al(`/api/portfoyum/defter-analiz?portfoy=${q(portfoy)}&hesap=${q(hesap)}&bas=${q(bas)}&bit=${q(bit)}`),
       gecmis: (hesap, portfoy) => al('/api/portfoyum/gecmis' + (hesap ? `?hesap=${q(hesap)}` : portfoy ? `?portfoy=${q(portfoy)}` : '')),
       /* 62.4 Portföyüm grafiğinin kıyas çizgileri (100 tabanlı, USD | TL) */
       kiyas: (bas, birim) => al(`/api/portfoyum/kiyas?bas=${q(bas)}&birim=${q(birim || 'USD')}`),

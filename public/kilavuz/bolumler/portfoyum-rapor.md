@@ -26,7 +26,7 @@ En üstte **Risk ve getiri ölçütleri** kartı ([Ölçütler](#/kilavuz/portfo
 
 ![Rapor — ay, getiriler, etkileyenler, kötü senaryolar, korelasyon](ekran:portfoyum-rapor-1400)
 
-1. **Ay** ve **Hesap** seçimi: son biten ay varsayılan; listede **"… — bu ay (devam ediyor)"** de vardır (bugüne kadar). Hesap seçersen her şey yalnız o hesap için hesaplanır (hesaplar arası aktarım o hesap için para girişi/çıkışı sayılır). **Yenile** yeniden hesaplar.
+1. **Ay** ve **Hesap** seçimi: son biten ay varsayılan; listede **"… — bu ay (devam ediyor)"** de vardır (bugüne kadar). Hesap listesinde yalnız üst çubukta seçili kişinin hesapları vardır (**Tümü**: hepsi; kişi değişince başka kişinin hesabı seçili kalmaz). Hesap seçersen her şey yalnız o hesap için hesaplanır (hesaplar arası aktarım o hesap için para girişi/çıkışı sayılır). **Yenile** yeniden hesaplar.
 2. **Seçili ayın altı kutusu** (dolar): ay başı → ay sonu değer · para girişi/çıkışı · piyasa etkisi · zaman ağırlıklı getiri · para ağırlıklı getiri · TL, enflasyon hariç.
 3. **Başlangıçtan:** para ağırlıklı getiri (1 yıl dolduysa yıllığı da), karşılaştırma için zaman ağırlıklı getiri ve TL, enflasyon hariç getiri.
 4. **En çok etkileyenler:** ayın kazandıranları ve kaybettirenleri, her birinin dolar katkısı ve kendi fiyat getirisi.

@@ -3096,6 +3096,18 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .pn-tablo-alan select { min-width: 9rem; }
 .pn-yeni-portfoy { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-2); margin-top: var(--sp-3); }
 .pn-defter-kaynak { margin-bottom: var(--sp-3); }
+/* 68.7 İşlem defteri › Yatırım grafikleri: iki serili aylık çubuk (alış ↔ satış, yatırma ↔ çekme) + lejant */
+.pn-ikili-a { fill: var(--seri-1); }
+.pn-ikili-b { fill: var(--seri-2); }
+.pn-lejant { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-2); margin: 0 0 var(--sp-2); font-size: var(--fs-sm); color: var(--text-soft); }
+.pn-lejant-kutu { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.pn-lejant-kutu + span { margin-right: var(--sp-2); }
+.pn-lejant-a { background: var(--seri-1); }
+.pn-lejant-b { background: var(--seri-2); }
+.pn-yatirim-analiz { margin-bottom: var(--sp-4); }
+/* 68.7 Hesaplar › Tümü: hesap kartları kişi başlıkları altında */
+.pm-kisi-baslik { display: flex; align-items: baseline; gap: var(--sp-1); margin: var(--sp-3) 0 0; font-size: var(--fs-lg); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.pm-kisi-baslik:first-child { margin-top: 0; }
 /* 67.3 Hesaplar › portföy adını değiştir (satır içi) */
 .pn-ad-duzenle td { background: var(--accent-soft); }
 .pn-ad-dugmeler { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: flex-end; }

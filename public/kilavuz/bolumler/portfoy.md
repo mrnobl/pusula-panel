@@ -23,7 +23,7 @@ Portföy, **kendi paranın** (aracı kurum, banka, kripto borsası) tek yeridir.
 
 Bir Portföy sayfası açıkken üst çubukta iki seçici durur; seçim bütün Portföy sayfalarında geçerlidir ve bu tarayıcıda hatırlanır:
 
-- **Portföy:** **Ben**, eklediğin öteki portföyler (ör. **Anıl**) ve **Tümü**. Her hesap tek bir portföye bağlıdır; başkasının hesabı senin toplamına, getirine, hedefine ve raporuna girmez. **Tümü** bütün portföylerin birleşimidir ve **yalnız okunur** (hedef girilmez; Pano'da portföy başına değer tablosu çıkar). Hesabı portföye bağlamak: [Hesaplar › Portföyler](#/kilavuz/portfoyum/portfoyler).
+- **Portföy:** **Ben**, eklediğin öteki portföyler (ör. **Anıl**) ve **Tümü**. Her hesap tek bir portföye bağlıdır; başkasının hesabı senin toplamına, getirine, hedefine ve raporuna girmez. **Tümü** bütün portföylerin birleşimidir ve **yalnız okunur** (hedef girilmez; Pano'da portföy başına değer tablosu çıkar). **Hesaplar** yalnız seçili kişinin hesap kartlarını gösterir (Tümü: kişi başlıkları altında hepsi); **İşlem defteri › Yatırım** ve **Rapor**'daki hesap seçicisi de yalnız onun hesaplarını listeler. Hesabı portföye bağlamak: [Hesaplar › Portföyler](#/kilavuz/portfoyum/portfoyler).
 - **Para:** **$** · **₺** · **Gizli**. Gizli bütün tutarları **•••** yapar (yüzdeler görünür) — ekran paylaşırken ya da yanında biri varken. Eski "Tutarları gizle" ve "$ USD / ₺ TL" düğmeleri kaldırıldı; tek yer burası.
 
 > **Not:** Gizli yalnız bu tarayıcının görünümünü değiştirir, veriyi değil. Telefonda tutarların **sunucudan hiç gönderilmemesi** ayrı bir ayardır: Modeller › Ayarlar › "Tutarları telefonda gizle" ([Model sermayesi](#/kilavuz/tasarimci/sermaye)).
@@ -104,11 +104,11 @@ Düzeltme (adet, alış fiyatı) burada yapılmaz: [Hesaplar](#/kilavuz/portfoyu
 
 **Hedef**, paranın nasıl bölünmesini istediğindir — ör. "%50 endeks, %40 kripto, %10 nakit". Getiri hedefi değildir. Her portföyün **kendi hedefi** vardır (Ben ve Anıl ayrı); **Tümü** görünümünde hedef girilmez.
 
-1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**) ya da **Kendim gireyim** (sınıf yüzdeleri). Toplam %100 olmalı → **Hedefi kaydet**. Sapma bandı ±5 puan.
+1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
 2. **Olması gereken ↔ şu an:** her sınıfın hedef ve gerçek payı, çubuk (dolgu: şu an, çizgi: hedef) ve **Ne yapmalı** ("al $…" / "azalt $…"). Bandın dışındaki satırlar renklidir ve Pano'daki "Yapman gerekenler"e düşer.
 3. **Hangi hesapta ne yapılacak:** alım → en çok nakdi olan hesap; azaltma → o kalemi en çok tutan hesap. **Öneridir, emir gönderilmez.** Yaptıktan sonra işlemi [Hesaplar](#/kilavuz/portfoyum/kayit)'dan gir. Yeni para eklersen önce eksik kalanlara dağıt (satış gerekmez).
 
-Tek tek **varlık düzeyinde** hedef (ör. "%30 QQQ, %20 GLD") Hesaplar'daki katlı **Hedef dağılım** düzenleyicisinden girilir ([Hedef dağılım](#/kilavuz/portfoyum/hedef)); modellerin hedefini oraya almak için Modeller › Ayarlar › **Portföyüm hedefini güncelle** ([Model sermayesi](#/kilavuz/tasarimci/sermaye)).
+Hedef yalnız burada girilir (Hesaplar'da yalnız **Hedefi düzenle → Hedefim** bağlantısı var — [Hedef dağılım](#/kilavuz/portfoyum/hedef)). Modellerin hedefini Portföyüm'e almak için Modeller › Ayarlar › **Portföyüm hedefini güncelle** ([Model sermayesi](#/kilavuz/tasarimci/sermaye)).
 
 ## Para ekle ve dağılımı değiştir {#para-ekle}
 
@@ -238,11 +238,11 @@ Düzeltme (adet, alış fiyatı) burada yapılmaz: [Hesaplar](#/kilavuz/portfoyu
 
 **Hedef**, paranın nasıl bölünmesini istediğindir — ör. "%50 endeks, %40 kripto, %10 nakit". Getiri hedefi değildir. Her portföyün **kendi hedefi** vardır (Ben ve Anıl ayrı); **Tümü** görünümünde hedef girilmez.
 
-1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**) ya da **Kendim gireyim** (sınıf yüzdeleri). Toplam %100 olmalı → **Hedefi kaydet**. Sapma bandı ±5 puan.
+1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
 2. **Olması gereken ↔ şu an:** her sınıfın hedef ve gerçek payı, çubuk (dolgu: şu an, çizgi: hedef) ve **Ne yapmalı** ("al $…" / "azalt $…"). Bandın dışındaki satırlar renklidir ve Pano'daki "Yapman gerekenler"e düşer.
 3. **Hangi hesapta ne yapılacak:** alım → en çok nakdi olan hesap; azaltma → o kalemi en çok tutan hesap. **Öneridir, emir gönderilmez.** Yaptıktan sonra işlemi [Hesaplar](#/kilavuz/portfoyum/kayit)'dan gir. Yeni para eklersen önce eksik kalanlara dağıt (satış gerekmez).
 
-Tek tek **varlık düzeyinde** hedef (ör. "%30 QQQ, %20 GLD") Hesaplar'daki katlı **Hedef dağılım** düzenleyicisinden girilir ([Hedef dağılım](#/kilavuz/portfoyum/hedef)); modellerin hedefini oraya almak için Modeller › Ayarlar › **Portföyüm hedefini güncelle** ([Model sermayesi](#/kilavuz/tasarimci/sermaye)).
+Hedef yalnız burada girilir (Hesaplar'da yalnız **Hedefi düzenle → Hedefim** bağlantısı var — [Hedef dağılım](#/kilavuz/portfoyum/hedef)). Modellerin hedefini Portföyüm'e almak için Modeller › Ayarlar › **Portföyüm hedefini güncelle** ([Model sermayesi](#/kilavuz/tasarimci/sermaye)).
 
 ## Para ekle ve dağılımı değiştir {#para-ekle}
 

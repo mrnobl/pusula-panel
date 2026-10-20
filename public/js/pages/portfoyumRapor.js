@@ -6,6 +6,7 @@
  * etkisi, zaman ağırlıklı getiri, para ağırlıklı getiri, TL enflasyon hariç) · "Başlangıçtan" (para ağırlıklı + TL reel) ·
  * bu ay en çok etkileyenler (kazandıran / kaybettiren) · stres tablosu (doğrudan pay ↔ geçmiş ilişkiyle / beta) ·
  * sınıflar arası korelasyon ısı tablosu.
+ * 68.7: hesap seçicide yalnız üst çubukta seçili kişinin hesapları (kisiHesaplari; Tümü = hepsi).
  * Kurallar: tüm DOM AG.dom.el, tablolar AG.tablo, renkler token sınıfları (inline stil yok). Tutarlar `.pm-tutar` —
  * Üst çubuktaki $ / ₺ / Gizli seçicisinin "Gizli"si (localStorage 'pusula.portfoy.gorunum', F6) burada da geçerli. Eksik veri her yerde
  * "—" ve nedeni; hiçbir fiyat uydurulmaz. Telegram'a gitmez (K6).
@@ -80,12 +81,23 @@
     ]);
   }
 
+  /** Üst çubukta seçili kişi (portföy): 'ben' | <kimlik> | 'tumu' | '' (pano yüklenmemiş). */
+  const seciliKisi = () => (AG.pages.pano ? AG.pages.pano.gorunum().portfoy : '');
+  /**
+   * 68.7 (saf): hesap seçicide yalnız seçili kişinin hesapları (portföyü yazılmamış hesap Ben'in); Tümü / boş = hepsi.
+   * Sunucu portfoy alanını hiç göndermiyorsa (68.7'den eski) süzülmez.
+   */
+  function kisiHesaplari(hesaplar, pf) {
+    if (!pf || pf === 'tumu' || !(hesaplar || []).some(h => 'portfoy' in h)) return hesaplar || [];
+    return hesaplar.filter(h => (h.portfoy || 'ben') === pf);
+  }
+
   /* ── Bölümler ───────────────────────────────────────────────────────── */
   function ustCiz() {
     const k = bul('prUst');
     if (!k) return;
     const aylar = (veri && veri.aylar) || [];
-    const hesaplar = (veri && veri.hesaplar) || [];
+    const hesaplar = kisiHesaplari((veri && veri.hesaplar) || [], seciliKisi());
     const ay = veri ? (aylar.find(a => a.ay === veri.ay) || {}) : {};
     const ayS = el('select', { id: 'selPrAy', class: 'form-control control-sm', 'aria-label': 'Rapor ayı', onchange: (e) => { secAy = e.target.value; yukle(true); } },
       aylar.map(a => el('option', { value: ayDegeri(a), text: a.devam ? `${a.ad} — bu ay (devam ediyor)` : a.ad })));
@@ -280,7 +292,9 @@
     if (!veri) ustCiz();
     try {
       // Yeni panel F4: üst çubukta seçili portföyün raporu (K-F; hesap seçilirse yalnız o hesap).
-      const pf = AG.pages.pano ? AG.pages.pano.gorunum().portfoy : '';
+      const pf = seciliKisi();
+      // 68.7: seçili hesap başka kişinin (üst çubukta kişi değişti) → o kişinin bütün hesapları
+      if (secHesap && veri && !kisiHesaplari(veri.hesaplar || [], pf).some(h => h.id === secHesap)) secHesap = '';
       const r = await api().rapor({ ay: secAy, hesap: secHesap, portfoy: pf });
       if (!r || !r.success) throw new Error((r && r.error) || 'sunucu yanıt vermedi');
       veri = r; sonYukleme = Date.now();
@@ -293,7 +307,7 @@
 
   AG.pages = AG.pages || {};
   AG.pages.portfoyumRapor = {
-    yukle, iskelet, usd, isaretliUsd, isaretliTl, korBicim, korMetin, isiSinifi, ayDegeri,
+    yukle, iskelet, kisiHesaplari, usd, isaretliUsd, isaretliTl, korBicim, korMetin, isiSinifi, ayDegeri,
     _ciz: { ustCiz, bantCiz, ayCiz, baslangicCiz, etkileyenCiz, stresCiz, korelasyonCiz, ciz },
     _durum: { veriAyarla: (v) => { veri = v; }, veri: () => veri }
   };

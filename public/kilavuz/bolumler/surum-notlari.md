@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 68.7 — Kişiye göre portföy, Yatırım defterinde grafikler (2026-10-20) {#s68-7}
+
+- **Hesaplar kişiye göre:** üstteki seçimde kim seçiliyse (Ben, ya da başka bir portföy sahibi) yalnız onun hesapları görünür; **Tümü** seçilince hesaplar kişi başlıkları altında gruplanır ([Portföyüm](#/kilavuz/portfoyum)).
+- **Hedef dağılım tek yerde:** Hesaplar sayfasındaki hedef düzenleyici kaldırıldı (hangi kişi seçili olursa olsun Ben'in hedefini kaydediyordu); hedef **Hedefim** sayfasından, seçili kişiye göre düzenlenir. Hedefim'e **Varlık varlık gireyim** seçeneği ve sapma bandı ayarı eklendi; varlık düzeyinde hedef artık buradan girilir.
+- **İşlem defteri › Yatırım:** kayıtlar seçili kişiye göre süzülür, hesap listesi yalnız o kişinin hesaplarını gösterir. Tablonun üstünde yeni kartlar: **gerçekleşen kâr/zarar** (birikimli çizgi, aylık çubuk, yıl × ay tablosu), **varlığa göre sonuç**, **temettü ve faiz geliri**, **alış / satış / para hareketi ve komisyon** ([İşlem defterim](#/kilavuz/islem-defterim)).
+- **Rapor:** hesap listesi seçili kişinin hesaplarıyla sınırlı.
+- **Borsa hesapları:** OKX / Binance / MT hesapları Ben'e aittir; başka bir kişi seçiliyken Kripto/FX bunu not olarak yazar.
+- Portföy kartlarındaki "yeni" etiketleri kaldırıldı.
+
 ## 68.6 — Coin tarama uyarıları, Dikkat listesi sunucudan, renkli kural rozetleri (2026-10-20) {#s68-6}
 
 - **Yanlış "likidite düştü" bayrakları:** DexScreener aynı coin için her sorguda farklı çiftler döndürüyordu; toplam likidite bu yüzden günden güne oynuyor (ör. 1,9 M $ → 95 bin $ → 149 M $) ve neredeyse her gün yeni bir "likidite düştü" ya da "kilitli LP azaldı" bayrağı çıkıyordu. Artık yalnız **iki günde de görülen aynı çiftler** (Solana'da kilitli LP için aynı pazar) karşılaştırılır; ortak çiftler likiditenin yarısından azını taşıyorsa o gün ölçülmez, bayrak çıkmaz ([Coin tarama](#/kilavuz/coin-tarama)).

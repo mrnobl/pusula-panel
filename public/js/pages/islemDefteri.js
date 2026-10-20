@@ -189,7 +189,7 @@
   /** Yeni panel F4 (§5): gün kazanma, ücret ÷ brüt, seriler, toparlanma, işlem skoru, gün × saat ısı (lib/islemDefteri/analiz.js ekOlcutler). */
   function ekCiz(p) {
     const e = p.ek, b = p.birim || 'USD';
-    const kutu = (etiket, deger, alt) => el('div', { class: 'p-gosterge' }, [el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: etiket }), el('span', { class: 'p-yeni', text: 'yeni' })]),
+    const kutu = (etiket, deger, alt) => el('div', { class: 'p-gosterge' }, [el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: etiket })]),
       el('p', { class: 'p-gosterge-deger', text: deger }), el('p', { class: 'p-gosterge-alt', text: alt })]);
     const enB = Math.max(1e-9, ...e.isi.hucreler.flat().map(h => Math.abs(h.net)));
     const hucre = (h, gun, dilim) => {
@@ -205,7 +205,7 @@
         kutu('İşlem skoru', e.skor.puan == null ? '—' : `${e.skor.puan}/100`, e.skor.eksenler.map(x => `${x.ad} ${x.puan == null ? '—' : Math.round(x.puan)}`).join(' · '))
       ]),
       el('div', { class: 'idf-isi-kutu' }, [
-        el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: 'Gün × saat (yerel) — net K/Z' }), el('span', { class: 'p-yeni', text: 'yeni' })]),
+        el('p', { class: 'p-gosterge-etiket' }, [el('span', { text: 'Gün × saat (yerel) — net K/Z' })]),
         el('div', { class: 'pn-isi idf-isi', role: 'img', 'aria-label': 'Gün ve saate göre net kâr/zarar ısı haritası' }, [
           el('span'), ...e.isi.dilimler.map(d => el('span', { class: 'pn-isi-bas', text: d })),
           ...e.isi.gunler.flatMap((g, i) => [el('span', { class: 'pn-isi-bas', text: g }), ...e.isi.hucreler[i].map((h, j) => hucre(h, g, e.isi.dilimler[j]))])

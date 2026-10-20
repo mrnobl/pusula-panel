@@ -1,5 +1,5 @@
 {
-  "surum": "68.6",
+  "surum": "68.7",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -54,6 +54,16 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "68.7", "tarih": "2026-10-20",
+      "yeni": [
+        "Hesaplar seçili kişinin hesaplarını gösterir; Tümü'de hesaplar kişi başlıkları altında.",
+        "Hedef dağılım yalnız Hedefim'den, seçili kişiye göre düzenlenir; Hedefim'e varlık düzeyinde hedef ve sapma bandı ayarı eklendi.",
+        "İşlem defteri › Yatırım kişiye göre süzülür; gerçekleşen kâr/zarar, varlığa göre sonuç, temettü/faiz ve alış-satış/para hareketi grafikleri.",
+        "Rapor'un hesap listesi seçili kişinin hesaplarıyla sınırlı.",
+        "Portföy kartlarındaki \"yeni\" etiketleri kaldırıldı."
+      ]
+    },
     {
       "surum": "68.6", "tarih": "2026-10-20",
       "yeni": [

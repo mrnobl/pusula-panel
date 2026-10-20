@@ -132,11 +132,14 @@
   /** Zaman ekseni etiketleri: aralığa göre yıl / ay / gün. */
   function zamanEtiketleri(t0, t1, adet) {
     const aralik = t1 - t0;
+    // 68.7: birkaç günlük seride (ör. tek satışlı birikimli K/Z) etiket sayısı gün sayısını aşmaz; aynı metin bir kez yazılır.
+    const n = aralik > 0 ? Math.max(1, Math.min(adet, Math.floor(aralik / 864e5))) : 0;
     const out = [];
-    for (let i = 0; i <= adet; i++) {
-      const t = t0 + aralik * i / adet;
+    for (let i = 0; i <= n; i++) {
+      const t = n ? t0 + aralik * i / n : t0;
       const g = gunStr(t);
-      out.push({ t, metin: aralik > 3 * 365 * 864e5 ? g.slice(0, 7) : aralik > 60 * 864e5 ? g.slice(0, 7) : g.slice(5) });
+      const metin = aralik > 60 * 864e5 ? g.slice(0, 7) : g.slice(5);
+      if (!out.length || out[out.length - 1].metin !== metin) out.push({ t, metin });
     }
     return out;
   }

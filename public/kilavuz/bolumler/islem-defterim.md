@@ -5,8 +5,10 @@
 | Kaynak | Ne |
 |---|---|
 | **Kripto / FX** (varsayılan) | Senin **kendi** kripto ve FX işlemlerin: OKX ve Binance (salt okuma bağlantısıyla her gün kendiliğinden ya da dosyayla) ve MetaTrader 4/5 — kârı, ücreti, fonlaması, aylık sonucu ve grafikleriyle. Bu bölümün geri kalanı bu defteri anlatır (eski adı "İşlem defterim") |
-| **Yatırım (Portföyüm)** | Hesaplar'a girdiğin işlemlerin defteri: süzgeç, iptal, CSV dışa aktarma ([İşlem defteri › Yatırım](#/kilavuz/portfoyum/islem-defteri)) |
+| **Yatırım (Portföyüm)** | Hesaplar'a girdiğin işlemlerin defteri, üst çubukta seçili kişiye göre: gerçekleşen kâr/zarar, varlığa göre sonuç, temettü ve faiz, alış / satış / para hareketi grafikleri; süzgeç, iptal, CSV dışa aktarma ([İşlem defteri › Yatırım](#/kilavuz/portfoyum/islem-defteri)) |
 | **Bot** | Botların (Hücum, Denge) borsadaki hesaplarında yapılan bütün işlemlerin **dökümü (CSV)**: hesap, kimin yaptığı (Hücum / Denge / Elle / Acil fren) ve tarih aralığı seçilip indirilir. Son 30 günün tablosu ve açık pozisyonlar botun kendi sayfasında: **Botlar › Hücum › İşlemler**, **Denge › İşlemler**, **Hücum › Hesap** (düğmeleri kartta) |
+
+Borsa hesapları (OKX, Binance, MetaTrader) her zaman **Ben**'indir: üst çubukta başka bir kişi seçiliyken Kripto / FX kaynağında bunu söyleyen kısa bir not çıkar ve yine Ben'in borsa işlemleri görünür.
 
 Telegram'a hiçbir şey gitmez. Kripto borsalarının (Binance, OKX) **bakiyesi** salt okuma anahtarıyla okunup Pano toplamına eklenir ([Pano](#/kilavuz/portfoy/pano)).
 
