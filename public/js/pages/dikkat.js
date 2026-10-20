@@ -18,8 +18,11 @@
   const doldur = (...a) => AG.dom.doldur(...a);
   const ikonla = () => { if (global.lucide && global.lucide.createIcons) global.lucide.createIcons(); };
 
-  const DURUM = { kip: null, tur: 'kacin', gun: null, karne: 'asil', secili: null, ara: '', tumu: false };
+  // karne: null → ilk çizimde t0 yoksa 'isinma' (68.6: asıl görünüm t0'dan önce hep 0 gösteriyordu)
+  const DURUM = { kip: null, tur: 'kacin', gun: null, karne: null, secili: null, ara: '', tumu: false };
   let sonDurum = null, sonListe = null;
+  /** 68.6: kapı adı / açıklama / tehlike kademesi — YEREL uçtan (durum sunucudan gelse de rozetler bu bilgisayarın sürümüyle). */
+  let KURAL = null;
 
   /* ── Biçim ──────────────────────────────────────────────────────────── */
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
@@ -41,6 +44,27 @@
   const KANAT = { cex: 'Borsa (Binance)', dex: 'DEX' };
   const SONUC = { coktu: 'çöktü', temiz: 'sorun yok' };
   const COKUS = { a: 'fiyat %80+ düştü', b: 'delist / likidite bitti', c: 'veri kayboldu (14 g)' };
+
+  /** Kapı → { kod, ad, aciklama, kademe (1 en tehlikeli … 5) }; bilinmeyen kod kademe 5. */
+  function kapiBilgi(kod, k) {
+    const x = k || KURAL || {};
+    return { kod, ad: (x.ad && x.ad[kod]) || kod, aciklama: (x.aciklama && x.aciklama[kod]) || '', kademe: (x.tehlike && x.tehlike[kod]) || 5 };
+  }
+  /** Kapı kodları en tehlikeliden en hafife (aynı kademede kod numarası). */
+  function kapiSirala(kodlar, k) {
+    const no = (c) => Number(String(c).replace(/\D/g, '')) || 0;
+    return (kodlar || []).slice().sort((a, b) => (kapiBilgi(a, k).kademe - kapiBilgi(b, k).kademe) || (no(a) - no(b)));
+  }
+  function kapiRozet(kod) {
+    const b = kapiBilgi(kod);
+    return el('span', { class: `badge badge-isi-${b.kademe}`, title: `${b.kod} — ${b.ad}${b.aciklama ? `: ${b.aciklama}` : ''}`, text: b.kod });
+  }
+
+  /** Son kayıt günü kaç gün önce (UTC günleri); gün yoksa null. */
+  function gunOnce(gun, simdi = Date.now()) {
+    const t = Date.parse(`${gun}T00:00:00Z`);
+    return Number.isFinite(t) ? Math.floor((simdi - t) / 86400000) : null;
+  }
 
   /* ── Saf görünüm modelleri (öz test bunları sınar) ──────────────────── */
 
@@ -82,7 +106,7 @@
   function satirModel(r) {
     return {
       anahtar: r.anahtar, sembol: r.sembol || r.anahtar, kanat: KANAT[r.kanat] || r.kanat, ag: r.ag || '—',
-      kapilar: (r.dogru || []).map(x => x.kod), metinler: (r.dogru || []).map(x => `${x.kod}: ${x.metin || ''}`),
+      kapilar: kapiSirala((r.dogru || []).map(x => x.kod)), metinler: (r.dogru || []).map(x => `${x.kod}: ${x.metin || ''}`),
       bilgi: (r.bilgi || []).map(b => b.kod), yeni: !!r.yeni, yetersiz: !!r.yetersiz,
       fiyat: fiyatMetni(r.fiyat), likidite: kisaUsd(r.likidite),
       pencere: r.pencere ? `${r.pencere.tur === 'olay' ? 'olay' : 'kontrol'} #${r.pencere.olayNo} (${r.pencere.bas})` : '—',
@@ -106,7 +130,13 @@
     const l = [];
     if (d.hata) l.push(el('p', { class: 'hint tone-danger mb-2', text: `Son günün dikkat hesabı başarısız oldu (${d.hata.gun}): ${d.hata.hata}. Arşiv kaydı etkilenmedi.` }));
     if (d.isinma) l.push(el('p', { class: 'hint mb-2', text: `Isınma dönemi: evren eşikleri ilk 30 resmî kayıt gününden sonra bir kez sabitlenecek. O güne kadar liste ve takip ÖN İZLEMEDİR, ön kayıtlı değerlendirmeye (H-DL1) girmez.${d.t0 ? '' : ' Değerlendirme başlangıcı (t0) henüz belli değil.'}` }));
-    if (d.kip === 'deneme') l.push(el('p', { class: 'hint tone-warning mb-2', text: 'Deneme kaydı gösteriliyor (bu bilgisayar). Resmî kayıt sunucunun gece görevindedir.' }));
+    const sunucu = !!d.evKaynak;
+    if (sunucu && d.evKaynak.eski) l.push(el('p', { class: 'hint tone-warning mb-2', text: `Sunucuya şu an ulaşılamıyor; son okunan sunucu verisi gösteriliyor (${d.evKaynak.zaman || '?'}).` }));
+    if (d.kip === 'deneme') l.push(el('p', { class: 'hint tone-warning mb-2', text: sunucu
+      ? 'Sunucuda henüz resmî kayıt yok; sunucunun deneme kaydı gösteriliyor. Resmî kayıt sunucunun gece görevinde (her gece 03:30) üretilir.'
+      : `Deneme kaydı gösteriliyor (bu bilgisayar, son kayıt ${d.sonGun || '—'}). Gece görevi bu bilgisayarda kurulu değil, liste burada kendiliğinden yenilenmez; sunucu bağlantısı kurulunca resmî kayıt sunucudan gelir.` }));
+    const once = d.sonGun ? gunOnce(d.sonGun) : null;
+    if (d.kip === 'resmi' && once != null && once > 1) l.push(el('p', { class: 'hint tone-warning mb-2', text: `Son resmî kayıt günü ${d.sonGun} (${once} gün önce). Gece görevi her gün yeni kayıt yazmalı; sunucuda "PusulaDikkatArsiv" görevini denetleyin (Sistem › Kurulum denetimi).` }));
     doldur(k, l);
     k.classList.toggle('is-hidden', !l.length);
   }
@@ -133,7 +163,6 @@
     const k = bul('dikkatTablo');
     if (!k) return;
     if (!l || !l.gun) { doldur(k, [el('p', { class: 'hint mb-0', text: 'Henüz dikkat listesi hesaplanmış bir gün yok. Gece arşiv koşusundan sonra burada görünür.' })]); return; }
-    const ad = (d && d.kural && d.kural.ad) || {};
     // Sıra: bugün yeni girenler önce, sonra sembol. İlk SINIR satır; arama tüm satırlarda; "Tümünü göster" hepsini açar.
     const ara = String(DURUM.ara || '').trim().toLocaleUpperCase('tr-TR');
     const modeller = listeModel(l.satirlar, ara);
@@ -141,7 +170,7 @@
     const satirlar = gorunen.map(m => el('tr', null, [
       el('td', null, [el('span', { class: 'row row-wrap gap-1' }, [el('strong', { text: m.sembol }), m.yeni ? el('span', { class: 'badge badge-danger', text: 'yeni' }) : null])]),
       el('td', { text: `${m.kanat} · ${m.ag}` }),
-      el('td', { title: m.metinler.join('\n') }, m.kapilar.length ? [el('span', { class: 'row row-wrap gap-1' }, m.kapilar.map(c => el('span', { class: 'badge badge-warning', title: ad[c] || c, text: c })))] : [el('span', { class: 'tone-muted', text: m.yetersiz ? 'güvenlik verisi yok' : '—' })]),
+      el('td', { title: m.metinler.join('\n') }, m.kapilar.length ? [el('span', { class: 'row row-wrap gap-1' }, m.kapilar.map(kapiRozet))] : [el('span', { class: 'tone-muted', text: m.yetersiz ? 'güvenlik verisi yok' : '—' })]),
       el('td', { class: 'sayi', text: m.fiyat }), el('td', { class: 'sayi', text: m.likidite }),
       el('td', { text: m.pencere }),
       el('td', null, [el('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => coinAc(m.anahtar) }, [el('span', { text: 'Ayrıntı' })])]),
@@ -150,7 +179,25 @@
       satirlar.length ? AG.tablo.kutulu({ id: 'tblDikkat', sinif: 'table-dense', siralanabilir: 'dikkat', basliklar: ['Coin', 'Kanat · ağ', 'Doğru çıkan kapılar', 'Fiyat', 'DEX likiditesi', 'Takip', ''], satirlar })
         : el('p', { class: 'hint mb-0', text: ara ? `"${DURUM.ara}" bu listede yok.` : DURUM.tur === 'kacin' ? 'Bu gün dikkat listesinde coin yok.' : 'Bu filtrede coin yok.' }),
       gorunen.length < modeller.length ? el('div', { class: 'row-end mt-3' }, [el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnDikkatTumu', onclick: () => { DURUM.tumu = true; listeCiz(l, d); ikonla(); } }, [el('span', { text: `Tümünü göster (${modeller.length})` })])]) : null,
-      el('p', { class: 'hint hint-sm mt-3 mb-0', text: `${l.gun} · ${l.sayim.hepsi} coin incelendi. Kapı kodunun üstüne gelince adı, satırın üstüne gelince gerekçesi görünür.` }),
+      el('p', { class: 'hint hint-sm mt-3 mb-0', text: `${l.gun} · ${l.sayim.hepsi} coin incelendi. Kapı kodunun üstüne gelince kuralı, satırın üstüne gelince o günkü gerekçesi görünür. Renk: kırmızı en tehlikeli, sarı en hafif.` }),
+      sozlukCiz(),
+    ]);
+  }
+
+  /** 68.6: K kodları sözlüğü — tehlike sırasıyla, ısı rengiyle; açılır/kapanır. */
+  function sozlukCiz() {
+    if (!KURAL || !KURAL.ad) return null;
+    const kodlar = kapiSirala(Object.keys(KURAL.ad));
+    const bilgi = new Set(KURAL.bilgi || []);
+    return el('details', { class: 'mt-3', id: 'dikkatSozluk' }, [
+      el('summary', { text: 'K kodları ne anlama geliyor? (16 kural, en tehlikeliden en hafife)' }),
+      el('div', { class: 'kapi-olcek mt-3 mb-3' }, [el('span', { class: 'hint hint-sm mb-0', text: 'Tehlike:' }),
+        ...[1, 2, 3, 4, 5].map(n => el('span', { class: `badge badge-isi-${n}`, text: n === 1 ? '1 en yüksek' : n === 5 ? '5 en düşük' : String(n) }))]),
+      el('dl', { class: 'kapi-sozluk' }, kodlar.flatMap(kd => { const b = kapiBilgi(kd); return [
+        el('dt', null, [kapiRozet(kd)]),
+        el('dd', null, [el('strong', { text: b.ad }), el('span', { text: ` — ${b.aciklama}${bilgi.has(kd) && !/Bilgi rozeti/.test(b.aciklama) ? ' Bilgi rozeti: listeye sokmaz.' : ''}` })]),
+      ]; })),
+      el('p', { class: 'hint hint-sm mt-3 mb-0' }, [el('a', { href: '#/kilavuz/dikkat-listesi/kurallar', text: 'Kuralların kaynakları ve eşikleri kılavuzda →' })]),
     ]);
   }
 
@@ -166,6 +213,7 @@
   function karneCiz(d) {
     const k = bul('dikkatKarne');
     if (!k) return;
+    if (!DURUM.karne) DURUM.karne = d.t0 ? 'asil' : 'isinma';
     const sec = DURUM.karne === 'isinma' ? d.karne.isinma : d.karne.asil;
     const m = karneModel(sec);
     const dugme = (a, metin) => el('button', { type: 'button', class: `btn btn-sm ${DURUM.karne === a ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': DURUM.karne === a ? 'true' : 'false',
@@ -174,13 +222,14 @@
       el('td', { text: g.ad }), el('td', { class: 'sayi', text: tr(g.n) }), el('td', { class: 'sayi', text: tr(g.kapanan) }), el('td', { class: 'sayi', text: tr(g.coktu) }),
       el('td', { class: 'sayi', text: yuzde(g.oran, 1) }), el('td', { class: 'sayi', text: tr(g.erken30) }),
     ]));
-    const kapiSatir = m.kapilar.filter(x => x.n > 0).map(x => el('tr', null, [
-      el('td', { text: `${x.kod} — ${x.ad}` }), el('td', { class: 'sayi', text: tr(x.n) }), el('td', { class: 'sayi', text: tr(x.kapanan) }), el('td', { class: 'sayi', text: tr(x.coktu) }),
+    const kapiSatir = m.kapilar.filter(x => x.n > 0).sort((a, b) => (kapiBilgi(a.kod).kademe - kapiBilgi(b.kod).kademe) || (b.n - a.n)).map(x => el('tr', null, [
+      el('td', null, [el('span', { class: 'row row-wrap gap-1' }, [kapiRozet(x.kod), el('span', { text: KURAL ? kapiBilgi(x.kod).ad : x.ad })])]), el('td', { class: 'sayi', text: tr(x.n) }), el('td', { class: 'sayi', text: tr(x.kapanan) }), el('td', { class: 'sayi', text: tr(x.coktu) }),
       el('td', { class: 'sayi', text: yuzde(x.isabet, 1) }), el('td', { class: 'sayi', text: yuzde(x.yanlisAlarm, 1) }), el('td', { class: 'sayi', text: `${tr(x.yalniz.n)} / ${tr(x.yalniz.coktu)}` }),
       el('td', { class: x.aday ? 'tone-warning' : 'tone-muted', text: x.aday || '—' }),
     ]));
     doldur(k, [
       el('div', { class: 'row row-wrap gap-2 mb-3' }, [dugme('asil', 'Değerlendirme (t0 sonrası)'), dugme('isinma', 'Ön izleme (ısınma)')]),
+      karneDurum(d),
       el('p', { class: 'hint mb-3 max-w-prose', text: 'Listeye giren her coin ve aynı gün, aynı likidite diliminden rastgele seçilen 3 kontrol coini 90 gün izlenir. Çöküş: fiyat %80+ düştü, delist / likidite bitti ya da veri 14 gün kayboldu. Dikkat listesi işe yarıyorsa listedekilerin çöküş oranı kontrolden belirgin yüksek olmalı.' }),
       AG.tablo.kutulu({ sinif: 'table-dense', basliklar: ['Grup', 'Coin', '90 günü dolan', 'Çöken', 'Çöküş oranı', 'İlk 30 günde çöken'], satirlar: grupSatir }),
       el('dl', { class: 'kv-list kv-sik mt-3 mb-4' }, [
@@ -193,6 +242,15 @@
         : el('p', { class: 'hint mb-0', text: 'Bu görünümde henüz olay yok.' }),
       el('p', { class: 'hint hint-sm mt-3 mb-0', text: '"Ayırt etmiyor": 90 günü dolan en az 20 coinde bu kapının çöküş oranı kontrolden yüksek değil. Bu tablo ara görünümdür, hüküm değildir; mevcut kural (kural-v1) buna bakılarak DEĞİŞTİRİLMEZ. Yeni bir sürüm (kural-v2) önerilebilir: v2 önerildiği günden SONRAKİ olaylarla, kendi numarasıyla ayrıca sınanır, v1 yanında çalışmaya devam eder, eski kayıt silinmez.' }),
     ]);
+  }
+
+  /** 68.6: karnenin şu an neyi gösterdiği — sıfırların nedeni ve ilk sonucun tarihi. */
+  function karneDurum(d) {
+    const i = d.karne.isinma, acik = i.olay.acik + i.kontrol.acik;
+    const ilk = d.ilkKapanis ? ` İlk 90 günü dolacak pencere: ${d.ilkKapanis}; "Çöken" ve "Çöküş oranı" o günden sonra dolmaya başlar.` : '';
+    if (DURUM.karne === 'asil' && !d.t0) return el('p', { class: 'hint tone-warning mb-3 max-w-prose', text: `Değerlendirme henüz başlamadı: t0, ilk 30 resmî kayıt gününden sonra belirlenir. Bu görünümde o güne kadar her şey 0 görünür; şu an izlenenleri "Ön izleme (ısınma)" gösterir (${tr(acik)} açık pencere).` });
+    if (DURUM.karne === 'isinma') return el('p', { class: 'hint mb-3 max-w-prose', text: acik ? `Isınma: ${tr(i.olay.n)} liste coini + ${tr(i.kontrol.n)} kontrol coini izleniyor, henüz hiçbirinin 90 günü dolmadı.${ilk}` : 'Isınma: henüz izlenen coin yok.' });
+    return null;
   }
 
   function hukumCiz(d) {
@@ -230,7 +288,7 @@
         el('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => { DURUM.secili = null; k.classList.add('is-hidden'); doldur(k, []); } }, [el('span', { text: 'Kapat' })]),
       ]),
       el('p', { class: 'hint hint-sm mb-3', text: `Anahtar: ${anahtar}` }),
-      v.gecmis.length ? el('ul', { class: 'tarama-bayrak-liste mb-4' }, (v.gecmis[v.gecmis.length - 1].dogru || []).map(kd => el('li', null, [el('strong', { text: `${kd} — ${ad[kd] || kd}` }), el('span', { text: ` — ${((v.gecmis[v.gecmis.length - 1].kapilar || {})[kd] || {}).metin || ''}` })]))) : null,
+      v.gecmis.length ? el('ul', { class: 'tarama-bayrak-liste mb-4' }, kapiSirala(v.gecmis[v.gecmis.length - 1].dogru || []).map(kd => el('li', null, [kapiRozet(kd), el('strong', { text: ` ${KURAL ? kapiBilgi(kd).ad : (ad[kd] || kd)}` }), el('span', { text: ` — ${((v.gecmis[v.gecmis.length - 1].kapilar || {})[kd] || {}).metin || ''}` })]))) : null,
       el('h4', { class: 'card-title-sm mb-2', text: 'Son kayıt günleri' }),
       AG.tablo.kutulu({ sinif: 'table-dense', basliklar: ['Gün', 'KAÇIN', 'Kapılar', 'Fiyat', 'Likidite', 'Holder'], satirlar: v.gecmis.slice().reverse().map(g => el('tr', null, [
         el('td', { text: g.gun }), el('td', { class: g.kacin ? 'tone-danger' : null, text: g.kacin ? 'evet' : g.yetersiz ? 'yetersiz veri' : 'hayır' }),
@@ -255,6 +313,7 @@
   }
 
   async function yukle() {
+    if (!KURAL) { try { const r = await AG.api.dikkat.kurallar(); if (r && r.success) KURAL = r; } catch (e) { /* rozetler kodla, açıklamasız */ } }
     let d; try { d = await AG.api.dikkat.durum(DURUM.kip); } catch (e) { d = { success: false, error: e.message }; }
     if (!d || !d.success) { const k = bul('dikkatTablo'); if (k) doldur(k, [AG.bildirim.hataKutusu((d && d.error) || 'sunucu yanıt vermedi', { baslik: 'Dikkat listesi okunamadı', yeniden: yukle })]); return; }
     sonDurum = d;
@@ -273,7 +332,7 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.dikkat = { yukle, coinAc, sayilarModel, karneModel, satirModel, listeModel, degisiklikAdayi, kisaUsd, fiyatMetni };
+  AG.pages.dikkat = { yukle, coinAc, sayilarModel, karneModel, satirModel, listeModel, degisiklikAdayi, kisaUsd, fiyatMetni, kapiBilgi, kapiSirala, gunOnce };
   if (doc && doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', baslat);
   else baslat();
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.dikkat;

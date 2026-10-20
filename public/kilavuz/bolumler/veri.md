@@ -75,7 +75,7 @@ Dikkat listesinin **ileriye dönük ham kaydı** (F1; liste üretmez). Her gece 
 
 ## Kaynak hatası bildirimleri {#kaynak-bildirimleri}
 
-Coin taramasında bir kaynak hata verirse (ör. "GeckoTerminal: 2/14 coinde veri alınamadı — istek sınırına takıldı (429) — bir sonraki taramada yeniden denenir") sağ altta **balon yalnız Coin tarama ve Veri ekranında** çıkar; diğer ekranlarda (Portföy, Ana sayfa…) içeriği kapatmasın diye yalnız menüdeki sayı rozeti artar. Bu ekranlardan birini açtığınızda bekleyen uyarı bir kez balon olur. "429" kaynağın istek sınırı demektir; bir şey yapmanız gerekmez.
+Coin taramasında bir kaynak hata verirse (ör. "CoinGecko: 2/14 coinde veri alınamadı — istek sınırına takıldı (429) — bir sonraki taramada yeniden denenir") sağ altta **balon yalnız Coin tarama ve Veri ekranında** çıkar; diğer ekranlarda (Portföy, Ana sayfa…) içeriği kapatmasın diye yalnız menüdeki sayı rozeti artar. Bu ekranlardan birini açtığınızda bekleyen uyarı bir kez balon olur. "429" kaynağın istek sınırı demektir; bir şey yapmanız gerekmez.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 

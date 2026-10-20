@@ -1,5 +1,5 @@
 {
-  "surum": "68.5",
+  "surum": "68.6",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -54,6 +54,17 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "68.6", "tarih": "2026-10-20",
+      "yeni": [
+        "Coin tarama: likidite ve kilitli LP artık yalnız iki günde de görülen aynı çiftlerle karşılaştırılır; DexScreener'ın her sorguda değişen çift listesinden doğan yanlış \"likidite düştü\" bayrakları kalktı.",
+        "Dikkat listesi kuralları sürüm 1.1 (K11, K15 aynı düzeltmeyle); ısınma döneminde, değerlendirme başlamadan.",
+        "GeckoTerminal Coin tarama kaynaklarından çıkarıldı (her taramada istek sınırına takılıyordu).",
+        "Dikkat listesi, İZLE ve Kendimizi denetleme sunucunun resmî kaydından okunur; ekran hangi kaydı gösterdiğini ve son kaydın tarihini yazar.",
+        "Kendimizi denetleme ısınma görünümüyle açılır, sıfırların nedenini ve ilk sonucun tarihini yazar.",
+        "K1–K16 rozetleri tehlikeye göre kırmızıdan sarıya renkli, tehlike sırasıyla; açılır K kodları sözlüğü."
+      ]
+    },
     {
       "surum": "68.5", "tarih": "2026-10-20",
       "yeni": [

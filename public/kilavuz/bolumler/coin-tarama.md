@@ -32,6 +32,8 @@ Bu ekran **sizin seçtiğiniz** coinleri izler. Yüzlerce coini kendiliğinden t
 
 Kırmızı bayrak **"şuna bak"** demektir; alım/satım sinyali ya da puan DEĞİLDİR. Örnekler: likidite düştü, ilk 10 payı oynadı, büyük bir cüzdan payını bıraktı, holder azaldı, LP kilidi bitiyor, yeni token basılabiliyor (mint), kara liste yetkisi, paralı reklam, alan adı token'dan hemen önce alınmış, fiyat/hacim kayboldu. Eşikler başlangıç değeridir; birkaç ay kayıt birikince isabetine bakılıp ayarlanacak.
 
+**Likidite ve kilitli LP bayrağı:** DexScreener her taramada coinin çiftlerinden farklı bir kısmını döndürebiliyor; bu yüzden "likidite düştü" yalnız iki taramada da görülen çiftleri karşılaştırır. Ortak çiftler likiditenin yarısını bile taşımıyorsa karşılaştırma yapılmaz (bayrak çıkmaz). "Kilitli LP azaldı" da Solana'da aynı pazarı karşılaştırır (RugCheck pazar sırası değişebiliyor).
+
 **Alan adı bayrağı (61.1):** alan adı token'ın ilk DEX çiftinden **önce ve en çok 30 gün önce** kaydedildiyse kırmızı bayrak çıkar (site token için aceleyle açılmış olabilir). Alan adı token'dan **sonra** alındıysa bu olağandır (çoğu proje önce token, sonra site açar) — bayrak çıkmaz; **Ayrıntı**'daki "Alan adı" satırında yalnız bilgi olarak "token'dan 12 gün sonra alınmış (olağan; bayrak değil)" yazar. Eşik Tarama ayarları'ndan değiştirilebilir.
 
 **Kaynak hatası balonu:** bir kaynak hata verirse ("istek sınırına takıldı (429) — bir sonraki taramada yeniden denenir") sağ alttaki balon yalnız Coin tarama ve Veri ekranında çıkar; başka ekranda yalnız menüdeki sayı rozeti artar.

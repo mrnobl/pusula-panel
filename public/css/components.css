@@ -1366,6 +1366,16 @@
 .badge-success { background: var(--pos-soft); color: var(--pos-metin); }
 .badge-warning { background: var(--warn-soft); color: var(--warn-metin); }
 .badge-danger { background: var(--neg); color: var(--ton-contrast); }
+/* 68.6 Dikkat kapı rozetleri: tehlike kademesine göre ısı rengi (lib/tarama/dikkat.js KAPI_TEHLIKE) */
+.badge-isi-1 { background: var(--isi-1); color: var(--isi-metin); }
+.badge-isi-2 { background: var(--isi-2); color: var(--isi-metin); }
+.badge-isi-3 { background: var(--isi-3); color: var(--isi-metin); }
+.badge-isi-4 { background: var(--isi-4); color: var(--isi-metin); }
+.badge-isi-5 { background: var(--isi-5); color: var(--isi-metin); }
+.kapi-sozluk { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-2, 8px) var(--sp-3, 12px); align-items: baseline; margin: 0; }
+.kapi-sozluk dt { margin: 0; }
+.kapi-sozluk dd { margin: 0; }
+.kapi-olcek { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 
 /** Etiket–değer listesi (`<dl>`): iki sütun, sayılar sağa yaslı. */
 .kv-list {

@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 68.6 — Coin tarama uyarıları, Dikkat listesi sunucudan, renkli kural rozetleri (2026-10-20) {#s68-6}
+
+- **Yanlış "likidite düştü" bayrakları:** DexScreener aynı coin için her sorguda farklı çiftler döndürüyordu; toplam likidite bu yüzden günden güne oynuyor (ör. 1,9 M $ → 95 bin $ → 149 M $) ve neredeyse her gün yeni bir "likidite düştü" ya da "kilitli LP azaldı" bayrağı çıkıyordu. Artık yalnız **iki günde de görülen aynı çiftler** (Solana'da kilitli LP için aynı pazar) karşılaştırılır; ortak çiftler likiditenin yarısından azını taşıyorsa o gün ölçülmez, bayrak çıkmaz ([Coin tarama](#/kilavuz/coin-tarama)).
+- **Dikkat listesi kuralları sürüm 1.1:** aynı düzeltme K11 (likidite çekilmesi) ve K15 (kilitli likidite azaldı) için. Değişiklik ısınma döneminde, değerlendirme başlamadan yapıldı; ön kayıtta gerekçesiyle yazılı ([Dikkat listesi](#/kilavuz/dikkat-listesi/kurallar)).
+- **GeckoTerminal Coin taramadan çıktı:** her taramada istek sınırına (429) takılıyor ve kalıcı "veri alınamadı" uyarısı bırakıyordu; zaten varsayılan olarak kapalıydı. Gece arşivindeki kullanımı değişmedi.
+- **Dikkat listesi sunucudan:** geliştirme bilgisayarı sunucuya bağlıysa KAÇIN listesi, İZLE ve "Kendimizi denetleme" sunucunun resmî kaydından okunur. Ekran hangi kaydı gösterdiğini yazar; son resmî kayıt bir günden eskiyse gece görevini denetlemenizi söyler.
+- **Kendimizi denetleme:** değerlendirme başlayana kadar karne **Ön izleme (ısınma)** görünümüyle açılır; sütunların neden 0 olduğu ve ilk 90 günü dolacak pencerenin tarihi yazar.
+- **Renkli kural rozetleri:** K1–K16 rozetleri tehlikeye göre renklidir (kırmızı en yüksek, sarıya doğru azalır) ve en tehlikeliden en hafife sıralanır. Üstüne gelince kuralın tam cümlesi görünür; listenin altında açılır **"K kodları ne anlama geliyor?"** sözlüğü var.
+
 ## 68.5 — Yeni bilgisayara taşıma düzeltmesi (2026-10-20) {#s68-5}
 
 - **Başka bilgisayardan taşı:** yeni kurulumda Pusula açılır açılmaz başlayan otomatik coin taraması yüzünden taşıma "bu bilgisayarda zaten kişisel veri var" diyerek reddediliyordu. Artık kurulumdan sonra kendiliğinden oluşan tarama kayıtları (tarama ayarı değiştirilmemişse ve kayıtlar 2 günden yeniyse) boş kurulum sayılır. Taşınan veride tarama kaydı varsa yerel olanlar silinmez, `makine\onceki-<zaman>` klasörüne ayrılır ([Yedek ve taşıma](#/kilavuz/yedek-tasima)).

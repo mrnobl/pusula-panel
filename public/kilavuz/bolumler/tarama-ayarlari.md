@@ -28,7 +28,7 @@ Coin taramasının ayarları: **izleme listesi** (coin ekle / düzelt / çıkar)
 
 | Ayar | Anlamı |
 |---|---|
-| Kaynaklar | GoPlus, RugCheck, DexScreener, RDAP, borsa açık; CoinGecko ve GeckoTerminal **kapalı** gelir (koşulları verinin saklanmasını yasaklıyor) |
+| Kaynaklar | GoPlus, RugCheck, DexScreener, RDAP, borsa açık; CoinGecko **kapalı** gelir (koşulları verinin saklanmasını yasaklıyor). GeckoTerminal Coin taramadan çıkarıldı (her taramada istek sınırına takılıyordu) |
 | Eşikler | Bayrakların sınırları (başlangıç değeri, ön kayıt değil) |
 | Otomatik aralık / gecikme | 20 saat / 36 saat |
 | Telegram | Uyarıları Telegram'a da gönder (kapalı gelir) |

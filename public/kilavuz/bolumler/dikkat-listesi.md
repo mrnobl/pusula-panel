@@ -47,11 +47,11 @@ Her gece her coin için 16 kural denetlenir. **Birincil 13 kuraldan biri** "doğ
 | K8 | Az cüzdanda yoğunlaşma | Sözleşme, kilit, yakma ve etiketli (bilinen) adresler çıkarıldıktan sonra ilk 10 cüzdan arzın %50'sinden fazlasını tutuyor. Etiketsiz borsa cüzdanı kişisel cüzdan gibi görünebilir | GoPlus / RugCheck | Evet |
 | K9 | Ölü kod deposu | Projenin GitHub'daki en yeni güncellemesi 180 günden eski | GitHub (DefiLlama kaydından) | Evet |
 | K10 | Veri kayboldu | Art arda 2 kayıt gününde hiçbir kaynakta fiyat ve hacim yok | Borsa / DexScreener / CoinGecko | Hayır, bilgi |
-| K11 | Likidite çekilmesi | DEX likiditesi önceki kayıt gününe göre %30 ya da daha fazla düştü | DexScreener | Evet |
+| K11 | Likidite çekilmesi | DEX likiditesi önceki kayıt gününe göre %30 ya da daha fazla düştü; yalnız iki günde de görülen çiftler karşılaştırılır, ortak çiftler likiditenin yarısından azını taşıyorsa ölçülmez (kural-v1.1) | DexScreener | Evet |
 | K12 | Büyük cüzdan boşaltması | Önceki gün ilk 10'da olan bir kişisel cüzdanın payı en az 2 puan azaldı | GoPlus / RugCheck | Evet |
 | K13 | Holder düşüşü | Holder sayısı önceki kayıt gününe göre %5 ya da daha fazla azaldı (iki gün aynı kaynakla) | GoPlus / RugCheck / GeckoTerminal | Evet |
 | K14 | Likidite kilidi bitiyor | Likidite kilidinin bitmesine 30 gün ya da daha az kaldı | GoPlus / RugCheck | Evet |
-| K15 | Kilitli likidite azaldı | Kilitli likidite payı önceki güne göre 20 puan ya da daha fazla düştü | GoPlus / RugCheck | Evet |
+| K15 | Kilitli likidite azaldı | Kilitli likidite payı önceki güne göre 20 puan ya da daha fazla düştü (Solana'da aynı pazar, kural-v1.1) | GoPlus / RugCheck | Evet |
 | K16 | Yeni alan adı | Projenin sitesi ilk DEX çiftinden en çok 30 gün önce ya da sonra kaydedilmiş | RDAP + DexScreener | Evet |
 
 **Bilgi rozetleri** listeye sokmaz, yalnız ayrıntıda görünür: K2, K6, K10, ayrıca kara liste/dondurma yetkisi, tek başına değişebilir vergi, tek başına sahip yetkisi ve ilk 10 payının bir günde ±5 puan oynaması. K2 ve K10 çöküşün kendisini ölçtüğü için listeye sokmaz; aksi hâlde test kendi sonucunu tahmin ederdi.
@@ -85,6 +85,8 @@ Listenin işe yarayıp yaramadığı ölçülür:
 4. **Çöküş:** fiyat işaret gününün %20'sine iner (%80+ düşüş), Binance'ten delist olur ya da DEX likiditesi 1 000 
 5. **Karne:** listedeki coinlerin çöküş oranı kontrol grubunun oranıyla karşılaştırılır. Liste işe yarıyorsa listedekilerin oranı belirgin biçimde yüksek olmalı.
 
+**Karne neden 0 gösteriyor?** Bir coinin sonucu ancak 90 günü dolunca (ya da daha önce çökünce) belli olur. Bu yüzden ilk pencereler kapanana kadar "90 günü dolan", "Çöken" ve "Çöküş oranı" sütunları 0 kalır; bu bir arıza değildir. Değerlendirme (t0) başlamadan sayfa karneyi **Ön izleme (ısınma)** görünümüyle açar ve kaç coinin izlendiğini, ilk 90 günü dolacak pencerenin tarihini yazar.
+
 **Kapı karnesi** hangi kuralın işe yaradığını gösterir. Her kural için listeye soktuğu coin sayısı, 90 günü dolan, çöken, isabet ve yanlış alarm oranı yer alır. "Gözden geçirme" sütununda **ayırt etmiyor** yazıyorsa, o kuralın 90 günü dolan en az 20 coininde çöküş oranı kontrolden yüksek değildir. Böyle bir kural yeni sürümde (kural-v2) değiştirilmeye ya da çıkarılmaya adaydır.
 
 **Kurallar nasıl değişir:** mevcut kural (kural-v1) ölçüm başlamadan önce kayda geçti ve değiştirilmez. Değişiklik **yeni sürüm** olarak eskisinin yanında çalışır, eski kayıtlar silinmez; yeni sürüm de kendi 90 günlük takibiyle sınanır. Böylece "sonuca bakıp kuralı ayarlama" yanılgısına düşülmez.
@@ -105,14 +107,15 @@ Listenin işe yarayıp yaramadığı ölçülür:
 
 | Alan | Anlamı |
 |---|---|
-| Resmî / Deneme kaydı | Resmî kayıt sunucunun gece görevidir; deneme kaydı bu bilgisayarda elle çalıştırılan koşudur |
+| Resmî / Deneme kaydı | Resmî kayıt sunucunun gece görevidir (her gece 03:30); deneme kaydı bir bilgisayarda elle çalıştırılan koşudur. Geliştirme bilgisayarı sunucuya bağlıysa liste, karne ve İZLE sunucudan okunur |
 | KAÇIN | O gün listede olan / incelenen coin sayısı |
 | Bugün yeni giren | Önceki kayıt gününde listede değildi, bugün girdi (takip bu coinler için açılır) |
 | Yetersiz veri | Güvenlik kaynağı (GoPlus / RugCheck) o gün cevap vermedi; coin listeye alınmaz, kontrol olarak da seçilmez |
 | Takipteki olay | 90 günlük izlemesi süren olaylar |
 | Coin ara | Sembolün bir kısmını yazın (ör. PEPE): coin seçili filtrede (KAÇIN / yeni / yetersiz veri) varsa satırı görünür, yoksa "bu listede yok" yazar |
 | Tümünü göster | Liste uzunsa ilk 25 satır görünür (bugün yeni girenler önce); düğme hepsini açar |
-| Doğru çıkan kapılar | Coini listeye sokan kurallar (kodun üstüne gelince adı, satırın üstüne gelince gerekçesi) |
+| Doğru çıkan kapılar | Coini listeye sokan kurallar, en tehlikeliden en hafife sıralı. Rozet rengi tehlikeyi gösterir: kırmızı en yüksek, turuncudan sarıya doğru azalır. Kodun üstüne gelince kuralın tam cümlesi, satırın üstüne gelince o günkü gerekçesi görünür |
+| K kodları ne anlama geliyor? | Listenin altındaki açılır sözlük: 16 kuralın hepsi, tehlike sırasıyla ve renkleriyle |
 | Takip | Coin bir olayın ya da kontrolün penceresindeyse olay numarası |
 | Ayrıntı | Son 30 kayıt günü, kural geçmişi, takip pencereleri (başlangıç fiyatı, en düşük seviye, sonuç) |
 
@@ -121,7 +124,9 @@ Listenin işe yarayıp yaramadığı ölçülür:
 | Görünen | Anlamı | Ne yapmalı |
 |---|---|---|
 | "Isınma dönemi" şeridi | Evren eşikleri henüz sabitlenmedi (30 kayıt günü dolmadı) | Bekleyin; eşikler kendiliğinden sabitlenir, liste o güne kadar ön izlemedir |
-| "Deneme kaydı gösteriliyor" | Bu bilgisayardaki deneme koşusu görünüyor | Resmî kaydı görmek için üstteki seçiciden "Resmî kayıt"ı seçin (sunucuda) |
+| "Deneme kaydı gösteriliyor" | Resmî kayıt yok; deneme koşusu görünüyor. Geliştirme bilgisayarında gece görevi kurulu değildir, liste orada kendiliğinden yenilenmez | Sunucu bağlantısı kuruluysa liste sunucudan gelir; sunucuda da deneme görünüyorsa gece görevi henüz resmî kayıt yazmamıştır |
+| "Son resmî kayıt günü … gün önce" | Gece görevi bir günden fazladır yeni kayıt yazmadı | Sunucuda Sistem › Kurulum denetimi'nde "PusulaDikkatArsiv" görevine bakın; kırmızıysa Onar |
+| "Sunucuya şu an ulaşılamıyor" | Sunucu kapalı ya da bağlantı yok; son okunan sunucu verisi gösteriliyor | Sunucu açılınca kendiliğinden düzelir |
 | "Son günün dikkat hesabı başarısız oldu" | Gece koşusunda dikkat adımı hata verdi; arşiv kaydı yine de alındı | Bir sonraki gece kendiliğinden yeniden hesaplanır; sürerse Claude'a hata metnini gösterin |
 | Yetersiz veri sayısı yüksek | GoPlus / RugCheck o gün çoğu coinde cevap vermedi | Tek gün sorun değil; 2 ay üst üste %30'u geçerse sonuç SONUÇSUZ olur (Ön kayıt ve hüküm katı) |
 

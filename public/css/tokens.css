@@ -76,6 +76,13 @@
   --pos-metin: #6fe0ae;
   --neg-metin: #ff968c;
   --warn-metin: #f5b97f;
+  /* 68.6 Dikkat kapı ısı ölçeği: 1 en tehlikeli (kırmızı) … 5 en hafif (sarı); düz zemin + koyu metin, iki temada ≥ 4,5 */
+  --isi-1: #e5484d;
+  --isi-2: #ec6a3f;
+  --isi-3: #f08c38;
+  --isi-4: #f2ad3a;
+  --isi-5: #eed24a;
+  --isi-metin: #1a0b08;
   --info-metin: #8ec3ff;
   --accent-metin: #a9bbff;
 
@@ -160,6 +167,13 @@
   --pos-metin: #1a6b43;
   --neg-metin: #a23a28;
   --warn-metin: #855410;
+  /* 68.6 Dikkat kapı ısı ölçeği: 1 en tehlikeli (kırmızı) … 5 en hafif (sarı); düz zemin + koyu metin, iki temada ≥ 4,5 */
+  --isi-1: #e5484d;
+  --isi-2: #ec6a3f;
+  --isi-3: #f08c38;
+  --isi-4: #f2ad3a;
+  --isi-5: #eed24a;
+  --isi-metin: #1a0b08;
   --info-metin: #335f9e;
   --accent-metin: #4f3ad1;
 
@@ -242,6 +256,13 @@
     --pos-metin: #1a6b43;
     --neg-metin: #a23a28;
     --warn-metin: #855410;
+    /* 68.6 Dikkat kapı ısı ölçeği: 1 en tehlikeli (kırmızı) … 5 en hafif (sarı); düz zemin + koyu metin, iki temada ≥ 4,5 */
+    --isi-1: #e5484d;
+    --isi-2: #ec6a3f;
+    --isi-3: #f08c38;
+    --isi-4: #f2ad3a;
+    --isi-5: #eed24a;
+    --isi-metin: #1a0b08;
     --info-metin: #335f9e;
     --accent-metin: #4f3ad1;
 

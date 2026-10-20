@@ -400,6 +400,7 @@
     },
     /* ── Dikkat listesi F2 (lib/tarama/dikkatPanel.js, 64.1; panel: js/pages/dikkat.js) — salt okuma ── */
     dikkat: {
+      kurallar: () => al('/api/dikkat/kurallar'),
       durum: (kip) => al(`/api/dikkat/durum${kip ? `?kip=${q(kip)}` : ''}`),
       liste: (o) => { const s = o || {}; const p = [s.kip ? `kip=${q(s.kip)}` : '', s.gun ? `gun=${q(s.gun)}` : '', s.tur ? `tur=${q(s.tur)}` : ''].filter(Boolean).join('&'); return al(`/api/dikkat/liste${p ? `?${p}` : ''}`); },
       coin: (anahtar, kip) => al(`/api/dikkat/coin?anahtar=${q(anahtar)}${kip ? `&kip=${q(kip)}` : ''}`),

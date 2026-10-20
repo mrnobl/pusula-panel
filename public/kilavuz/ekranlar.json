@@ -3112,64 +3112,65 @@
         "dosya": "para-ekle-1400.webp",
         "en": 1400,
         "boy": 2500,
-        "bayt": 172322,
+        "bayt": 137942,
         "olcek": 1,
         "ozet": "d1f83c505a42d40646311b1db9693bc896f6003e923d3ee56f058cef949be6ca",
-        "genel": "db21ef2266864dc0a6a4d83e8d17245873dfd50b5344e8ea26079748e4b95534",
-        "surum": "68.4",
-        "tarih": "2026-10-19",
+        "genel": "7a3e6e6f5685d7eb0593db3a107ea6ac916f9b2ccec1df9f6e0ba5eabd61d2d8",
+        "surum": "68.6",
+        "tarih": "2026-10-20",
         "isaretler": [
           {
             "secici": "#pePara",
             "x": 279,
-            "y": 435,
+            "y": 377,
             "w": 200,
             "h": 41
           },
           {
             "secici": "#pfYeni-hedefim .pe-satir-sat",
             "x": 279,
-            "y": 694,
+            "y": 635,
             "w": 1090,
             "h": 67
           },
           {
             "secici": "#pePlanDurum",
             "x": 1109,
-            "y": 920,
+            "y": 862,
             "w": 279,
             "h": 130
           },
           {
             "secici": "#peSatKutu",
             "x": 279,
-            "y": 1269,
+            "y": 1211,
             "w": 1090,
             "h": 252
           },
           {
             "secici": "#btnPeKaydet",
             "x": 279,
-            "y": 1780,
+            "y": 1721,
             "w": 188,
             "h": 44
           },
           {
             "secici": "#peBotKart",
             "x": 260,
-            "y": 1857,
+            "y": 1798,
             "w": 1128,
-            "h": 641
+            "h": 700
           },
           {
             "secici": "#btnPeGecmis",
             "x": 697,
-            "y": 1780,
+            "y": 1721,
             "w": 209,
             "h": 44
           }
         ]
-      }
+      },
+      "kalite": 58
     },
     {
       "kimlik": "para-ekle-390",
@@ -4745,17 +4746,18 @@
           "etiket": "Kendimizi denetleme (karne)"
         }
       ],
-      "yukseklik": 3000,
+      "yukseklik": 2350,
+      "kalite": 58,
       "uretim": {
         "dosya": "dikkat-listesi-1400.webp",
         "en": 1400,
-        "boy": 3000,
-        "bayt": 166342,
+        "boy": 2350,
+        "bayt": 192076,
         "olcek": 1,
-        "ozet": "a2c21e075e3c67187a94871a007155a312bc8d706f2c6d88c69cfadcac2e32a5",
-        "genel": "37b895fe9e12151094b4710a6e436afeeb23ee8553e71779a740358580717e73",
-        "surum": "68.3",
-        "tarih": "2026-10-19",
+        "ozet": "c0969208fa1d3eaa367f3cd0f9afe70f678066e436d965e5fd92d3e9c76a2d6d",
+        "genel": "7a3e6e6f5685d7eb0593db3a107ea6ac916f9b2ccec1df9f6e0ba5eabd61d2d8",
+        "surum": "68.6",
+        "tarih": "2026-10-20",
         "isaretler": [
           {
             "secici": "#selDikkatKip",
@@ -4781,9 +4783,9 @@
           {
             "secici": "#dikkatKarne",
             "x": 281,
-            "y": 1564,
+            "y": 1598,
             "w": 1086,
-            "h": 356
+            "h": 638
           }
         ]
       }
@@ -6076,11 +6078,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 73216,
+        "bayt": 73784,
         "olcek": 1,
-        "ozet": "3120ba26d5d0ef75f017a891ba70464ce4dc7c00f9a0611a43cba3a91879d15a",
-        "genel": "db21ef2266864dc0a6a4d83e8d17245873dfd50b5344e8ea26079748e4b95534",
-        "surum": "68.5",
+        "ozet": "45adf2e8469002f0114c9fbc290e3e3d6055830d732691f042d23f32f773fae3",
+        "genel": "7a3e6e6f5685d7eb0593db3a107ea6ac916f9b2ccec1df9f6e0ba5eabd61d2d8",
+        "surum": "68.6",
         "tarih": "2026-10-20",
         "isaretler": [
           {

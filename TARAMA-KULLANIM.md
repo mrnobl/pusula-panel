@@ -24,7 +24,7 @@ fiyat/hacim kayboldu. Eşikler başlangıç değeridir; birkaç ay kayıt biriki
 
 - **İzleme listesi:** Coin ekle / Düzelt / Çıkar. Yanlış eşleşen sözleşme, ağ ya da borsa sembolünü buradan düzeltin; bir coinde
   anlamsız bulduğunuz bayrağı "yok sayılacak bayraklar"dan kapatın (ör. büyük projelerde "mint yetkisi").
-- **Kaynaklar:** aç/kapa. CoinGecko ve GeckoTerminal kapalı gelir (koşulları verinin saklanmasını yasaklıyor).
+- **Kaynaklar:** aç/kapa. CoinGecko kapalı gelir (koşulları verinin saklanmasını yasaklıyor). GeckoTerminal 2026-10-20'de Coin taramadan çıkarıldı (her taramada 429); eski ayar dosyasındaki açık/kapalı değeri yok sayılır.
 - **Eşikler, otomatik aralık (20 saat), gecikme uyarısı (36 saat), Telegram** (kapalı gelir).
 - Her elle değişiklik **denetim kaydına** yazılır (kim, ne zaman, eski → yeni).
 
