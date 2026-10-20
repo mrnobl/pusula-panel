@@ -1,5 +1,5 @@
 {
-  "surum": "68.8",
+  "surum": "68.9",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -55,6 +55,13 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "68.9", "tarih": "2026-10-21",
+      "yeni": [
+        "Kâğıt hesaptaki bot için BTC ayağı seçimi: spot ya da çoklu varlık (canlı tasarımı); değiştirmek kâğıt hesabı onayla sıfırlar (G7 denemesi).",
+        "Çoklu varlık: spottaki kalıntıdan yapılan satıştan artan BTC hemen vadeli cüzdana (teminat) döner."
+      ]
+    },
     {
       "surum": "68.8", "tarih": "2026-10-20",
       "yeni": [

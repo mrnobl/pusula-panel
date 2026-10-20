@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '68.8';
+const APP_VERSION = '68.9';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -658,6 +658,7 @@ const saglikBot = saglikBotlar.hucum;
 const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn: () => config.healthchecksSunucuUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
 const bindirmeAyar = (ad) => ({ mod: 'kagit', sermayeTavani: 10000, kagitBakiye: 10000, k: 15, demoSermayeTavani: 1000, kucukSermaye: 'oto', ...(((config.bindirme || {})[ad]) || {}) });
 const KUCUK_SECIMLER = { oto: 'oto', acik: true, kapali: false };
+const KAGIT_AYAKLAR = ['spot', 'coklu'];   // 68.9: kâğıt hesapta BTC ayağı (sıfırlamayla seçilir; demo her zaman perp, canlı her zaman çoklu)
 const bindirmeDizin = (ad, mod) => path.join(CANLI_DIZIN, mod === 'demo' ? `${ad}-demo` : mod === 'canli' ? `${ad}-canli` : ad);
 const bindirmeler = {};
 const ACILIS_DENEME_DK = [1, 2, 5, 10, 30];
@@ -1663,6 +1664,8 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
  * 68.8 KÂĞIT HESABI SIFIRLA (TEMİZ BAŞLA) — lib/live/kagitSifirla.js. Yalnız kâğıt modda ve bot durmuşken (yoksa 409); gövde
  * { onay: 'SIFIRLA' }. Botun dizini (data/live/<ad>) SİLİNMEZ: `<ad>-onceki-<UTC zaman>` yedeğine taşınır; bot taze durumla yeniden
  * kurulur (sermaye = kagitBakiye; son gün yok → ilk çalışmada kaçırılan gün telafisi yok). Demo / canlı dizinine dokunmaz.
+ * 68.9 (G7, PLAN-GERCEK-PARA-2027 §1): isteğe bağlı { btcAyak: 'spot' | 'coklu' } — BTC ayağı biçimi YALNIZ sıfırlamayla değişir
+ * (spot ↔ çoklu varlık durumu birbirine taşınmaz); config.bindirme.<ad>.btcAyak yazılır, bot o biçimle taze kurulur.
  */
 const kagitSifirlaLib = require('./lib/live/kagitSifirla');
 app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
@@ -1672,13 +1675,20 @@ app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
     const e = kagitSifirlaLib.engel(durum);
     if (e) return res.status(409).json({ success: false, error: e });
     if (String((req.body || {}).onay || '').trim().toLocaleUpperCase('tr-TR') !== kagitSifirlaLib.ONAY) return res.status(400).json({ success: false, error: 'onay eksik: gövdede { onay: "SIFIRLA" } olmalı' });
+    const yeniAyak = (req.body || {}).btcAyak;
+    if (yeniAyak != null && !KAGIT_AYAKLAR.includes(yeniAyak)) return res.status(400).json({ success: false, error: `btcAyak ${KAGIT_AYAKLAR.join(' | ')} olmalı` });
     if (b.y.borsa) b.y.baglantiyiKes();
     if (b.bot.zamanlayici) b.bot.durdur();
     const r = kagitSifirlaLib.sifirla({ ...durum, simdi: Date.now() });
+    if (yeniAyak != null) {
+      const onceki = (config.bindirme || {})[b.ad] || {};
+      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, btcAyak: yeniAyak } };
+      saveConfig(config);
+    }
     bindirmeler[b.ad] = bindirmeKur(b.ad, 'kagit');
     const yedekAd = r.yedek ? path.basename(r.yedek) : null;
-    db.addLog('WARN', `[${b.ad}] kâğıt hesap sıfırlandı (temiz başlangıç, sermaye ${bindirmeAyar(b.ad).kagitBakiye} USDT)${yedekAd ? ` — eski kayıtlar data/live/${yedekAd}` : ''}`);
-    res.json({ success: true, yedek: yedekAd, sermaye: bindirmeAyar(b.ad).kagitBakiye, bot: bindirmeler[b.ad].bot.ozet() });
+    db.addLog('WARN', `[${b.ad}] kâğıt hesap sıfırlandı (temiz başlangıç, sermaye ${bindirmeAyar(b.ad).kagitBakiye} USDT · BTC ayağı ${bindirmeler[b.ad].bot.ayar.btcAyak === 'coklu' ? 'çoklu varlık' : 'spot'})${yedekAd ? ` — eski kayıtlar data/live/${yedekAd}` : ''}`);
+    res.json({ success: true, yedek: yedekAd, sermaye: bindirmeAyar(b.ad).kagitBakiye, btcAyak: bindirmeler[b.ad].bot.ayar.btcAyak, bot: bindirmeler[b.ad].bot.ozet() });
   } catch (err) {
     if (err && err.kod === 409) return res.status(409).json({ success: false, error: err.message });
     res.status(500).json({ success: false, error: `kâğıt hesap sıfırlanamadı (bot olduğu gibi kaldı): ${err.message}` });

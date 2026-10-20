@@ -3571,9 +3571,9 @@
         "boy": 900,
         "bayt": 67110,
         "olcek": 1,
-        "ozet": "c75a3037cd0c6d348e3a6fa0b608c99d956773a7d655ff0b6e5744a690546b25",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
+        "ozet": "6278ba7f3d679d28c4ac229cd30f8e2f6c3fd4d062d0d0dc40fa68aaba9e3598",
+        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
+        "surum": "68.9",
         "tarih": "2026-10-20",
         "isaretler": [
           {
@@ -3757,6 +3757,57 @@
       }
     },
     {
+      "kimlik": "botlar-denge-yonetim-1400",
+      "rota": "botlar/denge/yonetim",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#selBotAyak-denge",
+          "sure": 30000
+        },
+        {
+          "bekle": 800
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#selBotAyak-denge",
+          "etiket": "BTC ayağı (kâğıt): spot ya da çoklu varlık — değiştirmek sıfırlar"
+        },
+        {
+          "secici": "#btnBotKagitSifirla-denge",
+          "etiket": "Kâğıt hesabı sıfırla (temiz başla)"
+        }
+      ],
+      "uretim": {
+        "dosya": "botlar-denge-yonetim-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 47174,
+        "olcek": 1,
+        "ozet": "965b6b73cbc1ef8e4c53131369bf8fd5a760ccd77e3aa22d45b045ba55493776",
+        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
+        "surum": "68.9",
+        "tarih": "2026-10-20",
+        "isaretler": [
+          {
+            "secici": "#selBotAyak-denge",
+            "x": 473,
+            "y": 582,
+            "w": 191,
+            "h": 26
+          },
+          {
+            "secici": "#btnBotKagitSifirla-denge",
+            "x": 473,
+            "y": 666,
+            "w": 202,
+            "h": 32
+          }
+        ]
+      }
+    },
+    {
       "kimlik": "botlar-390",
       "rota": "botlar",
       "genislik": 390,
@@ -3785,9 +3836,9 @@
         "boy": 1688,
         "bayt": 60224,
         "olcek": 2,
-        "ozet": "6057ce7b379f97ad77ee7882c6a72a03197af807ffebde92bf404dfb5fdd35ee",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
+        "ozet": "18a3b1116876de98be4937fe8779fa7803172871043db91bd97b8a0fdd2d2f54",
+        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
+        "surum": "68.9",
         "tarih": "2026-10-20",
         "isaretler": [
           {
@@ -6126,11 +6177,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 69170,
+        "bayt": 68418,
         "olcek": 1,
-        "ozet": "e0a22bd88e293187c20ba6075a8ad5403c5bdd26704775b687c6e7515edc3bbd",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
+        "ozet": "34fa569592a19458ed150cc033c3bc8217487b994c99fa574668e6a83da1e1ba",
+        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
+        "surum": "68.9",
         "tarih": "2026-10-20",
         "isaretler": [
           {
@@ -7234,9 +7285,9 @@
         "boy": 1150,
         "bayt": 81288,
         "olcek": 1,
-        "ozet": "ce14d498022d49398235da298acd019bfc8508845d8bec76427190ea791a6b83",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
+        "ozet": "0a41935bdbfe6d652a3eea418eef00700e1a0364f494be7c2ce103a5abb586d3",
+        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
+        "surum": "68.9",
         "tarih": "2026-10-20",
         "isaretler": [
           {

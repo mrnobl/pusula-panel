@@ -125,20 +125,26 @@
    * 68.8 KÂĞIT HESABI SIFIRLA (TEMİZ BAŞLA): POST /api/bindirme/:ad/kagit-sifirla { onay: 'SIFIRLA' } — yalnız kâğıt modda ve bot
    * durmuşken (sunucu lib/live/kagitSifirla.js denetler). Eski kayıtlar silinmez: data/live/<bot>-onceki-<zaman> yedeğine taşınır.
    */
-  async function kagitSifirla(ad, d, dugme) {
+  async function kagitSifirla(ad, d, dugme, yeniAyak) {
     const b = d.bot;
+    const ayakAd = (x) => x === 'coklu' ? 'çoklu varlık' : 'spot';
+    // 68.9 (G7): BTC ayağı yalnız sıfırlamayla değişir — spot ↔ çoklu varlık durumu birbirine taşınmaz.
+    const ayakMetni = yeniAyak ? `BTC ayağı: ${ayakAd(b.btcAyak)} → ${ayakAd(yeniAyak)}. ${yeniAyak === 'coklu'
+      ? 'Çoklu varlık = canlı hesap tasarımı: BTC spotta alınır, vadeli cüzdana teminat olarak aktarılır (kâğıtta taklit). Canlı hesaba geçiş şartı G7 için en az 14 gün böyle çalışmalı.'
+      : 'Spot = varsayılan kâğıt biçimi.'} Biçim değişince hesap sıfırlanmak zorunda.\n` : '';
     const v = await AG.onayla({ baslik: `${b.adGorunen}: kâğıt hesabı sıfırla (temiz başla)`, onay: 'Sıfırla', iptal: 'Vazgeç', tehlikeli: true,
-      metin: `Kâğıt hesap sıfırdan başlar: sermaye ayarlardaki kâğıt bakiyesi (kagitBakiye, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş; ilk çalışmada geçmiş günler telafi edilmez.
+      metin: `${ayakMetni}Kâğıt hesap sıfırdan başlar: sermaye ayarlardaki kâğıt bakiyesi (kagitBakiye, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş; ilk çalışmada geçmiş günler telafi edilmez.
 Eski kayıtlar SİLİNMEZ — botun klasörü yedek klasöre taşınır (data/live/${ad}-onceki-<tarih>); istenirse oradan incelenir.
 Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
-    if (!v) return;
-    AG.dom.mesgul(dugme, '…');
+    if (!v) { if (yeniAyak) yukle(true); return; }   // seçim kutusu eski değere döner
+    const kutu = dugme && dugme.tagName === 'SELECT';   // seçim kutusunun seçenekleri silinmesin: yalnız pasif
+    if (kutu) dugme.disabled = true; else AG.dom.mesgul(dugme, '…');
     try {
-      const r = await AG.api.bindirmeKagitSifirla(ad, 'SIFIRLA');
+      const r = await AG.api.bindirmeKagitSifirla(ad, 'SIFIRLA', yeniAyak);
       if (!r.success) throw new Error(r.error);
-      bildir(`${b.adGorunen}: kâğıt hesap sıfırlandı — temiz başlangıç (sermaye ${D().para(r.sermaye)} USDT)${r.yedek ? ` · eski kayıtlar data/live/${r.yedek}` : ''}`, 'ok');
+      bildir(`${b.adGorunen}: kâğıt hesap sıfırlandı — temiz başlangıç (sermaye ${D().para(r.sermaye)} USDT${yeniAyak ? ` · BTC ayağı ${ayakAd(r.btcAyak)}` : ''})${r.yedek ? ` · eski kayıtlar data/live/${r.yedek}` : ''}`, 'ok');
     } catch (e) { bildir(`Sıfırlanmadı: ${e.message}`, 'hata'); }
-    finally { AG.dom.hazir(dugme); grafikVeri[ad] = null; yukle(true); }
+    finally { if (!kutu) AG.dom.hazir(dugme); grafikVeri[ad] = null; yukle(true); }
   }
 
   /** O3 (62.1): borsada hesaba para yatırdıktan/çektikten sonra kayıt — bot bunu getiri saymaz. */
@@ -207,12 +213,19 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const ksSec = el('select', { class: 'form-control control-sm', 'aria-label': `${b.adGorunen} küçük hesap kipi`, id: `selBotKucuk-${ad}`, onchange: (ev) => kucukDegistir(ad, ev.target.value) },
       [['oto', 'otomatik (< 5000 $)'], ['acik', 'açık'], ['kapali', 'kapalı']].map(([v, t]) => { const o = el('option', { value: v, text: t }); if (v === (ks.secim === true ? 'acik' : ks.secim === false ? 'kapali' : 'oto')) o.selected = true; return o; }));
     if (b.calisiyor) ksSec.disabled = true;
+    // 68.9 (G7): kâğıt hesapta BTC ayağı — değişiklik kâğıt hesabı sıfırlar (onaylı); demo her zaman perp, canlı her zaman çoklu.
+    const ayakSec = m === 'kagit' ? el('select', { class: 'form-control control-sm', 'aria-label': `${b.adGorunen} BTC ayağı`, id: `selBotAyak-${ad}`,
+      title: b.calisiyor ? 'BTC ayağı yalnız bot durmuşken değişir' : 'değiştirmek kâğıt hesabı sıfırlar',
+      onchange: (ev) => kagitSifirla(ad, d, ev.target, ev.target.value) },
+      [['spot', 'spot (varsayılan)'], ['coklu', 'çoklu varlık (canlı tasarımı)']].map(([v, t]) => { const o = el('option', { value: v, text: t }); if (v === (b.btcAyak === 'coklu' ? 'coklu' : 'spot')) o.selected = true; return o; })) : null;
+    if (ayakSec && b.calisiyor) ayakSec.disabled = true;
     const onayli = !!(d.yurutucu && d.yurutucu.kilitAcik);
     return {
       mod: el('div', { class: 'ayar-bot-hucre' }, [modSec, kapiNotu]),
       onay: m === 'canli' ? (onayli ? dugme('Emir onayını kaldır', (x) => canliOnay(ad, d, true, x), 'btn-outline-danger') : dugme('Canlı hesap emir onayı…', (x) => canliOnay(ad, d, false, x), 'btn-outline-danger')) : el('span', { class: 'hint hint-sm mb-0', text: 'yalnız canlı hesapta' }),
       para: m !== 'kagit' ? dugme('Kaydet…', (x) => sermayeAkisi(ad, d, x)) : el('span', { class: 'hint hint-sm mb-0', text: 'kâğıt hesapta gerekmez' }),
       kucuk: ksSec,
+      ayak: ayakSec,
       // 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda; bot çalışırken pasif (sunucu da 409 verir)
       sifirla: m === 'kagit' ? (() => { const x = dugme('Kâğıt hesabı sıfırla (temiz başla)…', (y) => kagitSifirla(ad, d, y), 'btn-outline-danger'); x.setAttribute('id', `btnBotKagitSifirla-${ad}`); if (b.calisiyor) { x.disabled = true; x.setAttribute('title', 'Önce botu durdurun'); } return x; })() : null,
       calistir: dugme('Şimdi çalıştır', (x) => calistir(ad, 'calistir', x, { baslik: `${b.adGorunen}: günlük çalışma`, tehlikeli: m === 'canli',
@@ -249,6 +262,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
         satir('Canlı hesap emir onayı', 'onay', 'gercekPara'),
         satir('Para yatırdım / çektim', 'para'),
         satir('Küçük hesap kipi', 'kucuk', 'kucukSermaye'),
+        h[0].ayak ? satir('BTC ayağı (kâğıt)', 'ayak') : null,
         satir('Bugünün kararını şimdi uygula', 'calistir'),
         h[0].sifirla ? satir('Kâğıt hesabı sıfırla', 'sifirla', 'kagit') : null,
         satir('Kontroller', 'kontrol')

@@ -223,7 +223,7 @@
     /** 64.5: Binance bakiye kırılımı (cüzdan, K/Z, marj, teminatlar, Avbl) + pozisyonlar (mark) + açık/koşullu emirler — yalnız okuma. */
     bindirmeBinanceBakiye: (ad) => al(`/api/bindirme/${q(ad)}/binance-bakiye`),
     /** 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda ve bot durmuşken; eski dizin <dizin>-onceki-<zaman> yedeğine taşınır. */
-    bindirmeKagitSifirla: (ad, onay) => gonder(`/api/bindirme/${q(ad)}/kagit-sifirla`, { onay }),
+    bindirmeKagitSifirla: (ad, onay, btcAyak) => gonder(`/api/bindirme/${q(ad)}/kagit-sifirla`, btcAyak ? { onay, btcAyak } : { onay }),
     /* Hesap düzeyi kapsayıcı kayıt (data/live/hesap-islemleri.jsonl) */
     hesapIslemleri: ({ hesap = '', bas = '', bit = '', sembol = '', kaynak = '', sayfa = 1 } = {}) =>
       al(`/api/hesap-islemleri?hesap=${q(hesap)}&bas=${q(bas)}&bit=${q(bit)}&sembol=${q(sembol)}&kaynak=${q(kaynak)}&sayfa=${q(sayfa)}`),

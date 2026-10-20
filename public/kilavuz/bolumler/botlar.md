@@ -135,6 +135,7 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 | Canlı hesap emir onayı | Yalnız canlı hesapta: **CANLI** yazarak verilir, kalıcıdır; "Emir onayını kaldır" kaldırır ([ayrıntı](#/kilavuz/botlar/gercek-para)) |
 | Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz |
 | Küçük hesap kipi | otomatik (< 5000 $) / açık / kapalı. Yalnız bot durmuşken değişir |
+| BTC ayağı (kâğıt) | Yalnız **kâğıt hesapta**: **spot** (varsayılan) ya da **çoklu varlık (canlı tasarımı)**. Değiştirmek kâğıt hesabı sıfırlar (onaylı); bot durmuşken açık ([aşağıda](#/kilavuz/botlar/btc-ayagi)) |
 | Bugünün kararını şimdi uygula | **Şimdi çalıştır** (onaylı) |
 | Kâğıt hesabı sıfırla | Yalnız **kâğıt hesapta**: **Kâğıt hesabı sıfırla (temiz başla)…** — bot durmuşken açık ([aşağıda](#/kilavuz/botlar/kagit-sifirla)) |
 | Kontroller | **Deneme (emirsiz)** bugünkü kararı emir vermeden gösterir · **Borsayla karşılaştır** · **Acil freni dene** (yalnız durmuş demo bot: dolmayacak küçük bir emir koyup acil freni sınar — demo hesaptaki TÜM pozisyonlar kapanır) |
@@ -147,6 +148,21 @@ Kâğıt hesaptaki bir botu (ör. Denge) sıfırdan başlatmak için: önce **Du
 - **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Hücum'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
 - **Bot çalışırken** düğme pasiftir ("Önce botu durdurun"); sıfırladıktan sonra **Başlat**.
 - Telefondan ve araştırma kopyasından yapılamaz (yalnız sunucudaki masaüstü panel).
+
+### BTC ayağı: spot ya da çoklu varlık {#btc-ayagi}
+
+![Botlar › Denge › Yönetim: BTC ayağı (kâğıt)](ekran:botlar-denge-yonetim-1400)
+
+Botun BTC payı kâğıt hesapta iki biçimde tutulabilir:
+
+- **spot** (varsayılan): BTC doğrudan alınır, tutulur.
+- **çoklu varlık (canlı tasarımı):** canlı hesapta kullanılacak biçim — BTC spotta alınır ve vadeli cüzdana **teminat** olarak aktarılır (Binance çoklu varlık modu; teminat BTC değerinin %95'i sayılır). Kâğıt hesapta bu akış taklit edilir: alım, aktarım, satış, iade, borsayla karşılaştırma her gün aynı adımlarla çalışır.
+
+Canlı hesaba geçiş şartlarından **G7**, çoklu varlık akışının kâğıt hesapta **en az 14 gün** sorunsuz çalışmasını ister. Hücum demo kabul testinde olduğu için (demo hesapta BTC ayağı her zaman perp) bu deneme kâğıt hesaptaki bot (Denge) ile yapılır: önce **Durdur**, Yönetim'de **BTC ayağı (kâğıt)** → **çoklu varlık**, onay, sonra **Başlat**.
+
+- Biçim değişince kâğıt hesap **sıfırlanmak zorunda** (iki biçimin kayıtları birbirine taşınmaz); eski kayıtlar [sıfırlamadaki gibi](#/kilavuz/botlar/kagit-sifirla) yedek klasöre taşınır.
+- Demo hesapta bu satır görünmez (demo: perp); canlı hesap her zaman çoklu varlıkla çalışır.
+- Telefondan ve araştırma kopyasından yapılamaz.
 
 Hücum'un Yönetim görünümünün altında **Demo kabul süreci** kartı da durur (aynı kart [İleri test](#/kilavuz/ileri-test)'te). İki botun salt okunur özeti (durum, hesap türü, küçük hesap kipi, hesap değeri) **Ayarlar › Botlar (özet)**'te; her satırdaki **Yönet →** buraya getirir.
 

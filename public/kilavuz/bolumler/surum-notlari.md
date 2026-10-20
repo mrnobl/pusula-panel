@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 68.9 — Kâğıt botta BTC ayağı seçimi (2026-10-21) {#s68-9}
+
+- **BTC ayağı (kâğıt):** Botlar › bot › Yönetim'de, kâğıt hesaptaki bot için **spot** ya da **çoklu varlık (canlı tasarımı)** seçilebilir. Değiştirmek kâğıt hesabı onayla sıfırlar. Canlı hesaba geçiş şartı G7 (çoklu varlık en az 14 gün kâğıtta) bununla başlatılır ([BTC ayağı](#/kilavuz/botlar/btc-ayagi)).
+- **Düzeltme (çoklu varlık):** satış spottaki BTC kalıntısından karşılandığında artan BTC artık hemen vadeli cüzdana (teminat) döner; önceden bir sonraki alımı bekliyordu. Demo hesaptaki Hücum'u etkilemez (demo perp kullanır).
+
 ## 68.8 — Portföy botları, bot başına sağlık sinyali, kâğıt hesabı sıfırlama (2026-10-20) {#s68-8}
 
 - **Portföy botları:** Botlar menüsünde **QQQ M10**, **BIST M10** ve **837 · QQQ + Hücum** artık her biri kendi sayfasında. Sayfada özet ve kıyas (aynı günlerde al-tut), portföy değeri grafiği ve karar günleri, hisse grafiğinde **nerede aldı ▲ nerede sattı ▼**, eldeki hisseler, her ay sonu kararının ne aldığı / sattığı / neden alamadığı (**karar defteri**) ve işlem geçmişi var ([Portföy botları](#/kilavuz/portfoy-botlari)).
