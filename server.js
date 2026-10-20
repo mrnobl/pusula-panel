@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '68.7';
+const APP_VERSION = '68.8';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -64,10 +64,33 @@ const APP_VERSION = '68.7';
 const SECRETS_PATH = yollar.veri('secrets.json');
 // testnet* : Binance demo trading anahtarları (prod anahtarı demo'da çalışmaz).
 // healthchecks* : healthchecks.io ping URL'leri — URL'yi bilen herkes "bot çalıştı" diyebilir, sırdır.
-//   healthchecksUrl        portföy botlarının günlük çalışması (start / başarı / fail)
+//   healthchecksUrl        HÜCUM botunun günlük çalışması (start / başarı / fail) — 68.8'e kadar iki bot bu adresi paylaşıyordu
 //   healthchecksSunucuUrl  isteğe bağlı: sunucu kalp atışı (günde bir; bot çalışmasa da)
+//   bindirme.<ad>.healthchecksUrl  68.8: Denge (ve sonraki botlar) KENDİ check'i; yoksa o bot ping göndermez (ortak adrese düşmez).
+//                          Bellekte config'te; DİSKTE yalnız secrets.json `bindirmeSaglik: { <ad>: url }` (ayarlar.json'a yazılmaz).
 const SECRET_KEYS = ['apiKey', 'apiSecret', 'testnetApiKey', 'testnetApiSecret', 'healthchecksUrl', 'healthchecksSunucuUrl'];
 const SAGLIK_URL_KEYS = ['healthchecksUrl', 'healthchecksSunucuUrl'];
+/** 68.8: secrets.json bindirmeSaglik → config.bindirme.<ad>.healthchecksUrl (Hücum'unki eski healthchecksUrl; burada atlanır). */
+function botSaglikSirlariniYukle(cfg, gizli) {
+  const bs = gizli && gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {};
+  for (const [ad, url] of Object.entries(bs)) {
+    if (ad === 'hucum' || typeof url !== 'string' || !url) continue;
+    cfg.bindirme = { ...(cfg.bindirme || {}), [ad]: { ...((cfg.bindirme || {})[ad] || {}), healthchecksUrl: url } };
+  }
+}
+/** 68.8: config'ten çıkan kopyada bindirme.<ad>.healthchecksUrl silinir (disariConfig, saveConfig); kopya döner. */
+function botSaglikCikar(cfg, topla) {
+  if (!cfg || !cfg.bindirme || typeof cfg.bindirme !== 'object') return cfg;
+  const bindirme = {};
+  for (const [ad, v] of Object.entries(cfg.bindirme)) {
+    if (v && typeof v === 'object' && 'healthchecksUrl' in v) {
+      const { healthchecksUrl, ...kalan } = v;
+      if (topla && healthchecksUrl) topla(ad, healthchecksUrl);
+      bindirme[ad] = kalan;
+    } else bindirme[ad] = v;
+  }
+  return { ...cfg, bindirme };
+}
 const guvenlikKur = require('./lib/guvenlik');
 
 /**
@@ -127,6 +150,8 @@ function loadConfig() {
     if (gizli.telegram && gizli.telegram.botToken) {
       cfg.telegram = { ...(cfg.telegram || {}), botToken: gizli.telegram.botToken };
     }
+    // 68.8 bot başına sağlık sinyali: diskte secrets.json bindirmeSaglik → bellekte config.bindirme.<ad>.healthchecksUrl
+    botSaglikSirlariniYukle(cfg, gizli);
     return cfg;
   } catch (e) {
     // Y5: yarım kalmış config.json sonsuz çökme döngüsü yapıyordu — son iyi kopyadan (.yedek) açılır, açılışta alarm.
@@ -190,8 +215,13 @@ function mergeConfig(current, patch) {
 function saveConfig(cfg) {
   // Anahtarlar diske ayrı yazılır; `config.json` her zaman boş alanla kaydedilir.
   const gizli = loadSecrets();
-  const temiz = { ...cfg };
   let degisti = false;
+  // 68.8: bot başına sağlık adresi ayarlar dosyasına GİRMEZ — secrets.json bindirmeSaglik'e (sır).
+  const temiz = botSaglikCikar({ ...cfg }, (ad, url) => {
+    if (ad === 'hucum') return;
+    const bs = gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {};
+    if (bs[ad] !== url) { gizli.bindirmeSaglik = { ...bs, [ad]: url }; degisti = true; }
+  });
 
   for (const k of SECRET_KEYS) {
     if (temiz[k]) {
@@ -260,9 +290,12 @@ const wss = new WebSocket.Server({ server, verifyClient: guvenlik.wsDogrula });
 
 /** Panele ve WebSocket'e giden config: sırlar çıkarılmış. */
 const disariConfig = () => {
-  const d = guvenlikKur.disariVer(config, SECRET_KEYS);
+  const d = guvenlikKur.disariVer(botSaglikCikar(config), SECRET_KEYS);
   const tg = config.telegram || {};
   d.sirlar.telegramBotToken = !!tg.botToken;
+  // 68.8: bot başına sağlık sinyali — yalnız "kayıtlı mı" (Hücum = eski healthchecksUrl).
+  const { botUrl } = require('./lib/saglikSinyali');
+  d.sirlar.botSaglik = Object.fromEntries([...new Set(['hucum', 'denge', ...Object.keys(config.bindirme || {})])].map(ad => [ad, !!botUrl(config, ad)]));
   // Karar Ö18 / denetim A-04: chat id gizli bilgi sayılmaz (config.json'da durur) ama panelde MASKELİ ("12••••89").
   d.sirlar.telegramChatId = !!tg.chatId;
   if (d.telegram) d.telegram = { ...d.telegram, botToken: '', chatId: guvenlikKur.chatIdMaskele(tg.chatId) };
@@ -599,7 +632,7 @@ function canliKapiDurum(ad) {
   let kapilar = null;
   try { kapilar = JSON.parse(fs.readFileSync(CANLI_KAPILAR_DOSYA, 'utf8')); } catch { /* yok/bozuk = onay yok */ }
   return canliKapi.denetle({ simdi: Date.now(), ad, tavan: bindirmeAyar(ad).canliSermayeTavani, kapilar,
-    anahtarVar: !!(config.apiKey && config.apiSecret), saglikUrl: config.healthchecksUrl || '', arastirma: ARASTIRMA_MODU,
+    anahtarVar: !!(config.apiKey && config.apiSecret), saglikUrl: botSaglikUrl(config, ad), arastirma: ARASTIRMA_MODU,   // 68.8: o botun KENDİ adresi
     digerCanli: Object.values(bindirmeler).filter(b => b && b.mod === 'canli').map(b => b.ad) });
 }
 function canliKapiGerekli(ad) { const k = canliKapiDurum(ad); if (!k.izin) throw new Error(canliKapi.metin(k)); return k; }
@@ -615,9 +648,13 @@ const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ozetDosy
  *   · bot    : yalnız portföy botunun günlük çalışması pingler. Sunucu kalp atışı AYNI URL'ye
  *              gitseydi, sunucu açık ama bot durmuş/takılmışken check hiç düşmezdi (asıl yakalanacak durum).
  *   · sunucu : isteğe bağlı ikinci check; sunucu açıkken günde bir ping.
+ * 68.8 BOT BAŞINA: her bot KENDİ check'ine (lib/saglikSinyali.js botUrl) — Hücum eski `healthchecksUrl` (geri uyum), Denge
+ *   `bindirme.denge.healthchecksUrl`. Önceden iki bot aynı URL'ye ping atıyordu: biri durunca öbürünün başarı ping'i check'i
+ *   "up" tutardı. Denge'nin adresi yoksa Denge ping GÖNDERMEZ (Hücum'unkine de). `saglikBot` = Hücum'unki (eski ad).
  */
-const { SaglikSinyali, urlGecerli: saglikUrlGecerli } = require('./lib/saglikSinyali');
-const saglikBot = new SaglikSinyali({ ad: 'sağlık sinyali (bot)', urlFn: () => config.healthchecksUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
+const { SaglikSinyali, urlGecerli: saglikUrlGecerli, botUrl: botSaglikUrl } = require('./lib/saglikSinyali');
+const saglikBotlar = Object.fromEntries(BINDIRME_ADLAR.map(ad => [ad, new SaglikSinyali({ ad: `sağlık sinyali (${bindirmeArastirma.STRATEJILER[ad].ad})`, urlFn: () => botSaglikUrl(config, ad), kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) })]));
+const saglikBot = saglikBotlar.hucum;
 const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn: () => config.healthchecksSunucuUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
 const bindirmeAyar = (ad) => ({ mod: 'kagit', sermayeTavani: 10000, kagitBakiye: 10000, k: 15, demoSermayeTavani: 1000, kucukSermaye: 'oto', ...(((config.bindirme || {})[ad]) || {}) });
 const KUCUK_SECIMLER = { oto: 'oto', acik: true, kapali: false };
@@ -648,7 +685,7 @@ function bindirmeKur(ad, mod) {
   const btcAyak = btcAyakSec(a, mod, ad);
   const y = new CanliYurutucu({ dizin, maxEmirNominal: 3 * tavan, maxPozisyonNominal: 3 * tavan, cokluVarlik: btcAyak === 'coklu', kaydet: (s, m) => kaydet(s, `borsa: ${m}`) });
   const bot = new BindirmeBot(y, { ad, dizin, sermayeTavani: tavan, evren: { k: a.k }, kaydet, mod,
-    btcAyak, bildirici: portfoyBildirici, golgeDosya: GOLGE_DOSYA, saglik: saglikBot,
+    btcAyak, bildirici: portfoyBildirici, golgeDosya: GOLGE_DOSYA, saglik: saglikBotlar[ad],   // 68.8: bot başına check (Hücum: saglikBot)
     kucukSermaye: a.kucukSermaye === true || a.kucukSermaye === false ? a.kucukSermaye : 'oto',
     hesapKesicisi: canliMi ? { uyari: 0.30, acil: 0.40 } : null,   // Ö6: yalnız gerçek parada
     kapiFn: canliMi ? () => canliKapiDurum(ad) : null });            // denetim #2: kapı çalışırken de denetlenir
@@ -1622,6 +1659,32 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
   } catch (err) { borsaHata(res, err); }
 });
 
+/**
+ * 68.8 KÂĞIT HESABI SIFIRLA (TEMİZ BAŞLA) — lib/live/kagitSifirla.js. Yalnız kâğıt modda ve bot durmuşken (yoksa 409); gövde
+ * { onay: 'SIFIRLA' }. Botun dizini (data/live/<ad>) SİLİNMEZ: `<ad>-onceki-<UTC zaman>` yedeğine taşınır; bot taze durumla yeniden
+ * kurulur (sermaye = kagitBakiye; son gün yok → ilk çalışmada kaçırılan gün telafisi yok). Demo / canlı dizinine dokunmaz.
+ */
+const kagitSifirlaLib = require('./lib/live/kagitSifirla');
+app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
+  const b = bindirmeBul(req, res); if (!b) return;
+  try {
+    const durum = { ad: b.bot.adGorunen || b.ad, mod: b.mod, calisiyor: !!b.bot.durum.calisiyor, dizin: b.dizin, kok: CANLI_DIZIN };
+    const e = kagitSifirlaLib.engel(durum);
+    if (e) return res.status(409).json({ success: false, error: e });
+    if (String((req.body || {}).onay || '').trim().toLocaleUpperCase('tr-TR') !== kagitSifirlaLib.ONAY) return res.status(400).json({ success: false, error: 'onay eksik: gövdede { onay: "SIFIRLA" } olmalı' });
+    if (b.y.borsa) b.y.baglantiyiKes();
+    if (b.bot.zamanlayici) b.bot.durdur();
+    const r = kagitSifirlaLib.sifirla({ ...durum, simdi: Date.now() });
+    bindirmeler[b.ad] = bindirmeKur(b.ad, 'kagit');
+    const yedekAd = r.yedek ? path.basename(r.yedek) : null;
+    db.addLog('WARN', `[${b.ad}] kâğıt hesap sıfırlandı (temiz başlangıç, sermaye ${bindirmeAyar(b.ad).kagitBakiye} USDT)${yedekAd ? ` — eski kayıtlar data/live/${yedekAd}` : ''}`);
+    res.json({ success: true, yedek: yedekAd, sermaye: bindirmeAyar(b.ad).kagitBakiye, bot: bindirmeler[b.ad].bot.ozet() });
+  } catch (err) {
+    if (err && err.kod === 409) return res.status(409).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: `kâğıt hesap sıfırlanamadı (bot olduğu gibi kaldı): ${err.message}` });
+  }
+});
+
 app.post('/api/bindirme/:ad/baslat', async (req, res) => {
   const b = bindirmeBul(req, res); if (!b) return;
   try {
@@ -2033,6 +2096,24 @@ app.post('/api/secrets', (req, res) => {
       return res.status(400).json({ success: false, error: `${k} biçimi geçersiz (16–128 harf/rakam)` });
     }
   }
+  // 68.8: bot başına sağlık adresi { botSaglik: { denge: url | '' } } — Hücum'unki healthchecksUrl (geri uyum).
+  const botGovde = govde.botSaglik && typeof govde.botSaglik === 'object' && !Array.isArray(govde.botSaglik) ? govde.botSaglik : null;
+  if (botGovde) {
+    for (const [ad, v] of Object.entries(botGovde)) {
+      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return res.status(400).json({ success: false, error: `botSaglik.${ad}: bilinmeyen bot (Hücum'un adresi healthchecksUrl alanında)` });
+      const u = typeof v === 'string' ? v.trim() : '';
+      if (u && !saglikUrlGecerli(u)) return res.status(400).json({ success: false, error: `${bindirmeArastirma.STRATEJILER[ad].ad} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)` });
+    }
+  }
+  {
+    // Kayıttan SONRAKİ adresler birbirinden farklı olmalı: her bot ve sunucu kalp atışı AYRI check (aynı URL bir botun durmasını gizler).
+    const yeni = (k, eski) => (k in govde ? (typeof govde[k] === 'string' ? govde[k].trim() : '') : eski);
+    const sonra = [['Hücum', yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
+      ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [bindirmeArastirma.STRATEJILER[a].ad, botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
+    for (let i = 0; i < sonra.length; i++) for (let j = i + 1; j < sonra.length; j++) {
+      if (sonra[i][1] === sonra[j][1]) return res.status(400).json({ success: false, error: `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.` });
+    }
+  }
   const degisen = [];
   for (const k of SECRET_KEYS) {
     if (!(k in govde)) continue;
@@ -2041,13 +2122,25 @@ app.post('/api/secrets', (req, res) => {
     config[k] = v;
     degisen.push(k);
   }
+  if (botGovde) {
+    for (const [ad, v] of Object.entries(botGovde)) {
+      const u = typeof v === 'string' ? v.trim() : '';
+      const bs = { ...(gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {}) };
+      if (u) bs[ad] = u; else delete bs[ad];
+      if (Object.keys(bs).length) gizli.bindirmeSaglik = bs; else delete gizli.bindirmeSaglik;
+      const onceki = { ...(((config.bindirme || {})[ad]) || {}) };
+      if (u) onceki.healthchecksUrl = u; else delete onceki.healthchecksUrl;
+      config.bindirme = { ...(config.bindirme || {}), [ad]: onceki };
+      degisen.push(`botSaglik.${ad}`);
+    }
+  }
   saveSecrets(gizli);
   engine.updateConfig(config);
   // Değer DEĞİL yalnız hangi alanın değiştiği loglanır.
-  const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k));
-  const anahtarDegisti = degisen.some(k => !SAGLIK_URL_KEYS.includes(k));
+  const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k) || k.startsWith('botSaglik.'));
+  const anahtarDegisti = degisen.some(k => !SAGLIK_URL_KEYS.includes(k) && !k.startsWith('botSaglik.'));
   if (anahtarDegisti) db.addLog('INFO', 'Borsa API anahtarları güncellendi.');
-  if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: bot ${saglikBot.ayarli() ? 'ayarlı' : 'yok'} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
+  if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: ${BINDIRME_ADLAR.map(a => `${bindirmeArastirma.STRATEJILER[a].ad} ${saglikBotlar[a].ayarli() ? 'ayarlı' : 'yok'}`).join(' · ')} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
   res.json({ success: true, sirlar: disariConfig().sirlar });
 });
 
@@ -2055,6 +2148,7 @@ app.post('/api/config', (req, res) => {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
   const govde = req.body && req.body.telegram ? { ...req.body, telegram: guvenlikKur.chatIdYamaTemizle(req.body.telegram) } : req.body;
   config = mergeConfig(config, guvenlikKur.yamaTemizle(govde, SECRET_KEYS));
+  botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
   saveConfig(config);
   engine.updateConfig(config);
   db.addLog('INFO', 'Sistem ve strateji parametreleri güncellendi.');
@@ -3260,21 +3354,22 @@ app.post('/api/strategy-scan', async (req, res) => {
  * "up" olur; URL yanlışsa (404) burada görünür. Yanıtta URL YOK, yalnız sonuç.
  */
 app.post('/api/saglik/test', async (req, res) => {
-  const sonuc = {};
-  for (const [ad, s] of [['bot', saglikBot], ['sunucu', saglikSunucu]]) {
-    if (!s.ayarli()) { sonuc[ad] = { ayarli: false }; continue; }
-    const r = await s.ping('basari');
-    sonuc[ad] = { ayarli: true, ok: r.ok, hata: r.hata || null, deneme: r.deneme };
-  }
-  const herhangi = sonuc.bot.ayarli || sonuc.sunucu.ayarli;
-  const hepsiOk = ['bot', 'sunucu'].every(a => !sonuc[a].ayarli || sonuc[a].ok);
-  if (herhangi) db.addLog(hepsiOk ? 'SUCCESS' : 'WARN', `Sağlık sinyali testi: bot ${sonuc.bot.ayarli ? (sonuc.bot.ok ? 'gönderildi' : `başarısız (${sonuc.bot.hata})`) : 'ayarlı değil'} · sunucu ${sonuc.sunucu.ayarli ? (sonuc.sunucu.ok ? 'gönderildi' : `başarısız (${sonuc.sunucu.hata})`) : 'ayarlı değil'}`);
+  // 68.8: her botun KENDİ check'i ayrı denenir (sonuc.botlar.<ad>); sonuc.bot = Hücum (eski panel / geri uyum).
+  const tek = async (s) => { if (!s.ayarli()) return { ayarli: false }; const r = await s.ping('basari'); return { ayarli: true, ok: r.ok, hata: r.hata || null, deneme: r.deneme }; };
+  const botlar = {};
+  for (const ad of BINDIRME_ADLAR) botlar[ad] = await tek(saglikBotlar[ad]);
+  const sonuc = { bot: botlar.hucum, botlar, sunucu: await tek(saglikSunucu) };
+  const hepsi = [...BINDIRME_ADLAR.map(a => [bindirmeArastirma.STRATEJILER[a].ad, botlar[a]]), ['sunucu', sonuc.sunucu]];
+  const herhangi = hepsi.some(([, x]) => x.ayarli);
+  const hepsiOk = hepsi.every(([, x]) => !x.ayarli || x.ok);
+  if (herhangi) db.addLog(hepsiOk ? 'SUCCESS' : 'WARN', `Sağlık sinyali testi: ${hepsi.map(([a, x]) => `${a} ${x.ayarli ? (x.ok ? 'gönderildi' : `başarısız (${x.hata})`) : 'ayarlı değil'}`).join(' · ')}`);
   res.status(!herhangi ? 400 : 200).json({ success: herhangi && hepsiOk, sonuc,
     error: !herhangi ? 'Ping URL\'si girilmemiş (Ayarlar → Sağlık sinyali).' : (hepsiOk ? null : 'En az bir ping gönderilemedi — URL\'yi ve internet bağlantısını kontrol edin.') });
 });
 
 app.get('/api/saglik/durum', (req, res) => {
-  res.json({ success: true, bot: saglikBot.durum(), sunucu: saglikSunucu.durum(), telegramKomut: telegramYoklayici.durum() });
+  res.json({ success: true, bot: saglikBot.durum(), botlar: Object.fromEntries(BINDIRME_ADLAR.map(a => [a, { ad: bindirmeArastirma.STRATEJILER[a].ad, ...saglikBotlar[a].durum() }])),
+    sunucu: saglikSunucu.durum(), telegramKomut: telegramYoklayici.durum() });
 });
 
 /**
@@ -3312,7 +3407,7 @@ const telegramYoklayici = new TelegramYoklayici({
     portfoyBotlari: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]),
     bildirici: portfoyBildirici,
     get yoklayici() { return telegramYoklayici; },
-    saglik: { bot: saglikBot, sunucu: saglikSunucu },
+    saglik: { bot: saglikBot, botlar: saglikBotlar, sunucu: saglikSunucu },   // 68.8: bot başına check
     // /ileri (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz.
     ileri: () => {
       const HD = require('./lib/ileri/hucumDengeEsikleri');

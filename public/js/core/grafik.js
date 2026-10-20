@@ -20,6 +20,9 @@
  *     isinma: { bas, bit, ad? }            gri gölge: göstergelerin dolduğu, işlem yapılmayan baş dönem (B-28)
  *     dusus:  true                         altta düşüş şeridi
  *     isaretler: [{ t, tur: "al"|"sat", etiket }]  alım ▲ / satım ▼ (61.4)
+ *     dikeyler: [{ t, etiket, vurgu? }]     68.8 dikey kesikli çizgi (portföy botu karar uygulama günleri); vurgu: true → kalın renkli
+ *     dikeyEtiketi: 'Karar günü'           lejant adı
+ *     imlecFn: (t | null, i) → void        68.8 imleç bir günün üstündeyken (t ms) / çıkınca (null) — sayfa ayrıntıyı grafiğin altına yazar
  *     ad, birim: '$', etiket: 'Strateji', bantEtiketi
  *   })
  *   AG.grafik.bootstrapBant(degerler, { n, blok, tohum })  → { alt, ust }  (saf)
@@ -278,6 +281,13 @@
       parcalar.push(svg('path', { class: z.tur === 'al' ? 'grf-isaret-al' : 'grf-isaret-sat', d }, [svg('title', { text: `${gunStr(seri[z.i].t)} · ${z.tur === 'al' ? 'alım' : 'satım'}: ${z.etiket.join(', ')}` })]));
     }
 
+    // 4c. Dikey günler (68.8): karar uygulama günleri — çizim alanı boyunca kesikli; vurgulu olan kalın ve renkli.
+    const dikeyler = (veri.dikeyler || []).map(d => ({ t: zaman(d.t), etiket: d.etiket || '', vurgu: !!d.vurgu })).filter(d => sayiMi(d.t) && d.t >= t0 && d.t <= t1);
+    for (const d of dikeyler) {
+      const xx = x(d.t).toFixed(1);
+      parcalar.push(svg('line', { class: d.vurgu ? 'grf-dikey grf-dikey-vurgu' : 'grf-dikey', x1: xx, x2: xx, y1: ustB, y2: ustB + anaH }, [svg('title', { text: `${gunStr(d.t)} · ${d.etiket}` })]));
+    }
+
     // 5. Düşüş şeridi.
     let enDerin = 0;
     if (dususVar) {
@@ -321,8 +331,12 @@
       imlecMetin.setAttribute('x', (sagda ? xx - 6 : xx + 6).toFixed(1));
       imlecMetin.setAttribute('text-anchor', sagda ? 'end' : 'start');
       imlecCizgi.classList.remove('is-hidden'); imlecMetin.classList.remove('is-hidden');
+      if (typeof veri.imlecFn === 'function') { try { veri.imlecFn(seri[i].t, i); } catch (e) { /* sayfa ayrıntısı yazılamadı: imleç yine çalışır */ } }
     };
-    const gizle = () => { imlecCizgi.classList.add('is-hidden'); imlecMetin.classList.add('is-hidden'); };
+    const gizle = () => {
+      imlecCizgi.classList.add('is-hidden'); imlecMetin.classList.add('is-hidden');
+      if (typeof veri.imlecFn === 'function') { try { veri.imlecFn(null, -1); } catch (e) { /* */ } }
+    };
     yuzey.addEventListener('pointermove', imlec);
     yuzey.addEventListener('pointerleave', gizle);
     parcalar.push(imlecCizgi, imlecMetin, yuzey);
@@ -339,6 +353,7 @@
       ...kiyas.map(k => lj(k.vurgu ? 'grf-lj-kiyas grf-lj-vurgu' : k.renk ? `grf-lj-kiyas grf-lj-r${k.renk}` : 'grf-lj-kiyas', k.ad)),
       isaretler.some(z => z.tur === 'al') ? lj('grf-lj-al', 'Alım') : null,
       isaretler.some(z => z.tur === 'sat') ? lj('grf-lj-sat', 'Satım') : null,
+      dikeyler.length ? lj('grf-lj-dikey', veri.dikeyEtiketi || 'Karar günü') : null,
       krizler.length ? lj('grf-lj-kriz', 'Kriz dönemi') : null,
       isinma ? lj('grf-lj-isinma', 'Isınma (işlem yok)') : null,
       dususVar ? lj('grf-lj-dusus', 'Tepeden düşüş') : null,
@@ -348,7 +363,7 @@
     kap.__grafik = { veri, genislik: W };
     kayitli.add(kap);
     boyutBagla();
-    return { genislik: W, yukseklik: H, nokta: seri.length, log, bant: !!bant, kriz: krizler.length, isinma: !!isinma, kiyas: kiyas.length, isaret: isaretler.length, enDerin };
+    return { genislik: W, yukseklik: H, nokta: seri.length, log, bant: !!bant, kriz: krizler.length, isinma: !!isinma, kiyas: kiyas.length, isaret: isaretler.length, dikey: dikeyler.length, enDerin };
   }
 
   /**

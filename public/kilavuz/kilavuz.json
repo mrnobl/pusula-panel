@@ -1,5 +1,5 @@
 {
-  "surum": "68.7",
+  "surum": "68.8",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -20,6 +20,7 @@
     { "id": "islem-defterim", "baslik": "İşlem defteri (kendi kripto ve FX işlemlerin)", "grup": "Ekranlar", "dosya": "bolumler/islem-defterim.md" },
     { "id": "kur-cevirici", "baslik": "Kur çevirici", "grup": "Ekranlar", "dosya": "bolumler/kur-cevirici.md" },
     { "id": "botlar", "baslik": "Botlar", "grup": "Ekranlar", "rota": "botlar", "dosya": "bolumler/botlar.md", "dosyalar": ["js/pages/botlar.js", "js/pages/botDil.js", "js/pages/bindirmeIslem.js", "js/pages/bindirme.js", "js/pages/botPerformans.js"] },
+    { "id": "portfoy-botlari", "baslik": "Portföy botları (QQQ M10 · BIST M10 · 837)", "grup": "Ekranlar", "dosya": "bolumler/portfoy-botlari.md", "dosyalar": ["js/pages/portfoyBotlari.js"] },
     { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js"] },
     { "id": "hesaplar", "baslik": "Bot hesabı (Botlar › Hesap)", "grup": "Ekranlar", "dosya": "bolumler/hesaplar.md", "dosyalar": ["js/pages/hesaplar.js", "js/pages/borsa.js"] },
 
@@ -54,6 +55,14 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "68.8", "tarih": "2026-10-20",
+      "yeni": [
+        "Portföy botları (QQQ M10, BIST M10, 837) Botlar menüsünde, her biri kendi sayfasında: grafikte nerede aldı / sattı, karar defteri, işlem geçmişi, kıyas.",
+        "Sağlık sinyali bot başına: Denge için Ayarlar › Bildirimler'de ayrı adres; iki bot aynı adresi kullanamaz.",
+        "Kâğıt kipindeki bot için \"Kâğıt hesabı sıfırla (temiz başla)\": eski kayıtlar yedek klasöre taşınır."
+      ]
+    },
     {
       "surum": "68.7", "tarih": "2026-10-20",
       "yeni": [

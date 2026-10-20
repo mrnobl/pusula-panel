@@ -69,15 +69,17 @@ Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "ince
 
 ![Sağlık sinyali (adresler görüntüde gizli)](ekran:ayarlar-saglik-1400)
 
-1. healthchecks.io'da ücretsiz hesap açın ve **iki** kontrol oluşturun: "Pusula bot" (Period 1 gün, Grace 3 saat) ve "Pusula sunucu".
-2. İki ping adresini **Bot ping URL'si** ve **Sunucu kalp atışı URL'si** alanlarına yazın, kaydedin, **Test**.
-3. healthchecks.io'da iki kontrol de "up" olmalı. Bot günlük çalışmasını yapmazsa ya da bilgisayar kapanırsa healthchecks size haber verir — Telegram'ın yetişemediği durumlar için "ölü adam anahtarı".
+1. healthchecks.io'da ücretsiz hesap açın ve kontrolleri oluşturun: **"Pusula Hücum"** (Period 1 gün, Grace 3 saat), **"Pusula Denge"** (aynı ayar — Denge çalışıyorsa) ve **"Pusula sunucu"** (Period 1 saat, Grace 1 saat). Ücretsiz plan bunlara yeter.
+2. Ping adreslerini **Hücum ping URL'si**, **Denge ping URL'si** ve **Sunucu kalp atışı URL'si** alanlarına yazın, kaydedin, **Test sinyali gönder**. Test her adresi ayrı dener ve satır satır yazar (Hücum · Denge · Sunucu kalp atışı).
+3. healthchecks.io'da kontrollerin hepsi "up" olmalı. Bir bot günlük çalışmasını yapmazsa ya da bilgisayar kapanırsa healthchecks size haber verir — Telegram'ın yetişemediği durumlar için "ölü adam anahtarı".
 
-İki adres bilinçli olarak ayrıdır: sunucu açık ama bot durmuşsa yalnız bot kontrolü düşer.
+Formun altındaki durum satırı her botu ayrı gösterir: adres kayıtlı mı ve **son ping** ne zaman gitti (gönderildi / GÖNDERİLEMEDİ), ayrıca sunucu kalp atışı.
+
+**Her bot kendi check'ine (68.8):** 68.8'e kadar Hücum ve Denge **aynı** adrese sinyal gönderiyordu; biri durduğunda öbürünün başarılı sinyali check'i "up" tuttuğu için durma fark edilmiyordu. Artık Hücum eski alanı (**Hücum ping URL'si**) kullanır, Denge **kendi** adresini. **Denge'nin adresi boşsa Denge hiç sinyal göndermez** — Hücum'un check'ine de göndermez; yani Denge'yi izlemek için healthchecks.io'da **ikinci bir ücretsiz check** açıp adresini girmeniz gerekir. Aynı adres iki alana yazılamaz (panel ve sunucu reddeder): her bot ve sunucu kalp atışı ayrı check olmalı — sunucu açık ama bir bot durmuşsa yalnız o botun kontrolü düşer.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 
-- Bot token ve healthchecks adresleri **sırdır**: `data/secrets.json`'a yazılır, panelde gösterilmez, `config.json`'a girmez.
+- Bot token ve healthchecks adresleri (Denge'ninki dahil) **sırdır**: `data/secrets.json`'a yazılır, panelde gösterilmez, `config.json` / `ayarlar.json`'a girmez.
 - **Chat id** gizli bilgi sayılmaz: `config.json`'da durur, ama panelde **maskeli** gösterilir.
 - **Canlı hesap izni** (`canliIzin`) ve canlı / Kalkan emir-sermaye tavanları (`canli`, `kalkan`) bu ekrandan ya da panelin herhangi bir kaydından **değiştirilemez**: sunucu bu alanları her kayıtta yok sayar. Yalnız sunucuda ayar dosyası elle düzenlenerek açılır: veri klasöründeki `ayarlar.json` (68.0 öncesinden kalan, henüz ayar kaydı yapılmamış kurulumda kökteki `config.json`); değişiklik Pusula yeniden başlayınca geçerli olur (bkz. [Bot hesabı](#/kilavuz/hesaplar/anahtar)).
 - **Araştırma kopyasında** (bot sunucudayken bu bilgisayarda) bu ekrandaki **bütün kayıtlar kilitlidir** (Araştırma'daki piyasa verisi ve izleme listesi de): Telegram "Ayarları kaydet" ve test, sağlık sinyali kaydet/kaldır/test; sunucu da reddeder. Telegram bu bilgisayarda bilinçli kapalıdır ve bu kapalılık `config.json`'a asla yazılmaz — sunucudaki ayar korunur.

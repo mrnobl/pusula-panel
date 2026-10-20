@@ -2200,6 +2200,20 @@
 .grf-isaret-sat { fill: var(--neg); stroke: var(--surface-1); stroke-width: 1; }
 .grf-lj-al { width: 10px; background: var(--pos); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .grf-lj-sat { width: 10px; background: var(--neg); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+/* 68.8 dikey günler (portföy botu karar uygulama günleri); vurgulu = Karar defteri › Bu günü grafikte göster */
+.grf-dikey { stroke: var(--chart-notr); stroke-width: 1; stroke-dasharray: 2 3; }
+.grf-dikey.grf-dikey-vurgu { stroke: var(--chart-2); stroke-width: 2.5; stroke-dasharray: none; }
+.grf-lj-dikey { width: 2px; height: 12px; background: var(--chart-notr); }
+
+/* 68.8 Botlar › portföy botları (js/pages/portfoyBotlari.js) — mevcut bot kartı / mp-* başlık dili; bloklar alt alta */
+#tab-botlar.pbot-acik #botGorunumler, #tab-botlar.pbot-acik #botSekmeler, #tab-botlar.pbot-acik #botPerformans, #tab-botlar.pbot-acik [data-bot-gorunum-kap] { display: none; }
+.pbot-kart { display: flex; flex-direction: column; gap: var(--sp-3); }
+.pbot-kart > .ana-sayilar { margin-top: var(--sp-1); }
+.pbot-grafik { min-width: 0; }
+.pbot-karar { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-1); padding: var(--sp-3); margin-top: var(--sp-3); min-width: 0; }
+.pbot-karar-sirada { border-style: dashed; }
+.pbot-karar-tablo { margin-top: var(--sp-2); }
+.pbot-nakit td { color: var(--text-soft); }
 
 /* Backtest: alt sekmeler + görünüme göre form düğmeleri / sağ sütun. */
 .bt-alt-sekme { margin-left: auto; }

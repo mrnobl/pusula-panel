@@ -739,19 +739,22 @@ function bindFormEvents() {
     e.preventDefault();
     const govde = {};
     const bot = (document.getElementById('inpHcUrl')?.value || '').trim();
+    const denge = (document.getElementById('inpHcUrlDenge')?.value || '').trim();   // 68.8: Denge kendi check'i
     const sunucu = (document.getElementById('inpHcSunucuUrl')?.value || '').trim();
     if (bot) govde.healthchecksUrl = bot;
+    if (denge) govde.botSaglik = { denge };
     if (sunucu) govde.healthchecksSunucuUrl = sunucu;
     if (!Object.keys(govde).length) { AG.bildir('Boş — kaydedilecek URL yok. Kaldırmak için "URL\'leri kaldır".', 'uyari'); return; }
-    if (bot && sunucu && bot === sunucu) { AG.bildir('İki URL aynı olamaz: sunucu kalp atışı ayrı bir check olmalı (aynı URL bot durmuşken uyarıyı gizler).', 'uyari'); return; }
+    const dolu = [bot, denge, sunucu].filter(Boolean);
+    if (new Set(dolu).size !== dolu.length) { AG.bildir('URL\'ler aynı olamaz: Hücum, Denge ve sunucu kalp atışı healthchecks.io\'da ayrı check olmalı (aynı URL bir botun durmasını gizler).', 'uyari'); return; }
     try { await saglikKaydet(govde, 'Sağlık sinyali kaydedildi. Şimdi "Test sinyali gönder" ile deneyin.'); }
     catch (err) { AG.bildir('Sunucuya ulaşılamıyor: ' + err.message, 'hata'); }
   });
 
   document.getElementById('btnHcSil')?.addEventListener('click', async () => {
-    const onay = await AG.onayla({ baslik: 'Sağlık sinyali URL\'leri kaldırılsın mı?', metin: 'Bot ve sunucu ping URL\'leri silinir; healthchecks.io\'ya sinyal gitmez ve check bir süre sonra "down" olur (healthchecks\'te check\'i duraklatmayı unutmayın).', onay: 'Kaldır', tehlikeli: true });
+    const onay = await AG.onayla({ baslik: 'Sağlık sinyali URL\'leri kaldırılsın mı?', metin: 'Hücum, Denge ve sunucu ping URL\'leri silinir; healthchecks.io\'ya sinyal gitmez ve check\'ler bir süre sonra "down" olur (healthchecks\'te check\'leri duraklatmayı unutmayın).', onay: 'Kaldır', tehlikeli: true });
     if (!onay) return;
-    try { await saglikKaydet({ healthchecksUrl: '', healthchecksSunucuUrl: '' }, 'Sağlık sinyali URL\'leri kaldırıldı.'); }
+    try { await saglikKaydet({ healthchecksUrl: '', healthchecksSunucuUrl: '', botSaglik: { denge: '' } }, 'Sağlık sinyali URL\'leri kaldırıldı.'); }
     catch (err) { AG.bildir('Sunucuya ulaşılamıyor: ' + err.message, 'hata'); }
   });
 
@@ -762,7 +765,9 @@ function bindFormEvents() {
       const r = await AG.api.saglikTest();
       const s = r.sonuc || {};
       const satir = (ad, x) => !x || !x.ayarli ? `${ad}: ayarlı değil` : (x.ok ? `${ad}: gönderildi ✓` : `${ad}: GÖNDERİLEMEDİ (${x.hata})`);
-      const metin = [satir('Bot sinyali', s.bot), satir('Sunucu kalp atışı', s.sunucu)].join('\n');
+      // 68.8: bot başına (s.botlar); eski sunucuda tek "bot" satırı
+      const botSatirlari = s.botlar ? [satir('Hücum', s.botlar.hucum), satir('Denge', s.botlar.denge)] : [satir('Bot sinyali', s.bot)];
+      const metin = [...botSatirlari, satir('Sunucu kalp atışı', s.sunucu)].join('\n');
       if (r.success) AG.bildir('✅ Test sinyali gönderildi — healthchecks.io\'da check "up" görünmeli.\n\n' + metin, 'ok');
       else AG.bildir('❌ ' + (r.error || 'Test başarısız') + (r.sonuc ? '\n\n' + metin : ''), 'hata');
     } catch (err) {

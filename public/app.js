@@ -1,7 +1,7 @@
 // Must match APP_VERSION in server.js. If the browser is serving a cached
 // app.js against a newer server, the mismatch is surfaced instead of silently
 // running outdated UI logic.
-const APP_VERSION = '68.7';
+const APP_VERSION = '68.8';
 
 // Global State
 let ws = null;
@@ -1904,13 +1904,33 @@ function saglikFormuDoldur(sirlar) {
     const a = document.getElementById(id);
     if (a) { a.value = ''; a.placeholder = kayitli ? 'kayıtlı — değiştirmek için yeni URL yapıştırın' : bos; }
   };
+  // 68.8: bot başına check — Hücum eski alan, Denge kendi alanı (sirlar.botSaglik.denge)
+  const bs = sirlar.botSaglik || {};
   yer('inpHcUrl', sirlar.healthchecksUrl, 'https://hc-ping.com/...');
+  yer('inpHcUrlDenge', bs.denge, 'https://hc-ping.com/... (Denge için ayrı check)');
   yer('inpHcSunucuUrl', sirlar.healthchecksSunucuUrl, 'https://hc-ping.com/... (boş bırakılabilir)');
   const d = document.getElementById('txtHcDurum');
-  if (d) {
-    d.textContent = `Bot sinyali: ${sirlar.healthchecksUrl ? 'kayıtlı ✓' : 'yok'} · Sunucu kalp atışı: ${sirlar.healthchecksSunucuUrl ? 'kayıtlı ✓' : 'yok'}` +
-      (sirlar.healthchecksUrl ? '' : ' — ping URL\'si girilmezse sinyal gönderilmez (bot etkilenmez).');
-  }
+  if (!d) return;
+  const ozet = saglikDurumMetni(sirlar, null);
+  d.textContent = ozet;
+  // Son ping (bot başına) sunucudan; okunamazsa yalnız "kayıtlı mı" kalır.
+  if (AG.api.saglikDurum) AG.api.saglikDurum().then(s => { if (s && s.success !== false && !kirliFormlar.has('formSaglik')) d.textContent = saglikDurumMetni(sirlar, s); }).catch(() => {});
+}
+
+/**
+ * Saf: sağlık sinyali durum satırı — her bot ayrı (kayıtlı mı + son ping), sunucu kalp atışı.
+ * `s` = GET /api/saglik/durum (68.8: botlar.<ad>; eski sunucuda yalnız bot → Hücum sayılır).
+ */
+function saglikDurumMetni(sirlar, s) {
+  const bs = sirlar.botSaglik || { hucum: !!sirlar.healthchecksUrl };
+  const once = (t) => { if (!t) return ''; const dk = Math.round((Date.now() - t) / 60000); return dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`; };
+  const son = (x) => (x && x.son ? ` · son ping ${once(x.son.zaman)} ${x.son.ok ? 'gönderildi' : 'GÖNDERİLEMEDİ'}` : x && x.ayarli ? ' · henüz ping yok' : '');
+  const botlar = (s && s.botlar) || (s && s.bot ? { hucum: s.bot } : {});
+  const AD = { hucum: 'Hücum', denge: 'Denge' };
+  const parca = Object.keys(AD).map(ad => `${AD[ad]}: ${bs[ad] ? 'kayıtlı ✓' : 'yok'}${son(botlar[ad])}`);
+  parca.push(`Sunucu kalp atışı: ${sirlar.healthchecksSunucuUrl ? 'kayıtlı ✓' : 'yok'}${son(s && s.sunucu)}`);
+  const eksik = Object.keys(AD).filter(ad => !bs[ad]).map(ad => AD[ad]);
+  return parca.join(' · ') + (eksik.length ? ` — ${eksik.join(' ve ')} için URL girilmezse o bot sinyal göndermez (bot etkilenmez; başka botun check'ine de gitmez).` : '');
 }
 
 async function saglikKaydet(govde, basari) {

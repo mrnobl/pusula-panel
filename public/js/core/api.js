@@ -222,6 +222,8 @@
     bindirmeGrafik: (ad) => al(`/api/bindirme/${q(ad)}/grafik?mumsuz=1`),
     /** 64.5: Binance bakiye kırılımı (cüzdan, K/Z, marj, teminatlar, Avbl) + pozisyonlar (mark) + açık/koşullu emirler — yalnız okuma. */
     bindirmeBinanceBakiye: (ad) => al(`/api/bindirme/${q(ad)}/binance-bakiye`),
+    /** 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda ve bot durmuşken; eski dizin <dizin>-onceki-<zaman> yedeğine taşınır. */
+    bindirmeKagitSifirla: (ad, onay) => gonder(`/api/bindirme/${q(ad)}/kagit-sifirla`, { onay }),
     /* Hesap düzeyi kapsayıcı kayıt (data/live/hesap-islemleri.jsonl) */
     hesapIslemleri: ({ hesap = '', bas = '', bit = '', sembol = '', kaynak = '', sayfa = 1 } = {}) =>
       al(`/api/hesap-islemleri?hesap=${q(hesap)}&bas=${q(bas)}&bit=${q(bit)}&sembol=${q(sembol)}&kaynak=${q(kaynak)}&sayfa=${q(sayfa)}`),
@@ -368,6 +370,10 @@
       hedefAktar: (g) => gonder('/api/tasarimci/hedef-aktar', g),
       tasarimlar: () => al('/api/tasarimci/tasarimlar'),
       tasarim: (g) => gonder('/api/tasarimci/tasarim', g),
+      /* 68.8 Botlar › portföy botları (lib/tasarimci/portfoyBot.js) — yalnız okur; geliştirme bilgisayarında sunucudan (lib/evOkuma.js) */
+      portfoyBotlar: () => al('/api/tasarimci/portfoy-botlar'),
+      portfoyBot: (id) => al(`/api/tasarimci/portfoy-bot/${q(id)}`),
+      portfoyBotFiyat: (id, s) => al(`/api/tasarimci/portfoy-bot/${q(id)}/fiyat?s=${q(s)}`),
       /* F5 (61.1) — model ↔ gerçek; yalnız GET. disariUrl indirme bağlantısıdır (a href download — fetch değil) */
       fark: (id, ay) => al(`/api/tasarimci/model/${q(id)}/fark${ay ? '?ay=' + q(ay) : ''}`),
       aylik: () => al('/api/tasarimci/aylik'),

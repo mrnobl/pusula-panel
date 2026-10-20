@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 68.8 — Portföy botları, bot başına sağlık sinyali, kâğıt hesabı sıfırlama (2026-10-20) {#s68-8}
+
+- **Portföy botları:** Botlar menüsünde **QQQ M10**, **BIST M10** ve **837 · QQQ + Hücum** artık her biri kendi sayfasında. Sayfada özet ve kıyas (aynı günlerde al-tut), portföy değeri grafiği ve karar günleri, hisse grafiğinde **nerede aldı ▲ nerede sattı ▼**, eldeki hisseler, her ay sonu kararının ne aldığı / sattığı / neden alamadığı (**karar defteri**) ve işlem geçmişi var ([Portföy botları](#/kilavuz/portfoy-botlari)).
+- **Sağlık sinyali bot başına:** Hücum ve Denge artık aynı healthchecks adresine ping atmaz. Hücum eski adresi kullanır; Denge için **Ayarlar › Bildirimler**'de ayrı bir adres girilir (girilmezse Denge ping atmaz). İki bot aynı adresi kullanamaz.
+- **Kâğıt hesabı sıfırla:** Botlar › bot › Yönetim'de, bot **kâğıt** kipinde ve dururken **"Kâğıt hesabı sıfırla (temiz başla)"**. Eski kayıtlar silinmez, yedek klasöre taşınır; bot yapılandırılmış sanal sermayeyle sıfırdan başlar, kaçırılan günleri telafi etmez. Demo ve canlı hesaplarda çalışmaz.
+
 ## 68.7 — Kişiye göre portföy, Yatırım defterinde grafikler (2026-10-20) {#s68-7}
 
 - **Hesaplar kişiye göre:** üstteki seçimde kim seçiliyse (Ben, ya da başka bir portföy sahibi) yalnız onun hesapları görünür; **Tümü** seçilince hesaplar kişi başlıkları altında gruplanır ([Portföyüm](#/kilavuz/portfoyum)).

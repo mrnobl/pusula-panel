@@ -33,7 +33,7 @@ Her sayfada olan **üst çubuk**: solda kırıntı ve sayfa adı (ör. "Günlük
 | Koruma stopu | Borsada bekleyen koruma emirleri ("N pozisyon korunuyor"; kâğıtta gerekmez) |
 | Ne yapmalı | Yalnız bot durduysa ya da onay bekliyorsa: ör. "Botlar › Denge › Başlat" |
 
-Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ayki emirler, ay sonu listesi) **Yapman gerekenler**'de yazar, ayrıntısı [Portföy](#/kilavuz/portfoy)'de.
+Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ayki emirler, ay sonu listesi) **Yapman gerekenler**'de yazar, ayrıntısı [Portföy](#/kilavuz/portfoy)'de. Modeller satırının altındaki **Portföy botları** bağlantıları (QQQ M10 · BIST M10 · 837) her modelin kâğıt hesabını bot sayfası olarak açar ([Portföy botları](#/kilavuz/portfoy-botlari)).
 
 > **Not:** Portföy hesaplarındaki tutarlar elle girilir; Binance/OKX borsa bakiyeleri salt okuma anahtarıyla Portföy toplamına kendiliğinden katılır. Model portföyler sanaldır (canlı hesap değil). Bot hesapları (kâğıt/demo) portföy toplamına katılmaz.
 

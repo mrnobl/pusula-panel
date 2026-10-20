@@ -16,6 +16,8 @@
 - **Hücum** — BTC trendi yükselişteyken BTC tutar (düşüşe dönünce nakde geçer); yanında 15 coinlik **coin sepeti**nde trend takibi ve kademeli alım (×3). Getiri öncelikli.
 - **Denge** — Hücum'un sakin hâli: BTC oranı en çok %50 + aynı coin sepeti. Gün içi riski daha düşük.
 
+Yan menüde Hücum ve Denge'nin altında **Portföy botları** ara başlığıyla üç bot daha durur: **QQQ M10**, **BIST M10**, **837 · QQQ + Hücum** — model portföylerin kâğıt hesapları, her biri kendi sayfasında ([Portföy botları](#/kilavuz/portfoy-botlari)). Bu sayfa Hücum ve Denge'yi anlatır.
+
 Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiyle 03:00 civarı) çalışır: önce kayıtlarını borsayla karşılaştırır, sonra yalnız **bugünkü hedefe** gider.
 
 ## Ne zaman kullanılır {#ne-zaman}
@@ -134,7 +136,17 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 | Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz |
 | Küçük hesap kipi | otomatik (< 5000 $) / açık / kapalı. Yalnız bot durmuşken değişir |
 | Bugünün kararını şimdi uygula | **Şimdi çalıştır** (onaylı) |
+| Kâğıt hesabı sıfırla | Yalnız **kâğıt hesapta**: **Kâğıt hesabı sıfırla (temiz başla)…** — bot durmuşken açık ([aşağıda](#/kilavuz/botlar/kagit-sifirla)) |
 | Kontroller | **Deneme (emirsiz)** bugünkü kararı emir vermeden gösterir · **Borsayla karşılaştır** · **Acil freni dene** (yalnız durmuş demo bot: dolmayacak küçük bir emir koyup acil freni sınar — demo hesaptaki TÜM pozisyonlar kapanır) |
+
+### Kâğıt hesabı sıfırla (temiz başla) {#kagit-sifirla}
+
+Kâğıt hesaptaki bir botu (ör. Denge) sıfırdan başlatmak için: önce **Durdur**, sonra Yönetim'de **Kâğıt hesabı sıfırla (temiz başla)…** ve onay. Bot yeni bir kâğıt hesapla başlar: sermaye ayarlardaki kâğıt bakiyesi (`kagitBakiye`, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş. **İlk çalışmada geçmiş günler telafi edilmez** — bot bugünkü hedefe gider ve oradan devam eder.
+
+- **Eski kayıtlar silinmez:** botun klasörü `data/live/<bot>-onceki-<tarih saat>` yedeğine taşınır (ör. `denge-onceki-20261020T083005Z`); istenirse oradan incelenir. Bildirim yedek klasörünün adını yazar.
+- **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Hücum'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
+- **Bot çalışırken** düğme pasiftir ("Önce botu durdurun"); sıfırladıktan sonra **Başlat**.
+- Telefondan ve araştırma kopyasından yapılamaz (yalnız sunucudaki masaüstü panel).
 
 Hücum'un Yönetim görünümünün altında **Demo kabul süreci** kartı da durur (aynı kart [İleri test](#/kilavuz/ileri-test)'te). İki botun salt okunur özeti (durum, hesap türü, küçük hesap kipi, hesap değeri) **Ayarlar › Botlar (özet)**'te; her satırdaki **Yönet →** buraya getirir.
 

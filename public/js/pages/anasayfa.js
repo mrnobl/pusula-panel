@@ -320,7 +320,10 @@
     doldur(k, [
       el('div', { class: 'row-between row-wrap gap-2' }, [baslik('layers', 'Modeller', yardim('modelPortfoy')), rozet ? el('span', { class: 'pf-is-sayi', text: rozet }) : null]),
       el('p', { class: 'ana-isik-satir mb-2', id: 'anaModelSatir' }, [el('span', { class: `borsa-isik borsa-isik-${isikTon}`, 'aria-hidden': 'true' }), el('span', { text: metin })]),
-      gitDugme('Modeller ›', () => portfoyAc(hedef || 'nasdaq'), 'btnAnaBuAy')
+      gitDugme('Modeller ›', () => portfoyAc(hedef || 'nasdaq'), 'btnAnaBuAy'),
+      // 68.8: modellerin kâğıt hesapları Botlar'da kendi sayfasında (js/pages/portfoyBotlari.js)
+      el('p', { class: 'hint hint-sm mb-0 mt-2', id: 'anaPortfoyBotlari' }, [el('span', { text: 'Portföy botları (kâğıt hesap): ' }),
+        ...[['m-qqq-m10', 'QQQ M10'], ['m-bist-m10', 'BIST M10'], ['m-837', '837']].flatMap(([id, ad], i) => [i ? el('span', { text: ' · ' }) : null, el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: ad })]).filter(Boolean)])
     ]);
   }
 

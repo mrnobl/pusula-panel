@@ -268,13 +268,15 @@
       pano: 'portfoy/pano', varliklar: 'portfoy/varliklar', hedefim: 'portfoy/hedefim', takvim: 'portfoy/takvim',
       kurucu: 'portfoy/sekmeler', sonuc: 'portfoy/sekmeler', varyasyon: 'portfoy/sekmeler', karsilastir: 'portfoy/sekmeler', plan: 'portfoy/tutarlari-girmek' };
     // 62.9: laboratuvar Araştırma içinde (#/arastirma/laboratuvar) — aynı Portföy alt sekme eşlemesi.
-    const hedefBolum = yol === 'portfoy' || yol === 'arastirma/laboratuvar' ? PF_ALT[portfoyAlt] : null;
+    // 68.8: Botlar › portföy botu (#/botlar/m-qqq-m10 …) → Portföy botları bölümü; Hücum/Denge → Botlar.
+    const hedefBolum = yol === 'portfoy' || yol === 'arastirma/laboratuvar' ? PF_ALT[portfoyAlt] : yol === 'botlar' && /^m-/.test(String(portfoyAlt || '')) ? 'portfoy-botlari' : null;
     if (hedefBolum && ((d && d.bolumler) || []).some(b => b.id === hedefBolum.split('/')[0])) return hedefBolum;
     return rotaBolumu(d, yol) || VARSAYILAN;
   }
   function ustHedefSimdi() {
-    const pf = AG.pages && AG.pages.portfoy && AG.pages.portfoy.aktifAlt ? AG.pages.portfoy.aktifAlt() : null;
-    return ustHedef(dizin, AG.rota && AG.rota.gecerli ? AG.rota.gecerli() : null, pf);
+    const yol = AG.rota && AG.rota.gecerli ? AG.rota.gecerli() : null;
+    const pf = yol === 'botlar' ? String((AG.rota.alt && AG.rota.alt()) || '').split('/')[0] : AG.pages && AG.pages.portfoy && AG.pages.portfoy.aktifAlt ? AG.pages.portfoy.aktifAlt() : null;
+    return ustHedef(dizin, yol, pf);
   }
   function ustDugmeTazele() {
     const b = bul('btnKilavuzUst');
@@ -325,6 +327,7 @@
     });
     // B-22: Portföy alt sekmesi değişince (js/pages/portfoy.js altSekme → ag:portfoy-alt) hedefler yenilenir.
     doc.addEventListener('ag:portfoy-alt', ustDugmeTazele);
+    doc.addEventListener('ag:rota-alt', ustDugmeTazele);   // 68.8: Botlar alt yolu (portföy botu ↔ Hücum/Denge)
     // 68.1: eklenti durumu öğrenilince (js/pages/kabuk.js) açık kılavuzun içindekileri yeniden çizilir.
     doc.addEventListener('ag:eklenti', () => { if (dizin && AG.rota && AG.rota.gecerli() === 'kilavuz') ekranAc(AG.rota.alt()); });
     try { await dizinYukle(); } catch (e) { return; /* kılavuz yoksa panel yine çalışır */ }

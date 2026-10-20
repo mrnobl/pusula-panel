@@ -235,6 +235,16 @@
 }
 .menu-alt:hover { background: var(--surface-2); color: var(--text-strong); }
 .menu-alt.is-active { background: var(--accent-soft); color: var(--text-strong); }
+/* 68.8: Botlar dalında "Portföy botları" ara başlığı (tıklanmaz; alt öğelerle aynı girinti). */
+.menu-alt-ayrac {
+  margin: var(--sp-2) 0 1px;
+  padding: 0 var(--sp-3) 0 38px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
 /* Telefon çekmecesinin perdesi: masaüstünde yok. */
 .menu-perde { display: none; }

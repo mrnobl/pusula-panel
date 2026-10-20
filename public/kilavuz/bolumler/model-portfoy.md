@@ -2,6 +2,8 @@
 
 **Portföy › Modeller** üç model portföyü tek sayfada toplar; sayfanın üstündeki **model seçicisi** aralarında geçer: **Nasdaq Momentum 10** (mavi), **BIST Momentum 10** (kırmızı), **%50 QQQ + %50 Hücum** (mor). Seçili model adreste durur ([#/portfoy/nasdaq](#/portfoy/nasdaq), [#/portfoy/bist](#/portfoy/bist), [#/portfoy/q837](#/portfoy/q837)). Model sayfasındaki her rakam **botun kendi sanal hesabındandır** (kâğıt hesap, canlı hesap değil): bot kuralına göre hisse seçer ve alır-satar; 2026-10-12 açılışından beri gerçek fiyatlarla izlenir. Senin gerçek hesabın burada değil: [Pano](#/kilavuz/portfoy/pano) ve [Hesaplar](#/kilavuz/portfoyum/kayit). Ayın açık emirleri Ana sayfadaki **Yapman gerekenler**'de de yazar.
 
+Aynı kâğıt hesaplar **Botlar › Portföy botları**'nda (QQQ M10 · BIST M10 · 837) bot gibi de izlenir — her biri kendi sayfasında: karar günleri grafikte, hisse grafiğinde nerede alıp sattığı, karar defteri (alındı / alınamadı ve nedeni) ve CSV'li işlem geçmişi ([Portföy botları](#/kilavuz/portfoy-botlari)).
+
 ## Ekran {#ekran}
 
 ![Modeller — Nasdaq Momentum 10 seçili](ekran:model-portfoy-1400)

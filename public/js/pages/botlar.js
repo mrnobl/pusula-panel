@@ -40,6 +40,8 @@
   const D = () => AG.botDil;
 
   const ADLAR = ['hucum', 'denge'];
+  /** 68.8: Botlar › Portföy botları (js/pages/portfoyBotlari.js) — Ayarlar › Botlar özetinde salt bağlantı satırı. */
+  const PORTFOY_BOTLARI = [['m-qqq-m10', 'QQQ M10'], ['m-bist-m10', 'BIST M10'], ['m-837', '837 · QQQ + Hücum']];
   const GRAFIK_MS = 5 * 60000;
   let durumZamani = 0;
   const acikMenu = {};
@@ -119,6 +121,26 @@
     finally { AG.dom.hazir(dugme); yukle(true); }
   }
 
+  /**
+   * 68.8 KÂĞIT HESABI SIFIRLA (TEMİZ BAŞLA): POST /api/bindirme/:ad/kagit-sifirla { onay: 'SIFIRLA' } — yalnız kâğıt modda ve bot
+   * durmuşken (sunucu lib/live/kagitSifirla.js denetler). Eski kayıtlar silinmez: data/live/<bot>-onceki-<zaman> yedeğine taşınır.
+   */
+  async function kagitSifirla(ad, d, dugme) {
+    const b = d.bot;
+    const v = await AG.onayla({ baslik: `${b.adGorunen}: kâğıt hesabı sıfırla (temiz başla)`, onay: 'Sıfırla', iptal: 'Vazgeç', tehlikeli: true,
+      metin: `Kâğıt hesap sıfırdan başlar: sermaye ayarlardaki kâğıt bakiyesi (kagitBakiye, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş; ilk çalışmada geçmiş günler telafi edilmez.
+Eski kayıtlar SİLİNMEZ — botun klasörü yedek klasöre taşınır (data/live/${ad}-onceki-<tarih>); istenirse oradan incelenir.
+Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
+    if (!v) return;
+    AG.dom.mesgul(dugme, '…');
+    try {
+      const r = await AG.api.bindirmeKagitSifirla(ad, 'SIFIRLA');
+      if (!r.success) throw new Error(r.error);
+      bildir(`${b.adGorunen}: kâğıt hesap sıfırlandı — temiz başlangıç (sermaye ${D().para(r.sermaye)} USDT)${r.yedek ? ` · eski kayıtlar data/live/${r.yedek}` : ''}`, 'ok');
+    } catch (e) { bildir(`Sıfırlanmadı: ${e.message}`, 'hata'); }
+    finally { AG.dom.hazir(dugme); grafikVeri[ad] = null; yukle(true); }
+  }
+
   /** O3 (62.1): borsada hesaba para yatırdıktan/çektikten sonra kayıt — bot bunu getiri saymaz. */
   async function sermayeAkisi(ad, d, dugme) {
     const b = d.bot;
@@ -191,6 +213,8 @@
       onay: m === 'canli' ? (onayli ? dugme('Emir onayını kaldır', (x) => canliOnay(ad, d, true, x), 'btn-outline-danger') : dugme('Canlı hesap emir onayı…', (x) => canliOnay(ad, d, false, x), 'btn-outline-danger')) : el('span', { class: 'hint hint-sm mb-0', text: 'yalnız canlı hesapta' }),
       para: m !== 'kagit' ? dugme('Kaydet…', (x) => sermayeAkisi(ad, d, x)) : el('span', { class: 'hint hint-sm mb-0', text: 'kâğıt hesapta gerekmez' }),
       kucuk: ksSec,
+      // 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda; bot çalışırken pasif (sunucu da 409 verir)
+      sifirla: m === 'kagit' ? (() => { const x = dugme('Kâğıt hesabı sıfırla (temiz başla)…', (y) => kagitSifirla(ad, d, y), 'btn-outline-danger'); x.setAttribute('id', `btnBotKagitSifirla-${ad}`); if (b.calisiyor) { x.disabled = true; x.setAttribute('title', 'Önce botu durdurun'); } return x; })() : null,
       calistir: dugme('Şimdi çalıştır', (x) => calistir(ad, 'calistir', x, { baslik: `${b.adGorunen}: günlük çalışma`, tehlikeli: m === 'canli',
         metin: m === 'canli' ? 'CANLI hesapta emir verilecek (BTC + coin sepeti). Canlı hesaptaki para kullanılır.' : demo ? 'Demo hesapta emir verilecek (BTC + coin sepeti). Canlı hesaba dokunulmaz.' : 'Kâğıt hesapta emir verilecek. Gerçek borsaya emir gitmez.' })),
       kontrol: el('div', { class: 'pf-dugmeler' }, [
@@ -226,8 +250,9 @@
         satir('Para yatırdım / çektim', 'para'),
         satir('Küçük hesap kipi', 'kucuk', 'kucukSermaye'),
         satir('Bugünün kararını şimdi uygula', 'calistir'),
+        h[0].sifirla ? satir('Kâğıt hesabı sıfırla', 'sifirla', 'kagit') : null,
         satir('Kontroller', 'kontrol')
-      ] })
+      ].filter(Boolean) })
     ]);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
@@ -248,7 +273,9 @@
           return el('tr', null, [el('td', { class: 'fw-semibold', text: b.adGorunen }), el('td', { text: du.metin }), el('td', { text: D().mod(d, b) }), el('td', { text: KS(b) }),
             el('td', { class: 'sayi', text: E != null ? `${D().para(E)} USDT` : '—' }),
             el('td', null, [el('a', { href: `#/botlar/${ad}/yonetim`, class: 'no-underline', text: 'Yönet →' })])]);
-        }) })
+        }).concat(PORTFOY_BOTLARI.map(([id, adG]) => el('tr', null, [el('td', { class: 'fw-semibold', text: adG }), el('td', { text: 'ay sonu kararıyla çalışır' }), el('td', { text: 'kâğıt hesap' }),
+          el('td', { text: '—' }), el('td', { class: 'sayi', text: '—' }), el('td', null, [el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: 'Aç →' })])]))) }),
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Portföy botları (model portföylerin kâğıt hesapları) yönetilmez: kararları ay sonu kuralından gelir, sermayesi Portföy › Modeller › Bu ay › Ayarlar\'da.' })
     ]);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
@@ -733,6 +760,17 @@
       ]);
     }));
   }
+  /**
+   * 68.8 PORTFÖY BOTLARI: model portföylerin kâğıt hesapları Botlar'da kendi sayfalarında (#/botlar/<model id>, yan menü
+   * Botlar › Portföy botları). Sayfa açıkken bölüme .pbot-acik konur — Hücum/Denge kapları CSS ile gizlenir (kendi
+   * is-hidden durumları bozulmaz; geri dönünce aynı görünüm açılır).
+   */
+  const portfoyBotuMu = (alt) => !!(AG.pages && AG.pages.portfoyBotlari && AG.pages.portfoyBotlari.SIRA.includes(alt));
+  function portfoyGorunumu(acik) {
+    const b = bul('tab-botlar');
+    if (b) b.classList.toggle('pbot-acik', !!acik);
+    if (!acik && AG.pages && AG.pages.portfoyBotlari && AG.pages.portfoyBotlari.acik()) AG.pages.portfoyBotlari.kapat();
+  }
   /** Yeni panel F2/F5: seçili bot + görünüm adreste (#/botlar/hucum/hesap) — yan menüde Botlar › Hücum işaretlenir, yenileme aynısını açar. */
   const GORUNUMLER = ['genel', 'hesap', 'islemler', 'yonetim'];
   let gorunum = 'genel';
@@ -782,6 +820,7 @@
   }
   function sec(ad) {
     if (!ADLAR.includes(ad)) return;
+    portfoyGorunumu(false);
     secili = ad;
     adresYaz(ad);
     try { if (global.localStorage) global.localStorage.setItem(SECILI_ANAHTAR, ad); } catch (e) { /* özel pencere */ }
@@ -840,6 +879,9 @@
     doc.addEventListener('ag:rota', (e) => {
       if (!e.detail || e.detail.bolum !== 'tab-botlar') return;
       const [alt, g] = String(e.detail.alt || '').split('/');
+      // 68.8: #/botlar/m-qqq-m10 · m-bist-m10 · m-837 → portföy botu sayfası (js/pages/portfoyBotlari.js); Hücum/Denge görünümleri gizli.
+      if (portfoyBotuMu(alt)) { portfoyGorunumu(true); AG.pages.portfoyBotlari.ac(alt); return; }
+      portfoyGorunumu(false);
       if (GORUNUMLER.includes(g)) gorunum = g;
       if (ADLAR.includes(alt) && alt !== secili) sec(alt); else adresYaz(secili);
       gorunumUygula();
@@ -854,5 +896,5 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.botlar = { yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  AG.pages.botlar = { portfoyGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);
