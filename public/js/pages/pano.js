@@ -478,8 +478,9 @@
     return kart([
       kartBas('Aylık getiri (%)'),
       yillar.length ? el('div', { class: 'pn-isi-kap', id: 'pnIsi' }, [el('div', { class: 'pn-isi' }, [
-        el('span'), ...AY_KISA.map(a => el('span', { class: 'pn-isi-bas', text: a })), el('span', { class: 'pn-isi-bas', text: 'Yıl' }),
-        ...yillar.flatMap(y => [el('span', { class: 'pn-isi-bas', text: y }), ...AY_KISA.map((_, i) => {
+        // 68.4: ilk sütun (yıl) telefonda yana kaydırınca sabit kalır (.pn-isi-sabit, css/components.css).
+        el('span', { class: 'pn-isi-sabit' }), ...AY_KISA.map(a => el('span', { class: 'pn-isi-bas', text: a })), el('span', { class: 'pn-isi-bas', text: 'Yıl' }),
+        ...yillar.flatMap(y => [el('span', { class: 'pn-isi-bas pn-isi-sabit', text: y }), ...AY_KISA.map((_, i) => {
           const a = m.get(`${y}-${String(i + 1).padStart(2, '0')}`);
           return el('span', { class: `pn-isi-hucre ${sinif(a && a.r)}${a && !a.tam ? ' pn-isi-yarim' : ''}`, title: a ? `${AY_AD[i]} ${y}: ${yuzde(a.r, 1, true)}${a.tam ? '' : ' (yarım ay)'}` : `${AY_AD[i]} ${y}: veri yok`, text: a ? isiMetni(a.r) : '' });
         }), el('span', { class: `pn-isi-hucre pn-isi-yil ${sinif(yilTop.get(y), 3)}`, title: `${y} yılı (bileşik, veri olan aylar): ${yuzde(yilTop.get(y), 1, true)}`, text: isiMetni(yilTop.get(y)) })])

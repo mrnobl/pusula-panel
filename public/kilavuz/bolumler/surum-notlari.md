@@ -2,6 +2,19 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 68.5 — Yeni bilgisayara taşıma düzeltmesi (2026-10-20) {#s68-5}
+
+- **Başka bilgisayardan taşı:** yeni kurulumda Pusula açılır açılmaz başlayan otomatik coin taraması yüzünden taşıma "bu bilgisayarda zaten kişisel veri var" diyerek reddediliyordu. Artık kurulumdan sonra kendiliğinden oluşan tarama kayıtları (tarama ayarı değiştirilmemişse ve kayıtlar 2 günden yeniyse) boş kurulum sayılır. Taşınan veride tarama kaydı varsa yerel olanlar silinmez, `makine\onceki-<zaman>` klasörüne ayrılır ([Yedek ve taşıma](#/kilavuz/yedek-tasima)).
+- **Güncelleme:** paket kurulumu ve Git, Windows PATH ayarına bağlı kalmadan Pusula'nın kendi Node.js'i ve Git'iyle çalışır.
+
+## 68.4 — Küçük açıklar: taşıma düğmesi, sabit Yıl sütunu, fiyat kodu, açılış notu (2026-10-20) {#s68-4}
+
+- **Kurulum sihirbazı:** "Başka bilgisayardan taşı" yolunda alt çubuktaki **Devam et** artık görünmez — taşıma kendi düğmeleriyle (dosya seç → şifre → önizleme → yerine koy) ilerler. Hoş geldin adımında yeni not: adımların hiçbiri paneli kullanmak için zorunlu değil, sonra Ayarlar'dan ya da Bilgi › Kurulum sihirbazı'ndan yapılabilir; tek şart, bir botu başlatmadan önce riskleri ve kullanım şartlarını onaylamak ([Kurulum sihirbazı](#/kilavuz/kurulum-sihirbazi)).
+- **Telefonda aylık getiri tabloları:** Pano'daki aylık getiri ısı haritası ve laboratuvarın "Aylık ve yıllık getiri" tablosu yana kaydırılınca **Yıl** sütunu solda sabit kalır.
+- **Portföyüm › Fiyat kodu:** var olan bir varlığın Yahoo fiyat kodu (ör. yanlış girilmiş BIST kodu için THYAO.IS, ya da BRK-B) **Gelişmiş › Varlıklar › Fiyat kodunu değiştir** ile düzeltilir. Kod kaydedilmeden önce Yahoo'da denetlenir: bulunamazsa, para birimi varlığınkinden farklıysa ya da kod başka bir varlıkta kullanılıyorsa kaydedilmez. Görünen sembol, işlemler ve geçmiş aynı kalır; fiyat geçmişi yeni koddan indirilir ([Portföyüm](#/kilavuz/portfoyum)).
+- **Portföyüm › Açılış notu:** Varlık ekle'de (her sekmede) ve listede **Düzenle**'de isteğe bağlı **Not** alanı. Not açılış kaydında saklanır, hesap kartındaki satırda soluk ve İşlem defterinin Not sütununda görünür. (67.4'te eski "Açılış bakiyesi" formu kalkarken bu alan da kaybolmuştu.)
+- **Ayarlar › Bağlantılar › Canlı hesap:** izin yazısı eski "config.json canliIzin" yerine yeni düzeni anlatır: izin veri klasöründeki `ayarlar.json`'a elle yazılır, Ayarlar sayfasından açılıp kapanmaz ([Borsa hesapları](#/kilavuz/hesaplar)).
+
 ## 68.3 — Kurulum programı, kurulum denetimi, botlarımızın sonuçları (2026-10-20) {#s68-3}
 
 - **Kurulum programı:** `Pusula-Kurulum-<sürüm>.exe` yeni bir Windows bilgisayara Pusula'yı tek dosyayla kurar — yönetici izni istemez; taşınabilir Node.js, Git ve paketler içinde. Kurulum görevleri, kısayolları, veri klasörünü (`C:Pusula-Veri`), telefon jetonunu ve uyku ayarını kendisi yapar; sonunda kurulum sihirbazı açılır. Kaldırınca **verilerin silinmez** ([Kurulum programı](#/kilavuz/kurulum-programi)).

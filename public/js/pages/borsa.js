@@ -125,7 +125,9 @@
 
   /**
    * CANLI HESAP (karar Ö16, denetim A-01): katlı "Gelişmiş — canlı hesap" bölümü. Sunucu `canliIzin` vermedikçe
-   * (config.json'da bilinçli `canliIzin: true` yok) bağlan düğmesi PASİF ve sunucu 403 verir. Canlı anahtar alanları
+   * (ayar dosyasında — 68.0'dan beri veri klasöründeki ayarlar.json, eski kurulumda kökteki config.json — bilinçli
+   * `canliIzin: true` yok) bağlan düğmesi PASİF ve sunucu 403 verir. Bayrak Ayarlar sayfasından yazılamaz (lib/guvenlik.js
+   * PANELDEN_YAZILMAZ); 68.4: ekrandaki yazı da eski "config.json" yerine bunu söyler. Canlı anahtar alanları
    * da yalnız burada (demo anahtarları ayrı katta).
    */
   function canliCiz(s) {
@@ -154,7 +156,7 @@
       el('input', { id, type: 'password', class: 'form-control', autocomplete: 'off', spellcheck: 'false' })]);
     doldur(kutu, [
       el('p', { class: `mb-3 ${izin ? 'tone-danger' : 'tone-warning'}`, text: izin
-        ? 'Canlı hesap modu bu bilgisayarda AÇIK (config.json canliIzin). Bağlanmadan önce canlı hesap şartlarını (G1–G9) yeniden okuyun.'
+        ? 'Canlı hesap modu bu bilgisayarda AÇIK: veri klasöründeki ayarlar.json dosyasına (henüz ayar kaydı yapılmamış eski kurulumda kökteki config.json\'a) elle canliIzin: true yazılmış (Ayarlar sayfasından açılıp kapanmaz; kapatmak için o satırı dosyadan silip Pusula\'yı yeniden başlatın). Bağlanmadan önce canlı hesap şartlarını (G1–G9) yeniden okuyun.'
         : 'Canlı hesap modu bilinçli olarak kapalı. En erken 5 Ocak 2027\'de, canlı hesap şartlarının (G1–G9) hepsi sağlanınca açılır; o zamana kadar bu bölüm yalnız bilgi içindir.' }),
       el('div', { id: 'canliParaDurum', class: 'mb-2' }, [el('span', { text: `Canlı anahtar: ${kayitli ? 'kayıtlı ✓' : 'yok'}` })]),
       el('div', { class: 'grid-2' }, [alan('inpLiveKey', 'Canlı API anahtarı'), alan('inpLiveSecret', 'Canlı gizli anahtar')]),

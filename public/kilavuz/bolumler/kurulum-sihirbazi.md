@@ -4,7 +4,7 @@
 
 Pusula'yı ilk kez kuran kişiyi adım adım hazırlar. **Zorunlu değildir:** kurulum tamamlanmadıysa panelin üstünde her girişte bir uyarı şeridi çıkar ("Kurulum sihirbazını aç" · "Şimdilik geç" — geç, yalnız o oturum için gizler). Sihirbaz **Bilgi › Kurulum sihirbazı**'ndan istediğin zaman açılır. Sekiz adım:
 
-1. **Hoş geldin** — Pusula nedir; verilerin yalnız bu bilgisayarda durduğu. Burada iki yol seçersin: **Yeni kurulum** (aşağıdaki adımlar) ya da **Başka bilgisayardan taşı** ([aşağıda](#/kilavuz/kurulum-sihirbazi/tasi)).
+1. **Hoş geldin** — Pusula nedir; verilerin yalnız bu bilgisayarda durduğu; adımların hiçbirinin paneli kullanmak için zorunlu olmadığı (sonra Ayarlar'dan ya da buradan yapılır — tek şart, bir botu başlatmadan önce riskleri onaylamak). Burada iki yol seçersin: **Yeni kurulum** (aşağıdaki adımlar) ya da **Başka bilgisayardan taşı** ([aşağıda](#/kilavuz/kurulum-sihirbazi/tasi)).
 2. **Riskler ve kullanım şartları** — dört madde ayrı ayrı onaylanır ([tam metin](#/kilavuz/kullanim-sartlari)). Onay verilmeden **botlar başlatılamaz** ve hesap türü değiştirilemez.
 3. **Pusula ne yapar, ne yapmaz** — para çekmez, senin yerine karar vermez, kazanç sözü vermez.
 4. **Binance demo anahtarı** — Demo Trading'de anahtar oluşturma (çekim izni kapalı), Ayarlar › Bağlantılar'a girme.
@@ -30,7 +30,7 @@ Daha önce kurulmuş bir Pusula'da (anahtarları zaten kayıtlı) uyarı şeridi
 
 Eski bilgisayarında **Ayarlar › Yedek ve taşıma › Taşıma dosyası oluştur** ile aldığın `.pusula` dosyası (ya da USB yedeği) varsa sihirbazın sekiz adımına gerek yok:
 
-1. **Hoş geldin** adımında **Başka bilgisayardan taşı**'yı seç.
+1. **Hoş geldin** adımında **Başka bilgisayardan taşı**'yı seç. Bu yolda alt çubukta **Devam et** yoktur: taşıma aşağıdaki kendi düğmeleriyle ilerler.
 2. Dosyayı seç (ya da bu bilgisayardaki tam yolunu yaz) → **Dosyayı aç**.
 3. Dosyanın şifresini yaz → **Doğrula ve önizle**: ne geleceğini, ne kadar olduğunu ve hangi sürümden geldiğini görürsün; henüz hiçbir şey değişmemiştir.
 4. **Bu bilgisayara taşı** → Pusula'yı kapatıp yeniden aç.

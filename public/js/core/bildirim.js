@@ -88,7 +88,7 @@
    * Onay penceresi. `alanlar` verilirse (60.5, telefondan acil durdurma: PIN + "DURDUR") pencerede giriş
    * kutuları çıkar; onay düğmesi her alanın `dogrula(deger)`ı doğru olana kadar KAPALIDIR ve söz
    * `{ <ad>: değer, … }` ile çözülür (vazgeçince `false`). Alansız kullanım değişmedi (true/false).
-   *   alanlar: [{ ad, etiket, tip ('text'|'password'), inputmode, ipucu, dogrula: (s) → bool }]
+   *   alanlar: [{ ad, etiket, tip ('text'|'password'), inputmode, ipucu, deger? (başlangıç değeri), dogrula: (s) → bool }]
    * `secenekler` verilirse (60.8, Portföyüm soruları) tek onay düğmesi yerine her seçenek için bir düğme çıkar; söz o seçeneğin
    * `deger`iyle çözülür. Vazgeç, Esc ve pencere dışına tıklama HER ZAMAN `false` (iptal = iptal; hiçbir seçenek seçilmiş sayılmaz).
    * Odak Vazgeç'te başlar (Enter yanlışlıkla bir seçeneği seçmesin).
@@ -114,6 +114,7 @@
           type: a.tip || 'text', class: 'form-control modal-girdi', id: `${id}A${i}`, autocomplete: 'off',
           autocapitalize: 'off', spellcheck: 'false', inputmode: a.inputmode || null, placeholder: a.ipucu || null
         });
+        if (a.deger != null) girdi.value = String(a.deger);   // 68.4: başlangıç değeri (ör. var olan fiyat kodu)
         return { a, girdi, kutu: el('label', { class: 'modal-alan', for: `${id}A${i}` }, [el('span', { class: 'modal-alan-etiket', text: a.etiket || a.ad }), girdi]) };
       });
       const gecerli = () => alanlar.every(x => typeof x.a.dogrula !== 'function' || x.a.dogrula(String(x.girdi.value || '')));

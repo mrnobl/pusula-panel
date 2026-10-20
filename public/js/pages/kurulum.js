@@ -26,6 +26,12 @@
     { id: 'acil', ad: 'Acil durdurma', durum: (d) => d.acilPin },
     { id: 'ilk-deneme', ad: 'İlk deneme (demo)' },
   ];
+  /**
+   * 68.4: hoş geldin notu. Doğruluk: sihirbaz zorunlu değil (bant "Şimdilik geç"; panel kullanılır) — tek istisna riskler onayı:
+   * onaysız bot BAŞLATILAMAZ (lib/kurulum.js). Demo anahtarı / Telegram Ayarlar'dan, telefon jetonu ve acil PIN komut satırından,
+   * her adım Bilgi › Kurulum sihirbazı'ndan yeniden açılır.
+   */
+  const ZORUNLU_DEGIL = 'Bu adımların hiçbiri paneli kullanmak için zorunlu değil; istediğini atlayıp sonra Ayarlar\'dan ya da Bilgi › Kurulum sihirbazı\'ndan yapabilirsin. Tek şart: bir botu başlatmadan önce riskleri ve kullanım şartlarını onaylaman gerekir.';
   let aktif = 0;
   let yontem = 'yeni';   // 68.1: 'yeni' | 'tasi'
   let tasimaKap = null;  // kalıcı kap: akışın durumu çizimler arasında korunur
@@ -58,6 +64,7 @@
         return [
           p('Pusula senin bilgisayarında, senin borsa hesabınla çalışan bir yazılım. Portföyünü izler, bot çalıştırır, rapor ve bildirim gönderir.'),
           p('Bütün bilgiler — borsa anahtarların, portföy kayıtların, Telegram ayarların — yalnız bu bilgisayarda durur. Yazılımı geliştirenlere hiçbir şey gönderilmez; onlardan sana yalnız güncellemeler gelir.'),
+          el('p', { class: 'kr-metin kr-zorunsuz', id: 'krZorunluDegil', text: ZORUNLU_DEGIL }),
           el('div', { class: 'kr-secimler', role: 'group', 'aria-label': 'Kurulum yolu' }, [
             secim('btnKrYeni', 'yeni', 'Yeni kurulum', 'Sekiz adım, yaklaşık 20 dakika. Her adımı sonra Bilgi › Kurulum sihirbazı\'ndan yeniden açabilirsin.'),
             secim('btnKrTasi', 'tasi', 'Başka bilgisayardan taşı', 'Eski bilgisayarındaki taşıma dosyasıyla (ya da USB yedeğiyle) her şey kendiliğinden kurulur.'),
@@ -161,6 +168,8 @@
       ? el('button', { type: 'button', class: 'btn btn-primary', id: 'btnKrOnayla', disabled: hepsi ? null : '', onclick: (e) => onayla(e.currentTarget) }, [el('span', { text: 'Onaylıyorum, devam et' })])
       : aktif === ADIMLAR.length - 1
         ? el('button', { type: 'button', class: 'btn btn-primary', id: 'btnKrBitir', disabled: k.onayli ? null : '', onclick: (e) => bitir(e.currentTarget) }, [el('span', { text: 'Kurulumu bitir' })])
+        // 68.4: "Başka bilgisayardan taşı" yolunda taşıma kendi düğmeleriyle ilerler — sihirbazın "Devam et"i gizli.
+        : aktif === 0 && yontem === 'tasi' ? null
         : el('button', { type: 'button', class: 'btn btn-primary', id: 'btnKrDevam', disabled: aktif > 1 && !k.onayli ? '' : null, onclick: () => { aktif += 1; ciz(); } }, [el('span', { text: 'Devam et' })]);
     doldur(kap, [el('div', { class: 'kr-izgara' }, [
       el('nav', { class: 'kr-adimlar', 'aria-label': 'Kurulum adımları', id: 'kurulumAdimlar' }, [
@@ -233,6 +242,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.kurulum = { yukle, ADIMLAR, _durum: { yontemAyarla: (v) => { yontem = v; }, aktifAyarla: (i) => { aktif = i; }, kAyarla: (v) => { k = v; }, dAyarla: (v) => { d = v; }, isaret } , _ciz: { ciz, icerik } };
+  AG.pages.kurulum = { yukle, ADIMLAR, ZORUNLU_DEGIL, _durum: { yontemAyarla: (v) => { yontem = v; }, aktifAyarla: (i) => { aktif = i; }, kAyarla: (v) => { k = v; }, dAyarla: (v) => { d = v; }, isaret } , _ciz: { ciz, icerik } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.kurulum;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -27,6 +27,10 @@ const arg = process.argv.slice(2);
 const deger = (ad) => { const i = arg.indexOf(ad); return i >= 0 ? arg[i + 1] : null; };
 const bekle = (ms) => new Promise(r => setTimeout(r, ms));
 const WIN = process.platform === 'win32';
+// 68.5: PATH'e bağlı kalmasın — çalışan Node'un yanındaki npm (taşınabilir kurulumda <program>\node), git taşınabilirse o.
+const NPM_CLI = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+const npmKomut = (a) => fs.existsSync(NPM_CLI) ? [process.execPath, [NPM_CLI, ...a], false] : [WIN ? 'npm.cmd' : 'npm', a, WIN];
+const GIT = (() => { try { return require('../lib/kurulumDenetimi').gitBul(KOK) || 'git'; } catch (e) { return 'git'; } })();
 
 function calistirSenk(komut, args, ops = {}) {
   const r = spawnSync(komut, args, { cwd: KOK, encoding: 'utf8', windowsHide: true, timeout: ops.sure || 180000, shell: !!ops.kabuk });
@@ -91,8 +95,8 @@ const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
   if (!onayla && !arg.includes('--kuru') && (saat >= 23 || saat < 2)) { console.log(`[${new Date().toISOString()}] gece penceresi (TR 02:00–05:00) — atlandı`); return; }
   const sonuc = await G.calistir({
     kok: KOK, onayla, kuru: arg.includes('--kuru'),
-    git: (a) => calistirSenk('git', a),
-    npmKur: () => calistirSenk(WIN ? 'npm.cmd' : 'npm', ['install', '--no-audit', '--no-fund'], { sure: 15 * 60000, kabuk: WIN }),
+    git: (a) => calistirSenk(GIT, a),
+    npmKur: () => { const [k, a, kabuk] = npmKomut(['install', '--no-audit', '--no-fund']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },
     nodeCheck: (yol) => calistirSenk(process.execPath, ['--check', yol], { sure: 30000 }),
     yenidenBaslat, saglik, bildir: telegram(), bekle
   });

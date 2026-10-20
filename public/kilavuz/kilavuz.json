@@ -1,5 +1,5 @@
 {
-  "surum": "68.3",
+  "surum": "68.5",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -54,6 +54,23 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "68.5", "tarih": "2026-10-20",
+      "yeni": [
+        "Başka bilgisayardan taşı: yeni kurulumda açılışta kendiliğinden başlayan coin taramasının kayıtları artık taşımayı engellemez (\"zaten kişisel veri var\" hatası); taşınan veride tarama varsa yereldekiler silinmez, önceki-<zaman> klasörüne ayrılır.",
+        "Güncelleme: paket kurulumu ve Git, Windows PATH ayarına bağlı kalmadan Pusula'nın kendi Node.js'i ve Git'iyle çalışır."
+      ]
+    },
+    {
+      "surum": "68.4", "tarih": "2026-10-20",
+      "yeni": [
+        "Kurulum sihirbazı: \"Başka bilgisayardan taşı\" seçilince gereksiz \"Devam et\" düğmesi görünmez (taşıma kendi düğmeleriyle ilerler); hoş geldin adımında adımların hiçbirinin zorunlu olmadığı (tek şart: bot başlatmadan önce riskler onayı) yazar.",
+        "Telefonda yana kaydırılan aylık getiri tablolarında (Pano ısı haritası, laboratuvar aylık-yıllık) Yıl sütunu sabit kalır.",
+        "Portföyüm: var olan varlığın Yahoo fiyat kodu değiştirilebilir (Gelişmiş › Varlıklar › Fiyat kodunu değiştir) — kod kaydetmeden önce Yahoo'da denetlenir, para birimi aynı olmalı.",
+        "Portföyüm: Varlık ekle ve Düzenle'de açılış kaydına isteğe bağlı Not; İşlem defterinin Not sütununda görünür.",
+        "Ayarlar › Bağlantılar › Canlı hesap: izin yazısı yeni ayar düzenini (veri klasöründeki ayarlar.json) anlatır."
+      ]
+    },
     {
       "surum": "68.3", "tarih": "2026-10-20",
       "yeni": [

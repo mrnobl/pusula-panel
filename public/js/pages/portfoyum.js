@@ -466,7 +466,7 @@
    *    eklenir (yeni hesap "Yeni hesap" kartında). Varlık yoksa arkada açılır, fiyatı indirilir: POST /hizli-ekle
    *    { kaynak: yahoo (Hisse/ETF) | tefas (Fon) | binance (Kripto) | altin (gram) | nakit (para + tutar) | elle (Diğer) }. ── */
   const hizliAlanlar = { sembol: 'inpPmHSembol', hesap: 'selPmHHesap', adet: 'inpPmHAdet', maliyet: 'inpPmHMaliyet', tarih: 'inpPmHTarih',
-    kod: 'inpPmHKod', para: 'selPmHPara', tutar: 'inpPmHTutar', eSembol: 'inpPmHESembol', ad: 'inpPmHAd', sinif: 'selPmHSinif', fiyat: 'inpPmHFiyat' };
+    kod: 'inpPmHKod', para: 'selPmHPara', tutar: 'inpPmHTutar', eSembol: 'inpPmHESembol', ad: 'inpPmHAd', sinif: 'selPmHSinif', fiyat: 'inpPmHFiyat', not: 'inpPmHNot' };
   const VE_SEKME = [['hisse', 'Hisse / ETF'], ['fon', 'Fon (TEFAS)'], ['kripto', 'Kripto'], ['altin', 'Altın (gram)'], ['nakit', 'Nakit bakiyesi'], ['diger', 'Diğer (elle fiyat)']];
   /** Yeniden çizimde yazılanlar kaybolmasın: alanları oku (yoksa önceki değer). */
   function hizliOku() {
@@ -537,6 +537,8 @@
       'Girersen kâr/zarar hesaplanır. Sonra da ekleyebilirsin.');
     const kodAlani = (etiket, ph, ipucu) => alan(etiket, girdi({ id: hizliAlanlar.kod, type: 'text', maxlength: '15', autocomplete: 'off', placeholder: ph }, o.kod), ipucu);
     const paraAlani = () => alan('Para birimi', secici({ id: hizliAlanlar.para }, paraSecenekleri(), o.para || hesapHam.para || 'USD'));
+    // 68.4: açılış kaydına isteğe bağlı not (67.4'te eski "Açılış bakiyesi" formuyla kaybolmuştu); İşlem defterinin Not sütununda görünür.
+    const notAlani = alan('Not (isteğe bağlı)', girdi({ id: hizliAlanlar.not, type: 'text', maxlength: '500', autocomplete: 'off', placeholder: 'ör. eski hesaptan aktarıldı' }, o.not), 'Açılış kaydında saklanır; İşlem defterinde görünür.');
     let ust = [], alanlar = [], not = null;
     if (s === 'hisse') {
       const adayKutusu = hizli.bulunuyor ? el('p', { class: 'hint hint-sm mb-0', text: 'Aranıyor…' })
@@ -578,7 +580,7 @@
       el('p', { class: 'hint hint-sm', text: 'Elinde ZATEN olan varlığı ve nakdi buraya gir (açılış bakiyesi). Bundan sonraki alış, satış, temettü ve para giriş/çıkışı hesap kartındaki "+ işlem" satırından.' }),
       sekmeler,
       ...ust,
-      el('div', { class: 'pf-form-izgara mt-2' }, alanlar),
+      el('div', { class: 'pf-form-izgara mt-2' }, alanlar.concat([notAlani])),
       not ? el('p', { class: 'hint hint-sm mt-2 mb-0', text: not }) : null,
       s !== 'hisse' && hizli.hata ? el('p', { class: 'tone-danger hint-sm mt-2 mb-0', role: 'alert', text: hizli.hata }) : null,
       el('div', { class: 'pf-dugmeler mt-3' }, [yazmaDugme('Ekle', (e) => hizliEkle(e.currentTarget), 'btn-primary', { id: 'btnPmHEkle' })]),
@@ -605,6 +607,7 @@
   /** 67.4 (saf): Varlık ekle sekmesi + okunan alanlar → POST /hizli-ekle gövdesi ve bildirimdeki ad ({ hata } yalnız hisse adayı yoksa). */
   function varlikGovdesi(sekme, o, aday) {
     const ortak = { hesap: o.hesap, tarih: o.tarih };
+    if (String(o.not || '').trim()) ortak.not = String(o.not).trim();
     const ad_ = { adet: o.adet, birimMaliyet: o.maliyet };
     if (sekme === 'hisse') {
       if (!aday) return { hata: 'Önce sembolü bulun ("Bul").' };
@@ -695,7 +698,7 @@
     } catch (e) { AG.bildir(`Hesap açılmadı: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
   }
 
-  const hizliDuzenleKaydet = (d, acilis) => yazIstek(d, 'Kaydediliyor…', () => api().hizliDuzenle({ acilis, adet: deger('inpPmDuzAdet'), birimMaliyet: deger('inpPmDuzMaliyet'), tarih: deger('inpPmDuzTarih') }),
+  const hizliDuzenleKaydet = (d, acilis) => yazIstek(d, 'Kaydediliyor…', () => api().hizliDuzenle({ acilis, adet: deger('inpPmDuzAdet'), birimMaliyet: deger('inpPmDuzMaliyet'), tarih: deger('inpPmDuzTarih'), not: deger('inpPmDuzNot') }),
     () => { duzenlenen = null; return 'Güncellendi.'; });
 
   async function hizliKaldir(p, acilis) {
@@ -936,7 +939,7 @@
     const s = veri.sabitler || {};
     const kurumlar = veri.kurumlar || [], hesaplar = veri.hesaplar || [], varliklar = veri.varliklar || [];
     doldur(k, [
-      el('p', { class: 'hint hint-sm', text: 'Yeni hesap (kurumuyla) "Yeni hesap" kartında, varlık "Varlık ekle"de açılır; vadeli mevduat faizi ve elle fiyat hesap kartında. Burada yalnız adlar değişir ve hesap kapatılır.' }),
+      el('p', { class: 'hint hint-sm', text: 'Yeni hesap (kurumuyla) "Yeni hesap" kartında, varlık "Varlık ekle"de açılır; vadeli mevduat faizi ve elle fiyat hesap kartında. Burada adlar ve Yahoo fiyat kodu değişir, hesap kapatılır.' }),
       el('h4', { class: 'pf-bolum-baslik', text: 'Kurumlar' }),
       kurumlar.length ? AG.tablo.kutulu({ id: 'tblPmKurumlar', sinif: 'table-dense pf-tablo', basliklar: ['Kurum', 'Kimlik', ''], satirlar: kurumlar.map(x => el('tr', null, [
         el('td', { class: 'pf-sola', text: x.ad }), el('td', { class: 'pf-kucuk', text: x.id }),
@@ -955,7 +958,8 @@
       varliklar.length ? AG.tablo.kutulu({ id: 'tblPmVarlikYonet', sinif: 'table-dense pf-tablo', basliklar: ['Sembol', 'Ad', 'Sınıf', 'Para', 'Fiyat kaynağı', 'Kimlik', ''], satirlar: varliklar.map(v => el('tr', null, [
         el('td', { class: 'fw-semibold', text: v.sembol }), el('td', { class: 'pf-sola', text: v.ad }), el('td', { class: 'pf-sola', text: (s.siniflar || {})[v.sinif] || v.sinif }), el('td', { text: v.para }),
         el('td', { class: 'pf-sola', text: `${KAYNAK_AD[v.kaynak] || v.kaynak}${v.kod ? ' · ' + v.kod : ''}` }), el('td', { class: 'pf-kucuk', text: v.id }),
-        el('td', null, [yazmaDugme('Adını değiştir', () => adDegistir('varlik', v), 'btn-secondary btn-xs')])
+        el('td', null, [el('div', { class: 'pf-dugmeler' }, [yazmaDugme('Adını değiştir', () => adDegistir('varlik', v), 'btn-secondary btn-xs'),
+          v.kaynak === 'yahoo' ? yazmaDugme('Fiyat kodunu değiştir', () => kodDegistir(v), 'btn-secondary btn-xs', { id: `btnPmKod-${v.id}`, title: 'Fiyatın çekildiği Yahoo sembolü (ör. THYAO.IS, QQQ)' }) : null])])
       ])) }) : el('p', { class: 'hint hint-sm mb-0', text: 'Henüz varlık yok.' })
     ]);
   }
@@ -1075,6 +1079,22 @@
     if (!r || !r.success) { AG.bildir(`Değiştirilemedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata'); return; }
     AG.bildir('Ad değiştirildi.', 'ok');
     yukle(true);
+  }
+
+  /** 68.4: Yahoo fiyat kodunu (sembol değil) değiştir — PUT /varlik/:id {kod}; sunucu kodu Yahoo'da doğrular, para birimi aynı olmalı. */
+  const yahooKodGecerli = (v) => /^[A-Z0-9.^=\-]{1,24}$/.test(String(v || '').trim().toUpperCase());
+  async function kodDegistir(v) {
+    const s = await AG.onayla({ baslik: `${v.sembol}: Yahoo fiyat kodu`, metin: `Fiyat bu koddan çekilir (şu an ${v.kod || v.sembol}). Kaydetmeden önce Yahoo'da denetlenir; para birimi (${v.para}) aynı olmalı. Görünen sembol, işlemler ve geçmiş aynı kalır; fiyat geçmişi yeni koddan yeniden indirilir.`,
+      onay: 'Kaydet', alanlar: [{ ad: 'kod', etiket: 'Yahoo kodu (ör. THYAO.IS, QQQ, GC=F)', deger: v.kod || v.sembol, dogrula: yahooKodGecerli }] });
+    if (!s) return;
+    const kod = s.kod.trim().toUpperCase();
+    if (kod === String(v.kod || '').toUpperCase()) { AG.bildir('Kod aynı — değişiklik yok.', 'bilgi'); return; }
+    try {
+      const r = await api().varlikGuncelle(v.id, { kod });
+      if (!r || !r.success) { AG.bildir(`Değiştirilemedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 12000 }); return; }
+      AG.bildir(`${v.sembol}: fiyat kodu ${kod}${r.fiyatHatasi ? ` — fiyat geçmişi indirilemedi (${r.fiyatHatasi}); "Fiyatları yenile" ile tekrar dene` : ''}.`, r.fiyatHatasi ? 'uyari' : 'ok', { sure: 9000 });
+      yukle(true);
+    } catch (e) { AG.bildir(`Değiştirilemedi: ${e.message}`, 'hata'); }
   }
 
   async function hesapKapat(h) {
@@ -1366,7 +1386,10 @@
           el('td', { class: 'pf-sola' }, [el('div', { class: 'fw-semibold', text: p.sembol }), el('div', { class: 'pf-kucuk', text: p.ad }),
             // 67.2: alış tarihi (açılış kaydının tarihi; getiri buradan ölçülür) — düzenlemede değiştirilebilir.
             duz ? girdi({ id: 'inpPmDuzTarih', type: 'date', max: bugun(), class: 'form-control control-sm mt-1', 'aria-label': `${p.sembol} alış tarihi` }, p.acilis && p.acilis.tarih)
-              : yalniz && p.acilis ? el('div', { class: 'pf-kucuk', text: `alış ${p.acilis.tarih}` }) : null]),
+              : yalniz && p.acilis ? el('div', { class: 'pf-kucuk', text: `alış ${p.acilis.tarih}` }) : null,
+            // 68.4: açılış notu — düzenlemede değişir (boş = silinir), değilse satırda soluk görünür.
+            duz ? girdi({ id: 'inpPmDuzNot', type: 'text', maxlength: '500', class: 'form-control control-sm mt-1', placeholder: 'not (isteğe bağlı)', 'aria-label': `${p.sembol} açılış notu` }, p.acilis && p.acilis.not)
+              : p.acilis && p.acilis.not ? el('div', { class: 'pf-kucuk tone-muted pm-acilis-not', text: p.acilis.not }) : null]),
           el('td', { class: 'pf-sola' }, [etiketCip(modelEtiketi(p.sembol, modelListe))]),
           el('td', { class: 'sayi' }, [duz ? hucreGirdi('inpPmDuzAdet', String(p.adet).replace('.', ','), `${p.sembol} adet`) : tutar(adetBicim(p.adet))]),
           el('td', { class: 'sayi' }, [duz ? hucreGirdi('inpPmDuzMaliyet', p.ortMaliyet != null ? String(p.ortMaliyet).replace('.', ',') : '', `${p.sembol} ortalama alış fiyatı`) : tutar(p.ortMaliyet != null ? paraBicim(p.ortMaliyet, p.para, p.ortMaliyet < 10 ? 4 : 2) : 'girilmedi')]),
@@ -1507,7 +1530,7 @@
       ]),
       kat('pmHedefKat', 'Hedef dağılım — olmasını istediğin oranlar', 'target', [el('div', { id: 'pmHedef' })], false, 'pm-yazma'),
       kat('pmCsvKat', 'Geçmiş işlemleri içe aktar (CSV, önizlemeli)', 'upload', [el('div', { id: 'pmCsv' })], false, 'pm-yazma'),
-      kat('pmYonetimKat', 'Gelişmiş: kurum, hesap ve varlık adları · hesap kapatma', 'building-2', [el('div', { id: 'pmYonetim' })], false, 'pm-yazma')
+      kat('pmYonetimKat', 'Gelişmiş: kurum, hesap ve varlık adları · fiyat kodu · hesap kapatma', 'building-2', [el('div', { id: 'pmYonetim' })], false, 'pm-yazma')
     ];
     if (kayitKap) {
       doldur(kap, [el('div', { id: 'pmKok', class: `pm-kok${gizli ? ' pm-gizli' : ''}` }, gorunum)]);
@@ -1576,7 +1599,7 @@
 
   AG.pages = AG.pages || {};
   AG.pages.portfoyum = {
-    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, hedefDenetle, halkaDilimleri, hedefTaslagiKur, FORM_ALANLARI, ISLEM_AD,
+    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, kodDegistir, yahooKodGecerli, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, hedefDenetle, halkaDilimleri, hedefTaslagiKur, FORM_ALANLARI, ISLEM_AD,
     _ciz: { ustCiz, bantCiz, ozetCiz, ozetSeritCiz, portfoyumCiz, hesapKartlariCiz, hesapFormCiz, kayitUstCiz, hizliCiz, yeniHesapCiz, dagilimCiz, varliklarCiz, hesaplarCiz, defterTabloCiz, formCiz, csvSonucCiz, hedefCiz, yonetimCiz, bosDurumCiz, ciz },
     _durum: { veriAyarla: (v) => { veri = v; }, defterAyarla: (d) => { defter = d; }, csvAyarla: (c) => { csvSonuc = c; }, gizli: () => gizli, formTurAyarla: (t, k) => { formTur = t; formKalem = k || 'varlik'; }, hizli: () => hizli, duzenleAyarla: (a) => { duzenlenen = a; }, faizAcAyarla: (h) => { faizAcik = h; }, fiyatAcAyarla: (a) => { fiyatAcik = a; } }
   };

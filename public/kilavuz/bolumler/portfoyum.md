@@ -34,12 +34,12 @@ Kartın üstündeki **portföy listesinde** her portföyün değeri ve hesap say
 2. Katlı **Yeni hesap** ve **Varlık ekle** ([ayrıntı](#/kilavuz/portfoyum/hisse-ekle)): önce hesap, sonra içindeki varlıklar ve nakit.
 3. **Hesap kartları:** başlıkta hesap adı · kurum · tür · para birimi, sağda değer ve son kayıt günü (30 günden eskiyse turuncu). Tabloda hesabın varlıkları: model etiketi (varlık o modelin son karar listesinde: N10, B10, 837 = QQQ), adet, ortalama alış, son fiyat, değer, kâr/zarar ve düğmeler:
    - **Sat:** kartın altındaki işlem satırını o varlıkla ve adediyle doldurur; adedi/fiyatı düzeltip **Ekle**.
-   - **Düzenle / Kaldır:** yalnız açılışla girilmiş (sonradan işlem görmemiş) varlıkta. Düzenle adet, alış fiyatı ve **alış tarihini** satırda değiştirir (eski açılış ters kayıtla iptal, yenisi yazılır); Kaldır onay sorar. Satırda varlık adının altında alış tarihi yazar.
+   - **Düzenle / Kaldır:** yalnız açılışla girilmiş (sonradan işlem görmemiş) varlıkta. Düzenle adet, alış fiyatı, **alış tarihini** ve **notu** satırda değiştirir (eski açılış ters kayıtla iptal, yenisi yazılır; notu boşaltırsan silinir); Kaldır onay sorar. Satırda varlık adının altında alış tarihi yazar.
    - **Fiyat gir** ya da **⋯ › Fiyatı düzelt:** elle fiyat ([ayrıntı](#/kilavuz/portfoyum/elle-fiyat)).
    - Banka / TL hesabında **Vadeli mevduat** (ya da ayar varsa özeti ve **Değiştir**): otomatik faiz ([ayrıntı](#/kilavuz/portfoyum/mevduat-faizi)).
 4. Her kartın altında **+ işlem** satırı: **Alış, Satış, Temettü, Para yatırma, Para çekme**; varlık, adet, fiyat, ücret (ya da tutar), **tarih**. Geçmiş işlem için tarihi geriye al; Pano'daki grafik ve sayılar o günden itibaren yeniden hesaplanır.
 5. Katlı **Diğer işlemler: transfer, faiz, ücret, bölünme** — hesaplar arası transfer (ulaşan tutar dahil), elle faiz, ücret / gider, bölünme ve **Aynı gün sırası**. Alış, satış, temettü, para giriş/çıkışı da burada seçilebilir ama kolay yolu hesap kartıdır; **açılış bakiyesi burada yoktur** (Varlık ekle'de).
-6. Katlı **Hedef dağılım** (varlık düzeyinde hedef), **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş** (yalnız kurum, hesap ve varlık **adları** ile **hesap kapatma**).
+6. Katlı **Hedef dağılım** (varlık düzeyinde hedef), **Geçmiş işlemleri içe aktar (CSV)** ve **Gelişmiş** (kurum, hesap ve varlık **adları**, Yahoo varlıkta **fiyat kodu** ve **hesap kapatma**).
 
 ![Diğer işlemler: transfer, faiz, ücret, bölünme](ekran:portfoyum-form-1400)
 
@@ -71,7 +71,7 @@ Elinde **zaten olan** varlığı ve nakdi buraya girersin: panel bunu **açılı
 | **Nakit bakiyesi** | **Para birimi** ve **tutar**. Bir hesapta her para birimi için tek nakit bakiyesi girilir; sonrası para yatırma / çekme | — |
 | **Diğer (elle fiyat)** | Sembol, ad, sınıf, para birimi, adet, birim maliyet ve isteğe bağlı **güncel birim fiyat** (bugünün fiyatı olarak kaydedilir) — tahvil, özel fon, gayrimenkul gibi kaynağı olmayan varlık | Elle ([Fiyat gir](#/kilavuz/portfoyum/elle-fiyat)) |
 
-Her sekmede: **Hesap** (sekmeye uyan hesap kendiliğinden önerilir: fon → fon hesabı, kripto → Binance, hissede para birimine ve borsaya uyan hesap; uyan hesap yoksa seçili hesaba eklenir ve bunu yazar), **Ortalama alış fiyatı** (boş kalırsa kâr/zarar hesaplanmaz; sonra **Düzenle** ile eklenir), **Alış tarihi** (varsayılan **dün**: getiri bu günden ölçülür; birkaç kez aldıysan ilk alış günü). **Ekle** → varlık hemen kendi hesabının kartında, Varlıklar'da ve Pano'da görünür; panelde yoksa varlık kaydı arkada açılır ve fiyat geçmişi indirilir.
+Her sekmede: **Hesap** (sekmeye uyan hesap kendiliğinden önerilir: fon → fon hesabı, kripto → Binance, hissede para birimine ve borsaya uyan hesap; uyan hesap yoksa seçili hesaba eklenir ve bunu yazar), **Ortalama alış fiyatı** (boş kalırsa kâr/zarar hesaplanmaz; sonra **Düzenle** ile eklenir), **Alış tarihi** (varsayılan **dün**: getiri bu günden ölçülür; birkaç kez aldıysan ilk alış günü), isteğe bağlı **Not** (ör. "eski hesaptan aktarıldı" — açılış kaydında saklanır, hesap kartındaki satırda soluk ve İşlem defterinin **Not** sütununda görünür). **Ekle** → varlık hemen kendi hesabının kartında, Varlıklar'da ve Pano'da görünür; panelde yoksa varlık kaydı arkada açılır ve fiyat geçmişi indirilir.
 
 ![Varlık ekle › Fon (TEFAS) ve açılış kuralı](ekran:portfoyum-varlik-ekle-1400)
 
@@ -88,7 +88,7 @@ Telefonda (dar pencerede) sekmeler alt alta sarılır:
 3. Vadeli mevduatsa hesap kartında **Vadeli mevduat**.
 4. Sonra her işlemi hesap kartının **+ işlem** satırından girersin; eski işlemleri de geriye tarihli girebilirsin ([Açılış kuralı](#/kilavuz/portfoyum/acilis-kurali)). Çok sayıda geçmiş işlem için **Geçmiş işlemleri içe aktar (CSV)**.
 
-Eski (67.3 ve öncesi) **Gelişmiş › 1. Kurum, 2. Hesap, 3. Varlık, 4. Elle fiyat** ve **Mevduat faizi (otomatik)** formları 67.4'te kalktı: kurum ve hesap **Yeni hesap**'ta, varlık **Varlık ekle**'de (fiyat kaynağı olmayan varlık "Diğer" sekmesinde), mevduat faizi ve elle fiyat **hesap kartında**. Gelişmiş'te yalnız adlar ve hesap kapatma kaldı. Fiyat kaynağı kodunu sonradan değiştirmek gerekirse (ör. BIST için `THYAO.IS`) varlığı doğru kodla yeniden ekleyin.
+Eski (67.3 ve öncesi) **Gelişmiş › 1. Kurum, 2. Hesap, 3. Varlık, 4. Elle fiyat** ve **Mevduat faizi (otomatik)** formları 67.4'te kalktı: kurum ve hesap **Yeni hesap**'ta, varlık **Varlık ekle**'de (fiyat kaynağı olmayan varlık "Diğer" sekmesinde), mevduat faizi ve elle fiyat **hesap kartında**. Gelişmiş'te adlar ve hesap kapatma kaldı. 68.4'ten beri Yahoo kaynaklı varlığın fiyat kodu da burada düzeltilir: **Varlıklar** tablosunda **Fiyat kodunu değiştir** → yeni kodu yaz (ör. BIST için `THYAO.IS`, `BRK-B`) → **Kaydet**. Kod kaydedilmeden önce Yahoo'da denetlenir; bulunamazsa, para birimi varlığınkinden farklıysa ya da kod başka bir varlıkta kullanılıyorsa kaydedilmez. Görünen sembol, işlemler ve geçmiş aynı kalır; fiyat geçmişi yeni koddan indirilir. TEFAS / Binance kodu ya da para birimi yanlışsa varlığı doğru bilgiyle yeniden ekleyin.
 
 ## Vadeli mevduat: otomatik faiz {#mevduat-faizi}
 

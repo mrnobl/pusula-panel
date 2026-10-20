@@ -46,7 +46,7 @@ Bir kez yapılan işler **Ayarlar › Bağlantılar**'da (eski adı Ayarlar › 
 1. **Demo hesap API anahtarı** katını açın. Binance → Futures → **Demo Trading** → API Management'tan aldığınız anahtarı iki alana yazın → **Anahtarları kaydet**. Anahtarlar `data/secrets.json`'a yazılır; panelde yalnız son 4 hanesi görünür. Hücum ve Denge kendi bağlantılarını kullanır; ayrıca "bağlan" gerekmez.
 2. **Canlı hesap** katı: canlı API anahtarı alanları ve **Canlı hesaba bağlan** düğmesi.
 
-> **Tehlike:** Canlı hesap yolu bilinçli olarak **kapalı**: düğme pasiftir; sunucu da `config.json`'da bilinçli `canliIzin: true` olmadıkça canlı bağlantıyı reddeder. Bu bayrak **yalnız `config.json` elle düzenlenerek** açılır; panelin ayar kaydı (ya da herhangi bir istek) onu yazamaz. En erken 5 Ocak 2027, canlı hesap şartları (G1–G9) sağlanınca. Canlı anahtarda **para çekme yetkisi KAPALI** olmalı.
+> **Tehlike:** Canlı hesap yolu bilinçli olarak **kapalı**: düğme pasiftir; sunucu da ayar dosyasında bilinçli `canliIzin: true` olmadıkça canlı bağlantıyı reddeder. Bu bayrak **yalnız ayar dosyası elle düzenlenerek** açılır — veri klasöründeki `ayarlar.json` (eski kurulumda, ilk ayar kaydından önce kökteki `config.json`), Pusula yeniden başlayınca geçerli; Ayarlar sayfası onu göstermez ve değiştirmez; panelin ayar kaydı (ya da herhangi bir istek) onu yazamaz. En erken 5 Ocak 2027, canlı hesap şartları (G1–G9) sağlanınca. Canlı anahtarda **para çekme yetkisi KAPALI** olmalı.
 
 ## Başka yerlere taşınanlar {#elle-emir}
 

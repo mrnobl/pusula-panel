@@ -3038,6 +3038,11 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .pn-isi-hucre { min-height: 24px; border-radius: 4px; background: var(--surface-2); color: var(--text); font-size: var(--fs-xs); display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 .pn-isi-yil { font-weight: var(--fw-semibold); box-shadow: inset 0 0 0 1px var(--border-strong); }
 .pn-isi-yarim { opacity: 0.55; }
+/* 68.4: telefonda kendi kutusunda yana kayan yıl × ay tablolarında (Pano ısı haritası, Portföy › laboratuvar "Aylık ve
+   yıllık getiri" — .tablo-matris) ilk sütun — yıl — sabit kalır. Arka plan kartın token rengi (geçen hücreler altında
+   görünmesin). Kaydırma yoksa etkisizdir; medya sorgusu gerekmez. Karta dönen tablolar (pm-aylik, bot-aylik) kaymaz. */
+.pn-isi-sabit,
+.tablo-matris.pf-isi th:first-child, .tablo-matris.pf-isi td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-1); }
 .pn-isi-p1 { background: var(--pos-soft); }
 .pn-isi-p2 { background: var(--pos-border); }
 .pn-isi-p3 { background: var(--pos); color: var(--bg); }
