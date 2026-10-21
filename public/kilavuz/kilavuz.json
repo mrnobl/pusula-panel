@@ -1,5 +1,5 @@
 {
-  "surum": "69.6",
+  "surum": "69.7",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -56,6 +56,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"69.7","tarih":"2026-10-21","yeni":["Borsa kütüphanesi ccxt 4.5.89: içindeki ağ paketinin yüksek önemli güvenlik açığı kapandı; Binance davranışı yeniden doğrulandı.","Kurulum programı derlemesinde eklentiler commit kimliğine sabit; örnek portföy adı Fırat."]},
     {"surum":"69.6","tarih":"2026-10-21","yeni":["Saldırı testi bulguları kapatıldı: masaüstünde de PIN, yabancı sitelere kapalı panel, yalnız imzalı kod kurulur, sırlar yalnız Pusula kullanıcısında çözülür.","Para güvenliği: fiyat yoksa büyüten emir yok, para kaydında KAYIT onayı, spot yatırma kabul bekler, canlıda IP kısıtı zorunlu; öz denetime virüs koruması ve dış erişim."]},
     {"surum":"69.5","tarih":"2026-10-21","yeni":["Güvenli kipte bot yalnız pozisyon küçülten emir verir; 24 saatte 2 felaket stopu tetiklenirse 24 saat yeni işlem yok.","Yeni kâğıt hesaplar kötümser dolumla çalışır (stop tetiklenir, kayma var); öz denetimde canlı–gölge kayması ve işlem maliyeti; npm run istatistik (PSR, MinTRL, PBO)."]},
     {
@@ -240,7 +241,7 @@
       "surum": "66.0", "tarih": "2026-10-19",
       "yeni": [
         "Yeni panel: koyu tema, iki seviyeli yan menü (Günlük · İzleme · Araştırma · Sistem); üst çubukta kırıntı, Kur, Kılavuz, tema ve bot çalışırken Acil durdur; telefonda alt çubuk Ana · Portföy · Botlar · Sinyaller · Menü.",
-        "Portföy yeniden: Pano · Hesaplar · Varlıklar · İşlem defteri · Hedefim · Modeller · Takvim ve akış · Rapor. Üst çubukta Ben / Anıl / Tümü ve $ / ₺ / Gizli seçicisi (eski \"Tutarları gizle\" ve $/₺ düğmeleri kalktı). Her hesap bir portföye bağlanır ve toplama dahil olup olmadığı seçilir; Binance/OKX bakiyesi Pano toplamına girer.",
+        "Portföy yeniden: Pano · Hesaplar · Varlıklar · İşlem defteri · Hedefim · Modeller · Takvim ve akış · Rapor. Üst çubukta Ben / Fırat / Tümü ve $ / ₺ / Gizli seçicisi (eski \"Tutarları gizle\" ve $/₺ düğmeleri kalktı). Her hesap bir portföye bağlanır ve toplama dahil olup olmadığı seçilir; Binance/OKX bakiyesi Pano toplamına girer.",
         "Botlar: her botta Genel · Hesap · İşlemler · Yönetim. Eski Borsa hesapları sayfası Hesap görünümünde, Ayarlar › Botlar eylemleri Yönetim'de; Ayarlar'da salt okunur bot özeti.",
         "Ana sayfa: Yapman gerekenler en üstte, sonra Portföyüm ve Sistem, sonra Botlar. Araştırma yeni Özet sayfasıyla açılır; İleri test, Veri ve Arşiv alt sayfalara bölündü.",
         "Sayılar her yerde Türkçe biçimde: $1.234,56 ve %12,35."

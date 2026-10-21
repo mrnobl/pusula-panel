@@ -18,15 +18,15 @@ Hesaplar sayfasının en üstündeki **Portföyler — kimin hesabı** kartı he
 
 | Sütun | Ne yapılır |
 |---|---|
-| **Portföy** | Seçiciden hesabın portföyü (ör. **Ben**, **Anıl**). Değişiklik hemen kaydedilir; eski kayıtlar silinmez, yeni bir "hesap → portföy" kaydı eklenir. Yeni hesap varsayılan olarak **Ben**'e düşer |
+| **Portföy** | Seçiciden hesabın portföyü (ör. **Ben**, **Fırat**). Değişiklik hemen kaydedilir; eski kayıtlar silinmez, yeni bir "hesap → portföy" kaydı eklenir. Yeni hesap varsayılan olarak **Ben**'e düşer |
 | **Toplama dahil** | **dahil** / **dahil değil** düğmesi. Dahil olmayan hesap portföyde görünür ama toplama, getiriye ve dağılıma katılmaz |
-| **Yeni portföy** | Ad yaz (ör. "Anıl") → **Portföy ekle**. Sonra hesapları seçiciden o portföye bağla |
+| **Yeni portföy** | Ad yaz (ör. "Fırat") → **Portföy ekle**. Sonra hesapları seçiciden o portföye bağla |
 
 ![Portföyler — Adını değiştir (satır içi)](ekran:portfoy-ad-1400)
 
 Kartın üstündeki **portföy listesinde** her portföyün değeri ve hesap sayısı görünür. **Adını değiştir** → satırda yeni adı yaz → **Kaydet** (ya da Enter); **Vazgeç** (ya da Esc) değiştirmeden kapatır. **Ben** dahil her portföyün adı değişebilir; başka bir portföyün adıyla aynı ad kabul edilmez. Ad değişince üst çubuktaki portföy seçicisi ve raporlar yeni adı gösterir; hesaplar, hedef ve geçmiş aynı kalır. Telefonda bu düğme gizlidir.
 
-Üst çubuktaki **Ben / Anıl / … / Tümü** seçicisi bütün Portföy sayfalarını seçilen portföye göre gösterir ([Görünüm](#/kilavuz/portfoy/gorunum)). Adında "Anıl" geçen açık bir hesap hâlâ varsayılan portföydeyse (Ben) Pano'da **sahip önerisi** bandı ve Yapman gerekenler'de "taşı" satırı çıkar: "… başkasına aitse kendi portföyüne taşıyın".
+Üst çubuktaki **Ben / Fırat / … / Tümü** seçicisi bütün Portföy sayfalarını seçilen portföye göre gösterir ([Görünüm](#/kilavuz/portfoy/gorunum)). Adında "Fırat" geçen açık bir hesap hâlâ varsayılan portföydeyse (Ben) Pano'da **sahip önerisi** bandı ve Yapman gerekenler'de "taşı" satırı çıkar: "… başkasına aitse kendi portföyüne taşıyın".
 
 ## Hesaplar: bilgi girişi {#kayit}
 

@@ -106,7 +106,7 @@
       el('p', { class: 'pn-metin', text: `Portföye para ekleyeceksen ya da dağılımı değiştireceksen, hangi hisseden ne kadar alıp satacağını burada hesaplarsın. Botların listesinden hisse de ekleyebilirsin (sayfanın en altında). Panel emir göndermez. "Aldım, işlemleri kaydet" dersen işlemler seçili portföye${ctx.salt ? '' : ` (${ad})`} yazılır; "Vazgeç" dersen hiçbir şey yazılmaz.` })
     ], 'p-kart-vurgu');
     if (ctx.salt) {
-      doldur(k, [el('div', { class: 'pe-kok' }, [bas, bant('"Tümü" görünümünde plan yapılamaz: işlemlerin hangi portföye yazılacağı belli değil. Üst çubuktan bir portföy seç (Ben, Aile …).', 'uyari'), botKap()])]);
+      doldur(k, [el('div', { class: 'pe-kok' }, [bas, bant('"Tümü" görünümünde plan yapılamaz: işlemlerin hangi portföye yazılacağı belli değil. Üst çubuktan bir portföy seç (Ben, Fırat …).', 'uyari'), botKap()])]);
       botDoldur(null, ctx);
       return;
     }

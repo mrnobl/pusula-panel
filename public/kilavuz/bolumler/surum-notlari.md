@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.7 — Borsa kütüphanesi güvenlik güncellemesi, örnek ad (2026-10-21) {#s69-7}
+
+- **Borsa kütüphanesi (ccxt) 4.5.89:** içindeki ağ paketinin (undici) yüksek önemli güvenlik açığı kapandı; paket taramasında açık kalmadı. Binance hata eşlemesinin bütün hücreleri ve gerçek Binance yoklaması (prod + demo) yeni sürümle yeniden doğrulandı.
+- **Kurulum programı derlemesi:** GitHub Actions eklentileri tam commit kimliğine sabitlendi (değiştirilmiş bir eklenti derlemeye giremez).
+- Kılavuzdaki ve paneldeki örnek portföy adı **Fırat** oldu.
+
 ## 69.6 — Güvenlik sıkılaştırma: saldırı testi bulguları kapatıldı (2026-10-21) {#s69-6}
 
 - **Masaüstünde de PIN:** tehlikeli işlemler (taşıma, anahtar kaydetme, engel kaldırma, canlı onay, güncelleme kurma …) acil durdurma PIN'ini ister; acil durdurma ve pozisyon kapatma istemez ([Saldırılara karşı korumalar](#/kilavuz/saglik/guvenlik)).
@@ -176,7 +182,7 @@ Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir
 ## 66.0 — Yeni panel (2026-10-19) {#s66-0}
 
 - **Görünüm:** koyu tema varsayılan (açık tema sağ üstteki düğmeyle), mor vurgu; kazanç yeşili ve kayıp kırmızısı yalnız para için. Yan menü dört grupta, en çok iki seviye: **Günlük** (Ana sayfa, Portföy, Botlar) · **İzleme** (Sinyaller, İleri test) · **Araştırma** (Araştırma, Coin tarama) · **Sistem** (Veri, Ayarlar, Bilgi, Arşiv). Alt sayfalar adreste durur; eski adresler yeni yerlerine açılır.
-- **Üst çubuk:** sayfa adı ve kırıntı, Kur, Kılavuz, tema; bot çalışırken **Acil durdur** (aynı onay ve PIN). Portföy sayfalarında **Ben / Anıl / Tümü** ve **$ / ₺ / Gizli** seçicisi — eski "Tutarları gizle" ve $/₺ düğmeleri kalktı. Telefonda alt çubuk **Ana · Portföy · Botlar · Sinyaller · Menü**.
+- **Üst çubuk:** sayfa adı ve kırıntı, Kur, Kılavuz, tema; bot çalışırken **Acil durdur** (aynı onay ve PIN). Portföy sayfalarında **Ben / Fırat / Tümü** ve **$ / ₺ / Gizli** seçicisi — eski "Tutarları gizle" ve $/₺ düğmeleri kalktı. Telefonda alt çubuk **Ana · Portföy · Botlar · Sinyaller · Menü**.
 - **Portföy:** [Pano](#/kilavuz/portfoy) (toplam, getiri, sağlık puanı, kıyaslı grafik, aylık ısı haritası, düşüş) · Hesaplar (hesap → portföy, toplama dahil mi) · Varlıklar · İşlem defteri (Kripto/FX · Yatırım · Bot kaynakları) · Hedefim (portföy başına hedef, modelden al) · Modeller · Takvim ve akış · Rapor (risk/getiri ölçütleri). Binance ve OKX bakiyeleri salt okumayla Pano toplamına girer; bot hesapları ayrı satır.
 - **Botlar:** her botta **Genel · Hesap · İşlemler · Yönetim** ([Botlar](#/kilavuz/botlar)). Eski Borsa hesapları sayfası **Hesap**'ta (Binance bakiyesi kartıyla), Ayarlar › Botlar eylemleri ve demo kabul süreci **Yönetim**'de; Ayarlar'da yalnız salt okunur bot özeti. İşlem dökümü (CSV) Portföy › İşlem defteri › Bot'ta.
 - **Ana sayfa:** Yapman gerekenler en üstte, sonra Portföyüm ve Sistem, sonra Botlar; "Bu sürümde yeni" ince bir şerit.

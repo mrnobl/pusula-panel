@@ -1,6 +1,6 @@
 # Portföy › Rapor {#portfoyum-rapor}
 
-**Portföy › Rapor** gerçek portföyünün (üst çubukta seçili portföy: Ben, Anıl … ya da Tümü — [Görünüm](#/kilavuz/portfoy/gorunum)) risk ölçütleri ve ay ay karnesidir. Üstte **risk ve getiri ölçütleri** portföyü QQQ ve BTC ile aynı dönemde karşılaştırır; altında karne: o ay ne oldu, para mı koydun yoksa piyasa mı kazandırdı, hangi varlık sürükledi, kötü bir günde ne kaybederdin ve varlık sınıfların birlikte mi hareket ediyor. Yalnız bakılır; hiçbir şeyi değiştirmez. Telefondan da aynı görünür. Telegram'a gitmez.
+**Portföy › Rapor** gerçek portföyünün (üst çubukta seçili portföy: Ben, Fırat … ya da Tümü — [Görünüm](#/kilavuz/portfoy/gorunum)) risk ölçütleri ve ay ay karnesidir. Üstte **risk ve getiri ölçütleri** portföyü QQQ ve BTC ile aynı dönemde karşılaştırır; altında karne: o ay ne oldu, para mı koydun yoksa piyasa mı kazandırdı, hangi varlık sürükledi, kötü bir günde ne kaybederdin ve varlık sınıfların birlikte mi hareket ediyor. Yalnız bakılır; hiçbir şeyi değiştirmez. Telefondan da aynı görünür. Telegram'a gitmez.
 
 ## Ne işe yarar {#ne-ise-yarar}
 

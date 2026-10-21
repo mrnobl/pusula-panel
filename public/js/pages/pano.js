@@ -3,7 +3,7 @@
  * ═══════════════════════════════════════════════════════════════════════════
  * Portföy bölümü yan menüden: Pano · Hesaplar · Varlıklar · İşlem defteri · Hedefim · Modeller · Takvim ve akış · Rapor
  * (js/pages/portfoy.js altSekme → sayfaYukle → bu modülün `yukle(ad)`'ı). Bu modül:
- *   · ÜST ÇUBUK GÖRÜNÜM YUVASI (#ustGorunum): Ben / Anıl / … / Tümü ve $ / ₺ / Gizli (K3). Seçim localStorage 'pusula.portfoy.gorunum'
+ *   · ÜST ÇUBUK GÖRÜNÜM YUVASI (#ustGorunum): Ben / Fırat / … / Tümü ve $ / ₺ / Gizli (K3). Seçim localStorage 'pusula.portfoy.gorunum'
  *     (try/catch). Tümü = SALT OKUNUR birleşim (Hedefim'de kayıt yok; bant söyler).
  *   · PANO (#pfYeni-pano): gösterge şeridi (toplam + kapsam satırı, TWR, başlangıçtan, düşüş, Sharpe, oynaklık) · portföy sağlığı
  *     örümcek ağı · dağılım halkası (Sınıf / Hesap / Para; 67.4 altında dilim listesi + içindeki varlıklar) · Yapman gerekenler ·
@@ -786,7 +786,7 @@
       const oz = x.ozet;
       const hesaplar = (oz.hesaplar || []).filter(h => h.durum !== 'kapali');
       const pl = oz.portfoyler || portfoyler;
-      const yeniAd = el('input', { id: 'pnYeniPortfoy', type: 'text', maxlength: '120', placeholder: 'ör. Anıl', 'aria-label': 'Yeni portföy adı' });
+      const yeniAd = el('input', { id: 'pnYeniPortfoy', type: 'text', maxlength: '120', placeholder: 'ör. Fırat', 'aria-label': 'Yeni portföy adı' });
       doldur(k, [kart([
         kartBas('Portföyler — kimin hesabı', el('span', { class: 'pn-soluk', text: pl.map(p => p.ad).join(' · ') })),
         el('p', { class: 'p-kart-alt pn-alt-bosluk', text: 'Her hesap TEK bir portföye bağlı; başkasının hesabı senin toplamına, getirine ve hedefine girmez. "Toplama dahil" kapalı hesap portföyde görünür ama toplama katılmaz.' }),
