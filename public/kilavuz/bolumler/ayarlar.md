@@ -45,6 +45,20 @@ Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API a
 
 **Güncelleme** alt sayfası (onay beklerken Ana sayfadaki Sistem kartının sürüm ışığı ve iş satırı doğrudan bu sayfayı açar): çalışan sürüm ve son kontrolün sonucu — **Güncel ✓**, **kuruldu** (otomatik ya da onayınızla), **kurulmayı bekliyor** (bot kodu değişti), **elle bakılmalı**, **geri alındı**. Sunucu her gün 12:00'de GitHub'daki yeni sürüme bakar: panel değişikliklerini kendisi kurar, bot kodu değiştiyse burada **Güncellemeyi kur** düğmesi çıkar (onay penceresi; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme döner). **Şimdi kontrol et** 12:00'yi beklemeden denetletir. **Telefonda da** çalışır (61.4): acil PIN ve onay için **GÜNCELLE** sorulur (acil durdurmayla aynı PIN, aynı yanlış deneme kilidi). Araştırma kopyasında düğme yoktur. Kurulum ve ayrıntı: [Otomatik güncelleme](#/kilavuz/kurulum/adim-22).
 
+### Güncellemeyi adım adım izlemek {#guncelleme-izleme}
+
+![Güncelleme sürerken: adımlar ve canlı günlük](ekran:ayarlar-guncelleme-izleme-1400)
+
+**Şimdi kontrol et** ya da **Güncellemeyi kur**'a bastığınızda (ya da 12:00 görevi çalışırken sayfayı açtığınızda) kartın altında işlem baştan sona görünür:
+
+- **Adımlar:** GitHub bağlantısı → değişikliklerin incelenmesi → yeni kodun indirilmesi → paketler → sözdizimi denetimi → Pusula'nın yeniden başlatılması → yeni sürümün açılışı → **kararlılık gözlemi** (8 dk boyunca 15 sn'de bir sağlık kontrolü; "12/32 kontrol · kalan ~5 dk" gibi). ✓ bitti, ◐ sürüyor, – atlandı (ör. paket değişikliği yok), ✗ hata; işlem bir adıma varmadan bittiyse (yeni sürüm yok, onay bekleniyor) kalan adımlar soluk görünür.
+- **Çubuk ve süre:** ne kadarının bittiği, ne zaman başladığı, kaç dakikadır sürdüğü.
+- **Günlük:** güncelleyicinin yazdığı her satır, saatiyle. Pusula yeniden başlarken panel birkaç saniye yanıt vermez — günlükte *"Panel yanıt vermiyor — bekleniyor…"* ve geri gelince *"Panel yeniden yanıt veriyor"* yazar; bu beklenen bir durumdur.
+- **Bitince:** başlık sonucu söyler (**Kuruldu ✓**, **Güncel ✓**, **onayınız bekleniyor**, **eski sürüme dönüldü** …). Yeni sürüm kurulduysa sayfa 5 sn içinde kendiliğinden yeni panelle yenilenir. Son işlemin adımları ve günlüğü bir sonraki işleme kadar burada kalır.
+- **Yarıda kaldı:** güncelleyici işlem bitmeden kapandıysa (ör. bilgisayar kapandı) bu yazar; **Şimdi kontrol et** ile yeniden başlatın.
+
+İşlem sürerken düğmeler kapalıdır (aynı anda ikinci güncelleme başlamaz).
+
 ## Bildirimler {#bildirimler}
 
 **Telegram** ve **Sağlık sinyali** aynı sayfada, alt alta. En üstte iki durum satırı: Telegram bağlı mı (günlük özet, işlem ve alarm bildirimleri gidiyor mu; araştırma kopyasında "bilinçli olarak kapalı") ve **Telegram komutları** yoklaması çalışıyor mu.

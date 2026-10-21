@@ -3293,3 +3293,30 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .kr-secim span { font-size: var(--fs-sm); color: var(--text-muted); }
 .kr-secim[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .kr-secim:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* 69.0 Ayarlar › Güncelleme: adım adım izleme + canlı günlük (js/pages/ayarlar.js cizIzleme). */
+.gunc-izleme { margin-top: var(--sp-4); }
+.gunc-izleme.is-tamam .ilerleme-kutu { border-color: var(--pos-border); border-left-color: var(--pos); background: var(--pos-soft); }
+.gunc-izleme.is-hata .ilerleme-kutu { border-color: var(--neg-border); border-left-color: var(--neg); background: var(--neg-soft); }
+.gunc-adimlar { list-style: none; margin: var(--sp-3) 0; padding: 0; display: grid; gap: var(--sp-1); }
+.gunc-adim { display: grid; grid-template-columns: 1.4em minmax(0, 1fr); column-gap: var(--sp-2); align-items: baseline; color: var(--text); }
+.gunc-adim-ikon { text-align: center; font-weight: var(--fw-semibold); }
+.gunc-adim-ayrinti { grid-column: 2; font-size: var(--fs-sm); color: var(--text-muted); overflow-wrap: anywhere; }
+.gunc-adim-ayrinti:empty { display: none; }
+.gunc-adim-tamam .gunc-adim-ikon { color: var(--pos-metin); }
+.gunc-adim-hata .gunc-adim-ikon, .gunc-adim-hata .gunc-adim-ad { color: var(--neg-metin); }
+.gunc-adim-suruyor .gunc-adim-ikon { color: var(--accent-hover); animation: gunc-don 1.2s linear infinite; display: inline-block; }
+.gunc-adim-suruyor .gunc-adim-ad { color: var(--text-strong); font-weight: var(--fw-semibold); }
+.gunc-adim-bekliyor, .gunc-adim-gerekmedi, .gunc-adim-atlandi { color: var(--text-muted); }
+@keyframes gunc-don { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .gunc-adim-suruyor .gunc-adim-ikon { animation: none; } }
+.gunc-konsol-baslik { display: flex; justify-content: space-between; gap: var(--sp-2); font-size: var(--fs-sm); color: var(--text-soft); margin-bottom: var(--sp-1); }
+.gunc-konsol { max-height: 260px; overflow-y: auto; padding: var(--sp-2) var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-inset); font-family: var(--font-mono); font-size: var(--fs-sm); line-height: 1.55; color: var(--text-soft); }
+.gunc-konsol:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.gunc-satir { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--sp-2); overflow-wrap: anywhere; }
+.gunc-saat { color: var(--text-muted); }
+.gunc-satir-tamam { color: var(--pos-metin); }
+.gunc-satir-uyari { color: var(--warn-metin); }
+.gunc-satir-hata { color: var(--neg-metin); }
+.gunc-satir-istemci { color: var(--text); font-style: italic; }
+.gunc-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

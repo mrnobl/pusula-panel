@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.0 — Güncellemeyi adım adım izleme, kâğıt çoklu varlık fiyat düzeltmesi (2026-10-21) {#s69-0}
+
+- **Güncelleme ekranı:** Ayarlar › Güncelleme'de güncelleme baştan sona izlenir: adımlar (indirme, denetim, yeniden başlatma, açılış, kararlılık gözlemi), ilerleme çubuğu ve canlı günlük. Önceden ekran 5 dakika sonra izlemeyi bırakıyordu; kurulumdan sonraki 8 dakikalık kararlılık gözlemi sürerken "kuruluyor" yazısı takılı kalıyordu. Artık işlem bitene kadar izlenir, bitince yeni panel kendiliğinden yüklenir ([Güncellemeyi izlemek](#/kilavuz/ayarlar/guncelleme-izleme)).
+- **Düzeltme (kâğıt hesap, çoklu varlık):** kâğıt hesap sıfırlandıktan sonra BTC fiyatı henüz okunmamış olduğundan çoklu varlık mutabakatı "Invalid symbol BTCUSDT (fiyat yok)" hatası veriyordu; ilk günlük alım da aynı hatayla düşerdi. Kâğıt borsa artık fiyatı her seferinde borsadan taze okur.
+- **Düzeltme (güncelleyici):** kurulum geri alınırken güncelleme kilidi erken kalkıyordu; artık geri alma ve bildirim bitince kalkar.
+
 ## 68.9 — Kâğıt botta BTC ayağı seçimi (2026-10-21) {#s68-9}
 
 - **BTC ayağı (kâğıt):** Botlar › bot › Yönetim'de, kâğıt hesaptaki bot için **spot** ya da **çoklu varlık (canlı tasarımı)** seçilebilir. Değiştirmek kâğıt hesabı onayla sıfırlar. Canlı hesaba geçiş şartı G7 (çoklu varlık en az 14 gün kâğıtta) bununla başlatılır ([BTC ayağı](#/kilavuz/botlar/btc-ayagi)).

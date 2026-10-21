@@ -58,24 +58,131 @@
       case 'geri-alindi': return { metin: `${s} kurulamadı, geri alındı (${g.geriDonus || ''}): ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'yeniden-baslat': return { metin: g.neden || 'Yeniden başlatma gerekli.', ton: 'tone-warning', onay: null, kontrolDugmesi: true };
       case 'ag-hatasi': return { metin: `GitHub'a ulaşılamadı (${g.agHatasi || 1}. kez; ${zaman(g.kontrol)}). İnternet gelince ertesi gün yeniden dener.`, ton: (g.agHatasi || 1) >= 3 ? 'tone-warning' : 'tone-muted', onay: null, kontrolDugmesi: true };
-      case 'kuruluyor': return { metin: `${s} kuruluyor…`, ton: 'tone-warning', onay: null, kontrolDugmesi: false };
+      case 'kuruluyor': return { metin: `${s} kuruluyor… (adımlar aşağıda)`, ton: 'tone-warning', onay: null, kontrolDugmesi: false };
       default: return { metin: 'Henüz kontrol yapılmadı. Günlük görev kurulu değilse: Kılavuz › Kurulum › Otomatik güncelleme.', ton: 'tone-muted', onay: null, kontrolDugmesi: true };
     }
   }
 
-  let izleme = null;
-  /** Kontrol / kurulum başladıktan sonra durumu 5 sn'de bir oku (sunucu yeniden başlarken istek düşer — beklenir), en çok 5 dk. */
+  /* ── 69.0: güncelleme izleme — adımlar + canlı günlük (lib/guncelleme.js `islem`) ─────────────────────── */
+  /** Sunucu `adimTanim` göndermezse (eski sunucu) aynı liste — lib/guncelleme.js ADIMLAR ile aynı sıra. */
+  const GUNC_ADIMLAR = [
+    { kod: 'baglanti', ad: 'GitHub bağlantısı' }, { kod: 'plan', ad: 'Değişikliklerin incelenmesi' },
+    { kod: 'indir', ad: 'Yeni kodun indirilmesi' }, { kod: 'paket', ad: 'Paketler' }, { kod: 'denetim', ad: 'Sözdizimi denetimi' },
+    { kod: 'baslat', ad: "Pusula'nın yeniden başlatılması" }, { kod: 'acilis', ad: 'Yeni sürümün açılışı' }, { kod: 'kararlilik', ad: 'Kararlılık gözlemi' }
+  ];
+  const saatYaz = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); };
+  const sureYaz = (ms) => { if (!(ms >= 0)) return ''; const sn = Math.round(ms / 1000); return sn < 60 ? `${sn} sn` : `${Math.floor(sn / 60)} dk ${String(sn % 60).padStart(2, '0')} sn`; };
+
+  /**
+   * Saf: islem (+ adım tanımı, şimdi) → { durum: 'suruyor'|'bitti'|'yarida', basari, oran (0–1), adimlar: [{ kod, ad, durum, ayrinti, sure }], baslik, sure }.
+   * Adım durumu: bekliyor | suruyor | tamam | atlandi | hata | gerekmedi (işlem o adıma varmadan bitti — ör. güncel / onay bekliyor).
+   */
+  function islemOzeti(islem, tanim, simdi = Date.now()) {
+    if (!islem) return null;
+    const liste = (Array.isArray(tanim) && tanim.length ? tanim : GUNC_ADIMLAR);
+    const bitti = !!islem.bitti, yarida = !bitti && !!islem.yarida;
+    const adimlar = liste.map(t => {
+      const a = (islem.adimlar || []).find(x => x.kod === t.kod);
+      let durum = a ? a.durum : 'bekliyor';
+      if ((bitti || yarida) && durum === 'bekliyor') durum = 'gerekmedi';
+      if (yarida && durum === 'suruyor') durum = 'hata';
+      const bas = a && a.bas ? Date.parse(a.bas) : NaN, bit = a && a.bit ? Date.parse(a.bit) : NaN;
+      const sure = Number.isFinite(bas) ? (Number.isFinite(bit) ? bit - bas : (durum === 'suruyor' ? simdi - bas : NaN)) : NaN;
+      return { kod: t.kod, ad: t.ad, durum, ayrinti: (a && a.ayrinti) || (yarida && a && a.durum === 'suruyor' ? 'süreç yarıda kesildi' : null), sure };
+    });
+    // Oran: bitmiş adım = 1, süren kararlılık "i/tur" ayrıntısından kesirli; işlem bittiyse 1.
+    let oran = 1;
+    if (!bitti) {
+      const gecerli = adimlar.filter(a => a.durum !== 'gerekmedi');
+      const tamam = gecerli.filter(a => ['tamam', 'atlandi', 'hata'].includes(a.durum)).length;
+      const suren = gecerli.find(a => a.durum === 'suruyor');
+      let kesir = 0;
+      if (suren) { const m = /^(\d+)\/(\d+) kontrol/.exec(suren.ayrinti || ''); kesir = m && +m[2] > 0 ? +m[1] / +m[2] : 0.3; }
+      oran = Math.min(0.99, (tamam + kesir) / (gecerli.length || 1));
+    }
+    const sonuc = islem.sonuc || null;
+    const basari = bitti && ['kuruldu', 'guncel', 'onay', 'kuru'].includes(sonuc);
+    const SONUC = { kuruldu: 'Kuruldu ✓', guncel: 'Güncel ✓ — yeni sürüm yok', onay: 'Bot kodu değişti — onayınız bekleniyor', elle: 'Elle bakılmalı', 'geri-alindi': 'Kurulamadı — eski sürüme dönüldü', 'yeniden-baslat': 'Kod indi, yeniden başlatma gerekli', 'ag-hatasi': 'GitHub\'a ulaşılamadı', kuru: 'Deneme (hiçbir şey değişmedi)' };
+    const suren = adimlar.find(a => a.durum === 'suruyor');
+    const baslik = yarida ? 'Güncelleme işlemi yarıda kaldı (güncelleyici süreç kapandı)'
+      : bitti ? (SONUC[sonuc] || `Bitti: ${sonuc || '?'}`)
+      : suren ? `${suren.ad}…` : 'Güncelleme sürüyor…';
+    const basMs = Date.parse(islem.bas), bitMs = islem.bitti ? Date.parse(islem.bitti) : simdi;
+    return { durum: yarida ? 'yarida' : bitti ? 'bitti' : 'suruyor', basari, oran, adimlar, baslik, sure: Number.isFinite(basMs) ? bitMs - basMs : NaN, sonuc };
+  }
+
+  let izleme = null, izlemeIlk = null, kopuk = false, izSonDurum = null;
+  const istemciSatirlari = [];   // panelin kendi gözlemi (sunucu yanıt vermiyor / geri geldi) — günlükte ayrı renk
+  const istemciSatir = (metin, tur = 'istemci') => { istemciSatirlari.push({ zaman: new Date().toISOString(), metin, tur }); if (istemciSatirlari.length > 40) istemciSatirlari.shift(); };
+  const yuklenenSurum = () => (typeof APP_VERSION !== 'undefined' ? APP_VERSION : null);   // eslint-disable-line no-undef
+
+  /**
+   * Kontrol / kurulum başladıktan sonra (ya da sayfa açıldığında süren bir işlem varsa) durumu 2 sn'de bir oku. Sunucu yeniden
+   * başlarken istek düşer — beklenir ve günlüğe yazılır. İşlem `bitti` olana kadar izlenir (en çok 45 dk). Eski güncelleyici
+   * (`islem` yazmayan) için yedek ölçüt: kontrol zamanı değişti ve durum "kuruluyor" değil.
+   */
   function izle(ilk) {
-    if (izleme) clearInterval(izleme);
-    const bitis = Date.now() + 5 * 60 * 1000;
-    izleme = setInterval(async () => {
+    if (izleme) return;
+    izlemeIlk = { bas: ilk && ilk.islem ? ilk.islem.bas : null, kontrol: ilk ? ilk.kontrol : null, beklenenYeni: !!(ilk && ilk.yeniIslem) };
+    const bitis = Date.now() + 45 * 60 * 1000;
+    const tik = async () => {
       const g = AG.api.guncelleme ? await AG.api.guncelleme.durum().catch(() => null) : null;
-      if (g && g.success !== false) cizGuncelleme(g);
-      const bitti = g && g.success !== false && g.kontrol !== ilk.kontrol && g.durum !== 'kuruluyor';
+      const ok = !!(g && g.success !== false);
+      if (!ok && !kopuk) { kopuk = true; istemciSatir('Panel yanıt vermiyor — Pusula yeniden başlıyor olabilir, bekleniyor…'); }
+      if (ok && kopuk) { kopuk = false; istemciSatir(`Panel yeniden yanıt veriyor (çalışan sürüm ${g.calisanSurum || '?'})`); }
+      if (ok) izSonDurum = g;
+      cizGuncelleme(izSonDurum || g);
+      if (!ok) { if (Date.now() > bitis) dur(); return; }
+      const isl = g.islem;
+      const yeniBasladi = isl && isl.bas !== izlemeIlk.bas;
+      const islemli = isl && (!izlemeIlk.beklenenYeni || yeniBasladi);
+      let bitti;
+      if (islemli) bitti = !!(isl.bitti || isl.yarida);
+      else bitti = g.kontrol !== izlemeIlk.kontrol && g.durum !== 'kuruluyor';   // eski güncelleyici
       if (!bitti && Date.now() <= bitis) return;
-      clearInterval(izleme); izleme = null;
-      if (bitti && g.durum === 'kuruldu') { AG.bildir('Yeni sürüm kuruldu — sayfa yenileniyor.', 'ok'); setTimeout(() => global.location && global.location.reload(), 1500); }
-    }, 5000);
+      dur();
+      const sonuc = islemli ? isl.sonuc : g.durum;
+      if (bitti && sonuc === 'kuruldu') {
+        const yeniPanel = g.calisanSurum && yuklenenSurum() && g.calisanSurum !== yuklenenSurum();
+        AG.bildir(yeniPanel ? `Pusula ${g.calisanSurum} kuruldu — yeni panel 5 sn içinde yükleniyor.` : 'Güncelleme kuruldu.', 'ok', { sure: 8000 });
+        if (yeniPanel) setTimeout(() => global.location && global.location.reload(), 5000);
+      }
+    };
+    const dur = () => { if (izleme) clearInterval(izleme); izleme = null; };
+    izleme = setInterval(tik, 2000);
+    tik();
+  }
+
+  function cizIzleme(g) {
+    const { el } = AG.dom;
+    const oz = islemOzeti(g.islem, g.adimTanim);
+    if (!oz) return null;
+    const ikon = { bekliyor: '○', suruyor: '◐', tamam: '✓', atlandi: '–', hata: '✗', gerekmedi: '·' };
+    const durumAd = { bekliyor: 'bekliyor', suruyor: 'sürüyor', tamam: 'tamam', atlandi: 'atlandı', hata: 'hata', gerekmedi: 'gerekmedi' };
+    const ton = oz.durum === 'suruyor' ? 'is-suruyor' : oz.durum === 'yarida' || (oz.durum === 'bitti' && !oz.basari) ? 'is-hata' : 'is-tamam';
+    const satirlar = [...((g.islem && g.islem.satirlar) || []), ...istemciSatirlari.filter(x => !g.islem.bas || x.zaman >= g.islem.bas)]
+      .sort((a, b) => String(a.zaman).localeCompare(String(b.zaman)));
+    const konsol = el('div', { class: 'gunc-konsol', id: 'guncKonsol', role: 'log', 'aria-label': 'Güncelleme günlüğü', tabindex: '0' },
+      satirlar.length ? satirlar.map(s => el('div', { class: `gunc-satir gunc-satir-${s.tur || 'bilgi'}` }, [
+        el('span', { class: 'gunc-saat', text: saatYaz(s.zaman) }), el('span', { text: s.metin })
+      ])) : [el('div', { class: 'gunc-satir', text: 'Henüz satır yok…' })]);
+    // Başlık + çubuk + "başladı · %x · n sn" satırı tek tip gösterge (AG.ilerleme, Pusula P5) ile çizilir.
+    const ust = el('div', { id: 'guncIzlemeUst' });
+    if (AG.ilerleme && AG.ilerleme.ciz) {
+      AG.ilerleme.ciz(ust, { durum: oz.durum === 'suruyor' ? 'calisiyor' : 'bitti', oran: oz.oran, sure: Number.isFinite(oz.sure) ? oz.sure : 0,
+        asama: `${g.islem.tur === 'onayli' ? 'Onaylı kurulum' : 'Kontrol'} · başladı ${saatYaz(g.islem.bas)}` }, { baslik: oz.baslik });
+    } else ust.appendChild(el('strong', { text: oz.baslik }));
+    const kutu = el('div', { class: `gunc-izleme ${ton}`, id: 'guncIzleme' }, [
+      ust,
+      el('ol', { class: 'gunc-adimlar' }, oz.adimlar.map(a => el('li', { class: `gunc-adim gunc-adim-${a.durum}` }, [
+        el('span', { class: 'gunc-adim-ikon', 'aria-hidden': 'true', text: ikon[a.durum] || '·' }),
+        el('span', { class: 'gunc-adim-ad' }, [el('span', { text: a.ad }), el('span', { class: 'gunc-sr', text: ` (${durumAd[a.durum]})` })]),
+        el('span', { class: 'gunc-adim-ayrinti', text: [a.ayrinti, Number.isFinite(a.sure) && a.durum !== 'gerekmedi' && a.sure >= 1000 ? sureYaz(a.sure) : null].filter(Boolean).join(' · ') })
+      ]))),
+      el('div', { class: 'gunc-konsol-baslik' }, [el('span', { text: 'Günlük' }), el('span', { class: 'hint', text: oz.durum === 'suruyor' ? 'canlı — 2 sn\'de bir yenilenir' : '' })]),
+      konsol
+    ]);
+    return kutu;
   }
 
   function cizGuncelleme(g) {
@@ -83,18 +190,24 @@
     if (!kap || !AG.dom) return;
     const { el, doldur } = AG.dom;
     const o = guncellemeOzeti(g);
+    const eskiKonsol = bul('guncKonsol');
+    const enAltta = !eskiKonsol || eskiKonsol.scrollHeight - eskiKonsol.scrollTop - eskiKonsol.clientHeight < 24;
+    const surer = !!(g && g.islem && !g.islem.bitti && !g.islem.yarida);
     // Telefonda da açık (PIN'li — kontrol/kur içinde sorulur); bu yüzden data-kilit YOK.
-    const dugme = (metin, onclick, sinif, id) => el('button', { type: 'button', id, class: `btn btn-sm ${sinif}`, onclick }, [el('span', { text: metin })]);
+    const dugme = (metin, onclick, sinif, id) => el('button', { type: 'button', id, class: `btn btn-sm ${sinif}`, onclick, disabled: surer ? true : undefined }, [el('span', { text: metin })]);
     doldur(kap, [
       el('dl', { class: 'kv-list kv-genis mb-0' }, [
         el('dt', { text: 'Çalışan sürüm' }), el('dd', { text: (g && g.calisanSurum) || '—' }),
-        el('dt', { text: 'Durum' }), el('dd', { class: o.ton || null, id: 'ayGuncDurum' }, [el('span', { text: o.metin }), el('span', { text: ' · ' }), el('a', { href: '#/kilavuz/kurulum/adim-22', text: 'Nasıl çalışır?' })])
+        el('dt', { text: 'Durum' }), el('dd', { class: o.ton || null, id: 'ayGuncDurum' }, [el('span', { text: surer ? 'Güncelleme işlemi sürüyor — aşağıda adım adım' : o.metin }), el('span', { text: ' · ' }), el('a', { href: '#/kilavuz/kurulum/adim-22', text: 'Nasıl çalışır?' })])
       ]),
       o.kontrolDugmesi || o.onay ? el('div', { class: 'pf-dugmeler mt-3' }, [
         o.onay ? dugme(`Güncellemeyi kur (${(g && g.hedefSurum) || 'yeni sürüm'})`, () => kur(g), 'btn-primary', 'btnGuncKur') : null,
         o.kontrolDugmesi ? dugme('Şimdi kontrol et', () => kontrol(g), 'btn-secondary', 'btnGuncKontrol') : null
-      ]) : null
+      ]) : null,
+      g && g.islem && !g.gelistirme ? cizIzleme(g) : null
     ]);
+    const k = bul('guncKonsol');
+    if (k && enAltta) k.scrollTop = k.scrollHeight;
     // 63.0: Güncelleme sekmesinde "onay" rozeti (bot kodu güncellemesi onay bekliyorsa).
     const rz = bul('ayarIsik-guncelleme');
     if (rz) rz.classList.toggle('is-hidden', !o.onay);
@@ -120,8 +233,8 @@
     }
     const r = await AG.api.guncelleme.kontrol(ek);
     if (!r || !r.success) { AG.bildir(`Başlatılamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata'); return; }
-    AG.bildir('Kontrol başladı — sonuç birkaç saniye içinde burada görünür.', 'ok');
-    izle(g || {});
+    AG.bildir('Kontrol başladı — adımlar aşağıda canlı görünür.', 'ok');
+    izle({ ...(g || {}), yeniIslem: true });
   }
 
   async function kur(g) {
@@ -130,8 +243,8 @@
     if (!cevap) return;
     const r = await AG.api.guncelleme.uygula(g.hedef, telefonMu() ? pinGovdesi(cevap) : {});
     if (!r || !r.success) { AG.bildir(`Kurulmadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 12000 }); return; }
-    AG.bildir('Kurulum başladı — Pusula birazdan yeniden başlayacak; bu sayfa kendiliğinden yenilenir.', 'ok', { sure: 10000 });
-    izle(g);
+    AG.bildir('Kurulum başladı — adımlar aşağıda canlı görünür; bitince sayfa kendiliğinden yenilenir.', 'ok', { sure: 10000 });
+    izle({ ...(g || {}), yeniIslem: true });
   }
 
   function cizSatirlar(h, s) {
@@ -163,6 +276,8 @@
     ]);
     cizSatirlar(h, s && s.success ? s : null);
     cizGuncelleme(g);
+    // 69.0: sayfa açıldığında süren bir güncelleme (ör. 12:00 görevi) varsa izlemeye başla.
+    if (g && g.islem && !g.islem.bitti && !g.islem.yarida) izle(g);
   }
 
   // ── 63.0: sekmeler (Botlar · Bildirimler · Borsa · Bu bilgisayar · Güncelleme; 68.1 + Yedek ve taşıma — js/pages/tasima.js) ──
@@ -200,6 +315,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.ayarlar = { ciz, satirlar, cizSatirlar, guncellemeOzeti, cizGuncelleme, sekmeSec, sekmeCoz, SEKMELER };
+  AG.pages.ayarlar = { ciz, satirlar, cizSatirlar, guncellemeOzeti, cizGuncelleme, islemOzeti, GUNC_ADIMLAR, sekmeSec, sekmeCoz, SEKMELER };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.ayarlar;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '68.9';
+const APP_VERSION = '69.0';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -894,7 +894,10 @@ function guncelleyiciBaslat(args) {
     { cwd: __dirname, detached: true, stdio: 'ignore', windowsHide: true }).unref();
 }
 app.get('/api/guncelleme/durum', (req, res) => {
-  res.json({ success: true, ...guncelleme.durumOku(__dirname), calisanSurum: APP_VERSION, gelistirme: ARASTIRMA_MODU, denetleyici: !!process.env.PUSULA_KONSOL_GUNLUGU });
+  const d = guncelleme.durumOku(__dirname);
+  // 69.0: işlem bitmeden kilit kalkmışsa güncelleyici süreç yarıda ölmüş — panel "sürüyor" deyip sonsuza dek beklemesin.
+  if (d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)) d.islem = { ...d.islem, yarida: true };
+  res.json({ success: true, ...d, adimTanim: guncelleme.ADIMLAR, calisanSurum: APP_VERSION, gelistirme: ARASTIRMA_MODU, denetleyici: !!process.env.PUSULA_KONSOL_GUNLUGU });
 });
 app.post('/api/guncelleme/kontrol', (req, res) => {
   guncelleyiciBaslat([]);

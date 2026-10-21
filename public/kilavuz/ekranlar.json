@@ -6177,12 +6177,12 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 68418,
+        "bayt": 67934,
         "olcek": 1,
-        "ozet": "34fa569592a19458ed150cc033c3bc8217487b994c99fa574668e6a83da1e1ba",
-        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
-        "surum": "68.9",
-        "tarih": "2026-10-20",
+        "ozet": "3eb0eeddf9d79368aa312a5754ec57c74e6f393b8c56fc17a2920f65551d4b45",
+        "genel": "821999054d0d71ba75a63a60c50de731f119f7f66d9c1d9e91e08cfc1774caa9",
+        "surum": "69.0",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#inpSearch",
@@ -6739,12 +6739,12 @@
         "dosya": "ayarlar-guncelleme-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 32816,
+        "bayt": 32810,
         "olcek": 1,
         "ozet": "716e613561ed4f889d433bafb3720c2469a01b82f50132ae8ab781ece6b898b8",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
-        "tarih": "2026-10-20",
+        "genel": "821999054d0d71ba75a63a60c50de731f119f7f66d9c1d9e91e08cfc1774caa9",
+        "surum": "68.9",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/guncelleme\"]",
@@ -6759,6 +6759,60 @@
             "y": 138,
             "w": 808,
             "h": 157
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-guncelleme-izleme-1400",
+      "rota": "ayarlar/guncelleme",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ayGuncDurum",
+          "sure": 20000
+        },
+        {
+          "degerJs": "(function(){var P=AG.pages.ayarlar;var g={\"success\":true,\"durum\":\"kuruluyor\",\"hedefSurum\":\"69.0\",\"calisanSurum\":\"69.0\",\"kontrol\":\"2026-10-24T09:00:00.000Z\",\"gelistirme\":false,\"islem\":{\"bas\":\"2026-10-24T09:00:00.000Z\",\"tur\":\"onayli\",\"bitti\":null,\"sonuc\":null,\"adimlar\":[{\"kod\":\"baglanti\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:00.000Z\",\"bit\":\"2026-10-24T09:00:02.000Z\"},{\"kod\":\"plan\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:02.000Z\",\"bit\":\"2026-10-24T09:00:04.000Z\",\"ayrinti\":\"68.9 → 69.0 · 12 dosya · kurulacak\"},{\"kod\":\"indir\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:04.000Z\",\"bit\":\"2026-10-24T09:00:07.000Z\",\"ayrinti\":\"12 dosya\"},{\"kod\":\"paket\",\"durum\":\"atlandi\",\"bas\":\"2026-10-24T09:00:07.000Z\",\"bit\":\"2026-10-24T09:00:07.000Z\",\"ayrinti\":\"paket değişikliği yok\"},{\"kod\":\"denetim\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:07.000Z\",\"bit\":\"2026-10-24T09:00:09.000Z\",\"ayrinti\":\"7 dosya temiz\"},{\"kod\":\"baslat\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:09.000Z\",\"bit\":\"2026-10-24T09:00:24.000Z\",\"ayrinti\":\"yol: uç\"},{\"kod\":\"acilis\",\"durum\":\"tamam\",\"bas\":\"2026-10-24T09:00:24.000Z\",\"bit\":\"2026-10-24T09:00:39.000Z\",\"ayrinti\":\"69.0 yanıt veriyor\"},{\"kod\":\"kararlilik\",\"durum\":\"suruyor\",\"bas\":\"2026-10-24T09:00:39.000Z\",\"ayrinti\":\"12/32 kontrol · kalan ~5 dk\"}],\"satirlar\":[{\"zaman\":\"2026-10-24T09:00:00.000Z\",\"metin\":\"Onaylı kurulum başladı (1a2b3c4)\",\"tur\":\"bilgi\"},{\"zaman\":\"2026-10-24T09:00:00.000Z\",\"metin\":\"▶ GitHub bağlantısı\",\"tur\":\"bilgi\"},{\"zaman\":\"2026-10-24T09:00:02.000Z\",\"metin\":\"✓ GitHub bağlantısı\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:04.000Z\",\"metin\":\"plan: kur — 89e9384 → 1a2b3c4 (68.9 → 69.0), 12 dosya\",\"tur\":\"bilgi\"},{\"zaman\":\"2026-10-24T09:00:04.000Z\",\"metin\":\"✓ Değişikliklerin incelenmesi — 68.9 → 69.0 · 12 dosya · kurulacak\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:07.000Z\",\"metin\":\"✓ Yeni kodun indirilmesi — 12 dosya\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:07.000Z\",\"metin\":\"– Paketler — paket değişikliği yok\",\"tur\":\"bilgi\"},{\"zaman\":\"2026-10-24T09:00:09.000Z\",\"metin\":\"✓ Sözdizimi denetimi — 7 dosya temiz\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:09.000Z\",\"metin\":\"▶ Pusula'nın yeniden başlatılması — panel birkaç saniye yanıt vermeyebilir\",\"tur\":\"bilgi\"},{\"zaman\":\"2026-10-24T09:00:24.000Z\",\"metin\":\"✓ Pusula'nın yeniden başlatılması — yol: uç\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:39.000Z\",\"metin\":\"✓ Yeni sürümün açılışı — 69.0 yanıt veriyor\",\"tur\":\"tamam\"},{\"zaman\":\"2026-10-24T09:00:39.000Z\",\"metin\":\"▶ Kararlılık gözlemi — 8 dk boyunca 15 sn'de bir sağlık kontrolü\",\"tur\":\"bilgi\"}]}};var s=Date.parse(g.islem.adimlar[7].bas)+180000;var D=Date.now;Date.now=function(){return s;};P.cizGuncelleme(g);Date.now=D;})()"
+        },
+        {
+          "bekle": 300
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#guncIzleme .gunc-adimlar",
+          "etiket": "Adımlar: ✓ bitti · ◐ sürüyor · – atlandı"
+        },
+        {
+          "secici": "#guncKonsol",
+          "etiket": "Günlük: işlemin her satırı, canlı"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-guncelleme-izleme-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 57552,
+        "olcek": 1,
+        "ozet": "d93aacf1a064858536a4eebd2d8966b8ba2d2e4ed128a08a6b53530ba39462d1",
+        "genel": "3f4d4e4185ca6303e8832dbf996454ad4de0e29af1826e24590d3af5e58070d9",
+        "surum": "69.0",
+        "tarih": "2026-10-21",
+        "isaretler": [
+          {
+            "secici": "#guncIzleme .gunc-adimlar",
+            "x": 445,
+            "y": 357,
+            "w": 758,
+            "h": 338
+          },
+          {
+            "secici": "#guncKonsol",
+            "x": 445,
+            "y": 725,
+            "w": 758,
+            "h": 173
           }
         ]
       }

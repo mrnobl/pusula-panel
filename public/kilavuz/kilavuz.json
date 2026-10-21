@@ -1,5 +1,5 @@
 {
-  "surum": "68.9",
+  "surum": "69.0",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -55,6 +55,13 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "69.0", "tarih": "2026-10-21",
+      "yeni": [
+        "Ayarlar › Güncelleme: güncelleme baştan sona adım adım izlenir (ilerleme çubuğu + canlı günlük); bitince yeni panel kendiliğinden yüklenir.",
+        "Kâğıt hesap çoklu varlık: sıfırlamadan sonraki \"Invalid symbol BTCUSDT (fiyat yok)\" hatası düzeldi (fiyat borsadan taze okunur)."
+      ]
+    },
     {
       "surum": "68.9", "tarih": "2026-10-21",
       "yeni": [
