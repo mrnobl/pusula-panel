@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.9 — Pusula arka planda PowerShell açmıyor (antivirüs) (2026-10-22) {#s69-9}
+
+- **Kaspersky sorunu kökten:** Pusula artık arka planda hiç PowerShell açmıyor. API anahtarı şifrelemesi (69.4) kapatıldı; anahtarlar 69.0'daki gibi düz durur — koruma, çekim izni kapalı ve IP kısıtlı anahtar ([API anahtarları](#/kilavuz/saglik/sir-kasasi)).
+- Şifreli kalmış anahtar dosyası bir kez `scripts\sir-coz.ps1` ile düz hâle getirilir.
+- Pil, beklenmeyen kapanma ve disk sağlığı denetimleri kapalı.
+
 ## 69.8 — Antivirüs uyumu, güncellemenin takılmaması (2026-10-22) {#s69-8}
 
 - **Antivirüs yanlış alarmı giderildi:** 21 Ekim'de sunucudaki Kaspersky Pusula'yı virüs sanıp durdurdu. Pusula artık saatte bir antivirüs ürünlerini, güvenlik duvarını ve açık portları sormuyor; Sağlık sayfasında bu iki madde **kapalı** görünür, elle kontrol edilir.
@@ -32,7 +38,7 @@ Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir
 
 ## 69.4 — Anahtar şifreleme, ikinci uyarı kanalı, paket güvenliği, şifreli uzak yedek (2026-10-21) {#s69-4}
 
-- **API anahtarları şifreli:** sır dosyası Windows DPAPI ile şifrelenir; yalnız bu bilgisayar çözer, kopyası sızarsa okunamaz ([API anahtarları şifreli](#/kilavuz/saglik/sir-kasasi)).
+- **API anahtarları şifreli:** sır dosyası Windows DPAPI ile şifrelenir; yalnız bu bilgisayar çözer, kopyası sızarsa okunamaz ([API anahtarları](#/kilavuz/saglik/sir-kasasi)).
 - **İkinci uyarı kanalı:** Telegram düşerse ACİL uyarılar ntfy ile telefona; healthchecks'ten bağımsız ikinci ölü adam ([İkinci uyarı kanalı](#/kilavuz/saglik/ikinci-kanal)).
 - **Belirti / neden:** telefon yalnız belirtide (bir şey şu an bozuk) ya da kırmızıda çalar; nedenlerin sarısı panelde ve akşam özetinde.
 - **Paket güvenliği:** paketler tam sürüme sabit, sunucuda yalnız kilit dosyası (`npm ci`), kurulum betikleri kapalı, Dependabot 7 gün beklemeyle; onay ekranında paket farkı; günde bir `npm audit`. İki alt paket açığı düzeltildi (proxy-addr, qs) ([Paket güvenliği](#/kilavuz/saglik/paket-guvenligi)).

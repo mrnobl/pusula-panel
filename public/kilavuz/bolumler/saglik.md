@@ -132,12 +132,13 @@ Telegram tek kanal olursa, Telegram düştüğünde (ya da jeton geçersizleşin
 - **İkinci ölü adam:** healthchecks'ten bağımsız ikinci bir izleyici. Örneğin Better Stack'in ücretsiz planında bir "heartbeat" açıp adresini karta yazın; Pusula her 5 dakikada bir o adrese haber verir, gelmezse Better Stack sizi e-postayla / uygulamasıyla uyarır. Adres mevcut healthchecks adreslerinden farklı olmalı.
 - SMS ve telefon araması ücretli planlarda olduğu için önerilmez.
 
-## API anahtarları şifreli {#sir-kasasi}
+## API anahtarları {#sir-kasasi}
 
-API anahtarları, Telegram jetonu ve sağlık adresleri `data/secrets.json` dosyasında **Windows DPAPI** ile şifreli durur (69.4'ten beri; Pusula ilk açılışta mevcut dosyayı kendisi şifreler ve doğrular). 69.6'dan beri dosyayı **yalnız Pusula'yı çalıştıran Windows kullanıcısı** çözebilir (aynı bilgisayardaki başka hesaplar çözemez); telefon jetonu, sunucu bağlantısı ve USB yedek şifresi de aynı kasada. Dosya bu bilgisayar ve bu kullanıcı dışında çözülmez: yedek, USB ya da bir kopyası sızarsa anahtarlar okunamaz. Pusula başka bir Windows hesabına taşınırsa anahtarlar yeniden girilir ya da taşıma dosyası kullanılır. Aynı bilgisayarda çalışan kötü amaçlı yazılıma karşı asıl savunma yine anahtarın **çekim izninin kapalı ve IP kısıtlı** olmasıdır.
+69.4–69.8 arasında API anahtarları Windows DPAPI ile şifreli tutuluyordu. Pusula bunu arka planda PowerShell açarak yapıyordu; 21–22 Ekim'de sunucudaki Kaspersky bu davranışı virüs sanıp Pusula'yı (server.js) iki kez sildi. **69.9'dan beri şifreleme kapalı** ve Pusula arka planda hiç PowerShell açmıyor: anahtarlar 69.0'daki gibi `secrets.json` dosyasında düz durur.
 
-- **Taşıma:** taşıma dosyası (parolalı) anahtarları çözülmüş olarak taşır; yeni bilgisayarda Pusula ilk açılışta yeniden şifreler.
-- **Başka bilgisayara yedekten dönüş:** şifreli dosya orada çözülmez — **Sır kasası** satırı kırmızıya döner ve Pusula dosyanın üstüne yazmaz. Anahtarları borsadan yeniden üretip panelden girin (önce eski dosyayı kenara alın).
+- **Koruma:** Binance anahtarında **para çekme izni kapalı** ve canlı hesapta **IP kısıtı zorunlu** — dosya çalınsa bile anahtar başka bir yerden kullanılamaz, para çekilemez.
+- **Şifreli kalmış dosya:** 69.4–69.8 sırasında şifrelenen dosyayı Pusula çözmeye çalışmaz; Sağlık kırmızı gösterir ve komutu söyler. Sunucuda bir kez (yönetici gerekmez): `powershell -ExecutionPolicy Bypass -File C:\Pusula\scripts\sir-coz.ps1`, sonra Pusula'yı yeniden başlatın. Şifreli hâli yanında `.dpapi-yedek` olarak kalır.
+- Pil, beklenmeyen kapanma ve disk sağlığı da aynı sebeple artık okunmuyor (Sağlık'ta **kapalı**).
 
 ## Saldırılara karşı korumalar {#guvenlik}
 
