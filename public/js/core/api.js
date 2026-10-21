@@ -504,6 +504,12 @@
     saglikTest: () => tetikle('/api/saglik/test'),
     /* Ayarlar › Bu bilgisayar (denetim A-18): healthchecks + Telegram komut yoklaması durumu (salt okuma). */
     saglikDurum: () => al('/api/saglik/durum'),
+    /* 69.1 Öz denetim (lib/ozDenetim.js; panel: js/pages/saglik.js) — tam kapanmayı açmak: bindirmeEylem(ad, 'engel-kaldir') */
+    saglikOz: {
+      durum: () => al('/api/saglik/oz'),
+      yokla: () => tetikle('/api/saglik/oz/yokla'),
+      guvenliKipKaldir: (ad) => tetikle(`/api/saglik/oz/${q(ad)}/guvenli-kip-kaldir`)
+    },
 
     /* ── Kılavuz (60.4; panel: js/pages/kilavuz.js) — durağan dosyalar public/kilavuz/ altında ── */
     kilavuz: {

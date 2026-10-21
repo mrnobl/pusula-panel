@@ -22,6 +22,8 @@
 
 /* ═══ TABLET + TELEFON (≤ 1023 px) ═════════════════════════════════════════ */
 @media (max-width: 1023px) {
+  /* 69.1 Sistem › Sağlık: denetim grupları alt alta. */
+  .oz-gruplar { grid-template-columns: minmax(0, 1fr); }
   /* Araştırma defteri hikâye kartı: dört adım alt alta; teknik alanlar tek sütun. */
   .df-hikaye { grid-template-columns: minmax(0, 1fr); }
   .df-kv { grid-template-columns: minmax(0, 1fr); }
@@ -263,7 +265,7 @@
   .control-xxs, .table-dense, .pick-list-sm, .param-desc, .param-range, .catalog-group, .wl-status, .run-dot,
   .liq-note, .lev-badge, .badge, .mode-badge, .dock-badge, .pf-rozet, .pf-kucuk, .pf-alan > span,
   .eylem-aciklama, .hs-alt, .hs-kaynak, .pn-oge-alt, .pn-p-alt, .strat-grup-baslik, .strat-satir-alt, .kur-kaynak, .pm-gun-sira, .pn-isi-hucre,
-  .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .menu-alt-ayrac, .df-adim-baslik, .kr-no { font-size: var(--fs-sm); }
+  .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .menu-alt-ayrac, .df-adim-baslik, .kr-no, .oz-kademe, .oz-sag { font-size: var(--fs-sm); }
   /* F4: iki sütunlu gösterge şeridinde büyük tutar bölünmesin ($4.114,2 | 0). */
   .p-gosterge-deger { font-size: var(--fs-lg); overflow-wrap: normal; }
   .p-dugme-simge, .p-dugme-simge.p-dugme-kucuk { width: var(--dokunma); }
@@ -393,6 +395,9 @@
 /* panel denetimi A */
 /* A-25 / A-26: dar ekranda bantlar tek satır (dokununca açılır — js/pages/kabuk.js bantlariBirlestir), yeni sürüm kartı kısa. */
 @media (max-width: 640px) {
+  /* 69.1 Sağlık onarım kaydı: saat + rozet üstte, metin alt satırda tam genişlik. */
+  .oz-olay { grid-template-columns: auto minmax(0, 1fr); }
+  .oz-olay .oz-olay-metin { grid-column: 1 / -1; }
   .arastirma-bandi { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
   .arastirma-bandi.bant-acik { white-space: normal; overflow: visible; }
 

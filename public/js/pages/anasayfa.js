@@ -329,8 +329,30 @@
 
   // ═══ 4. SİSTEM (yalnız ışık) ════════════════════════════════════════════
   /** Saf: üç ışık → [{ kimlik, ton: 'iyi'|'uyari'|'tehlike'|'notr', metin, href }]. Bilgi notu metni YAZILMAZ; yalnız özet. */
-  function sistemIsiklari({ veri, tdurum, hesaplar, guncelleme, gunluk }) {
+  /**
+   * 69.1 ÖZ DENETİM (Sistem › Sağlık): kapalı / güvenli kipteki bot, sonra hata ve uyarı satırları (en çok 3); sorun yoksa tek
+   * yeşil satır. Diğer ışıklar (veri, borsa, günlük, sürüm) aynen altta. `oz` yoksa (eski sunucu) satır gri.
+   */
+  function ozIsiklari(oz) {
+    if (!oz || !Array.isArray(oz.denetimler)) return [{ kimlik: 'oz', ton: 'notr', metin: 'Öz denetim okunamadı', href: '#/saglik' }];
     const l = [];
+    for (const b of oz.botlar || []) {
+      if (b.engel) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'tehlike', metin: `${b.adGorunen} tamamen kapalı — siz açana kadar çalışmaz`, href: '#/saglik' });
+      else if (b.guvenliKip) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'uyari', metin: `${b.adGorunen} güvenli kipte — yeni işlem açmıyor`, href: '#/saglik' });
+    }
+    const sorunlu = (oz.denetimler || []).filter(d => d.durum === 'hata' || d.durum === 'uyari').sort((a, b) => (a.durum === 'hata' ? 0 : 1) - (b.durum === 'hata' ? 0 : 1));
+    for (const d of sorunlu.slice(0, 3)) l.push({ kimlik: `oz-${d.kimlik}`, ton: d.durum === 'hata' ? 'tehlike' : 'uyari', metin: `${d.ad}: ${String(d.ayrinti || '').slice(0, 90)}`, href: '#/saglik' });
+    if (sorunlu.length > 3) l.push({ kimlik: 'oz-daha', ton: 'notr', metin: `+ ${sorunlu.length - 3} sorun daha`, href: '#/saglik' });
+    if (!l.length) {
+      const o = oz.ozet || {};
+      l.push({ kimlik: 'oz', ton: oz.calisiyor === false && !o.sonYoklama ? 'notr' : 'iyi',
+        metin: oz.calisiyor === false && !o.sonYoklama ? 'Öz denetim sunucuda çalışır' : `${o.tamam || 0} / ${o.toplam || 0} denetim tamam`, href: '#/saglik' });
+    }
+    return l;
+  }
+
+  function sistemIsiklari({ veri, tdurum, hesaplar, guncelleme, gunluk, oz }) {
+    const l = oz === undefined ? [] : ozIsiklari(oz);
     // Veri: güncellenemeyen kaynak / Binance bekleme / model verisi bayat / bayat (gece güncellenir).
     if (!veri) l.push({ kimlik: 'veri', ton: 'notr', metin: 'Veri durumu alınamadı', href: '#/veri' });
     else {
@@ -379,11 +401,12 @@
     const l = sistemIsiklari(girdi || {});
     const enKotu = l.some(x => x.ton === 'tehlike') ? 'sorun var' : l.some(x => x.ton === 'uyari') ? 'dikkat' : null;
     doldur(k, [
-      el('div', { class: 'row-between row-wrap gap-2' }, [baslik('activity', 'Sistem'), enKotu ? el('span', { class: 'pf-is-sayi', text: enKotu }) : null]),
+      el('div', { class: 'row-between row-wrap gap-2' }, [baslik('activity', 'Sistem sağlığı'), enKotu ? el('span', { class: 'pf-is-sayi', text: enKotu }) : null]),
       el('ul', { class: 'ana-isik-liste', id: 'anaSistemListe' }, l.map(x => el('li', { class: 'ana-isik-satir', 'data-kimlik': x.kimlik }, [
         el('span', { class: `borsa-isik borsa-isik-${x.ton}`, 'aria-hidden': 'true' }),
         el('a', { class: 'no-underline', href: x.href, text: x.metin })
-      ])))
+      ]))),
+      el('a', { class: 'ana-saglik-ac', href: '#/saglik', id: 'lnkAnaSaglik', text: 'Sağlık sayfasını aç →' })
     ]);
   }
 
@@ -403,7 +426,7 @@
     yukleniyor = true;
     try {
       const tz = AG.api.tasarimci;
-      const [durumlar, egriListe, pm, veri, modeller, oneri, tdurum, guncelleme, emirler, hesaplar, gunluk] = await Promise.all([
+      const [durumlar, egriListe, pm, veri, modeller, oneri, tdurum, guncelleme, emirler, hesaplar, gunluk, oz] = await Promise.all([
         Promise.all(BOTLAR.map(ad => AG.api.bindirmeDurum(ad).catch(e => ({ success: false, error: e.message })))),
         Promise.all(BOTLAR.map(ad => egriAl(ad))),
         AG.api.portfoyum ? AG.api.portfoyum.ozet().catch(() => null) : Promise.resolve(null),
@@ -414,7 +437,8 @@
         AG.api.guncelleme ? AG.api.guncelleme.durum().catch(() => null) : Promise.resolve(null),
         tz && tz.emirler ? tz.emirler().catch(() => null) : Promise.resolve(null),
         AG.api.hesaplar ? AG.api.hesaplar(false).catch(() => null) : Promise.resolve(null),
-        AG.api.gunluk ? AG.api.gunluk.liste({ limit: 1 }).catch(() => null) : Promise.resolve(null)
+        AG.api.gunluk ? AG.api.gunluk.liste({ limit: 1 }).catch(() => null) : Promise.resolve(null),
+        AG.api.saglikOz ? AG.api.saglikOz.durum().catch(() => null) : Promise.resolve(null)
       ]);
       const bugun = bugunStr();
       const ok = (x) => (x && x.success !== false ? x : null);
@@ -423,7 +447,8 @@
       yapilacaklarCiz(yapilacaklar({ pm: ok(pm), oneri: ok(oneri), durumlar, bugun, guncelleme: ok(guncelleme), emirler: ok(emirler) }));
       portfoyCiz({ portfoyum: ok(pm) });
       modellerCiz({ modeller: ok(modeller), oneri: ok(oneri), emirler: ok(emirler), bugun });
-      sistemCiz({ veri: ok(veri), tdurum: ok(tdurum), hesaplar: ok(hesaplar), guncelleme: ok(guncelleme), gunluk: ok(gunluk) });
+      sistemCiz({ veri: ok(veri), tdurum: ok(tdurum), hesaplar: ok(hesaplar), guncelleme: ok(guncelleme), gunluk: ok(gunluk), oz: ok(oz) });
+      if (ok(oz) && AG.pages.saglik) AG.pages.saglik.rozetGuncelle(oz);
       ikonla();
     } finally {
       yukleniyor = false;
@@ -440,5 +465,5 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.anasayfa = { yukle, botSagligiCiz, botKarti, portfoyCiz, modellerCiz, sistemCiz, sistemIsiklari, modelIsleri, yapilacaklarCiz, portfoyumOzeti, dilimler, yapilacaklar, halka, portfoyAc, turMetni };
+  AG.pages.anasayfa = { yukle, botSagligiCiz, botKarti, portfoyCiz, modellerCiz, sistemCiz, sistemIsiklari, ozIsiklari, modelIsleri, yapilacaklarCiz, portfoyumOzeti, dilimler, yapilacaklar, halka, portfoyAc, turMetni };
 })(typeof window !== 'undefined' ? window : globalThis);

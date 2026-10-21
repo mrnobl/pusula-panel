@@ -63,12 +63,12 @@
         "dosya": "ana-1400.webp",
         "en": 1400,
         "boy": 1350,
-        "bayt": 59990,
+        "bayt": 62076,
         "olcek": 1,
-        "ozet": "523f753e5040101a34941179e7e4087b691132e88a2adbbd55f221901ddf858a",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
-        "tarih": "2026-10-20",
+        "ozet": "b38042aff1bba498dd46e85ff44708bda12ddf20a7c9be3a3f4f7a8105cd3c70",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#anaYeniSurum",
@@ -89,19 +89,19 @@
             "x": 260,
             "y": 413,
             "w": 749,
-            "h": 184
+            "h": 234
           },
           {
             "secici": "#anaSistem",
             "x": 1017,
             "y": 413,
             "w": 371,
-            "h": 184
+            "h": 234
           },
           {
             "secici": "#anaBotSagligi",
             "x": 260,
-            "y": 605,
+            "y": 656,
             "w": 1128,
             "h": 305
           },
@@ -137,12 +137,12 @@
         "dosya": "ana-390.webp",
         "en": 780,
         "boy": 1688,
-        "bayt": 55942,
+        "bayt": 55616,
         "olcek": 2,
-        "ozet": "b2cda7e76262b15a36f7d9ced1748ebdb0ce6c22263827da7c6d67e249b0ae9f",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
-        "tarih": "2026-10-20",
+        "ozet": "a2a869559a6be5839e6ebd1c9b8008069ab2195b3434c83da57c308307342fa2",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#anaYapilacaklar",
@@ -195,12 +195,12 @@
         "dosya": "diger-390.webp",
         "en": 780,
         "boy": 2200,
-        "bayt": 28506,
+        "bayt": 29492,
         "olcek": 2,
-        "ozet": "c7ba87334f8f20fca84f837bd5c05e4b6c62c1c70f795e6fac47f1bf3325b45e",
-        "genel": "3667bcb4b1461bf18a5f8e617a94775902e94334320a4b3201d9d562701217a0",
-        "surum": "68.8",
-        "tarih": "2026-10-20",
+        "ozet": "a548e8d46777d16a24c3518efdbdc595436342bd4e3c248ac313b0d6b5c0e952",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#yanMenu [data-menu=\"arastirma\"] > .menu-ust",
@@ -212,9 +212,9 @@
           {
             "secici": "#yanMenu [data-menu=\"bilgi\"] > .menu-ust",
             "x": 8,
-            "y": 853,
+            "y": 889,
             "w": 283,
-            "h": 42
+            "h": 52
           }
         ]
       }
@@ -3569,12 +3569,12 @@
         "dosya": "botlar-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 67110,
+        "bayt": 66772,
         "olcek": 1,
-        "ozet": "6278ba7f3d679d28c4ac229cd30f8e2f6c3fd4d062d0d0dc40fa68aaba9e3598",
-        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
-        "surum": "68.9",
-        "tarih": "2026-10-20",
+        "ozet": "0d62dcb47fc231b9e9f64a7324674923f5ab73e653f932b01f1375ad3925fbf3",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"botlar/hucum\"]",
@@ -3836,10 +3836,10 @@
         "boy": 1688,
         "bayt": 60224,
         "olcek": 2,
-        "ozet": "18a3b1116876de98be4937fe8779fa7803172871043db91bd97b8a0fdd2d2f54",
-        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
-        "surum": "68.9",
-        "tarih": "2026-10-20",
+        "ozet": "edb6f96d1242d794c145cfb24d4ba328871c3191d7855f9f81834fda16fd1b00",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#botGorunumler",
@@ -6177,11 +6177,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 67934,
+        "bayt": 68846,
         "olcek": 1,
-        "ozet": "3eb0eeddf9d79368aa312a5754ec57c74e6f393b8c56fc17a2920f65551d4b45",
-        "genel": "821999054d0d71ba75a63a60c50de731f119f7f66d9c1d9e91e08cfc1774caa9",
-        "surum": "69.0",
+        "ozet": "a58b7e76c6dc3285514eb017ef1ff20722417962857e549c6b5e384fae0af26c",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
         "tarih": "2026-10-21",
         "isaretler": [
           {
@@ -6381,6 +6381,78 @@
             "y": 263,
             "w": 1094,
             "h": 525
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "saglik-1400",
+      "rota": "saglik",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#saglikKok",
+          "sure": 20000
+        },
+        {
+          "bekle": 800
+        },
+        {
+          "degerJs": "(function(){var g={\"success\":true,\"calisiyor\":true,\"ozet\":{\"toplam\":19,\"tamam\":18,\"uyari\":1,\"hata\":0,\"bilinmiyor\":0,\"durum\":\"uyari\",\"sonYoklama\":1792839900000,\"sonraki\":1792840200000,\"onarimBugun\":1,\"onarimSiniri\":5},\"gruplar\":[{\"kimlik\":\"sunucu\",\"ad\":\"Pusula ve sunucu\"},{\"kimlik\":\"borsa\",\"ad\":\"Borsa ve veri\"},{\"kimlik\":\"bot\",\"ad\":\"Botlar ve pozisyonlar\"},{\"kimlik\":\"bildirim\",\"ad\":\"Bildirimler\"}],\"denetimler\":[{\"kimlik\":\"surec\",\"grup\":\"sunucu\",\"ad\":\"Pusula süreci ayakta\",\"kademe\":\"onar\",\"olcut\":\"Panel 2 dk yanıt vermiyor; günde 5'ten çok yeniden açıldı\",\"nasil\":\"Bekçi Pusula'yı yeniden açar (sınırsız); günde 5'i geçince kırmızı + Telegram.\",\"durum\":\"tamam\",\"ayrinti\":\"30 saat süredir açık · bugün 1 açılış\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"donma\",\"grup\":\"sunucu\",\"ad\":\"Bot döngüsü dönüyor\",\"kademe\":\"onar\",\"olcut\":\"Botun işi 30 dk'dan uzun sürüyor ya da döngü 30 dk'da 3 kez hata verdi\",\"nasil\":\"Takılan bot için Pusula yeniden başlatılır; döngü tekrar tekrar hata verirse bot tamamen kapanır.\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: dönüyor · Denge: dönüyor\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"dönüyor\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"dönüyor\"}}},{\"kimlik\":\"bellek\",\"grup\":\"sunucu\",\"ad\":\"Bellek kullanımı\",\"kademe\":\"onar\",\"olcut\":\"1 GB üstü ya da 24 saatte 2 katı\",\"nasil\":\"Sessiz saatte Pusula yeniden başlatılır (çalışma sürmüyorken, 02:30–04:30 dışında).\",\"durum\":\"tamam\",\"ayrinti\":\"312 MB\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"disk\",\"grup\":\"sunucu\",\"ad\":\"Disk alanı\",\"kademe\":\"onar\",\"olcut\":\"Boş yer %10 ya da 5 GB altında\",\"nasil\":\"30 günden eski günlükler sıkıştırılır; hiçbir şey silinmez.\",\"durum\":\"tamam\",\"ayrinti\":\"boş 118,4 GB (%41)\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"saat\",\"grup\":\"sunucu\",\"ad\":\"Bilgisayar saati\",\"kademe\":\"haber\",\"olcut\":\"Borsa saatiyle fark 1 sn üstü\",\"nasil\":\"Windows saat eşitlemesini açmanızı söyler.\",\"durum\":\"tamam\",\"ayrinti\":\"borsa saatiyle fark 0,2 sn\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"kilit\",\"grup\":\"sunucu\",\"ad\":\"Takılı kilit dosyası\",\"kademe\":\"onar\",\"olcut\":\"Güncelleme kilidi var, sahibi çalışmıyor\",\"nasil\":\"Sahipsiz kilit silinir.\",\"durum\":\"tamam\",\"ayrinti\":\"kilit yok\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"dosya\",\"grup\":\"sunucu\",\"ad\":\"Kayıt dosyaları okunuyor\",\"kademe\":\"onar\",\"olcut\":\"Ayar ya da bot dosyası bozuk açıldı\",\"nasil\":\"Son sağlam kopyadan açılır; bot kaydıysa bot borsayla karşılaştırılana kadar kapalı kalır.\",\"durum\":\"tamam\",\"ayrinti\":\"ayar ve bot dosyaları okunuyor\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"okunuyor\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"okunuyor\"}}},{\"kimlik\":\"yedek\",\"grup\":\"sunucu\",\"ad\":\"Yedek alınıyor\",\"kademe\":\"haber\",\"olcut\":\"Son yedek 26 saatten eski ya da başarısız\",\"nasil\":\"\",\"durum\":\"tamam\",\"ayrinti\":\"son yedek 9 saat önce · 1284 dosya\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"guncel\",\"grup\":\"sunucu\",\"ad\":\"Son güncelleme\",\"kademe\":\"haber\",\"olcut\":\"Son kurulum geri alındı ya da yarıda kaldı\",\"nasil\":\"Adımları Ayarlar › Güncelleme gösterir.\",\"durum\":\"tamam\",\"ayrinti\":\"guncel · çalışan sürüm 69.1\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"baglanti\",\"grup\":\"borsa\",\"ad\":\"Borsa bağlantısı\",\"kademe\":\"onar\",\"olcut\":\"Bot borsaya bağlı değil ya da borsa yürütücüsü durdu\",\"nasil\":\"Bağlantı 1, 2, 5, 10, 30 dk arayla yeniden denenir; geri çekilme bitince yürütücü kendisi açılır.\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: bağlı · Denge: bağlı\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"bağlı\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"bağlı\"}}},{\"kimlik\":\"fiyat\",\"grup\":\"borsa\",\"ad\":\"Fiyat tazeliği\",\"kademe\":\"koru\",\"olcut\":\"Borsa fiyatı 10 dk okunamadı ya da ikinci kaynaktan %3'ten fazla sapıyor\",\"nasil\":\"Her yoklamada yeniden çekilir; sapma varsa botlar güvenli kipe girer, sapma %1'in altına inince çıkar.\",\"durum\":\"tamam\",\"ayrinti\":\"BTC 108.412 $ · ikinci kaynak (OKX) farkı %0,04\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"internet\",\"grup\":\"borsa\",\"ad\":\"İnternet\",\"kademe\":\"haber\",\"olcut\":\"Borsa ve GitHub'a ulaşılamıyor\",\"nasil\":\"İnternet gelince kesintinin ne kadar sürdüğünü yazar.\",\"durum\":\"tamam\",\"ayrinti\":\"bağlı · borsa 96 ms\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"mutabakat\",\"grup\":\"bot\",\"ad\":\"Mutabakat\",\"kademe\":\"koru\",\"olcut\":\"Borsadaki pozisyon ya da bakiye botun kaydından farklı\",\"nasil\":\"Bot tamamen kapanır (ENGEL); farkı inceleyip \\\"Engeli kaldır\\\" ile siz açarsınız.\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: kayıt borsayla uyuşuyor · Denge: kayıt borsayla uyuşuyor\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"kayıt borsayla uyuşuyor\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"kayıt borsayla uyuşuyor\"}}},{\"kimlik\":\"stop\",\"grup\":\"bot\",\"ad\":\"Koruma stopu\",\"kademe\":\"koru\",\"olcut\":\"Felaket stopu denetiminde hata\",\"nasil\":\"Stop her denetimde yeniden kurulur; art arda 3 denetimde kurulamazsa bot tamamen kapanır.\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: 3 pozisyonun stopu borsada · Denge: pozisyon yok\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"3 pozisyonun stopu borsada\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"pozisyon yok\"}}},{\"kimlik\":\"marj\",\"grup\":\"bot\",\"ad\":\"Marj oranı\",\"kademe\":\"haber\",\"olcut\":\"Marj uyarı ya da alarm eşiğinde\",\"nasil\":\"\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: marj oranı %8,1 · Denge: marj oranı %3,4\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"marj oranı %8,1\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"marj oranı %3,4\"}}},{\"kimlik\":\"tekrar\",\"grup\":\"bot\",\"ad\":\"Tekrarlayan hata\",\"kademe\":\"koru\",\"olcut\":\"Aynı hata 30 dk'da 3 kez\",\"nasil\":\"Bot güvenli kipe girer (yeni işlem yok, stop korunur); emir retleriyse tamamen kapanır.\",\"durum\":\"uyari\",\"ayrinti\":\"Denge: aynı hata 30 dk'da 3 kez: [çoklu varlık] çoklu varlık mutabakatı: çoklu varlık okunamadı: binance {\\\"code\\\":-1121,\\\"msg\\\":\\\"Invalid symbol BTCUSDT (fiyat yok)\\\"} → güvenli kip\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"tekrarlayan hata yok\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"uyari\",\"ayrinti\":\"aynı hata 30 dk'da 3 kez: [çoklu varlık] çoklu varlık mutabakatı: çoklu varlık okunamadı: binance {\\\"code\\\":-1121,\\\"msg\\\":\\\"Invalid symbol BTCUSDT (fiyat yok)\\\"} → güvenli kip\"}}},{\"kimlik\":\"kacan\",\"grup\":\"bot\",\"ad\":\"Kaçan planlı işlem\",\"kademe\":\"haber\",\"olcut\":\"Günlük çalışma 03:02'den 15 dk sonra hâlâ yapılmadı\",\"nasil\":\"Kaçırılanı kendisi yapmaz; nedenini yazar.\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: son günlük çalışma 2026-10-23 · Denge: son günlük çalışma 2026-10-23\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":{\"hucum\":{\"ad\":\"Hücum\",\"mod\":\"demo\",\"durum\":\"tamam\",\"ayrinti\":\"son günlük çalışma 2026-10-23\"},\"denge\":{\"ad\":\"Denge\",\"mod\":\"kagit\",\"durum\":\"tamam\",\"ayrinti\":\"son günlük çalışma 2026-10-23\"}}},{\"kimlik\":\"telegram\",\"grup\":\"bildirim\",\"ad\":\"Telegram ulaşıyor\",\"kademe\":\"haber\",\"olcut\":\"Son gönderim başarısız ya da Telegram bağlı değil\",\"nasil\":\"\",\"durum\":\"tamam\",\"ayrinti\":\"son gönderim 40 dk önce\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null},{\"kimlik\":\"sinyal\",\"grup\":\"bildirim\",\"ad\":\"Sağlık sinyali\",\"kademe\":\"haber\",\"olcut\":\"Son ping başarısız ya da sunucu sinyali 2 saatten eski\",\"nasil\":\"\",\"durum\":\"tamam\",\"ayrinti\":\"Hücum: son ping 11 saat önce · Denge: son ping 11 saat önce · sunucu: son ping 35 dk önce\",\"zaman\":1792839900000,\"onarim\":null,\"botlar\":null}],\"botlar\":[{\"ad\":\"hucum\",\"adGorunen\":\"Hücum\",\"mod\":\"demo\",\"calisiyor\":true,\"engel\":null,\"bindirmeEngel\":null,\"kolEngel\":null,\"guvenliKip\":null,\"dokunulmaz\":true},{\"ad\":\"denge\",\"adGorunen\":\"Denge\",\"mod\":\"kagit\",\"calisiyor\":true,\"engel\":null,\"bindirmeEngel\":null,\"kolEngel\":null,\"guvenliKip\":{\"kaynak\":\"oz:tekrar\",\"metin\":\"aynı hata 30 dk'da 3 kez: [çoklu varlık] çoklu varlık mutabakatı: çoklu varlık okunamadı: binance {\\\"code\\\":-1121,\\\"msg\\\":\\\"Invalid symbol BTCUSDT (fiyat yok)\\\"}\",\"zaman\":1792578846859},\"dokunulmaz\":false}],\"tetikler\":[{\"kimlik\":\"mutabakat\",\"ad\":\"Mutabakat farkı\",\"sonuc\":\"tam\",\"not\":\"mevcut ENGEL\"},{\"kimlik\":\"stop\",\"ad\":\"Koruma stopu kurulamadı\",\"sonuc\":\"tam\"},{\"kimlik\":\"dosya\",\"ad\":\"Bozuk bot kaydı borsayla uyuşmuyor\",\"sonuc\":\"tam\",\"not\":\"mevcut ENGEL\"},{\"kimlik\":\"emirRet\",\"ad\":\"Emirler art arda reddediliyor\",\"sonuc\":\"tam\"},{\"kimlik\":\"ciftEmir\",\"ad\":\"Beklenmeyen emir ya da dolum\",\"sonuc\":\"tam\",\"not\":\"mutabakat yakalar (mevcut ENGEL)\"},{\"kimlik\":\"cokme\",\"ad\":\"Bot döngüsü tekrar tekrar çöküyor\",\"sonuc\":\"tam\"},{\"kimlik\":\"yetki\",\"ad\":\"API anahtarının yetkisi değişti\",\"sonuc\":\"tam\",\"not\":\"gerçek para kipinde denetlenir\"},{\"kimlik\":\"fiyatSapma\",\"ad\":\"Fiyat ikinci kaynaktan çok farklı\",\"sonuc\":\"guvenli\"},{\"kimlik\":\"tekrar\",\"ad\":\"Diğer tekrarlayan hatalar\",\"sonuc\":\"guvenli\"},{\"kimlik\":\"guncelleme\",\"ad\":\"Güncellemeden hemen sonra bot hatası\",\"sonuc\":\"guvenli\",\"not\":\"tekrarlayan hata olarak yakalanır; kararlılık gözlemi eski sürüme döner\"}],\"demoKorumaBitis\":\"2026-12-09T21:00:00.000Z\",\"olaylar\":[{\"zaman\":1792839900000,\"kimlik\":\"tekrar\",\"tur\":\"uyari\",\"metin\":\"Denge: aynı hata 30 dk'da 3 kez: [çoklu varlık] çoklu varlık mutabakatı: çoklu varlık okunamadı: binance {\\\"code\\\":-1121,\\\"msg\\\":\\\"Invalid symbol BTCUSDT (fiyat yok)\\\"} → güvenli kip\"},{\"zaman\":1792839900000,\"kimlik\":\"tekrar\",\"tur\":\"guvenli-kip\",\"bot\":\"denge\",\"metin\":\"aynı hata 30 dk'da 3 kez: [çoklu varlık] çoklu varlık mutabakatı: çoklu varlık okunamadı: binance {\\\"code\\\":-1121,\\\"msg\\\":\\\"Invalid symbol BTCUSDT (fiyat yok)\\\"}\"},{\"zaman\":1792830420000,\"kimlik\":\"fiyat\",\"tur\":\"duzeldi\",\"metin\":\"BTC 108.412 $ · ikinci kaynak (OKX) farkı %0,04\"},{\"zaman\":1792830420000,\"kimlik\":\"internet\",\"tur\":\"duzeldi\",\"metin\":\"internet kesintisi 22 dk sürdü\"},{\"zaman\":1792829100000,\"kimlik\":\"internet\",\"tur\":\"uyari\",\"metin\":\"borsaya ve GitHub'a ulaşılamıyor · 1 dk süredir\"},{\"zaman\":1792829100000,\"kimlik\":\"fiyat\",\"tur\":\"uyari\",\"metin\":\"borsa fiyatı 1 saat süredir okunamıyor — her yoklamada yeniden deneniyor\"},{\"zaman\":1792829100000,\"kimlik\":\"kilit\",\"tur\":\"duzeldi\",\"metin\":\"kilit yok\"},{\"zaman\":1792825500000,\"kimlik\":\"kilit\",\"tur\":\"uyari\",\"metin\":\"güncelleme kilidi 2 saat süredir duruyor, sahibi (pid 8812) çalışmıyor\"},{\"zaman\":1792825500000,\"kimlik\":\"kilit\",\"tur\":\"onarildi\",\"metin\":\"sahipsiz güncelleme kilidi silindi\"}]};var d=Date.now()-1792839900000;(function k(o){if(!o||typeof o!=='object')return;for(var a in o){var v=o[a];if((a==='zaman'||a==='sonYoklama'||a==='sonraki')&&typeof v==='number')o[a]=v+d;else k(v);}})(g);var P=AG.pages.saglik;P._durum.veriAyarla(g);P._ciz.ciz();P.rozetGuncelle(g);return true;})()"
+        },
+        {
+          "bekleSecici": "#saglikBotlar",
+          "sure": 10000
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#saglikOzet",
+          "etiket": "Özet: durum · son 24 saat onarım · botlar · son yoklama"
+        },
+        {
+          "secici": "#saglikBotlar",
+          "etiket": "Güvenli kipteki bot: sebep, \"okudum\" kutusu, kaldır"
+        },
+        {
+          "secici": "#saglikDenetimler",
+          "etiket": "19 denetim, 4 grupta; sorunlular üstte"
+        }
+      ],
+      "uretim": {
+        "dosya": "saglik-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 69380,
+        "olcek": 1,
+        "ozet": "0d8491f15927df3ccb1c1e8fde97f991f75cf65c84e5d66c3dccb96f67fbfbd6",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
+        "isaretler": [
+          {
+            "secici": "#saglikOzet",
+            "x": 260,
+            "y": 178,
+            "w": 1128,
+            "h": 125
+          },
+          {
+            "secici": "#saglikBotlar",
+            "x": 260,
+            "y": 336,
+            "w": 1128,
+            "h": 201
+          },
+          {
+            "secici": "#saglikDenetimler",
+            "x": 260,
+            "y": 537,
+            "w": 1128,
+            "h": 361
           }
         ]
       }
@@ -7337,12 +7409,12 @@
         "dosya": "bot-performans-1400.webp",
         "en": 1400,
         "boy": 1150,
-        "bayt": 81288,
+        "bayt": 81642,
         "olcek": 1,
-        "ozet": "0a41935bdbfe6d652a3eea418eef00700e1a0364f494be7c2ce103a5abb586d3",
-        "genel": "eab07ff836f454ec02e169500b47a4d5e99e3f295dd256fa482c44bda2384bc7",
-        "surum": "68.9",
-        "tarih": "2026-10-20",
+        "ozet": "110259a6bd96dced260cda2a32175871974e8e9ac5b05223bf0da627d9c5f72e",
+        "genel": "ebf49adec9254b79af8b48f51fd3a928ae852dbc959b9528069d239756b0d1ad",
+        "surum": "69.1",
+        "tarih": "2026-10-21",
         "isaretler": [
           {
             "secici": "#botPerformansKart .bp-ozet",

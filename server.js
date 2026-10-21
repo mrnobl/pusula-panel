@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '69.0';
+const APP_VERSION = '69.1';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -929,6 +929,89 @@ app.post('/api/sistem/yeniden-baslat', (req, res) => {
 });
 
 // Lightweight liveness probe for supervisors / uptime monitors.
+/**
+ * ÖZ DENETİM (69.1, lib/ozDenetim.js, PLAN-OZ-DENETIM.md) — 5 dk'da bir 19 denetim; güvenli onarım, güvenli kip, tam kapanma
+ * (= bot ENGEL'i). Panel: Sistem › Sağlık (#/saglik) + ana sayfa "Sistem sağlığı" kartı. Demo kipindeki bota (demo kabul,
+ * 2026-12-09'a kadar) hiçbir şey yapmaz — yalnız haber. Araştırma modunda ÇALIŞMAZ (botlar sunucuda; panel sunucunun
+ * /api/saglik/oz yanıtını okur — lib/evOkuma.js EV_YOLU).
+ *   GET  /api/saglik/oz                         anlık görüntü + son 30 günün olayları
+ *   POST /api/saglik/oz/yokla                   şimdi yokla
+ *   POST /api/saglik/oz/:ad/guvenli-kip-kaldir  güvenli kipi elle kaldır (tam kapanma: /api/bindirme/:ad/engel-kaldir)
+ */
+const { OzDenetim } = require('./lib/ozDenetim');
+async function ozAgOlc() {
+  const al = async (url, o = {}) => { const bas = Date.now(); const r = await fetch(url, { signal: AbortSignal.timeout(8000), ...o }); return { r, sure: Date.now() - bas }; };
+  const sonuc = { binance: false, github: false, saatFarkMs: null, gecikmeMs: null, fiyat: {} };
+  await Promise.all([
+    (async () => {
+      try {
+        const { r, sure } = await al('https://fapi.binance.com/fapi/v1/time');
+        const j = await r.json();
+        if (Number.isFinite(j.serverTime)) { sonuc.binance = true; sonuc.gecikmeMs = sure; sonuc.saatFarkMs = Date.now() - sure / 2 - j.serverTime; }
+      } catch { /* ulaşılamadı */ }
+      try { const { r } = await al('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT'); const j = await r.json(); const f = +j.markPrice; if (f > 0) { sonuc.fiyat.binance = f; sonuc.binance = true; } } catch { /* */ }
+    })(),
+    (async () => { try { const { r } = await al('https://github.com', { method: 'HEAD' }); sonuc.github = r.status < 500; } catch { /* */ } })(),
+    (async () => {
+      try { const { r } = await al('https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT'); const j = await r.json(); const f = +(j.data && j.data[0] && j.data[0].last); if (f > 0) { sonuc.fiyat.ikinci = f; sonuc.fiyat.ikinciAd = 'OKX'; } } catch { /* */ }
+    })(),
+  ]);
+  return sonuc;
+}
+const KILIT_YOLU = () => yollar.programVeri(__dirname, 'guncelleme.kilit');
+const ozDenetim = new OzDenetim({
+  dizin: yollar.veri('oz-denetim'), bildirici: portfoyBildirici, kaydet: (sv, m) => db.addLog(sv, m),
+  ctx: {
+    botlar: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => ({ ad: b.ad, mod: b.mod, adGorunen: b.bot.adGorunen, dizin: b.dizin,
+      etiket: bindirmeArastirma.STRATEJILER[b.ad].ad.toLocaleUpperCase('tr-TR') + (b.mod === 'demo' ? '·DEMO' : ''), bot: b.bot, y: b.y })),
+    disk: () => { try { const st = fs.statfsSync(__dirname); return { bosGB: +((st.bavail * st.bsize) / 1e9).toFixed(1), toplamGB: +((st.blocks * st.bsize) / 1e9).toFixed(1) }; } catch (e) { return { hata: e.message }; } },
+    bellekMB: () => Math.round(process.memoryUsage().rss / 1048576),
+    denetleyici: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('denetleyici.json'), 'utf8')); } catch { return null; } },
+    denetleyiciVar: () => !!process.env.PUSULA_KONSOL_GUNLUGU,
+    kilit: () => {
+      let st; try { st = fs.statSync(KILIT_YOLU()); } catch { return null; }
+      let pid = null, yasiyor = false;
+      try { pid = parseInt(fs.readFileSync(KILIT_YOLU(), 'utf8'), 10); if (pid > 0) { process.kill(pid, 0); yasiyor = true; } } catch (e) { yasiyor = !!(e && e.code === 'EPERM'); }
+      return { zaman: st.mtimeMs, pid, yasiyor };
+    },
+    kilitSil: () => { fs.rmSync(KILIT_YOLU(), { force: true }); db.addLog('WARN', '[ÖZ DENETİM] sahipsiz güncelleme kilidi silindi'); return true; },
+    ayarBozuk: () => [loadConfig._yedekten, SIRLAR_BOZUK],
+    yedek: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('yedek-ayar.json'), 'utf8')); } catch { return null; } },
+    guncelleme: () => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, mesaj: d.neden, calisan: APP_VERSION, yarida: !!(d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)) }; },
+    telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length }),
+    sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: bindirmeArastirma.STRATEJILER[ad].ad, ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
+    kalp: (b) => isletim.kalpOku(b.dizin),
+    gunlukDizin: () => yollar.veri('gunluk'),
+    ag: ozAgOlc,
+    yenidenBaslat: (sebep) => {
+      if (!process.env.PUSULA_KONSOL_GUNLUGU) throw new Error('Pusula denetleyicisiz başlatılmış — kapanırsa geri açılmaz');
+      db.addLog('WARN', `🔄 ${sebep} — Pusula yeniden başlatılıyor (denetleyici birkaç saniye sonra açar)`);
+      setTimeout(() => shutdown(sebep, 75), 1500).unref();
+      return true;
+    },
+  },
+});
+if (!ARASTIRMA_MODU) {
+  const asilAddLog = db.addLog.bind(db);
+  db.addLog = (seviye, mesaj) => { asilAddLog(seviye, mesaj); try { ozDenetim.gunlukGozle(seviye, mesaj); } catch { /* gözlem işi durdurmaz */ } };
+  ozDenetim.acilisKaydet();
+  ozDenetim.baslat();
+}
+app.get('/api/saglik/oz', (req, res) => {
+  res.json({ success: true, calisiyor: !ARASTIRMA_MODU, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30) });
+});
+app.post('/api/saglik/oz/yokla', async (req, res) => {
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Öz denetim sunucuda çalışır — bu bilgisayar geliştirme kopyası.' });
+  try { await ozDenetim.yokla({ zorla: true }); res.json({ success: true, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30) }); }
+  catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+app.post('/api/saglik/oz/:ad/guvenli-kip-kaldir', (req, res) => {
+  const b = bindirmeler[req.params.ad];
+  if (!b) return res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad}` });
+  const g = b.bot.guvenliKipKaldir();
+  res.json({ success: true, kaldirilan: g, bot: b.bot.ozet() });
+});
+
 app.get('/api/health', (req, res) => {
   const bots = engine.getBots();
   const risk = engine.riskManager.getStatus();

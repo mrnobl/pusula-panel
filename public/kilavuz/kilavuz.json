@@ -1,5 +1,5 @@
 {
-  "surum": "69.0",
+  "surum": "69.1",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -38,6 +38,7 @@
     { "id": "sinyaller", "baslik": "Sinyaller", "grup": "Diğer ekranlar", "rota": "sinyaller", "dosya": "bolumler/sinyaller.md", "dosyalar": ["js/pages/sinyaller.js"] },
     { "id": "gosterge-havuzu", "baslik": "Gösterge havuzu", "grup": "Diğer ekranlar", "dosya": "bolumler/gosterge-havuzu.md", "arastirma": true },
     { "id": "veri", "baslik": "Veri", "grup": "Diğer ekranlar", "rota": "veri", "dosya": "bolumler/veri.md", "dosyalar": ["js/pages/veri.js", "js/pages/portfoy.js"] },
+    { "id": "saglik", "baslik": "Sağlık (öz denetim)", "grup": "Diğer ekranlar", "rota": "saglik", "dosya": "bolumler/saglik.md", "dosyalar": ["js/pages/saglik.js"] },
     { "id": "gunluk", "baslik": "Günlükler", "grup": "Diğer ekranlar", "rota": "gunluk", "dosya": "bolumler/gunluk.md", "dosyalar": ["js/pages/gunluk.js"] },
     { "id": "bildirimler", "baslik": "Bildirimler", "grup": "Diğer ekranlar", "rota": "bildirimler", "dosya": "bolumler/bildirimler.md", "dosyalar": ["js/pages/bildirimMerkezi.js"] },
     { "id": "kurulum-denetimi", "baslik": "Kurulum denetimi", "grup": "Diğer ekranlar", "rota": "kurulum-denetimi", "dosya": "bolumler/kurulum-denetimi.md", "dosyalar": ["js/pages/kurulumDenetimi.js"] },
@@ -55,6 +56,14 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "69.1", "tarih": "2026-10-21",
+      "yeni": [
+        "Sistem › Sağlık: Pusula kendini 5 dakikada bir yoklar, güvenli işleri kendisi onarır; tekrarlayan hatada bot güvenli kipe girer.",
+        "Para kaybettirebilecek bir sebepte bot tamamen kapanır ve siz açana kadar kapalı kalır; Hücum demo kabul süresince yalnız haber.",
+        "Ana sayfa \"Sistem sağlığı\" kartı, menüde Sağlık noktası, Telegram akşam özeti 21:00."
+      ]
+    },
     {
       "surum": "69.0", "tarih": "2026-10-21",
       "yeni": [

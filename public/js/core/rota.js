@@ -68,6 +68,8 @@
     'tarama/listeler': { bolum: 'tab-listeler', menu: 'tarama', baslik: 'Listeler' },
     'tarama/ayarlar': { bolum: 'tab-tarama-ayar', menu: 'tarama', baslik: 'Tarama ayarları' },
     'veri': { bolum: 'tab-veri', menu: 'veri', baslik: 'Veri', altYol: true },
+    // 69.1: Sistem › Sağlık — öz denetim (js/pages/saglik.js, lib/ozDenetim.js).
+    'saglik': { bolum: 'tab-saglik', menu: 'saglik', baslik: 'Sağlık' },
     'gunluk': { bolum: 'tab-gunluk', menu: 'gunluk', baslik: 'Günlükler' },
     'bildirimler': { bolum: 'tab-bildirim', menu: 'bildirimler', baslik: 'Bildirimler' },
     // 63.0: Ayarlar beş sekme — alt yol sekmeyi taşır (#/ayarlar/bildirimler …); js/pages/ayarlar.js sekmeSec.

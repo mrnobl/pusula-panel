@@ -209,6 +209,9 @@ Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden 
 
 1. **Borsa ile kayıtlar uyuşmuyor** (elle emir mi verdiniz?): nedeni bulun, düzeltin, banttaki **Borsayla karşılaştır** → temizse bot devam eder.
 2. **30 günde gerçek sonuç simülasyondan %5'ten fazla ayrıldı:** [İleri test](#/kilavuz/ileri-test) ekranında inceleyin, sonra **Engeli kaldır** (onaylı).
+3. **Öz denetim botu tamamen kapattı** (69.1 — kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü): neden "öz denetim: …" diye başlar. İnceleyin, sonra **Engeli kaldır** ya da [Sağlık](#/kilavuz/saglik/tam-kapanma) sayfasında **Botu yeniden aç**.
+
+**Sarı bant — güvenli kipte (69.1):** bot yeni işlem açmaz, açık pozisyonun stopu yerinde kalır. Öz denetim koyduysa sebep geçince kendiliğinden kalkar; banttaki **Güvenli kipi kaldır** ile de kaldırabilirsiniz ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
 
 ## Hisse yapıları {#hisse-yapilari}
 

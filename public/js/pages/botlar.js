@@ -388,6 +388,30 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     ]);
   }
 
+  /** 69.1 öz denetim: güvenli kip (yeni işlem yok, stop korunur) — sarı bant; ayrıntı ve tam kapanma Sistem › Sağlık'ta. */
+  function guvenliKipBandi(ad, d) {
+    const g = d.bot.guvenliKip;
+    let dugme = null;
+    if (!telefonMu()) {
+      dugme = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: `btnGkKaldir-${ad}` }, [el('span', { text: 'Güvenli kipi kaldır' })]);
+      dugme.addEventListener('click', async () => {
+        if (!(await AG.onayla({ baslik: `${d.bot.adGorunen}: güvenli kip kalksın mı?`, onay: 'Kaldır', iptal: 'Vazgeç', metin: `Neden: ${g.metin}. Kaldırınca bot sonraki günlük çalışmada yeniden işlem yapar.` }))) return;
+        AG.dom.mesgul(dugme, '…');
+        try { const r = await AG.api.saglikOz.guvenliKipKaldir(ad); if (!r.success) throw new Error(r.error); bildir('Güvenli kip kaldırıldı', 'ok'); }
+        catch (e) { bildir(`İşlem yapılamadı: ${e.message}`, 'hata'); }
+        finally { AG.dom.hazir(dugme); yukle(true); }
+      });
+    }
+    return el('div', { class: 'bot-dur-bandi bot-gk-bandi', role: 'status' }, [
+      el('div', { class: 'bot-dur-metin' }, [
+        el('strong', { text: 'Güvenli kipte — yeni işlem açmıyor' }),
+        el('div', { text: g.metin }),
+        el('div', { class: 'hint hint-sm mb-0' }, [el('span', { text: 'Açık pozisyonun stopu yerinde. Öz denetim koyduysa sebep geçince kendiliğinden kalkar · ' }), el('a', { href: '#/saglik', text: 'Sağlık' })]),
+      ]),
+      dugme,
+    ]);
+  }
+
   const sayiKutu = (etiket, deger, alt, sinif, yardimK, title) => el('div', { class: 'ana-sayi' }, [
     el('span', { class: 'stat-title' }, [el('span', { text: etiket }), yardimK ? yardim(yardimK) : null]),
     el('span', { class: `stat-value stat-value-sm bot-sayi-deger sayi ${sinif || ''}`, text: deger, title: title || null }),
@@ -458,6 +482,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
         el('div', { class: 'bot-bas-dugme' }, [telefonMu() ? null : baslatDurdur(ad, d), acilFren(ad, d)])
       ]),
       du.onayBekliyor ? durdurmaBandi(ad, d, du) : null,
+      !du.onayBekliyor && d.bot && d.bot.guvenliKip ? guvenliKipBandi(ad, d) : null,
       arastirmaMu() ? el('p', { class: 'hint hint-sm bot-eski-kayit mb-0', text: 'Bu bilgisayardaki eski kayıt — asıl durum sunucudaki panelde (bot sunucuda çalışır).' }) : null,
       telefonMu() && telefonAcilNotu(telefonPin()) ? el('p', { class: 'hint hint-sm tone-warning mb-0', text: telefonAcilNotu(telefonPin()) }) : null
     ];

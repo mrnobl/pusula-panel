@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.1 — Öz denetim: Pusula kendini yokluyor, güvenli onarım, güvenli kip, tam kapanma (2026-10-21) {#s69-1}
+
+- **Yeni sayfa — Sistem › Sağlık:** Pusula kendini 5 dakikada bir 19 denetimle yoklar (sunucu, borsa ve veri, botlar, bildirimler). Güvenli işleri kendisi onarır (sahipsiz kilit, disk dolarken eski günlükleri sıkıştırma, takılan botta yeniden başlatma; bellek şişmesinde yalnız sessiz saatte). Aynı onarım günde en çok 5 kez denenir ([Sağlık](#/kilavuz/saglik)).
+- **Güvenli kip:** aynı hata 30 dakikada 3 kez tekrarlanırsa ya da fiyat iki kaynakta %3'ten fazla farklıysa bot yeni işlem açmaz, stopu yerinde kalır; sebep geçince kendiliğinden çıkar. 21 Ekim'deki "fiyat yok" hatası bununla ilk tekrarda önünüze gelirdi.
+- **Tam kapanma:** para kaybettirebilecek bir sebepte (mutabakat farkı, kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü…) bot tamamen kapanır ve siz "Sebebi okudum" deyip açana kadar kapalı kalır. Açık pozisyona dokunulmaz.
+- **Hücum (demo kabul):** 9 Aralık sonuna kadar öz denetim Hücum'a hiçbir şey yapmaz, yalnız haber verir.
+- **Ana sayfa:** "Sistem" kartı **Sistem sağlığı** oldu; öz denetimin sorunlu satırları en üstte. Menüde Sağlık'ın yanında sarı / kırmızı nokta. Botlar sayfasında güvenli kipteki bot için sarı bant.
+- **Telegram:** uyarı ve hata anında; onarımlar 21:00 akşam özetinde.
+
 ## 69.0 — Güncellemeyi adım adım izleme, kâğıt çoklu varlık fiyat düzeltmesi (2026-10-21) {#s69-0}
 
 - **Güncelleme ekranı:** Ayarlar › Güncelleme'de güncelleme baştan sona izlenir: adımlar (indirme, denetim, yeniden başlatma, açılış, kararlılık gözlemi), ilerleme çubuğu ve canlı günlük. Önceden ekran 5 dakika sonra izlemeyi bırakıyordu; kurulumdan sonraki 8 dakikalık kararlılık gözlemi sürerken "kuruluyor" yazısı takılı kalıyordu. Artık işlem bitene kadar izlenir, bitince yeni panel kendiliğinden yüklenir ([Güncellemeyi izlemek](#/kilavuz/ayarlar/guncelleme-izleme)).
