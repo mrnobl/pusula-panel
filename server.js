@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '69.2';
+const APP_VERSION = '69.6';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -99,11 +99,20 @@ const guvenlikKur = require('./lib/guvenlik');
  * Yazım lib/live/kaliciDosya.js (tmp + fsync + rename + .yedek).
  */
 const kaliciDosya = require('./lib/live/kaliciDosya');
-let SIRLAR_BOZUK = null;
+/**
+ * 69.4 SIR KASASI (lib/sirKasasi.js): secrets.json Windows'ta DPAPI ile şifreli (69.6: CurrentUser; eski LocalMachine zarfı
+ * açılışta geçirilir). Açılışta düz dosya şifreliye çevrilir ve doğrulanır (tutmazsa düz kalır). Şifre ÇÖZÜLEMEZSE SIRLAR_KILITLI:
+ * sırlar boş sayılır ama dosyanın üstüne ASLA yazılmaz (anahtarlar silinmesin) + açılışta alarm.
+ * 69.6: telefon-jeton.json, ev-baglanti.json, yedek-sifre.json da kasada (KASA_DOSYALARI) — açılışta hepsi geçirilir.
+ */
+const sirKasasi = require('./lib/sirKasasi');
+let SIRLAR_BOZUK = null, SIRLAR_KILITLI = null, SIR_GECIS = null, KASA_GECIS = {};
+try { KASA_GECIS = sirKasasi.hepsiniGecir((ad) => yollar.veri(ad)); SIR_GECIS = KASA_GECIS['secrets.json'] || null; } catch (e) { SIR_GECIS = { yapildi: false, neden: e.message }; }
 function loadSecrets() {
   if (!fs.existsSync(SECRETS_PATH)) return {};
   for (const f of [SECRETS_PATH, `${SECRETS_PATH}.yedek`]) {
-    try { const j = JSON.parse(fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '')); if (j && typeof j === 'object') { if (f !== SECRETS_PATH && !SIRLAR_BOZUK) SIRLAR_BOZUK = 'data/secrets.json bozuk — son iyi kopyadan (.yedek) okundu'; return j; } } catch { /* sonraki */ }
+    try { const j = sirKasasi.oku(f); if (j && typeof j === 'object') { if (f !== SECRETS_PATH && !SIRLAR_BOZUK) SIRLAR_BOZUK = 'data/secrets.json bozuk — son iyi kopyadan (.yedek) okundu'; return j; } }
+    catch (e) { if (e instanceof sirKasasi.SirKilitliHatasi) { SIRLAR_KILITLI = `${e.message} — dosyaya dokunulmadı; sunucuyu başka bir bilgisayara taşıdıysanız anahtarları panelden yeniden girmeden önce dosyayı yedekleyip silin`; return {}; } }
   }
   SIRLAR_BOZUK = 'data/secrets.json bozuk ve son iyi kopya yok — API anahtarları, Telegram jetonu ve sağlık adresleri OKUNAMADI; panelden yeniden girin (dosya önce yedeklendi)';
   try { fs.copyFileSync(SECRETS_PATH, `${SECRETS_PATH}.bozuk-${Date.now()}.bak`); } catch { /* */ }
@@ -111,8 +120,9 @@ function loadSecrets() {
 }
 
 function saveSecrets(gizli) {
+  if (SIRLAR_KILITLI) throw new Error(`sırlar yazılmadı: ${SIRLAR_KILITLI}`);
   if (SIRLAR_BOZUK && !Object.keys(gizli || {}).length) throw new Error(`sırlar yazılmadı: ${SIRLAR_BOZUK}`);
-  kaliciDosya.yaz(SECRETS_PATH, gizli);
+  sirKasasi.yaz(SECRETS_PATH, gizli, kaliciDosya.yaz);
 }
 
 // Load Configuration
@@ -256,6 +266,30 @@ let config = loadConfig();
  * POST reddedilir. Okuma uçları, backtest ve portföy laboratuvarı çalışır.
  */
 const ARASTIRMA_MODU = process.env.ARASTIRMA_MODU === '1';
+/**
+ * 69.3 SÜRÜM İZİ (Knight 2012 dersi: "o an hangi kod çalışıyordu?"): açılıştaki git commit'i + etkin ayarların parmak izi
+ * (sırlar hariç, sha256 ilk 12). /api/health, günlük satırları (v), kara kutu ve öz denetim gösterir.
+ */
+function commitOku(kok) {
+  try {
+    const head = fs.readFileSync(path.join(kok, '.git', 'HEAD'), 'utf8').trim();
+    if (/^[0-9a-f]{40}$/.test(head)) return head.slice(0, 7);
+    const ref = (/^ref: (.+)$/.exec(head) || [])[1];
+    if (!ref) return null;
+    try { return fs.readFileSync(path.join(kok, '.git', ref), 'utf8').trim().slice(0, 7); } catch { /* packed */ }
+    const p = fs.readFileSync(path.join(kok, '.git', 'packed-refs'), 'utf8').split('\n').find(l => l.endsWith(` ${ref}`));
+    return p ? p.slice(0, 7) : null;
+  } catch { return null; }
+}
+const COMMIT = commitOku(__dirname);
+GUNLUK.surumAyarla(`${APP_VERSION}${COMMIT ? `@${COMMIT}` : ''}`);
+function ayarIzi() {
+  try {
+    const gizli = /key|secret|token|sifre|parola|pin|jeton|url/i;
+    const temiz = JSON.parse(JSON.stringify(config, (k, v) => (k && gizli.test(k) ? undefined : v)));
+    return require('crypto').createHash('sha256').update(JSON.stringify(temiz)).digest('hex').slice(0, 12);
+  } catch { return null; }
+}
 if (ARASTIRMA_MODU && config.telegram) config.telegram = { ...config.telegram, enabled: false };
 const app = express();
 const server = http.createServer(app);
@@ -284,7 +318,7 @@ const guvenlik = guvenlikKur.kur({
 });
 const acilPin = require('./lib/acilPin').olustur({
   // Kilit uyarısı Telegram'a (portfoyBildirici aşağıda tanımlanır; çağrı anında hazırdır).
-  uyari: (metin) => portfoyBildirici.gonder('alarm', 'Telefondan acil durdurma kilitlendi', [metin], { anahtar: 'acil-pin-kilit' })
+  uyari: (metin) => portfoyBildirici.gonder('alarm', 'PIN kilitlendi (yanlış denemeler)', [metin], { anahtar: 'acil-pin-kilit' })
 });
 const wss = new WebSocket.Server({ server, verifyClient: guvenlik.wsDogrula });
 
@@ -314,6 +348,15 @@ app.use((req, res, next) => {
   }
   next();
 });
+/*
+ * 69.6 YEREL PIN (lib/yerelPin.js, güvenlik testi K1/YÜKSEK-1): masaüstü panelde de tehlikeli işlemler (taşıma paketi, anahtarlar,
+ * engel / güvenli kip kaldırma, canlı kilit, mod, güncelleme onayı, sıfırlama, yeniden başlatma) acil PIN'i ister; doğru PIN 10 dk
+ * oturum. Risk azaltan işlemler (acil, durdur) PIN istemez. Araştırma modunda kapalı; PUSULA_YEREL_PIN=0 yalnız uçtan uca testler için.
+ */
+const yerelPin = require('./lib/yerelPin').olustur({
+  acilPin, kok: __dirname, etkin: !ARASTIRMA_MODU && process.env.PUSULA_YEREL_PIN !== '0', log: (lv, msg) => db.addLog(lv, msg)
+});
+app.use(yerelPin.middleware);
 // 61.7: araştırma modunda bot/işlem okuma uçları sunucudaki panelden (Tailscale, salt okuma) — lib/evOkuma.js.
 const EV_BAGLANTI_ETKIN = ARASTIRMA_MODU && process.env.EV_OKUMA !== '0';   // EV_OKUMA=0: kılavuz görüntüleri (scripts/kilavuz-ekran.js)
 const evYazmaLib = require('./lib/evYazma');
@@ -371,6 +414,10 @@ const KURULUM = require('./lib/kurulum').olustur({ kok: __dirname, tasima: () =>
  */
 const TASIMA = require('./lib/tasimaApi').olustur({
   surum: APP_VERSION, log: (lv, msg) => db.addLog(lv, msg),
+  // 69.6: taşıma paketi çözülmüş sırları taşır — her oluşturma Telegram'a (siz yapmadıysanız hemen anahtarları yenileyin).
+  bildir: (tur, ad, boyut, gizli) => portfoyBildirici.gonder('uyari', `${tur === 'tasima' ? 'Taşıma paketi' : 'Araştırma eklentisi'} oluşturuldu`,
+    [`${ad} (${(boyut / 1048576).toFixed(1)} MB)${gizli ? ' — API anahtarları ve jetonlar içinde (şifreli)' : ''}`,
+      'Bunu siz yapmadıysanız: Binance API anahtarlarını ve Telegram jetonunu hemen yenileyin, Sağlık sayfasına bakın.'], { anahtar: `tasima-olustur:${ad}` }),
   botlarCalisiyor: () => [
     ...BINDIRME_ADLAR.filter(ad => bindirmeler[ad] && (bindirmeler[ad].bot.zamanlayici || bindirmeler[ad].y.borsa) && bindirmeler[ad].bot.durum.calisiyor),
     ...(kalkanBot.durum.calisiyor && kalkanYurutucu.borsa ? ['kalkan'] : []), ...(donchianBot.durum.calisiyor && canli.borsa ? ['donchian'] : [])],
@@ -590,7 +637,7 @@ async function kalkanBagla() {
   if (kalkanYurutucu.borsa) return kalkanYurutucu.ozet();
   const ccxt = require('ccxt');
   const veri = new ccxt.binanceusdm({ enableRateLimit: true });     // anahtarsız: yalnız piyasa verisi
-  const borsa = new KagitBorsa({ veri, bakiye: kalkanAyar().kagitBakiye, dosya: path.join(KALKAN_DIZIN, 'kagit-borsa.json') });
+  const borsa = new KagitBorsa({ veri, bakiye: kalkanAyar().kagitBakiye, dosya: path.join(KALKAN_DIZIN, 'kagit-borsa.json'), model: 'kotumser' });   // 69.5: yalnız yeni dosyada etkin
   const ozet = await kalkanYurutucu.baglanKagit(borsa);
   await kalkanBot.mutabakat();
   return ozet;
@@ -639,7 +686,9 @@ function canliKapiGerekli(ad) { const k = canliKapiDurum(ad); if (!k.izin) throw
 /** Panelde görünen modlar: gerçek para yalnız kapı açıkken (ya da zaten o moddaysa — geri dönebilmek için). */
 const gorunurModlar = (b) => BINDIRME_MODLAR.filter(m => m !== 'canli' || b.mod === 'canli' || canliKapiDurum(b.ad).izin);
 const GOLGE_DOSYA = yollar.veri('ileri', 'bindirme-golge.jsonl');
-const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ozetDosya: yollar.veri('telegram-son-ozet.json'),
+/** 69.4 ikinci kanal (ntfy) ve ikinci ölü adam: secrets.json `ikinciKanal` { ntfyKonu, sinyalUrl } (sır — panelde maskeli). */
+const ikinciKanal = () => { const k = (loadSecrets().ikinciKanal) || {}; return { konu: k.ntfyKonu || null, sinyalUrl: k.sinyalUrl || null }; };
+const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ikinciKanalFn: ikinciKanal, ozetDosya: yollar.veri('telegram-son-ozet.json'),
   kuyrukDosya: ARASTIRMA_MODU ? null : yollar.veri('telegram-kuyruk.jsonl'),   // Y3: giden kutusu (5 dk'da bir boşaltılır)
   gunlukDosya: ARASTIRMA_MODU ? null : yollar.veri('live', 'alarmlar.jsonl') });   // PLAN-DEMO-KABUL I3: kalıcı bildirim günlüğü
 
@@ -688,6 +737,7 @@ function bindirmeKur(ad, mod) {
   const bot = new BindirmeBot(y, { ad, dizin, sermayeTavani: tavan, evren: { k: a.k }, kaydet, mod,
     btcAyak, bildirici: portfoyBildirici, golgeDosya: GOLGE_DOSYA, saglik: saglikBotlar[ad],   // 68.8: bot başına check (Hücum: saglikBot)
     kucukSermaye: a.kucukSermaye === true || a.kucukSermaye === false ? a.kucukSermaye : 'oto',
+    tavanAkis: a.tavanAkis !== false,   // 69.3: yatırma/çekme sermaye tavanını izler (canlıda onaylı üst sınırla)
     hesapKesicisi: canliMi ? { uyari: 0.30, acil: 0.40 } : null,   // Ö6: yalnız gerçek parada
     kapiFn: canliMi ? () => canliKapiDurum(ad) : null });            // denetim #2: kapı çalışırken de denetlenir
   /** @param o.mutabakatsiz Y4 (61.7): acil durdurma için yalnız bağlan — kol mutabakatı (ve hatası) acili engellemez. */
@@ -705,7 +755,8 @@ function bindirmeKur(ad, mod) {
       if (!config.testnetApiKey || !config.testnetApiSecret) throw new Error('Demo anahtarı yok — Borsa sekmesi → API anahtarları → Testnet Key/Secret girin');
       ozet = await y.baglan({ ortam: 'testnet', apiKey: config.testnetApiKey, apiSecret: config.testnetApiSecret, veri });
     } else {
-      const borsa = new KagitBorsa({ veri, bakiye: a.kagitBakiye, dosya: path.join(dizin, 'kagit-borsa.json') });
+      // 69.5: yeni kâğıt hesap kötümser modelle açılır (stoplar tetiklenir, piyasa emri kaymalı); var olan dosya kendi modelinde kalır.
+      const borsa = new KagitBorsa({ veri, bakiye: a.kagitBakiye, dosya: path.join(dizin, 'kagit-borsa.json'), model: 'kotumser' });
       ozet = await y.baglanKagit(borsa);
     }
     if (!o.mutabakatsiz) await bot.mutabakat();
@@ -813,7 +864,10 @@ async function disIpDenetle() {
 if (!ARASTIRMA_MODU) {
   // Açılış: bozuk ayar/sır dosyası kurtarıldıysa (Y5) alarm (Telegram ayarı bu sırada okunmuş olur).
   setTimeout(() => {
-    for (const m of [loadConfig._yedekten, SIRLAR_BOZUK].filter(Boolean)) {
+    if (SIR_GECIS && SIR_GECIS.yapildi) db.addLog('SUCCESS', `[İŞLETİM] sır dosyası şifrelendi (Windows DPAPI, yalnız bu bilgisayardaki bu Windows kullanıcısı çözer)${SIR_GECIS.neden ? ` — ${SIR_GECIS.neden}` : ''}`);
+    for (const [ad, g] of Object.entries(KASA_GECIS || {})) if (ad !== 'secrets.json' && g && g.yapildi) db.addLog('SUCCESS', `[İŞLETİM] ${ad} sır kasasına alındı${g.neden ? ` — ${g.neden}` : ''}`);
+    else if (SIR_GECIS && /doğrulanamadı/.test(SIR_GECIS.neden || '')) db.addLog('ERROR', `[İŞLETİM] ${SIR_GECIS.neden}`);
+    for (const m of [loadConfig._yedekten, SIRLAR_BOZUK, SIRLAR_KILITLI].filter(Boolean)) {
       db.addLog('ERROR', `[İŞLETİM] ${m}`);
       portfoyBildirici.gonder('alarm', 'Ayar dosyası bozuk açıldı', [m], { anahtar: `ayar-bozuk:${m.slice(0, 30)}` });
     }
@@ -992,7 +1046,7 @@ function ozKaraKutuVeri(b, o = {}) {
     }
   }
   return {
-    surum: APP_VERSION, sistem: { bellekMB: Math.round(process.memoryUsage().rss / 1048576), acikSn: Math.round(process.uptime()), disk: diskDurumu() },
+    surum: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(), sistem: { bellekMB: Math.round(process.memoryUsage().rss / 1048576), acikSn: Math.round(process.uptime()), disk: diskDurumu() },
     botOzet: b ? guvenli(() => b.bot.ozet()) : null, yurutucu: b ? guvenli(() => b.y.ozet()) : null,
     kolEngel: b && b.bot.kol && b.bot.kol.durum ? b.bot.kol.durum.engel || null : null,
     guncelleme: guvenli(() => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, kurulu: d.kurulu || null, kontrol: d.kontrol || null, neden: d.neden || null, kuruDeneme: d.kuruDeneme || null }; }),
@@ -1015,17 +1069,49 @@ const ozDenetim = new OzDenetim({
       return { zaman: st.mtimeMs, pid, yasiyor };
     },
     kilitSil: () => { fs.rmSync(KILIT_YOLU(), { force: true }); db.addLog('WARN', '[ÖZ DENETİM] sahipsiz güncelleme kilidi silindi'); return true; },
-    ayarBozuk: () => [loadConfig._yedekten, SIRLAR_BOZUK],
+    ayarBozuk: () => [loadConfig._yedekten, SIRLAR_BOZUK, SIRLAR_KILITLI],
+    sirKasasi: () => ({ sifreli: sirKasasi.sifreliMi(SECRETS_PATH), etkin: sirKasasi.etkinMi(), kilitli: SIRLAR_KILITLI, var: fs.existsSync(SECRETS_PATH),
+      // 69.6: kapsam (CurrentUser beklenir), düz kip (PUSULA_SIR_DUZ=1) ve diğer kasa dosyaları (düz kalan var mı)
+      kapsam: sirKasasi.kapsamOku(SECRETS_PATH), duzKip: sirKasasi.duzKipMi(),
+      duzKalan: sirKasasi.KASA_DOSYALARI.filter(ad => ad !== 'secrets.json' && fs.existsSync(yollar.veri(ad)) && !sirKasasi.sifreliMi(yollar.veri(ad))) }),
     yedek: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('yedek-ayar.json'), 'utf8')); } catch { return null; } },
-    guncelleme: () => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, mesaj: d.neden, calisan: APP_VERSION, yarida: !!(d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)) }; },
+    guncelleme: () => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, mesaj: d.neden, calisan: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(), yarida: !!(d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)),
+      // 69.6 imza: son kontrolün sonucu; yoksa imza dosyası var mı
+      imza: (d.imza && d.imza.durum && d.imza.durum !== 'atlandi') ? d.imza.durum : (fs.existsSync(guncelleme.imzaDosyasi(__dirname)) ? 'kurulu' : 'kurulmadi') }; },
     telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length }),
     sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: bindirmeArastirma.STRATEJILER[ad].ad, ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
     kalp: (b) => isletim.kalpOku(b.dizin),
     gunlukDizin: () => yollar.veri('gunluk'),
     ag: ozAgOlc,
-    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir),
+    // 69.6: güvenlik ölçümü de (antivirüs, güvenlik duvarı, port, RDP, Pusula klasör izinleri)
+    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir, process.platform, { port: PORT, klasorler: [__dirname, yollar.kok()] }),
     borsaTakvimi: () => require('./lib/borsaTakvimi').getir(fetch),
+    // 69.3 funding: tek istek, tüm semboller (anahtarsız) → { oranlar: { ETHUSDT: 0.0001, … } }
+    funding: async () => {
+      const r = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex', { signal: AbortSignal.timeout(12000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const l = await r.json();
+      const oranlar = {};
+      for (const x of Array.isArray(l) ? l : []) { const v = +x.lastFundingRate; if (x.symbol && Number.isFinite(v)) oranlar[x.symbol] = v; }
+      return { oranlar };
+    },
     karaKutuVeri: ozKaraKutuVeri,
+    // 69.4 npm audit (günde bir; ücretsiz kayıt hizmeti) — çalışan Node'un yanındaki npm
+    npmAudit: () => new Promise((coz) => {
+      const cli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+      if (!fs.existsSync(cli)) return coz({ hata: 'npm bulunamadı' });
+      require('child_process').execFile(process.execPath, [cli, 'audit', '--omit=dev', '--json'], { cwd: __dirname, timeout: 90000, windowsHide: true, maxBuffer: 32 << 20 }, (e, out) => {
+        try { const j = JSON.parse(out); coz({ acik: (j.metadata && j.metadata.vulnerabilities) || {}, paketler: Object.entries(j.vulnerabilities || {}).filter(([, v]) => ['high', 'critical'].includes(v.severity)).map(([k, v]) => `${k} (${v.severity === 'critical' ? 'kritik' : 'yüksek'})`) }); }
+        catch { coz({ hata: e ? e.message : 'çıktı okunamadı' }); }
+      });
+    }),
+    // 69.4 ikinci ölü adam (Better Stack ücretsiz heartbeat ya da başka bir healthchecks hesabı): 5 dk'da bir GET
+    ikinciSinyal: async () => {
+      const u = ikinciKanal().sinyalUrl;
+      if (!u || ARASTIRMA_MODU) return { atlandi: true };
+      const r = await fetch(u, { signal: AbortSignal.timeout(10000) });
+      return { ok: r.ok, hata: r.ok ? null : `HTTP ${r.status}` };
+    },
     yenidenBaslat: (sebep) => {
       if (!process.env.PUSULA_KONSOL_GUNLUGU) throw new Error('Pusula denetleyicisiz başlatılmış — kapanırsa geri açılmaz');
       db.addLog('WARN', `🔄 ${sebep} — Pusula yeniden başlatılıyor (denetleyici birkaç saniye sonra açar)`);
@@ -1043,6 +1129,39 @@ if (!ARASTIRMA_MODU) {
 app.get('/api/saglik/oz', (req, res) => {
   res.json({ success: true, calisiyor: !ARASTIRMA_MODU, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30), karaKutular: ozDenetim.karaKutular(30) });
 });
+/** 69.4 İkinci uyarı kanalı: GET durum (maskeli) · POST kaydet { ntfyKonu, sinyalUrl } · POST /dene (ntfy'a deneme iletisi). */
+app.get('/api/saglik/ikinci-kanal', (req, res) => {
+  const k = ikinciKanal();
+  const maske = (s) => (s ? `${String(s).slice(0, 4)}…${String(s).slice(-3)}` : null);
+  res.json({ success: true, ntfy: { ayarli: !!k.konu, maske: maske(k.konu) }, sinyal: { ayarli: !!k.sinyalUrl, maske: k.sinyalUrl ? String(k.sinyalUrl).replace(/^(https?:\/\/[^/]+\/).*$/, '$1…') : null },
+    son: (portfoyBildirici.ikinciGecmis || []).slice(-5) });
+});
+app.post('/api/saglik/ikinci-kanal', (req, res) => {
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'İkinci kanal sunucuda ayarlanır — bu bilgisayar geliştirme kopyası.' });
+  const g = req.body || {};
+  const k = { ...((loadSecrets().ikinciKanal) || {}) };
+  if ('ntfyKonu' in g) {
+    const v = String(g.ntfyKonu || '').trim();
+    if (v && !/^[A-Za-z0-9_-]{12,64}$/.test(v)) return res.status(400).json({ success: false, error: 'ntfy konusu 12–64 harf/rakam/-/_ olmalı (tahmin edilemeyecek uzunlukta seçin; konuyu bilen herkes iletileri görebilir).' });
+    if (v) k.ntfyKonu = v; else delete k.ntfyKonu;
+  }
+  if ('sinyalUrl' in g) {
+    const v = String(g.sinyalUrl || '').trim();
+    if (v && !/^https:\/\/[^\s]{8,300}$/.test(v)) return res.status(400).json({ success: false, error: 'ikinci ölü adam adresi https:// ile başlamalı (Better Stack heartbeat ya da healthchecks ping adresi).' });
+    if (v && [config.healthchecksUrl, config.healthchecksSunucuUrl].includes(v)) return res.status(400).json({ success: false, error: 'ikinci ölü adam, mevcut healthchecks adreslerinden FARKLI olmalı (bağımsız ikinci izleyici).' });
+    if (v) k.sinyalUrl = v; else delete k.sinyalUrl;
+  }
+  try { const s = loadSecrets(); if (Object.keys(k).length) s.ikinciKanal = k; else delete s.ikinciKanal; saveSecrets(s); }
+  catch (e) { return res.status(500).json({ success: false, error: e.message }); }
+  db.addLog('INFO', `[İŞLETİM] ikinci uyarı kanalı güncellendi: ntfy ${k.ntfyKonu ? 'ayarlı' : 'yok'} · ikinci ölü adam ${k.sinyalUrl ? 'ayarlı' : 'yok'}`);
+  res.json({ success: true });
+});
+app.post('/api/saglik/ikinci-kanal/dene', async (req, res) => {
+  const r = await portfoyBildirici._ikinci('uyari', 'deneme iletisi', ['Bu ileti Telegram\'dan bağımsız ikinci kanaldan (ntfy) geldi. Telegram düşerse ACİL uyarılar buradan da gelir.']);
+  if (r.atlandi) return res.status(400).json({ success: false, error: 'ntfy konusu ayarlı değil' });
+  res.status(r.ok ? 200 : 502).json({ success: !!r.ok, error: r.ok ? null : `ntfy'a gönderilemedi: ${r.hata}` });
+});
+
 app.post('/api/saglik/kara-kutu/:ad', (req, res) => {
   if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Olay raporu sunucuda yazılır — bu bilgisayar geliştirme kopyası.' });
   const b = req.params.ad === 'sistem' ? null : bindirmeler[req.params.ad];
@@ -1081,7 +1200,7 @@ app.get('/api/health', (req, res) => {
 
   res.status(healthy ? 200 : 503).json({
     status: healthy ? 'ok' : 'degraded',
-    appVersion: APP_VERSION,
+    appVersion: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(),
     // Panel başlığındaki "Araştırma modu" rozeti ve devre dışı bot/borsa/emir düğmeleri (public/js/pages/kabuk.js).
     arastirmaModu: ARASTIRMA_MODU,
     // 68.1 (PLAN-TASIMA F3): araştırma eklentisi yoksa panel Araştırma menüsünü gizler; taşıma sonrası botlar mutabakat bekler.
@@ -1851,11 +1970,13 @@ app.post('/api/bindirme/:ad/baslat', async (req, res) => {
   catch (err) { borsaHata(res, err); }
 });
 
-/** O3 (62.1): para yatırma/çekme kaydı — { tutar: +/− USDT, not? }. Para taşımaz; ölçüm tabanlarını kaydırır. */
-app.post('/api/bindirme/:ad/sermaye-akisi', (req, res) => {
+/** O3 (62.1): para yatırma/çekme kaydı — { tutar: +/− USDT, not?, onay: 'KAYIT' }. Para taşımaz; ölçüm tabanlarını kaydırır.
+ *  69.6: onay metni, tutar sınırı ve büyük kayıtta borsadaki özsermayeyle tutarlılık botta denetlenir (400). */
+app.post('/api/bindirme/:ad/sermaye-akisi', async (req, res) => {
   const b = bindirmeBul(req, res); if (!b) return;
   try {
-    const k = b.bot.sermayeDegisikligi((req.body || {}).tutar, (req.body || {}).not);
+    const g = req.body || {};
+    const k = await b.bot.sermayeDegisikligi(g.tutar, g.not, { onay: g.onay });
     portfoyBildirici.gonder('bilgi', `${b.bot.adGorunen}: ${k.tutar > 0 ? 'para yatırma' : 'para çekme'} kaydedildi`, ['Bot bu hareketi getiri saymaz (gölge karşılaştırması ve risk tepesi kaydırıldı).']);
     res.json({ success: true, kayit: k, bot: b.bot.ozet() });
   } catch (err) { borsaHata(res, err); }

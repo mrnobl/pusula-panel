@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 24 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 34 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -44,8 +44,10 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 
 Sebep belirsiz ya da geçici olabilir; devam etmek risk büyütmesin diye bot **yeni işlem açmaz**. Açık pozisyonun stopu yerinde kalır, dakikalık koruma ve marj denetimi sürer. Bot "durdu" sayılmaz.
 
-- **Ne zaman:** aynı hata 30 dakikada 3 kez tekrarlanınca (21 Ekim'deki "fiyat yok" hatası gibi), borsanın fiyatı ikinci bir kaynaktan (OKX) %3'ten fazla saptığında ya da Binance bakım penceresinde.
-- **Ne zaman kalkar:** öz denetim koyduysa sebep geçince kendiliğinden: 60 dakika aynı hata tekrarlanmazsa, fiyat farkı %1'in altına inerse, bakım bittikten 15 dakika sonra. İsterseniz Sağlık sayfasından ya da botun sayfasındaki sarı banttan **Güvenli kipi kaldır**.
+**Yalnız azaltan emir (69.5):** güvenli kipteyken borsa yürütücüsü de kilitlenir — pozisyonu büyüten hiçbir emir gönderilmez, dakikalık DCA denetimi dahil. Pozisyonu küçülten ve kapatan emirler, felaket stopları serbesttir. Pusula yeniden açılsa da kilit, botun kayıtlı güvenli kipinden geri konur. Reddedilen emir günlüğe sembol başına saatte bir yazılır.
+
+- **Ne zaman:** aynı hata 30 dakikada 3 kez tekrarlanınca (21 Ekim'deki "fiyat yok" hatası gibi), borsanın fiyatı ikinci bir kaynaktan (OKX) %3'ten fazla saptığında, Binance bakım penceresinde ya da **24 saatte 2 felaket stopu tetiklendiğinde** (piyasa olağan dışı: 24 saat yeni işlem yok).
+- **Ne zaman kalkar:** öz denetim koyduysa sebep geçince kendiliğinden: 60 dakika aynı hata tekrarlanmazsa, fiyat farkı %1'in altına inerse, bakım bittikten 15 dakika sonra, stop vuruşunda ilk vuruştan 24 saat sonra. İsterseniz Sağlık sayfasından ya da botun sayfasındaki sarı banttan **Güvenli kipi kaldır**.
 - Kısa internet kesintilerinin ağ hataları (zaman aşımı, bağlantı koptu, 429 / 418 geri çekilme) tekrar sayılmaz; onları **Borsa bağlantısı** ve **İnternet** denetimleri izler.
 
 ## Sunucu bilgisayarı {#sunucu-bilgisayari}
@@ -54,9 +56,14 @@ Pusula'yı en çok Windows durdurur. Bu grup saatte bir yalnız **okur**, hiçbi
 
 | Denetim | Sarı / kırmızı ne zaman | Ne yapmalı |
 |---|---|---|
-| Windows yeniden başlatması | Güncelleme yeniden başlatma bekliyor. Windows **etkin saatler** dışında kendiliğinden yeniden başlatır; 03:02'deki günlük çalışma bu aralığın dışındaysa gece yeniden başlatabilir | Yeniden başlatmayı gündüz uygun bir saatte elle yapın. Kalıcı çözüm: Ayarlar › Windows Update › Gelişmiş seçenekler › **Etkin saatler**'i 03:00'ı kapsayacak biçimde ayarlayın (ör. 00:00–18:00) |
+| Windows yeniden başlatması | Güncelleme yeniden başlatma bekliyor. Windows **etkin saatler** dışında kendiliğinden yeniden başlatır; 03:02'deki günlük çalışma bu aralığın dışındaysa gece yeniden başlatabilir | Yeniden başlatmayı gündüz uygun bir saatte elle yapın. Kalıcı çözüm: sunucuda **yönetici** PowerShell'de `powershell -ExecutionPolicy Bypass -File scripts\windows-etkin-saat.ps1` — etkin saatleri **21:00–15:00** sabitler (03:02 ve 12:00 güncellemesi korunur; Windows yalnız 15:00–21:00 arasında yeniden başlatabilir). Durum: aynı komut `-Durum` ile |
 | Uyku ve hazırda bekleme | Prize takılıyken bilgisayar boşta uyuyor ya da hazırda bekliyor | Denetim Masası › Güç Seçenekleri › "Bilgisayarı uyku moduna geçir": **Asla** (prizdeyken) |
 | Güç ve beklenmeyen kapanma | **Kırmızı:** dizüstü pilden çalışıyor — elektrik kesik olabilir, pil bitince Pusula durur. **Sarı:** son 7 günde beklenmeyen kapanma (elektrik kesintisi ya da donma) | Elektriği kontrol edin; sık oluyorsa kesintisiz güç kaynağı düşünülebilir |
+
+## ADL, likidasyon ve funding {#adl-funding}
+
+- **ADL ve likidasyon:** borsa bir pozisyonu zorla kapatırsa (ADL — sigorta fonu yetmeyince kârlı pozisyonların otomatik azaltılması — ya da likidasyon) son 24 saat içinde fark edilir: kırmızı satır, ACİL Telegram iletisi ve olay raporu. Diğer bacak korumasız kalmış olabilir; mutabakat botu zaten durdurur (ENGEL). Binance'te açık pozisyonları ve stopları kontrol edin.
+- **Funding aşırılığı:** açık pozisyonu olan bir sembolde funding (vadeli işlemde long ile short tarafın 8 saatte bir birbirine ödediği ücret) 8 saatte %0,1'i (yıllık ≈ %110) aşarsa sarı, %0,3'ü aşarsa kırmızı. Kalabalık pozisyon işaretidir; yalnız haber verilir, strateji kararı değişmez.
 
 ## Borsa bakımı ve delist {#borsa-takvimi}
 
@@ -64,6 +71,13 @@ Pusula Binance'in ücretsiz, anahtarsız duyurularını saatte bir okur:
 
 - **Borsa bakımı:** vadeli işlem ya da sistem bakımı duyurusunun saat aralığında (10 dakika önce … 15 dakika sonra) botlar **güvenli kipe** girer, bakım bitince kendiliğinden çıkar. Binance sistem durumu "bakım" derse de aynı. 48 saat içindeki bir bakım 03:02 çalışmasıyla çakışıyorsa önceden sarı uyarı gelir. Cüzdan, ağ yükseltmesi, hisse işlemleri gibi duyurular botları etkilemez, sayılmaz.
 - **Delist:** botların evrenindeki bir vadeli sözleşme ya da coin borsadan çıkarılacaksa tarihiyle **haber** verir. Evreni değiştirmez; evren seçimi stratejinin işidir.
+
+## Canlı ↔ gölge kayması ve işlem maliyeti {#sapma-maliyet}
+
+İki **haber** denetimi (bota dokunmaz):
+
+- **Canlı ↔ gölge kayması:** botun gerçekleşen günlük getirisi ile aynı günün ideal gölgesi arasındaki fark CUSUM ile izlenir (günde 5 baz puan tolerans; birikim 1,5 puanı aşınca sarı). 30 günlük %3 (incele) / %5 (ENGEL) bandından önce, küçük ama sürekli sapmayı yakalar. "İYİ" ya da "KÖTÜ" yönünü yazar.
+- **İşlem maliyeti:** son 30 günün piyasa dolumlarında emir anındaki fiyattan kayma + 5 baz puan ücret, backtestin varsaydığı 7 baz puanın 2 katını aşarsa (en az 10 dolum) sarı: backtest sonuçları gerçekte bu kadar iyi olmayabilir. Kâğıt hesap ölçülmez (dolum sanal). Demo hesabın ayrıntılı maliyet ölçümü demo kabul raporundadır (U4, U5).
 
 ## Olay raporları (kara kutu) {#kara-kutu}
 
@@ -85,6 +99,7 @@ Devam etmek **para kaybettirebilecekse** bot tamamen durur ve siz açana kadar k
 | Emirler art arda reddediliyor | "Margin is insufficient", geçersiz miktar gibi retler 30 dakikada 3 kez; miktar ya da bakiye hesabı bozuk olabilir |
 | Beklenmeyen emir ya da dolum | Botun göndermediği bir emir dolmuş; mutabakat yakalar |
 | Bot döngüsü tekrar tekrar çöküyor | Dakikalık döngü 30 dakikada 3 kez hata verdi |
+| Emir freni | Risk artıran emirler 24 saatte 600'ü, 10 dakikada 150'yi ya da 24 saatte sermaye tavanının 20 katını aştı — kaçak bir döngü (Knight Capital 2012 tipi kaza). Azaltan emirler ve stoplar serbest kalır |
 | API anahtarının yetkisi değişti | Para çekme izni açılırsa ya da IP kısıtı kalkarsa. **Henüz denetlenmiyor** — canlı hesaba geçmeden eklenecek |
 
 - **Açık pozisyona dokunulmaz;** borsadaki stoplar yerinde kalır. Pozisyonu kapatmak da bir al-sat kararıdır ve kötü bir fiyattan zarar yazdırabilir.
@@ -104,9 +119,42 @@ Demo kipindeki bota (Hücum) öz denetim **9 Aralık 2026 sonuna kadar hiçbir �
 
 ## Telegram {#telegram}
 
-- Bir denetim **sarıya ya da kırmızıya dönünce** anında ileti gider (aynı durum 6 saatte bir tekrarlanır). Güvenli kip ve tam kapanmada ayrı, kırmızı ileti.
+- **Belirti ve neden ayrımı:** denetimlerin bir kısmı "belirti"dir — bir şeyin şu an bozuk olduğunu söyler (botun döngüsü, borsa bağlantısı, mutabakat, koruma stopu, marj, ADL, kaçan işlem, güç, disk sağlığı, Telegram'ın kendisi…). Belirti sarıya ya da kırmızıya dönünce **anında** ileti gider. Geri kalanlar "neden"dir (bekleyen Windows yeniden başlatması, yedek yaşı, paket taraması, Node desteği, saat farkı…): sarıları yalnız panelde ve 21:00 akşam özetinde görünür, **kırmızıya dönerlerse** anında gider. Böylece telefon yalnız gerçekten bakmanız gereken şeyde çalar.
+- Aynı durum 6 saatte bir tekrarlanır. Güvenli kip ve tam kapanmada ayrı, kırmızı ileti.
 - Düzelen sorunlar ve yapılan onarımlar **21:00 akşam özetinde** gelir: denetim sayıları, günün onarımları, açık sorunlar, disk, bellek, saat farkı.
 - İnternet 10 dakikadan uzun kesilip gelince "kesinti X dk sürdü" bilgisi gider.
+
+## İkinci uyarı kanalı {#ikinci-kanal}
+
+Telegram tek kanal olursa, Telegram düştüğünde (ya da jeton geçersizleşince) hiçbir uyarı gelmez. Sağlık sayfasındaki **İkinci uyarı kanalı** kartında iki ücretsiz önlem var:
+
+- **ntfy:** ACİL uyarılar (alarm) her zaman, diğerleri Telegram gönderilemediğinde ntfy ile telefona da gelir. Telefona **ntfy** uygulamasını kurun (ücretsiz, hesap gerekmez), tahmin edilemeyecek bir konu adı seçin (ör. `pusula-7k2q9x4mzt`; konuyu bilen herkes iletileri görebilir), uygulamada bu konuya abone olun, aynı adı karta yazıp **Kaydet**, sonra **ntfy'a deneme gönder**.
+- **İkinci ölü adam:** healthchecks'ten bağımsız ikinci bir izleyici. Örneğin Better Stack'in ücretsiz planında bir "heartbeat" açıp adresini karta yazın; Pusula her 5 dakikada bir o adrese haber verir, gelmezse Better Stack sizi e-postayla / uygulamasıyla uyarır. Adres mevcut healthchecks adreslerinden farklı olmalı.
+- SMS ve telefon araması ücretli planlarda olduğu için önerilmez.
+
+## API anahtarları şifreli {#sir-kasasi}
+
+API anahtarları, Telegram jetonu ve sağlık adresleri `data/secrets.json` dosyasında **Windows DPAPI** ile şifreli durur (69.4'ten beri; Pusula ilk açılışta mevcut dosyayı kendisi şifreler ve doğrular). 69.6'dan beri dosyayı **yalnız Pusula'yı çalıştıran Windows kullanıcısı** çözebilir (aynı bilgisayardaki başka hesaplar çözemez); telefon jetonu, sunucu bağlantısı ve USB yedek şifresi de aynı kasada. Dosya bu bilgisayar ve bu kullanıcı dışında çözülmez: yedek, USB ya da bir kopyası sızarsa anahtarlar okunamaz. Pusula başka bir Windows hesabına taşınırsa anahtarlar yeniden girilir ya da taşıma dosyası kullanılır. Aynı bilgisayarda çalışan kötü amaçlı yazılıma karşı asıl savunma yine anahtarın **çekim izninin kapalı ve IP kısıtlı** olmasıdır.
+
+- **Taşıma:** taşıma dosyası (parolalı) anahtarları çözülmüş olarak taşır; yeni bilgisayarda Pusula ilk açılışta yeniden şifreler.
+- **Başka bilgisayara yedekten dönüş:** şifreli dosya orada çözülmez — **Sır kasası** satırı kırmızıya döner ve Pusula dosyanın üstüne yazmaz. Anahtarları borsadan yeniden üretip panelden girin (önce eski dosyayı kenara alın).
+
+## Saldırılara karşı korumalar {#guvenlik}
+
+69.6'da Pusula'ya dört yönden saldırı testi yapıldı (panel, sırlar ve bilgisayar, güncelleme zinciri, para mantığı) ve bulunan açıklar kapatıldı:
+
+- **Masaüstünde de PIN:** sunucudaki panelde tehlikeli işlemler acil durdurma PIN'ini ister: taşıma paketi oluşturma / indirme / yükleme, API anahtarlarını ve ayarları kaydetme, engeli ve güvenli kipi kaldırma, hesap türü ve canlı onay, canlı emir kilidi, kâğıt hesabı sıfırlama, para yatırma/çekme kaydı, güncellemeyi kurma, yeniden başlatma, geçmişi silme. Doğru PIN 10 dakika geçerlidir (Pusula yeniden başlayınca yeniden sorulur). **Acil durdurma, botu durdurma ve pozisyon kapatma PIN istemez** — risk azaltan işlem hiç engellenmez. 15 dakikada 5 yanlış PIN telefonu da masaüstünü de 15 dakika kilitler ve Telegram'a uyarı gider. PIN panelden belirlenemez (kötü bir program kendi PIN'ini koyamasın diye): sunucuda bir kez `npm run acil-pin`.
+- **Yabancı siteler paneli kullanamaz:** isteği gönderen sayfanın adresi panelin kendi adresiyle birebir aynı olmalı; başka bir sitenin (başka bir Tailscale adresi dahil) gizlice "acil kapat", "engeli kaldır" gibi istek göndermesi ve canlı yayını okuması kapalı. Panel başka bir sitede görünmez çerçeveye de konamaz.
+- **Taşıma paketi haberi:** her taşıma paketi oluşturulduğunda Telegram'a haber gelir. Siz yapmadıysanız API anahtarlarını hemen yenileyin.
+- **Yalnız imzalı kod kurulur:** sunucu, geliştirme bilgisayarında imzalanmamış güncellemeyi kurmaz; Telegram'a kritik uyarı gider. Kurulum bir kerelik: [Kod imzası](#/kilavuz/ayarlar/kod-imzasi).
+- **Klasör izinleri:** Pusula klasörlerine yalnız Pusula'yı çalıştıran kullanıcı, SYSTEM ve yöneticiler erişir (`scripts\klasor-izin.ps1`).
+- **İki yeni denetim:** **Virüs koruması** (antivirüs gerçek zamanlı koruması açık mı, tanımlar güncel mi) ve **Dış erişim ve izinler** (güvenlik duvarı, panelin yalnız bu bilgisayarda dinlemesi, Uzak Masaüstü, klasör izinleri). İkisi de yalnız haber verir.
+
+## Paket güvenliği ve Node desteği {#paket-guvenligi}
+
+- **Paket güvenliği:** günde bir `npm audit` (ücretsiz) yapılır; yüksek açık sarı, kritik açık kırmızı. Düzeltme geliştirme tarafında yapılır ve güncellemeyle gelir. 2025'te popüler npm paketlerine kripto işlemlerini hedefleyen zararlı kod eklenmişti; bu yüzden paketler tam sürüme sabitlidir, sunucu yalnız kilit dosyasındaki sürümleri kurar (`npm ci`), kurulum betikleri çalıştırılmaz ve yeni sürümler en az 7 gün beklemeden önerilmez. Bot kodu güncellemesinde paket değişikliği varsa onay ekranı hangi paketin hangi sürümden hangisine geçtiğini gösterir.
+- **Node.js desteği:** çalışan Node sürümünün güvenlik desteğinin bitmesine 6 aydan az kaldıysa sarı, bittiyse kırmızı.
+- **Disk sağlığı:** Windows'un diskler için verdiği sağlık değerlendirmesi "Healthy" değilse **Disk alanı** satırı kırmızıya döner — yedeğin taze olduğundan emin olun ve diski değiştirmeyi planlayın.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 

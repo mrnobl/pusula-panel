@@ -21,6 +21,8 @@ const path = require('path');
 const http = require('http');
 const { spawnSync, spawn } = require('child_process');
 const G = require('../lib/guncelleme');
+// 69.6: kuru deneme modülü merge'den ÖNCE (eski, çalışan kodla) yüklenir — gelen kod kendi denetleyicisini değiştiremesin.
+const KD = require('../lib/kuruDeneme');
 
 const KOK = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 3000;
@@ -40,7 +42,9 @@ function calistirSenk(komut, args, ops = {}) {
 
 function istek(yontem, yol, sureMs = 3000) {
   return new Promise((coz) => {
-    const q = http.request({ host: '127.0.0.1', port: PORT, path: yol, method: yontem, timeout: sureMs, headers: { 'content-type': 'application/json', 'content-length': yontem === 'POST' ? 2 : 0 } }, (res) => {
+    // 69.6: yeniden başlatma yerel PIN kapısının arkasında — Pusula'nın kendi betiği sistem jetonuyla geçer (lib/yerelPin.js).
+    const sistem = (() => { try { return require('../lib/yerelPin').sistemJetonuOku(KOK); } catch (e) { return ''; } })();
+    const q = http.request({ host: '127.0.0.1', port: PORT, path: yol, method: yontem, timeout: sureMs, headers: { 'content-type': 'application/json', 'content-length': yontem === 'POST' ? 2 : 0, ...(sistem ? { 'x-pusula-sistem': sistem } : {}) } }, (res) => {
       let m = ''; res.setEncoding('utf8'); res.on('data', d => { m += d; });
       res.on('end', () => { let j = null; try { j = JSON.parse(m); } catch (e) { /* metin */ } coz({ durum: res.statusCode, j }); });
     });
@@ -96,9 +100,9 @@ async function kuruDeneme({ eskiRev, yeniRev, ilerleme }) {
     c.on('close', (kod) => { clearTimeout(t); coz({ kod, cikti: s }); });
     c.on('error', (e) => { clearTimeout(t); coz({ kod: 1, cikti: e.message }); });
   });
-  const ham = (a) => { const x = spawnSync(GIT, a, { cwd: KOK, windowsHide: true, timeout: 60000, maxBuffer: 64 << 20 }); return { kod: x.status == null ? 1 : x.status, cikti: x.stdout }; };
-  return require('../lib/kuruDeneme').calistir({ kok: KOK, eskiRev, yeniRev, botlar: r.j.botlar || [], ilerleme,
-    ops: { git: (a) => calistirSenk(GIT, a), gitHam: ham, komut: (k, a, o = {}) => calistirSenk(k, a, o), node } });
+  const ham = (a) => { const x = spawnSync(GIT, G.guvenliGit(a), { cwd: KOK, windowsHide: true, timeout: 60000, maxBuffer: 64 << 20 }); return { kod: x.status == null ? 1 : x.status, cikti: x.stdout }; };
+  return KD.calistir({ kok: KOK, eskiRev, yeniRev, botlar: r.j.botlar || [], ilerleme,
+    ops: { git: (a) => calistirSenk(GIT, G.guvenliGit(a)), gitHam: ham, komut: (k, a, o = {}) => calistirSenk(k, a, o), node } });
 }
 
 /** Telegram: lib/telegramDosya.js (config.json + data/secrets.json; araştırma kopyasında göndermez). */
@@ -115,8 +119,9 @@ const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
   if (!onayla && !arg.includes('--kuru') && (saat >= 23 || saat < 2)) { console.log(`[${new Date().toISOString()}] gece penceresi (TR 02:00–05:00) — atlandı`); return; }
   const sonuc = await G.calistir({
     kok: KOK, onayla, kuru: arg.includes('--kuru'), kuruFarkOnay: !!onayla && arg.includes('--kuru-fark-onay'), kuruDeneme,
-    git: (a) => calistirSenk(GIT, a),
-    npmKur: () => { const [k, a, kabuk] = npmKomut(['install', '--no-audit', '--no-fund']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },
+    git: (a) => calistirSenk(GIT, G.guvenliGit(a)),   // 69.6: fsmonitor/hooks kapalı
+    // 69.4: npm ci — yalnız kilit dosyasındaki sürümler; kurulum betikleri çalışmaz (.npmrc ignore-scripts + açık bayrak).
+    npmKur: () => { const [k, a, kabuk] = npmKomut(['ci', '--no-audit', '--no-fund', '--ignore-scripts']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },
     nodeCheck: (yol) => calistirSenk(process.execPath, ['--check', yol], { sure: 30000 }),
     yenidenBaslat, saglik, bildir: telegram(), bekle
   });

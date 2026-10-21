@@ -59,6 +59,20 @@ Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API a
 
 İşlem sürerken düğmeler kapalıdır (aynı anda ikinci güncelleme başlamaz).
 
+### Ne kendiliğinden kurulur (69.6) {#kendiliginden}
+
+69.6'dan beri yalnız **belgeler ve görseller** (kılavuz metinleri, ekran görüntüleri, araştırma kayıtları) onaysız kurulur. Panel dahil **her kod değişikliği** **Güncellemeyi kur** onayı (ve PIN) ister: saldırı testi, "panel" sayılan dosyaların aslında sunucunun içinde çalıştığını gösterdi.
+
+### Kod imzası {#kod-imzasi}
+
+Sunucu yalnız sizin geliştirme bilgisayarınızda imzalanan kodu kurar; GitHub hesabı ele geçirilse bile imzasız kod sunucuya giremez. İmzasız ya da tanınmayan imzalı bir güncelleme gelirse **kurulmaz**, Telegram'a kritik uyarı gider, Sağlık kırmızıya döner.
+
+1. **Geliştirme bilgisayarında** (bir kez): `npm run imza-kur` — imza anahtarı üretilir, geliştirme ve dağıtım depolarında imza açılır. Çıktıdaki `npm run imza-kur -- --sunucu "…"` satırını kopyalayın.
+2. **Sunucuda** (bir kez): kopyaladığınız satırı çalıştırın, sonra `npm run imza-kur -- --sunucu-durum`. İzin dosyası kodun dışında (veri klasöründe) durur; gelen kod onu değiştiremez.
+3. **GitHub'da** depo ayarlarında main dalı için **Require signed commits** kuralını açın.
+
+Kurulmadan önce sunucu imzasız kodu da kurar; Sağlık bunu sarı gösterir. Not: GitHub web arayüzünde birleştirilen değişiklikler (ör. Dependabot) GitHub'ın imzasını taşır ve kurulmaz — birleştirme geliştirme bilgisayarında yapılır.
+
 ### Kuru deneme (bot kodu değişince) {#kuru-deneme}
 
 Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bugünkü kararını** eski ve yeni kodla, **emir göndermeden** hesaplayıp karşılaştırır (1–3 dakika). Pusula bu sırada eski sürümle çalışmaya devam eder.
@@ -69,6 +83,7 @@ Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bug�
 - **Yeni kod hata verdi** → **kurulmaz**; kod eski sürüme döndürülür, Pusula yeniden başlamaz, Telegram'a haber gider.
 - **Karar farklı** → **kurulmaz**; Durum satırı farkı ve kutu eski → yeni değerleri gösterir. Fark bekleniyorsa (ör. bir hata düzeltmesi — 69.0'daki "fiyat yok" düzeltmesi böyle görünürdü) **Farkı gördüm, yine de kur**; beklenmiyorsa kurmayın ve geliştirme sohbetine haber verin.
 - İki sürüm de aynı hatayı veriyorsa (yeni kodun getirdiği değil) ya da deneme yapılamazsa (internet yok) kurulum uyarıyla sürer.
+- **69.6:** kuru deneme imza denetiminden sonra ve **sırsız** çalışır: API anahtarları, Telegram jetonu görünmez; yalnız borsanın herkese açık verisine bağlanabilir, başka program başlatamaz.
 
 ## Bildirimler {#bildirimler}
 

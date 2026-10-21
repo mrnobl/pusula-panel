@@ -24,6 +24,7 @@
 @media (max-width: 1023px) {
   /* 69.1 Sistem › Sağlık: denetim grupları alt alta. */
   .oz-gruplar { grid-template-columns: minmax(0, 1fr); }
+  .oz-kanal-alanlar { grid-template-columns: minmax(0, 1fr); }
   /* Araştırma defteri hikâye kartı: dört adım alt alta; teknik alanlar tek sütun. */
   .df-hikaye { grid-template-columns: minmax(0, 1fr); }
   .df-kv { grid-template-columns: minmax(0, 1fr); }

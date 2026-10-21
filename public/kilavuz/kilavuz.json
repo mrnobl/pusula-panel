@@ -1,5 +1,5 @@
 {
-  "surum": "69.2",
+  "surum": "69.6",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -56,6 +56,22 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"69.6","tarih":"2026-10-21","yeni":["Saldırı testi bulguları kapatıldı: masaüstünde de PIN, yabancı sitelere kapalı panel, yalnız imzalı kod kurulur, sırlar yalnız Pusula kullanıcısında çözülür.","Para güvenliği: fiyat yoksa büyüten emir yok, para kaydında KAYIT onayı, spot yatırma kabul bekler, canlıda IP kısıtı zorunlu; öz denetime virüs koruması ve dış erişim."]},
+    {"surum":"69.5","tarih":"2026-10-21","yeni":["Güvenli kipte bot yalnız pozisyon küçülten emir verir; 24 saatte 2 felaket stopu tetiklenirse 24 saat yeni işlem yok.","Yeni kâğıt hesaplar kötümser dolumla çalışır (stop tetiklenir, kayma var); öz denetimde canlı–gölge kayması ve işlem maliyeti; npm run istatistik (PSR, MinTRL, PBO)."]},
+    {
+      "surum": "69.4", "tarih": "2026-10-21",
+      "yeni": [
+        "API anahtarları Windows DPAPI ile şifreli; ikinci uyarı kanalı (ntfy) ve ikinci ölü adam; telefon yalnız belirtide çalar.",
+        "Paket güvenliği (tam sürüm, npm ci, kurulum betikleri kapalı, Dependabot, günlük npm audit) ve şifreli uzak yedek (restic + rclone)."
+      ]
+    },
+    {
+      "surum": "69.3", "tarih": "2026-10-21",
+      "yeni": [
+        "Emir freni: kaçak bir emir döngüsünde bot durur; sürpriz sermaye: yatırma/çekme kendiliğinden fark edilir, tavan izler.",
+        "Veri kapısı (eksik/bayat/sıçramalı mumla karar yok), ADL/likidasyon ve funding uyarısı, her günlük satırında sürüm izi."
+      ]
+    },
     {
       "surum": "69.2", "tarih": "2026-10-21",
       "yeni": [

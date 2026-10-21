@@ -114,7 +114,7 @@ Hedef yalnız burada girilir (Hesaplar'da yalnız **Hedefi düzenle → Hedefim*
 
 ![Para ekle ve dağılımı değiştir — kural, yapılacaklar, satışta elde kalacak adet](ekran:para-ekle-1400)
 
-Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. Portföye para ekleyeceksen ya da hisselerin payını değiştireceksen, hangi hisseden kaç adet alıp satacağını burada hesaplarsın. **Panel emir göndermez**; işlemi aracı kurumda (ör. Midas) sen yaparsın, sonra burada kaydedersin. Plan, üst çubukta seçili portföyün (Ben, ANIL …) **tek bir hesabında** yapılır; **Tümü** seçiliyken plan yapılamaz (işlemlerin hangi portföye yazılacağı belli değil). **← Hedefim** geri döner.
+Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. Portföye para ekleyeceksen ya da hisselerin payını değiştireceksen, hangi hisseden kaç adet alıp satacağını burada hesaplarsın. **Panel emir göndermez**; işlemi aracı kurumda (ör. Midas) sen yaparsın, sonra burada kaydedersin. Plan, üst çubukta seçili portföyün (Ben, Aile …) **tek bir hesabında** yapılır; **Tümü** seçiliyken plan yapılamaz (işlemlerin hangi portföye yazılacağı belli değil). **← Hedefim** geri döner.
 
 1. **Eklenecek para:** tutarı **₺** ya da **$** yaz (yalnız dağılım değişecekse 0). ABD hesabında TL tutar o günün USD/TRY kuruyla dolara çevrilir; aracı kurumun kuru farklıysa tutarı doğrudan **$** olarak yaz. Portföyün birden çok hesabı varsa **Hesap** seçicisi çıkar (varsayılan: hisseleri en büyük USD hesabı; ABD hissesi USD hesaba, BIST hissesi TL hesaba). Hesapta nakit varsa yazılır; **Hesaptaki nakdi de dağıt** işaretlenirse o nakit de plana girer (işaretsizken yalnız eklediğin para dağıtılır).
 2. **Her hisse için kural:**
@@ -248,7 +248,7 @@ Hedef yalnız burada girilir (Hesaplar'da yalnız **Hedefi düzenle → Hedefim*
 
 ![Para ekle ve dağılımı değiştir — kural, yapılacaklar, satışta elde kalacak adet](ekran:para-ekle-1400)
 
-Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. Portföye para ekleyeceksen ya da hisselerin payını değiştireceksen, hangi hisseden kaç adet alıp satacağını burada hesaplarsın. **Panel emir göndermez**; işlemi aracı kurumda (ör. Midas) sen yaparsın, sonra burada kaydedersin. Plan, üst çubukta seçili portföyün (Ben, ANIL …) **tek bir hesabında** yapılır; **Tümü** seçiliyken plan yapılamaz (işlemlerin hangi portföye yazılacağı belli değil). **← Hedefim** geri döner.
+Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. Portföye para ekleyeceksen ya da hisselerin payını değiştireceksen, hangi hisseden kaç adet alıp satacağını burada hesaplarsın. **Panel emir göndermez**; işlemi aracı kurumda (ör. Midas) sen yaparsın, sonra burada kaydedersin. Plan, üst çubukta seçili portföyün (Ben, Aile …) **tek bir hesabında** yapılır; **Tümü** seçiliyken plan yapılamaz (işlemlerin hangi portföye yazılacağı belli değil). **← Hedefim** geri döner.
 
 1. **Eklenecek para:** tutarı **₺** ya da **$** yaz (yalnız dağılım değişecekse 0). ABD hesabında TL tutar o günün USD/TRY kuruyla dolara çevrilir; aracı kurumun kuru farklıysa tutarı doğrudan **$** olarak yaz. Portföyün birden çok hesabı varsa **Hesap** seçicisi çıkar (varsayılan: hisseleri en büyük USD hesabı; ABD hissesi USD hesaba, BIST hissesi TL hesaba). Hesapta nakit varsa yazılır; **Hesaptaki nakdi de dağıt** işaretlenirse o nakit de plana girer (işaretsizken yalnız eklediğin para dağıtılır).
 2. **Her hisse için kural:**

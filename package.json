@@ -39,18 +39,21 @@
     "eklenti-olustur": "node scripts/tasima.js eklenti-olustur",
     "eklenti-yukle": "node scripts/tasima.js eklenti-yukle",
     "yedek-sifre": "node scripts/tasima.js yedek-sifre",
-    "kur": "node scripts/kur.js"
+    "kur": "node scripts/kur.js",
+    "uzak-yedek": "node scripts/uzak-yedek.js",
+    "istatistik": "node scripts/istatistik.js",
+    "imza-kur": "node scripts/imza-kur.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "ccxt": "^4.5.71",
-    "express": "^5.2.1",
-    "qrcode-terminal": "^0.12.0",
-    "technicalindicators": "^3.1.0",
-    "ws": "^8.21.3"
+    "ccxt": "4.5.71",
+    "express": "5.2.1",
+    "qrcode-terminal": "0.12.0",
+    "technicalindicators": "3.1.0",
+    "ws": "8.21.3"
   },
   "devDependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",

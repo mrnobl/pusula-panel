@@ -42,7 +42,7 @@ async function alarmGonder(cikis, ardisik) {
   try { await require('../lib/telegramDosya').telegramDosyadan(KOK)('critical', 'Pusula açılamıyor — çökme döngüsü', satirlar); } catch { /* */ }
   try {
     let url = '';
-    try { url = (JSON.parse(fs.readFileSync(yollar.veri('secrets.json'), 'utf8')) || {}).healthchecksSunucuUrl || ''; } catch { /* */ }
+    try { url = (require('../lib/sirKasasi').okuGuvenli(yollar.veri('secrets.json'), {}) || {}).healthchecksSunucuUrl || ''; } catch { /* */ }
     const makine = (() => { try { return JSON.parse(fs.readFileSync(yollar.veri('makine.json'), 'utf8')); } catch { return null; } })();
     if (url && /^https:\/\//.test(url) && !(makine && makine.arastirmaModu)) await fetch(`${url.replace(/\/+$/, '')}/fail`, { method: 'POST', body: satirlar.join('\n'), signal: AbortSignal.timeout(8000) });
   } catch { /* */ }

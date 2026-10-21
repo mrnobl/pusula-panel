@@ -190,9 +190,45 @@
     ]);
   }
 
+  /**
+   * 69.6 YEREL PIN penceresi (lib/yerelPin.js; js/core/api.js tehlikeli işlemde 403 `pin-gerekli` alınca çağırır).
+   * PIN tanımlı değilse yalnız nasıl belirleneceğini söyler (panelden belirlenemez). Doğru PIN → 10 dk oturum → true.
+   * @param veri sunucunun pin-gerekli cevabı ya da /api/yerel-pin/durum
+   */
+  let pinAcik = null;   // aynı anda iki istek PIN isterse tek pencere
+  function pinIste(veri) {
+    if (pinAcik) return pinAcik;
+    pinAcik = (async () => {
+      const d = veri || {};
+      if (d.tanimli === false) {
+        await onayla({ baslik: 'PIN gerekli', metin: 'Bu işlem PIN ister ama PIN tanımlı değil. Sunucu bilgisayarında bir kez komut satırında "npm run acil-pin" ile 6–12 haneli bir PIN belirleyin (telefondaki acil durdurma PIN\'iyle aynıdır). Sonra işlemi yeniden deneyin.', onay: 'Tamam', iptal: 'Kapat' });
+        return false;
+      }
+      for (let deneme = 0; deneme < 3; deneme++) {
+        const g = await onayla({
+          baslik: 'PIN gerekli',
+          metin: `Bu işlem korumalı: acil PIN'inizi girin. Doğru PIN ${d.sureDk || 10} dakika geçerli olur.${Number.isFinite(d.kalanHak) && d.kalanHak < 5 ? ` Kalan hak: ${d.kalanHak}.` : ''}`,
+          onay: 'Doğrula',
+          alanlar: [{ ad: 'pin', etiket: 'PIN (6–12 hane)', tip: 'password', inputmode: 'numeric', dogrula: (v) => /^\d{6,12}$/.test(v.trim()) }]
+        });
+        if (!g || !g.pin) return false;
+        let r;
+        try { r = await AG.api.yerelPin.dogrula(g.pin.trim()); } catch (e) { bildir(`PIN doğrulanamadı: ${e.message}`, 'hata'); return false; }
+        if (r && r.success) { bildir('PIN doğru — 10 dakika boyunca korumalı işlemler PIN sormaz.', 'ok'); return true; }
+        bildir((r && r.error) || 'PIN yanlış.', 'hata');
+        if (r && (r.kilitli || r[AG.api.DURUM] === 429)) return false;
+        if (r && Number.isFinite(r.kalanHak)) d.kalanHak = r.kalanHak;
+      }
+      return false;
+    })();
+    pinAcik.finally(() => { pinAcik = null; });
+    return pinAcik;
+  }
+  if (AG.api && typeof AG.api.pinIsteyiciAyarla === 'function') AG.api.pinIsteyiciAyarla(pinIste);
+
   AG.bildir = bildir;
   AG.onayla = onayla;
-  AG.bildirim = { bildir, onayla, turTahmin, hataKutusu };
+  AG.bildirim = { bildir, onayla, turTahmin, hataKutusu, pinIste };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.bildirim;
 })(typeof window !== 'undefined' ? window : globalThis);

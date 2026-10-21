@@ -132,7 +132,14 @@
           el('td', { class: 'p-sag p-sayi', text: boyutYaz(f.boyut) }),
           el('td', { text: tarihYaz(f.zaman) }),
           el('td', { class: 'ts-eylem' }, [
-            el('a', { class: 'p-dugme p-dugme-kucuk', href: AG.api.tasima.indirYolu(f.ad), download: f.ad, text: 'İndir' }),
+            el('a', { class: 'p-dugme p-dugme-kucuk', href: AG.api.tasima.indirYolu(f.ad), download: f.ad, text: 'İndir', onclick: async (e) => {
+              // 69.6: indirme PIN ister (paket çözülmüş sırları taşır) — düz bağlantı yinelenemez, önce oturum açılır.
+              if (e.currentTarget.dataset.pinTamam === '1') return;
+              e.preventDefault();
+              const a = e.currentTarget;
+              if (!(await AG.api.yerelPin.hazirla())) return;
+              a.dataset.pinTamam = '1'; a.click(); delete a.dataset.pinTamam;
+            } }),
             el('button', { type: 'button', class: 'p-dugme p-dugme-kucuk p-dugme-sessiz', onclick: async () => {
               if (!(await AG.onayla({ baslik: 'Dosya silinsin mi?', metin: `${f.ad} bu bilgisayardan silinir (başka yere kopyaladıysan o kopya kalır).`, onay: 'Sil', tehlikeli: true }))) return;
               const r = await AG.api.tasima.sil(f.ad); if (r && r.success) { durum = r; ciz(); } else AG.bildir(`Silinemedi: ${(r && r.error) || ''}`, 'hata');
@@ -167,7 +174,7 @@
 
   async function yedekSifreKaydet(d) {
     const a = (bul('tsYedekSifre') || {}).value || '', b = (bul('tsYedekSifre2') || {}).value || '';
-    if (a.length < 8) { AG.bildir('Şifre en az 8 karakter olmalı.', 'hata'); return; }
+    if (a.length < 12) { AG.bildir('Yedek şifresi en az 12 karakter olmalı.', 'hata'); return; }
     if (a !== b) { AG.bildir('İki şifre aynı değil.', 'hata'); return; }
     AG.dom.mesgul(d, 'Kaydediliyor…');
     try {

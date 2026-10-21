@@ -23,7 +23,7 @@ const GV = require('../lib/guvenlik');
 const KOK = path.join(__dirname, '..');
 const arg = (ad) => { const i = process.argv.indexOf(`--${ad}`); return i > 0 ? process.argv[i + 1] : undefined; };
 
-function hamOku(yol) { try { return JSON.parse(fs.readFileSync(yol, 'utf8').replace(/^﻿/, '')); } catch { return {}; } }
+function hamOku(yol) { return require('../lib/sirKasasi').okuGuvenli(yol, {}); }   // 69.6 sır kasası
 
 async function dene(a) {
   try {
@@ -76,7 +76,7 @@ async function yazmaDene(a) {
     if (yazma != null && yj.length < 32) throw new Error('Yazma jetonu eksik/kısa — sunucuda `npm run gelistirme-jeton` çıktısındaki jeton.');
     if (yj) yeni.yazmaJetonu = yj;
     fs.mkdirSync(path.dirname(yol), { recursive: true });
-    fs.writeFileSync(yol, JSON.stringify({ ...yeni, kayit: new Date().toISOString() }, null, 2), { encoding: 'utf8', mode: 0o600 });
+    require('../lib/sirKasasi').yaz(yol, { ...yeni, kayit: new Date().toISOString() });   // 69.6 sır kasası (DPAPI)
     console.log(`Kaydedildi: ${path.relative(KOK, yol)} · adres ${yeni.adres} · yazma ${yj ? 'açık (jeton kayıtlı)' : 'kapalı'}`);
   }
   const { ayarOku } = require('../lib/evOkuma');

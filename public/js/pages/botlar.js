@@ -151,15 +151,16 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   async function sermayeAkisi(ad, d, dugme) {
     const b = d.bot;
     const v = await AG.onayla({ baslik: `${b.adGorunen}: para yatırdım / çektim`, onay: 'Kaydet', iptal: 'Vazgeç',
-      metin: 'Binance hesabına para yatırdıysanız ya da çektiyseniz tutarı buraya yazın (yatırma artı, çekme eksi; USDT). Bot parayı taşımaz; yalnız ölçümünü düzeltir — yazmazsanız bot bunu kazanç ya da kayıp sanır ve gereksiz ENGEL koyabilir.',
+      metin: 'Binance hesabına para yatırdıysanız ya da çektiyseniz tutarı buraya yazın (yatırma artı, çekme eksi; USDT). Bot parayı taşımaz; yalnız ölçümünü düzeltir. Çoğu zaman gerekmez: bot vadeli cüzdana gelen aktarımı kendisi algılar. Büyük tutar (özsermayenin %20 üstü) borsadaki bakiyede görünmüyorsa kayıt reddedilir.',
       alanlar: [
         { ad: 'tutar', etiket: 'Tutar (USDT, + yatırma / − çekme)', ipucu: 'ör. 500 ya da -200', inputmode: 'decimal', dogrula: (s) => /^[-+]?\d+([.,]\d+)?$/.test(s.trim()) && Number(s.trim().replace(',', '.')) !== 0 },
-        { ad: 'not', etiket: 'Not (isteğe bağlı)', ipucu: 'ör. Binance P2P yatırma' }
+        { ad: 'not', etiket: 'Not (isteğe bağlı)', ipucu: 'ör. Binance P2P yatırma' },
+        { ad: 'onay', etiket: 'Onay: KAYIT yazın', ipucu: 'KAYIT', dogrula: (s) => s.trim().toLocaleUpperCase('tr-TR') === 'KAYIT' }
       ] });
     if (!v) return;
     AG.dom.mesgul(dugme, '…');
     try {
-      const r = await AG.api.bindirmeSermayeAkisi(ad, Number(v.tutar.trim().replace(',', '.')), v.not || null);
+      const r = await AG.api.bindirmeSermayeAkisi(ad, Number(v.tutar.trim().replace(',', '.')), v.not || null, v.onay.trim());
       if (!r.success) throw new Error(r.error);
       bildir(`Kaydedildi: ${r.kayit.tutar > 0 ? '+' : ''}${r.kayit.tutar} USDT`, 'ok');
     } catch (e) { bildir(`Kaydedilemedi: ${e.message}`, 'hata'); }

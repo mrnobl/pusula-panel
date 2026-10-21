@@ -74,6 +74,22 @@ Daha önce kurulmuş bir Pusula'da yedek şifresi kaydedilene kadar USB yedeği 
 
 Geri kurmak: yeni bilgisayarda kurulum sihirbazı → **Başka bilgisayardan taşı** → USB'deki `.pusula` dosyasının yolunu yaz → yedek şifresi.
 
+## Şifreli uzak yedek {#uzak-yedek}
+
+Yerel yedek ve USB, sunucu çalınır, yanar ya da diski bozulursa kopyayla birlikte gidebilir. **Şifreli uzak yedek** günlük yerel kopyayı ücretsiz bir bulut hesabına (Google Drive, OneDrive …) **parolayla şifreleyerek** gönderir: bulut sağlayıcısı içeriği göremez. Araçlar ücretsiz ve açık kaynak: **restic** (şifreli yedek) ve **rclone** (bulut bağlantısı).
+
+**Kurulum (sunucuda, bir kez):**
+1. PowerShell'de: `winget install restic.restic rclone.rclone` (pencereyi kapatıp yeniden açın).
+2. `rclone config` → **n** (yeni) → ad: `gdrive` → depolama: **Google Drive** → soruları varsayılanla geçin → tarayıcıda Google hesabınızla izin verin.
+3. Pusula klasöründe: `npm run uzak-yedek -- --kur --depo rclone:gdrive:PusulaYedek` → bir **parola** sorulur (en az 12 karakter). Parola sır kasasına (şifreli) yazılır ve bulutta depo açılır.
+4. **Parolayı Pusula'dan bağımsız iki yerde saklayın** (ücretsiz bir parola yöneticisi + kâğıt). Parola kaybolursa buluttaki yedek **açılamaz**.
+5. İlk gönderim: `npm run uzak-yedek -- --simdi`. Sonra günlük yedek görevi (05:30) her gün kendiliğinden gönderir.
+
+- Saklama yerel düzenle aynıdır: son 14 gün + 8 hafta. Haftada bir eski kopyalar temizlenir ve depo bütünlük denetiminden geçer (`restic check`).
+- Durum: `npm run uzak-yedek -- --durum` (son gönderim, buluttaki kopyalar) ve Sağlık sayfasındaki **Şifreli uzak yedek** satırı (26 saatten eskiyse sarı).
+- Başarısızlık yerel yedeği bozmaz; Telegram'a "Pusula uzak yedeği başarısız" gider.
+- Geri dönüş: `restic -r rclone:gdrive:PusulaYedek restore latest --target C:\Pusula-geri` (parola sorulur), sonra gereken dosyaları elle kopyalayın.
+
 ## Eski yedekten geri yükleme {#eski-yedek}
 
 68.1'den önceki günlük ve USB yedekleri tarihli **klasörlerdir** (içinde `yedek-manifest.json` ve `data\…`). Okunabilir kalırlar:

@@ -172,6 +172,38 @@
     ]);
   }
 
+  /** 69.4 İkinci uyarı kanalı: Telegram düşerse ACİL uyarı ntfy ile telefona; ikinci ölü adam sunucu susarsa ayrı bir hizmetten uyarır. */
+  let kanal = null;
+  function kanalKarti(v) {
+    const k = kanal || {};
+    const sunucuda = v.calisiyor !== false;
+    const ntfy = el('input', { type: 'text', id: 'inpOzNtfy', class: 'form-control', autocomplete: 'off', placeholder: k.ntfy && k.ntfy.ayarli ? `ayarlı (${k.ntfy.maske}) — değiştirmek için yazın` : 'ör. pusula-7k2q9x4mzt (tahmin edilemeyecek bir ad)' });
+    const sinyal = el('input', { type: 'url', id: 'inpOzSinyal', class: 'form-control', autocomplete: 'off', placeholder: k.sinyal && k.sinyal.ayarli ? `ayarlı (${k.sinyal.maske})` : 'https://uptime.betterstack.com/api/v1/heartbeat/…' });
+    const kaydet = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnOzKanalKaydet', disabled: sunucuda ? null : 'disabled' }, [el('span', { text: 'Kaydet' })]);
+    const dene = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnOzKanalDene', disabled: sunucuda && k.ntfy && k.ntfy.ayarli ? null : 'disabled' }, [el('span', { text: 'ntfy\'a deneme gönder' })]);
+    kaydet.addEventListener('click', () => {
+      const g = {};
+      if (ntfy.value.trim()) g.ntfyKonu = ntfy.value.trim();
+      if (sinyal.value.trim()) g.sinyalUrl = sinyal.value.trim();
+      if (!Object.keys(g).length) { bildir('Değiştirmek için bir alan doldurun', 'bilgi'); return; }
+      eylem(kaydet, () => AG.api.saglikOz.ikinciKanalKaydet(g), 'İkinci kanal kaydedildi');
+    });
+    dene.addEventListener('click', () => eylem(dene, () => AG.api.saglikOz.ikinciKanalDene(), 'Deneme iletisi gönderildi — telefondaki ntfy uygulamasına bakın'));
+    const son = (k.son || []).slice(-3).reverse();
+    return el('section', { class: 'p-kart mt-4', id: 'saglikKanal' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'İkinci uyarı kanalı' }),
+        el('span', { class: `p-rozet ${k.ntfy && k.ntfy.ayarli ? 'p-rozet-pos' : 'p-rozet-warn'}`, text: k.ntfy && k.ntfy.ayarli ? 'ntfy ayarlı' : 'ntfy yok' })]),
+      el('p', { class: 'hint hint-sm', text: 'Telegram düşerse ACİL uyarılar ntfy ile telefona da gelir (ücretsiz, hesap gerekmez: telefona ntfy uygulamasını kurup aynı konuya abone olun). İkinci ölü adam, healthchecks\'ten bağımsız ikinci bir izleyicidir (ör. Better Stack ücretsiz heartbeat): sunucu susarsa oradan da uyarı gelir.' }),
+      el('div', { class: 'oz-kanal-alanlar' }, [
+        el('label', { class: 'form-group', for: 'inpOzNtfy' }, [el('span', { text: 'ntfy konusu' }), ntfy]),
+        el('label', { class: 'form-group', for: 'inpOzSinyal' }, [el('span', { text: 'İkinci ölü adam adresi' }), sinyal]),
+      ]),
+      el('div', { class: 'oz-bot-dugmeler' }, [kaydet, dene]),
+      son.length ? el('p', { class: 'hint hint-sm mb-0', text: `Son ntfy: ${son.map(x => `${saat(x.zaman)} ${x.ok ? 'gitti' : `gitmedi (${x.hata || '?'})`}`).join(' · ')}` }) : null,
+      sunucuda ? null : el('p', { class: 'hint hint-sm mb-0', text: 'Bu bilgisayar geliştirme kopyası: ayar sunucudaki panelden yapılır.' }),
+    ]);
+  }
+
   function ciz() {
     const k = bul('saglikKok');
     if (!k || !veri) return;
@@ -204,6 +236,7 @@
         })) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Son 30 günde onarım ya da olay yok.' })]),
       ]),
       karaKutuKarti(veri, simdi),
+      kanalKarti(veri),
       el('details', { class: 'p-kart mt-4 oz-tetikler', id: 'saglikTetikler' }, [
         el('summary', { class: 'p-kart-baslik', text: 'Bot ne zaman tamamen kapanır' }),
         el('p', { class: 'hint hint-sm', text: 'Para kaybettirebilecek bir sebepte bot tamamen kapanır ve siz açana kadar kapalı kalır. Diğerlerinde yalnız yeni işlem açmaz (güvenli kip). Zarar sınırları (kill-switch, günlük zarar limiti) ayrıca ve aynen çalışır.' }),
@@ -232,6 +265,7 @@
     }
     veri = r;
     rozetGuncelle(r);
+    try { const kk = AG.api.saglikOz.ikinciKanal ? await AG.api.saglikOz.ikinciKanal() : null; kanal = kk && kk.success ? kk : null; } catch (e) { kanal = null; }
     ciz();
     return r;
   }

@@ -133,7 +133,7 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 |---|---|
 | Hesap türü | kâğıt ↔ demo (↔ CANLI HESAP, yalnız şartlar sağlanınca; altında neyin eksik olduğu yazar). Yalnız bot durmuşken değişir |
 | Canlı hesap emir onayı | Yalnız canlı hesapta: **CANLI** yazarak verilir, kalıcıdır; "Emir onayını kaldır" kaldırır ([ayrıntı](#/kilavuz/botlar/gercek-para)) |
-| Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz |
+| Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz. 69.3'ten beri bot borsadaki yatırma/çekmeyi **kendisi de fark eder** ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)); elle kayıt yine yapılabilir |
 | Küçük hesap kipi | otomatik (< 5000 $) / açık / kapalı. Yalnız bot durmuşken değişir |
 | BTC ayağı (kâğıt) | Yalnız **kâğıt hesapta**: **spot** (varsayılan) ya da **çoklu varlık (canlı tasarımı)**. Değiştirmek kâğıt hesabı sıfırlar (onaylı); bot durmuşken açık ([aşağıda](#/kilavuz/botlar/btc-ayagi)) |
 | Bugünün kararını şimdi uygula | **Şimdi çalıştır** (onaylı) |
@@ -148,6 +148,7 @@ Kâğıt hesaptaki bir botu (ör. Denge) sıfırdan başlatmak için: önce **Du
 - **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Hücum'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
 - **Bot çalışırken** düğme pasiftir ("Önce botu durdurun"); sıfırladıktan sonra **Başlat**.
 - Telefondan ve araştırma kopyasından yapılamaz (yalnız sunucudaki masaüstü panel).
+- **Kötümser dolum (69.5):** sıfırlamadan sonra açılan yeni kâğıt hesap gerçeğe daha yakın çalışır — felaket stopu 1 dakikalık mumda tetiklenir ve tetik fiyatı ile kapanıştan **kötü olanından** 5 baz puan kaymayla dolar; piyasa emri 5 baz puan kaymayla dolar; stoplar diske yazılır. Sıfırlanmamış eski kâğıt hesap eski (iyimser) modelde kalır, böylece süren ölçüm (ör. Denge) ortasında kurallar değişmez.
 
 ### BTC ayağı: spot ya da çoklu varlık {#btc-ayagi}
 
@@ -212,6 +213,30 @@ Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden 
 3. **Öz denetim botu tamamen kapattı** (69.1 — kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü): neden "öz denetim: …" diye başlar. İnceleyin, sonra **Engeli kaldır** ya da [Sağlık](#/kilavuz/saglik/tam-kapanma) sayfasında **Botu yeniden aç**.
 
 **Sarı bant — güvenli kipte (69.1):** bot yeni işlem açmaz, açık pozisyonun stopu yerinde kalır. Öz denetim koyduysa sebep geçince kendiliğinden kalkar; banttaki **Güvenli kipi kaldır** ile de kaldırabilirsiniz ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
+
+## Sürpriz sermaye: yatırma ve çekmeyi bot kendisi fark eder {#surpriz-sermaye}
+
+Sermaye artışları her ay ama tutarı belli olmadan yapılacağı için bot hazırlıklıdır:
+
+- **Algılama:** her günlük çalışmadan (03:02) önce bot borsadaki yatırma / çekme / aktarım geçmişine bakar. Vadeli hesapta (demo) vadeli cüzdana giren-çıkan USDT; canlı tasarımda (spot BTC + vadeli) Binance yatırma ve çekme geçmişi (USDT; BTC güncel fiyatla). Bot ilk kez çalıştığında saymaya o andan başlar; eski hareketler "yeni para" sayılmaz.
+- **Ölçüm bozulmaz:** algılanan tutar elle kaydedilmiş gibi işlenir — gölge sapma bandı, risk tepesi ve hesap kesicisi yanlış alarm vermez, yatırılan para kâr sayılmaz.
+- **Para hemen çalışır:** yatırılan para o günkü çalışmada hedefe göre dağıtılır (BTC ayağında sebep **sermaye değişimi**; ay başını beklemez).
+- **Sermaye tavanı izler:** yatırma tavanı aynı tutarda yükseltir, çekme düşürür (ayarlı tavanın altına inmez). **Canlı hesapta** tavan onay dosyasındaki üst sınırı (G9) asla aşmaz: aşacaksa tavan sınırda kalır, fazlası kullanılmaz ve Telegram "onaylı üst sınırı artırın" der. İstenmezse ayarda `tavanAkis: false`.
+- Telegram'a "sermaye artışı / çekişi algılandı" iletisi gider. USDT ve BTC dışındaki coinler sermayeye sayılmaz (uyarı yazılır).
+
+## Para güvenliği (69.6) {#para-guvenligi}
+
+- **Fiyat okunamazsa** bot pozisyonu büyüten emir vermez; yalnız küçülten ve kapatan emirler geçer.
+- **"Para yatırdım/çektim" kaydı** onay için **KAYIT** yazılmasını ister. Çekme özsermayeden, yatırma özsermayenin 3 katından büyük olamaz; özsermayenin %20'sini aşan bir tutar Binance bakiyesinde görünmüyorsa kayıt reddedilir. Çoğu zaman bu kayda gerek yoktur: bot vadeli cüzdana gelen aktarımı kendisi algılar ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)).
+- **Spot cüzdana yatırma (çoklu varlık):** bot onu hemen sermayeye saymaz, **"kabul bekliyor"** uyarısı gelir. Botun sayfasında **Engeli kaldır** ile kabul edince ölçüm ve tavan güncellenir. Böylece kendi para eklemeniz sahte kayıp gibi görünüp acil durdurmayı tetiklemez.
+- **Hesap kesicisi kör olmaz:** sermaye artınca birikmiş kayıp korunur, kesici sıfırdan ölçmeye başlamaz.
+- **Bir coinin verisi okunamazsa ya da bozuksa** açık Donchian pozisyonu satılmaz, korunur; günlükte uyarı çıkar. Veri kapısı ani düşüşleri ve tutarsız mumları da yakalar (BTC'de günlük %60'tan büyük düşüş şüpheli veri sayılır).
+- **Canlı hesapta IP kısıtı zorunlu:** API anahtarında "Restrict access to trusted IPs only" açık değilse (yalnız sunucunun IP'si) bot bağlanmaz.
+
+## Emir freni ve veri kapısı {#emir-freni}
+
+- **Emir freni:** borsaya giden risk artıran emirlerin **toplamı** sınırlıdır: 24 saatte 600 emir, 10 dakikada 150 emir, 24 saatte sermaye tavanının 20 katı nominal. Günde bir karar veren bot için çok geniştir; yalnız kaçak bir döngüyü yakalar. Aşılınca bot durur (ENGEL) ve Telegram'a "EMİR FRENİ" gider; azaltan emirler ve felaket stopları çalışmaya devam eder. Fren diske yazılır, yeniden başlatma ya da mutabakat kaldırmaz; günlüğü inceledikten sonra **Engeli kaldır**. Kâğıt hesapta uygulanmaz (sanal para).
+- **Veri kapısı:** karar vermeden önce günlük mumlar denetlenir: son 30 günde boşluk, 2 günden eski son mum, son 3 günde sıfır hacim, anlamsız fiyat sıçraması (BTC'de günlük %50, coinlerde %300). BTC verisi geçmezse o çalışmada karar verilmez (15 dakika sonra yeniden denenir, Telegram'a hata gider); bir coinin verisi geçmezse yalnız o coin o gün atlanır.
 
 ## Hisse yapıları {#hisse-yapilari}
 

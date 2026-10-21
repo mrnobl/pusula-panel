@@ -2,6 +2,41 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.6 — Güvenlik sıkılaştırma: saldırı testi bulguları kapatıldı (2026-10-21) {#s69-6}
+
+- **Masaüstünde de PIN:** tehlikeli işlemler (taşıma, anahtar kaydetme, engel kaldırma, canlı onay, güncelleme kurma …) acil durdurma PIN'ini ister; acil durdurma ve pozisyon kapatma istemez ([Saldırılara karşı korumalar](#/kilavuz/saglik/guvenlik)).
+- **Yabancı siteler paneli kullanamaz;** panel başka sitede çerçeveye konamaz; taşıma paketi oluşturulunca Telegram'a haber.
+- **Yalnız imzalı kod kurulur;** onaysız kurulum yalnız belge ve görseller; kuru deneme sırsız çalışır ([Kod imzası](#/kilavuz/ayarlar/kod-imzasi)).
+- **Sırlar yalnız Pusula'yı çalıştıran kullanıcıda çözülür;** telefon jetonu, sunucu bağlantısı ve yedek şifresi de şifreli; klasör izinleri kısıtlı.
+- **Para güvenliği:** fiyat yoksa büyüten emir yok; para kaydı KAYIT onayı ve tutar sınırıyla; spot yatırma kabul bekler; veri hatası pozisyon kapatmaz; canlıda IP kısıtı zorunlu ([Para güvenliği](#/kilavuz/botlar/para-guvenligi)).
+- Öz denetim 34 denetim: **Virüs koruması** ve **Dış erişim ve izinler** eklendi.
+
+## 69.5 — Güvenli kipte yalnız azaltan emir, stop vuruşu kilidi, kötümser kâğıt hesap, sapma ve maliyet izleme (2026-10-21) {#s69-5}
+
+- **Güvenli kipte yalnız azaltan emir:** güvenli kipteyken borsa yürütücüsü pozisyonu büyüten hiçbir emri göndermez (dakikalık DCA dahil); küçülten emirler ve stoplar serbest ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
+- **Stop vuruşu kilidi:** 24 saatte 2 felaket stopu tetiklenirse bot 24 saat yeni işlem açmaz, sonra kendiliğinden döner.
+- **Kötümser kâğıt hesap:** sıfırlamadan sonra açılan yeni kâğıt hesapta stoplar gerçekten tetiklenir ve dolumlar kaymalıdır; eski kâğıt hesap olduğu gibi kalır ([Kâğıt hesabı sıfırla](#/kilavuz/botlar/kagit-sifirla)).
+- **Canlı ↔ gölge kayması ve işlem maliyeti** öz denetimde; öz denetim 32 denetim ([Sapma ve maliyet](#/kilavuz/saglik/sapma-maliyet)).
+- **Araştırma istatistikleri:** `npm run istatistik` deneme sayacından şansla beklenen en iyi Sharpe'ı, `--seri` ile PSR ve gereken kayıt süresini (MinTRL), `--matris` ile aşırı uydurma olasılığını (PBO) verir.
+
+## 69.4 — Anahtar şifreleme, ikinci uyarı kanalı, paket güvenliği, şifreli uzak yedek (2026-10-21) {#s69-4}
+
+- **API anahtarları şifreli:** sır dosyası Windows DPAPI ile şifrelenir; yalnız bu bilgisayar çözer, kopyası sızarsa okunamaz ([API anahtarları şifreli](#/kilavuz/saglik/sir-kasasi)).
+- **İkinci uyarı kanalı:** Telegram düşerse ACİL uyarılar ntfy ile telefona; healthchecks'ten bağımsız ikinci ölü adam ([İkinci uyarı kanalı](#/kilavuz/saglik/ikinci-kanal)).
+- **Belirti / neden:** telefon yalnız belirtide (bir şey şu an bozuk) ya da kırmızıda çalar; nedenlerin sarısı panelde ve akşam özetinde.
+- **Paket güvenliği:** paketler tam sürüme sabit, sunucuda yalnız kilit dosyası (`npm ci`), kurulum betikleri kapalı, Dependabot 7 gün beklemeyle; onay ekranında paket farkı; günde bir `npm audit`. İki alt paket açığı düzeltildi (proxy-addr, qs) ([Paket güvenliği](#/kilavuz/saglik/paket-guvenligi)).
+- **Şifreli uzak yedek:** restic + rclone ile ücretsiz bulut hesabına parolalı yedek ([Şifreli uzak yedek](#/kilavuz/yedek-tasima/uzak-yedek)).
+- **Disk sağlığı ve Node desteği** öz denetimde; öz denetim 30 denetim.
+
+## 69.3 — Emir freni, sürpriz sermaye, veri kapısı, ADL ve funding uyarısı (2026-10-21) {#s69-3}
+
+- **Emir freni:** risk artıran emirlerin toplamı 24 saat / 10 dakika pencerelerinde sınırlı; kaçak bir döngüde bot durur, yalnız siz açarsınız ([Emir freni](#/kilavuz/botlar/emir-freni)).
+- **Sürpriz sermaye:** bot borsadaki yatırma ve çekmeyi kendisi fark eder; ölçümler bozulmaz, para o gün dağıtılır, sermaye tavanı izler (canlıda onaylı üst sınırla) ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)).
+- **Veri kapısı:** eksik, bayat ya da anlamsız sıçramalı mumla karar verilmez.
+- **ADL, likidasyon ve funding:** borsa bir pozisyonu zorla kapatırsa ACİL haber ve olay raporu; açık pozisyonda aşırı funding uyarısı ([ADL ve funding](#/kilavuz/saglik/adl-funding)).
+- **Sürüm izi:** her günlük satırında çalışan kodun sürümü ve commit'i; ayar parmak izi sağlık ucunda ve olay raporlarında.
+- **Windows etkin saatleri:** `scripts\windows-etkin-saat.ps1` (yönetici) etkin saatleri 21:00–15:00 sabitler; Sağlık sayfası ilkeyi okur.
+
 ## 69.2 — Kuru deneme, olay raporları, sunucu bilgisayarı, borsa bakımı ve delist (2026-10-21) {#s69-2}
 
 - **Kuru deneme:** bot kodunu değiştiren güncelleme kurulmadan önce botların bugünkü kararı eski ve yeni kodla, emir göndermeden karşılaştırılır. Yeni kod hata verirse kurulmaz; karar farklıysa siz "Farkı gördüm, yine de kur" diyene kadar kurulmaz ([Kuru deneme](#/kilavuz/ayarlar/kuru-deneme)). Hücum'un demo hesabına bağlanılmaz.

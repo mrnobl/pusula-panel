@@ -70,6 +70,14 @@
   const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır — bu işlem sunucudaki panelden yapılır.';
 
   /**
+   * 69.6 YEREL PIN (lib/yerelPin.js): masaüstü panelin tehlikeli işlemleri sunucudan 403 + `kod: 'pin-gerekli'` alır.
+   * Bu dosya DOM'a dokunmaz — PIN'i soran pencere js/core/bildirim.js'te (`pinIsteyiciAyarla` ile bağlanır). Pencere doğru
+   * PIN'le 10 dakikalık oturum açınca istek BİR KEZ yinelenir.
+   */
+  let pinIsteyici = null;
+  const pinGerekliMi = (status, veri) => status === 403 && veri && typeof veri === 'object' && veri.kod === 'pin-gerekli';
+
+  /**
    * Tek giriş noktası. Gövde verilmişse POST varsayılır ve JSON'a çevrilir.
    *
    * `secenek.yontem` açıkça verilebilir; gövdesiz POST'lar (kill-switch
@@ -116,6 +124,11 @@
       }
     }
 
+    if (pinGerekliMi(res.status, veri) && pinIsteyici && !s.pinYineleme) {
+      let ok = false;
+      try { ok = await pinIsteyici(veri); } catch (e) { ok = false; }
+      if (ok) return istek(yol, Object.assign({}, s, { pinYineleme: true }));
+    }
     if (veri && typeof veri === 'object') {
       Object.defineProperty(veri, DURUM, { value: res.status, enumerable: false });
     }
@@ -146,6 +159,21 @@
     ilkKademe,
     kademeAyarla: (k) => { kademe = k === 'telefon' ? 'telefon' : 'yerel'; },
     TELEFON_MESAJI,
+    /** 69.6: (veri) → Promise<boolean> — PIN penceresi (js/core/bildirim.js bağlar). */
+    pinIsteyiciAyarla: (fn) => { pinIsteyici = typeof fn === 'function' ? fn : null; },
+    /* 69.6 Yerel PIN oturumu (lib/yerelPin.js) */
+    yerelPin: {
+      durum: () => al('/api/yerel-pin/durum'),
+      dogrula: (pin) => istek('/api/yerel-pin/dogrula', { govde: { pin }, pinYineleme: true }),
+      kapat: () => istek('/api/yerel-pin/kapat', { yontem: 'POST', pinYineleme: true }),
+      /** Düz bağlantıyla yapılan korumalı işlemden (indirme) önce: oturum yoksa PIN sorar. @returns {Promise<boolean>} */
+      hazirla: async () => {
+        let d;
+        try { d = await al('/api/yerel-pin/durum'); } catch (e) { return true; }   // eski sunucu: kapı yok
+        if (!d || d.success === false || d.etkin === false || d.oturum || kademe === 'telefon') return true;
+        return pinIsteyici ? !!(await pinIsteyici(d)) : false;
+      }
+    },
 
     /* ── Durum ve ayar ──────────────────────────────────────────────── */
     durum: () => al('/api/status'),
@@ -215,7 +243,7 @@
     bindirmeAcil: (ad, pin, onay) => gonder(`/api/bindirme/${q(ad)}/acil`, { pin, onay }),
     bindirmeMod: (ad, mod, onay) => gonder(`/api/bindirme/${q(ad)}/mod`, onay ? { mod, onay } : { mod }),
     bindirmeCanliOnay: (ad, govde) => gonder(`/api/bindirme/${q(ad)}/canli-onay`, govde),
-    bindirmeSermayeAkisi: (ad, tutar, not) => gonder(`/api/bindirme/${q(ad)}/sermaye-akisi`, { tutar, not }),
+    bindirmeSermayeAkisi: (ad, tutar, not, onay) => gonder(`/api/bindirme/${q(ad)}/sermaye-akisi`, { tutar, not, onay }),
     bindirmeKucukSermaye: (ad, secim) => gonder(`/api/bindirme/${q(ad)}/kucuk-sermaye`, { secim }),
     bindirmeIslemler: (ad, { sayfa = 1, sembol = '', kol = '', bas = '', bit = '', grafikSembol = '' } = {}) =>
       al(`/api/bindirme/${q(ad)}/islemler?sayfa=${q(sayfa)}&sembol=${q(sembol)}&kol=${q(kol)}&bas=${q(bas)}&bit=${q(bit)}&grafikSembol=${q(grafikSembol)}`),
@@ -472,6 +500,7 @@
       /** Dosyayı ham gövdeyle (akış) yükler — JSON değil. Telefonda istek(…) gibi reddedilir. */
       yukle: async (dosya) => {
         if (kademe === 'telefon') { const red = { success: false, kademe: 'telefon', error: TELEFON_MESAJI }; Object.defineProperty(red, DURUM, { value: 403, enumerable: false }); return red; }
+        if (!(await api.yerelPin.hazirla())) { const red = { success: false, kod: 'pin-gerekli', error: 'PIN girilmedi — yükleme yapılmadı.' }; Object.defineProperty(red, DURUM, { value: 403, enumerable: false }); return red; }   // 69.6: akış gövdesi yinelenemez → önce oturum
         const res = await global.fetch('/api/tasima/yukle', { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'x-dosya-adi': encodeURIComponent((dosya && dosya.name) || 'dosya.pusula') }, body: dosya });
         const m = await res.text();
         let v; try { v = JSON.parse(m); } catch (e) { throw new Error(`POST /api/tasima/yukle → HTTP ${res.status}: ${m.slice(0, 120)}`); }
@@ -511,7 +540,11 @@
       guvenliKipKaldir: (ad) => tetikle(`/api/saglik/oz/${q(ad)}/guvenli-kip-kaldir`),
       /* 69.2 olay raporu (kara kutu): ad = bot ya da 'sistem' */
       karaKutuAl: (ad) => tetikle(`/api/saglik/kara-kutu/${q(ad || 'sistem')}`),
-      karaKutuYolu: (dosya) => `/api/saglik/kara-kutu/dosya/${q(dosya)}`
+      karaKutuYolu: (dosya) => `/api/saglik/kara-kutu/dosya/${q(dosya)}`,
+      /* 69.4 ikinci uyarı kanalı (ntfy) + ikinci ölü adam */
+      ikinciKanal: () => al('/api/saglik/ikinci-kanal'),
+      ikinciKanalKaydet: (govde) => gonder('/api/saglik/ikinci-kanal', govde),
+      ikinciKanalDene: () => tetikle('/api/saglik/ikinci-kanal/dene')
     },
 
     /* ── Kılavuz (60.4; panel: js/pages/kilavuz.js) — durağan dosyalar public/kilavuz/ altında ── */

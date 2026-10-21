@@ -51,6 +51,12 @@ const ayarOku = () => { try { return JSON.parse(fs.readFileSync(AYAR, 'utf8')); 
     const son = { zaman: new Date().toISOString(), klasor: r.klasor, dosya: r.dosya, bayt: r.bayt, sirlar: r.sirlar, hata: null };
     fs.writeFileSync(AYAR, JSON.stringify({ ...ayarOku(), hedef, son }, null, 2), 'utf8');
     console.log(`[${son.zaman}] yedek tamam: ${r.dosya} dosya, ${(r.bayt / 1e6).toFixed(1)} MB → ${r.klasor}${r.sirlar ? '' : ' (bulut hedefi: sırlar kopyalanmadı)'}${r.silinen.length ? ` · eski kopya silindi: ${r.silinen.join(', ')}` : ''}`);
+    // 69.4 şifreli uzak yedek (restic + rclone; kuruluysa) — başarısızlık yerel yedeği bozmaz, Telegram'a gider.
+    if ((ayarOku().uzak || {}).depo) {
+      const u = await require('./uzak-yedek').gonder();
+      console.log(u.ok ? `[${u.zaman}] uzak yedek tamam: ${u.snapshot || '?'}${u.bakim ? ` · bakım ${u.bakim.ok ? 'tamam' : `HATA ${u.bakim.hata}`}` : ''}` : `[${u.zaman}] UZAK YEDEK BAŞARISIZ: ${u.hata}`);
+      if (!u.ok || (u.bakim && !u.bakim.ok)) { try { await require('../lib/telegramDosya').telegramDosyadan(KOK)('error', 'Pusula uzak yedeği başarısız', [u.hata || `bakım: ${u.bakim.hata}`, 'Yerel yedek alındı; buluttaki kopya güncellenmedi. Durum: npm run uzak-yedek -- --durum']); } catch { /* */ } }
+    }
   } catch (e) {
     try { fs.writeFileSync(AYAR, JSON.stringify({ ...ayarOku(), hedef, son: { zaman: new Date().toISOString(), hata: e.message } }, null, 2), 'utf8'); } catch { /* */ }
     console.error(`[${new Date().toISOString()}] YEDEK BAŞARISIZ: ${e.message}`);

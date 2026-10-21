@@ -3358,3 +3358,4 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .gunc-kuru { border: 1px solid var(--warn-border); border-left: 3px solid var(--warn); border-radius: var(--radius-md); background: var(--warn-soft); padding: var(--sp-3); }
 .gunc-kuru-liste, .gunc-kuru-fark { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: var(--fs-sm); overflow-wrap: anywhere; }
 .gunc-kuru-fark { color: var(--text-soft); }
+.oz-kanal-alanlar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); margin-bottom: var(--sp-3); }

@@ -78,17 +78,17 @@ function jsonOku(dosya) {
 
 function jetonBul({ yeniJeton } = {}, env = process.env) {
   if ((env.PANEL_TOKEN || '').length >= 24) return { jeton: env.PANEL_TOKEN, kaynak: 'PANEL_TOKEN ortam değişkeni' };
-  const sir = jsonOku(SIR_DOSYA);
+  const sir = require('../lib/sirKasasi').okuGuvenli(SIR_DOSYA, null);   // 69.4/69.6 sır kasası
   if (sir && typeof sir.panelToken === 'string' && sir.panelToken.length >= 24) {
     return { jeton: sir.panelToken, kaynak: 'data/secrets.json (panelToken)' };
   }
-  const kayit = jsonOku(JETON_DOSYA);
+  const kayit = require('../lib/sirKasasi').okuGuvenli(JETON_DOSYA, null);
   if (!yeniJeton && kayit && typeof kayit.jeton === 'string' && kayit.jeton.length >= 24) {
     return { jeton: kayit.jeton, kaynak: 'data/telefon-jeton.json' };
   }
   const jeton = guvenlik.yeniJeton();
   fs.mkdirSync(path.dirname(JETON_DOSYA), { recursive: true });
-  fs.writeFileSync(JETON_DOSYA, JSON.stringify({ jeton, olusturma: new Date().toISOString() }, null, 2), { encoding: 'utf8', mode: 0o600 });
+  require('../lib/sirKasasi').yaz(JETON_DOSYA, { jeton, olusturma: new Date().toISOString() });   // 69.6 sır kasası
   return { jeton, kaynak: 'data/telefon-jeton.json (yeni üretildi)' };
 }
 

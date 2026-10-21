@@ -16,6 +16,7 @@
  *   veri           veri klasörü + tür alt klasörleri (kisisel, gizli, arastirma, onbellek, makine)
  *   jeton          panel / telefon jetonu (telefon-jeton.json; yoksa üretilir). secrets.json OLUŞTURULMAZ: lib/kurulum.js
  *                  secrets.json'u "eski kurulum" sayar ve sihirbazı atlar.
+ *   izin           (69.6) program + veri klasörü: miras kaldırılır, yalnız SYSTEM + Administrators + bu kullanıcı (scripts/klasor-izin.ps1)
  *   git            program klasörü git deposu + origin = dağıtım deposu (güncelleme K4). Başka bir uzak depo varsa DOKUNMAZ.
  *   gorev-*        zamanlanmış görevler — scripts/install-*.ps1 aynen çağrılır (görev adları aynı: PusulaBot, PusulaBekci,
  *                  PusulaDikkatArsiv, PusulaGuncelle, PusulaYedek, PusulaYedekUSB[yalnız sunucu]); parola SORULMAZ
@@ -42,9 +43,9 @@ const kd = require('../lib/kurulumDenetimi');
 const PROGRAM = path.resolve(__dirname, '..');
 /** Dağıtım deposu adresi — scripts/dagitim.js dağıtım kopyasında bu yer tutucuyu --depo adresiyle değiştirir. */
 const DEPO_VARSAYILAN = 'https://github.com/mrnobl/pusula-panel.git';
-const ADIM_SIRASI = ['node', 'yol', 'paketler', 'isaret', 'veri', 'jeton', 'git', ...kd.GOREVLER.map(g => g.adim), 'kisayol', 'uyku', 'ac'];
+const ADIM_SIRASI = ['node', 'yol', 'paketler', 'isaret', 'veri', 'jeton', 'izin', 'git', ...kd.GOREVLER.map(g => g.adim), 'kisayol', 'uyku', 'ac'];
 /** Geliştirme bilgisayarında atlanan (sisteme dokunan) adımlar. */
-const SISTEM = new Set(['yol', ...kd.GOREVLER.map(g => g.adim), 'kisayol', 'uyku']);
+const SISTEM = new Set(['yol', 'izin', ...kd.GOREVLER.map(g => g.adim), 'kisayol', 'uyku']);
 
 function argOku(argv) {
   const a = { kuru: false, json: false, ac: false, zorla: false, adim: null, rol: null, veri: null, depo: null, onek: '', masaustu: null, baslatKlasor: null, uykuYok: false, pathYok: false };
@@ -123,13 +124,13 @@ function adimlar() {
   A.paketler = {
     baslik: 'Paketler (node_modules)',
     yokla: (ctx) => { const p = kd.paketlerTamam(ctx.program); return { tamam: p.tamam, ayrinti: p.tamam ? `${p.sayi} paket hazır` : `eksik: ${p.eksik.join(', ')}` }; },
-    plan: (ctx) => `npm ${fs.existsSync(path.join(ctx.program, 'package-lock.json')) ? 'ci' : 'install'} --omit=dev`,
+    plan: (ctx) => `npm ${fs.existsSync(path.join(ctx.program, 'package-lock.json')) ? 'ci' : 'install'} --omit=dev --ignore-scripts`,
     yap: (ctx) => {
       const komut = fs.existsSync(path.join(ctx.program, 'package-lock.json')) ? 'ci' : 'install';
       const cli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
       const r = fs.existsSync(cli)
-        ? spawnSync(process.execPath, [cli, komut, '--omit=dev', '--no-audit', '--no-fund'], { cwd: ctx.program, env: ortam(ctx.program), encoding: 'utf8', windowsHide: true, timeout: 15 * 60000 })
-        : spawnSync('npm.cmd', [komut, '--omit=dev', '--no-audit', '--no-fund'], { cwd: ctx.program, env: ortam(ctx.program), encoding: 'utf8', windowsHide: true, shell: true, timeout: 15 * 60000 });
+        ? spawnSync(process.execPath, [cli, komut, '--omit=dev', '--no-audit', '--no-fund', '--ignore-scripts'], { cwd: ctx.program, env: ortam(ctx.program), encoding: 'utf8', windowsHide: true, timeout: 15 * 60000 })
+        : spawnSync('npm.cmd', [komut, '--omit=dev', '--no-audit', '--no-fund', '--ignore-scripts'], { cwd: ctx.program, env: ortam(ctx.program), encoding: 'utf8', windowsHide: true, shell: true, timeout: 15 * 60000 });
       if (r.status !== 0) throw new Error(`npm ${komut} başarısız: ${sonSatirlar(r.stdout + '\n' + r.stderr)}`);
       const p = kd.paketlerTamam(ctx.program);
       if (!p.tamam) throw new Error(`npm ${komut} sonrası eksik: ${p.eksik.join(', ')}`);
@@ -191,8 +192,24 @@ function adimlar() {
     yap: (ctx) => {
       const f = yollar.yolKur(ctx.c, ['telefon-jeton.json']);
       fs.mkdirSync(path.dirname(f), { recursive: true });
-      fs.writeFileSync(f, JSON.stringify({ jeton: crypto.randomBytes(24).toString('hex'), olusturma: new Date().toISOString(), kaynak: 'scripts/kur.js' }, null, 2), { encoding: 'utf8', mode: 0o600, flag: 'wx' });
+      if (fs.existsSync(f)) throw new Error('telefon-jeton.json zaten var — üzerine yazılmadı');
+      require('../lib/sirKasasi').yaz(f, { jeton: crypto.randomBytes(24).toString('hex'), olusturma: new Date().toISOString(), kaynak: 'scripts/kur.js' });   // 69.6 sır kasası
       return 'üretildi (telefon bağlantısı: npm run telefon)';
+    },
+  };
+  A.izin = {
+    baslik: 'Klasör izinleri (yalnız bu kullanıcı + SYSTEM + yöneticiler)',
+    yokla: (ctx) => {
+      const d = require('../lib/klasorIzni').durum([ctx.program, ctx.c.kok]);
+      if (d.windowsDisi) return { atlandi: true, ayrinti: 'Windows dışı' };
+      if (d.hata) return { tamam: false, ayrinti: `okunamadı: ${d.hata}` };
+      return { tamam: !d.genis.length, ayrinti: d.genis.length ? `geniş izin: ${[...new Set(d.genis.map(g => g.ad))].join(', ')}` : 'yalnız bu kullanıcı' };
+    },
+    plan: () => 'powershell -File scripts\\klasor-izin.ps1 (miras kaldırılır; SYSTEM, Administrators ve bu kullanıcı)',
+    yap: (ctx) => {
+      const u = require('../lib/klasorIzni').uygula([ctx.program, ctx.c.kok]);
+      if (!u.tamam) throw new Error(`klasör izni uygulanamadı: ${u.hata || '?'}`);
+      return `uygulandı (${u.uygulandi} klasör)`;
     },
   };
   A.git = {

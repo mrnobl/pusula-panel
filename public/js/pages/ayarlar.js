@@ -56,7 +56,8 @@
       case 'onay':
         // 69.2: kuru denemede karar farkı — kurulum ancak "Farkı gördüm, yine de kur" ile.
         if (g.kuruFark && g.kuruFark.hedef === g.hedef) return { metin: `${s} kurulmadı: kuru denemede botun kararı değişti — ${g.kuruFark.ozet || ''}. Fark bekleniyorsa (ör. bir düzeltme) yine de kurabilirsiniz.`, ton: 'tone-warning', onay: g.hedef || null, kuruFark: true, kontrolDugmesi: true };
-        return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme kendiliğinden döner.`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
+        const paket = g.paketFarki && g.paketFarki.length ? ` · paket değişikliği (${g.paketFarki.length}): ${g.paketFarki.slice(0, 5).map(x => `${x.ad} ${x.eski || '—'} → ${x.yeni || 'silindi'}`).join(', ')}${g.paketFarki.length > 5 ? ' …' : ''}` : '';
+        return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}${paket}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme kendiliğinden döner.`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
       case 'elle': return { metin: `Elle bakılmalı: ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'geri-alindi': return { metin: `${s} kurulamadı, geri alındı (${g.geriDonus || ''}): ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'yeniden-baslat': return { metin: g.neden || 'Yeniden başlatma gerekli.', ton: 'tone-warning', onay: null, kontrolDugmesi: true };

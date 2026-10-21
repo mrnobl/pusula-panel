@@ -78,7 +78,7 @@ async function jetonKomutu(argv) {
   if (!b || yeni) {
     const jeton = guvenlik.yeniJeton();
     fs.mkdirSync(path.dirname(JETON_DOSYA), { recursive: true });
-    fs.writeFileSync(JETON_DOSYA, JSON.stringify({ jeton, olusturma: new Date().toISOString() }, null, 2), { encoding: 'utf8', mode: 0o600 });
+    require('../lib/sirKasasi').yaz(JETON_DOSYA, { jeton, olusturma: new Date().toISOString() });   // 69.6 sır kasası
     b = { jeton, kaynak: `data/telefon-jeton.json (${yeni ? 'yenilendi — eski oturumlar düştü' : 'yeni üretildi'})` };
   }
   console.log(`Panel jetonu (${b.kaynak}):\n\n  ${b.jeton}\n`);
