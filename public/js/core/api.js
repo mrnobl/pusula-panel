@@ -508,7 +508,10 @@
     saglikOz: {
       durum: () => al('/api/saglik/oz'),
       yokla: () => tetikle('/api/saglik/oz/yokla'),
-      guvenliKipKaldir: (ad) => tetikle(`/api/saglik/oz/${q(ad)}/guvenli-kip-kaldir`)
+      guvenliKipKaldir: (ad) => tetikle(`/api/saglik/oz/${q(ad)}/guvenli-kip-kaldir`),
+      /* 69.2 olay raporu (kara kutu): ad = bot ya da 'sistem' */
+      karaKutuAl: (ad) => tetikle(`/api/saglik/kara-kutu/${q(ad || 'sistem')}`),
+      karaKutuYolu: (dosya) => `/api/saglik/kara-kutu/dosya/${q(dosya)}`
     },
 
     /* ── Kılavuz (60.4; panel: js/pages/kilavuz.js) — durağan dosyalar public/kilavuz/ altında ── */

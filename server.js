@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '69.1';
+const APP_VERSION = '69.2';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -917,8 +917,19 @@ app.post('/api/guncelleme/uygula', (req, res) => {
   const d = guncelleme.durumOku(__dirname);
   const hedef = String((req.body && req.body.hedef) || '');
   if (d.durum !== 'onay' || !d.hedef || hedef !== d.hedef) return res.status(409).json({ success: false, error: 'Onay bekleyen bu güncelleme artık yok (yeni sürüm gelmiş ya da kurulmuş olabilir). Sayfayı yenileyin.' });
-  guncelleyiciBaslat(['--onayla', d.hedef]);
-  res.status(202).json({ success: true, basladi: true });
+  // 69.2: kuru denemede karar farkı çıktıysa kurulum ancak "Farkı gördüm, yine de kur" ile (aynı commit için) sürer.
+  const farkOnay = !!(req.body && req.body.kuruFarkOnay) && !!(d.kuruFark && d.kuruFark.hedef === d.hedef);
+  guncelleyiciBaslat(['--onayla', d.hedef, ...(farkOnay ? ['--kuru-fark-onay'] : [])]);
+  res.status(202).json({ success: true, basladi: true, kuruFarkOnay: farkOnay });
+});
+/** 69.2 KURU DENEME: güncelleyicinin (scripts/guncelle.js) bot listesi — yalnız bu bilgisayardan (yollar sunucu içi bilgi). */
+app.get('/api/guncelleme/kuru-bilgi', (req, res) => {
+  if ((req.kademe || 'yerel') !== 'yerel') return res.status(403).json({ success: false, error: 'yalnız sunucunun kendisinden' });
+  res.json({ success: true, botlar: BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => {
+    const a = bindirmeAyar(b.ad);
+    return { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, dizin: b.dizin, btcAyak: b.bot.ayar.btcAyak, sermayeTavani: b.bot.ayar.sermayeTavani,
+      k: a.k, kagitBakiye: a.kagitBakiye, kucukSermaye: b.bot.ayar.kucukSermaye, calisiyor: !!b.bot.durum.calisiyor };
+  }) });
 });
 app.post('/api/sistem/yeniden-baslat', (req, res) => {
   if (!process.env.PUSULA_KONSOL_GUNLUGU) return res.status(409).json({ success: false, error: 'Pusula denetleyiciyle (kısayol / PusulaBot görevi) başlatılmamış: kapanırsa geri açılmaz.' });
@@ -937,6 +948,8 @@ app.post('/api/sistem/yeniden-baslat', (req, res) => {
  *   GET  /api/saglik/oz                         anlık görüntü + son 30 günün olayları
  *   POST /api/saglik/oz/yokla                   şimdi yokla
  *   POST /api/saglik/oz/:ad/guvenli-kip-kaldir  güvenli kipi elle kaldır (tam kapanma: /api/bindirme/:ad/engel-kaldir)
+ *   69.2: POST /api/saglik/kara-kutu/:ad (olay raporu şimdi; ad = bot ya da "sistem") · GET /api/saglik/kara-kutu/dosya/:dosya (indir)
+ *         bağdaştırıcı + bilgisayar (lib/sunucuBilgisayari.js) + borsaTakvimi (lib/borsaTakvimi.js) + karaKutuVeri.
  */
 const { OzDenetim } = require('./lib/ozDenetim');
 async function ozAgOlc() {
@@ -959,6 +972,33 @@ async function ozAgOlc() {
   return sonuc;
 }
 const KILIT_YOLU = () => yollar.programVeri(__dirname, 'guncelleme.kilit');
+const ozCalistir = (komut, args, o = {}) => new Promise((coz) => {
+  require('child_process').execFile(komut, args, { timeout: o.sure || 20000, windowsHide: true, encoding: 'utf8', maxBuffer: 4 << 20 },
+    (e, out, err) => coz({ kod: e ? (Number.isInteger(e.code) ? e.code : 1) : 0, cikti: `${out || ''}${err || ''}` }));
+});
+/** 69.2 kara kutu: o anın sunucu tarafı (bot ve yürütücü özeti, son 30 dk günlük, güncelleme). Sır yok (özetlerde anahtar bulunmaz). */
+function ozKaraKutuVeri(b, o = {}) {
+  const guvenli = (fn) => { try { return fn(); } catch (e) { return { hata: e.message }; } };
+  const simdi = Date.now(), sinir = simdi - (o.gunlukMs || 30 * 60000);
+  const gunluk = [];
+  for (const g of [...new Set([new Date(sinir).toISOString().slice(0, 10), new Date(simdi).toISOString().slice(0, 10)])]) {
+    let metin = '';
+    try { metin = fs.readFileSync(yollar.veri('gunluk', `${g}.jsonl`), 'utf8'); } catch { continue; }
+    for (const satir of metin.split('\n')) {
+      if (!satir.trim()) continue;
+      let x; try { x = JSON.parse(satir); } catch { continue; }
+      const t = Date.parse(x.t || x.zaman);
+      if (t >= sinir) gunluk.push({ t: x.t || x.zaman, s: x.s || x.seviye, m: String(x.m || x.mesaj || '').slice(0, 600) });
+    }
+  }
+  return {
+    surum: APP_VERSION, sistem: { bellekMB: Math.round(process.memoryUsage().rss / 1048576), acikSn: Math.round(process.uptime()), disk: diskDurumu() },
+    botOzet: b ? guvenli(() => b.bot.ozet()) : null, yurutucu: b ? guvenli(() => b.y.ozet()) : null,
+    kolEngel: b && b.bot.kol && b.bot.kol.durum ? b.bot.kol.durum.engel || null : null,
+    guncelleme: guvenli(() => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, kurulu: d.kurulu || null, kontrol: d.kontrol || null, neden: d.neden || null, kuruDeneme: d.kuruDeneme || null }; }),
+    gunluk: gunluk.slice(-400),
+  };
+}
 const ozDenetim = new OzDenetim({
   dizin: yollar.veri('oz-denetim'), bildirici: portfoyBildirici, kaydet: (sv, m) => db.addLog(sv, m),
   ctx: {
@@ -983,6 +1023,9 @@ const ozDenetim = new OzDenetim({
     kalp: (b) => isletim.kalpOku(b.dizin),
     gunlukDizin: () => yollar.veri('gunluk'),
     ag: ozAgOlc,
+    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir),
+    borsaTakvimi: () => require('./lib/borsaTakvimi').getir(fetch),
+    karaKutuVeri: ozKaraKutuVeri,
     yenidenBaslat: (sebep) => {
       if (!process.env.PUSULA_KONSOL_GUNLUGU) throw new Error('Pusula denetleyicisiz başlatılmış — kapanırsa geri açılmaz');
       db.addLog('WARN', `🔄 ${sebep} — Pusula yeniden başlatılıyor (denetleyici birkaç saniye sonra açar)`);
@@ -998,7 +1041,22 @@ if (!ARASTIRMA_MODU) {
   ozDenetim.baslat();
 }
 app.get('/api/saglik/oz', (req, res) => {
-  res.json({ success: true, calisiyor: !ARASTIRMA_MODU, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30) });
+  res.json({ success: true, calisiyor: !ARASTIRMA_MODU, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30), karaKutular: ozDenetim.karaKutular(30) });
+});
+app.post('/api/saglik/kara-kutu/:ad', (req, res) => {
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Olay raporu sunucuda yazılır — bu bilgisayar geliştirme kopyası.' });
+  const b = req.params.ad === 'sistem' ? null : bindirmeler[req.params.ad];
+  if (req.params.ad !== 'sistem' && !b) return res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad}` });
+  const dosya = ozDenetim.karaKutu(b ? { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, bot: b.bot, y: b.y } : null, 'elle', 'panelden elle istendi');
+  if (!dosya) return res.status(500).json({ success: false, error: 'rapor yazılamadı' });
+  res.json({ success: true, dosya, karaKutular: ozDenetim.karaKutular(30) });
+});
+app.get('/api/saglik/kara-kutu/dosya/:dosya', (req, res) => {
+  const y = ozDenetim.karaKutuYolu(req.params.dosya);
+  if (!y) return res.status(404).json({ success: false, error: 'rapor bulunamadı' });
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(y)}"`);
+  res.send(fs.readFileSync(y, 'utf8'));
 });
 app.post('/api/saglik/oz/yokla', async (req, res) => {
   if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Öz denetim sunucuda çalışır — bu bilgisayar geliştirme kopyası.' });

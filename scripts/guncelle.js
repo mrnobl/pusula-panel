@@ -5,6 +5,7 @@
  *   node scripts/guncelle.js                 kontrol et; panel değişikliğiyse kur, bot kodu değiştiyse onay bekle
  *   node scripts/guncelle.js --onayla <sha>  (panel "Güncellemeyi kur") bot kodu değişmiş olsa da YALNIZ bu commit'i kur
  *   node scripts/guncelle.js --kuru          ne yapacağını yaz, hiçbir şey değiştirme
+ *   node scripts/guncelle.js --onayla <sha> --kuru-fark-onay   (panel "Farkı gördüm, yine de kur") kuru denemedeki karar farkına rağmen kur
  *   node scripts/guncelle.js --durum         son durumu yaz (data/guncelleme.json)
  *
  * Yeniden başlatma: önce POST /api/sistem/yeniden-baslat (61.3+ sunucu; denetleyici 10 sn sonra yeni kodla açar);
@@ -18,7 +19,7 @@ process.env.GCM_INTERACTIVE = 'never';
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const { spawnSync } = require('child_process');
+const { spawnSync, spawn } = require('child_process');
 const G = require('../lib/guncelleme');
 
 const KOK = path.join(__dirname, '..');
@@ -81,6 +82,25 @@ async function yenidenBaslat() {
   return b.kod === 0 ? { tamam: true, yol: 'betik' } : { tamam: false, yol: 'betik', hata: b.cikti.trim().split('\n').slice(-2).join(' ') };
 }
 
+/**
+ * 69.2 KURU DENEME (lib/kuruDeneme.js): botların listesi çalışan sunucudan (GET /api/guncelleme/kuru-bilgi); koşucu ayrı süreçte
+ * (scripts/kuru-deneme.js). Sunucu yanıt vermezse deneme yapılmaz (uyarı ile kurulum sürer).
+ */
+async function kuruDeneme({ eskiRev, yeniRev, ilerleme }) {
+  const r = await istek('GET', '/api/guncelleme/kuru-bilgi', 5000);
+  if (!r || !r.j || !r.j.success) throw new Error('sunucu bot listesini vermedi (Pusula kapalı ya da eski sürüm)');
+  const node = (args, o) => new Promise((coz) => {
+    const c = spawn(process.execPath, args, { cwd: KOK, env: o.env, windowsHide: true });
+    let s = ''; c.stdout.on('data', d => { s += d; }); c.stderr.on('data', d => { s += d; });
+    const t = setTimeout(() => { try { c.kill(); } catch (e) { /* */ } }, o.sure);
+    c.on('close', (kod) => { clearTimeout(t); coz({ kod, cikti: s }); });
+    c.on('error', (e) => { clearTimeout(t); coz({ kod: 1, cikti: e.message }); });
+  });
+  const ham = (a) => { const x = spawnSync(GIT, a, { cwd: KOK, windowsHide: true, timeout: 60000, maxBuffer: 64 << 20 }); return { kod: x.status == null ? 1 : x.status, cikti: x.stdout }; };
+  return require('../lib/kuruDeneme').calistir({ kok: KOK, eskiRev, yeniRev, botlar: r.j.botlar || [], ilerleme,
+    ops: { git: (a) => calistirSenk(GIT, a), gitHam: ham, komut: (k, a, o = {}) => calistirSenk(k, a, o), node } });
+}
+
 /** Telegram: lib/telegramDosya.js (config.json + data/secrets.json; araştırma kopyasında göndermez). */
 const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
 
@@ -94,7 +114,7 @@ const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
   const saat = new Date().getUTCHours();
   if (!onayla && !arg.includes('--kuru') && (saat >= 23 || saat < 2)) { console.log(`[${new Date().toISOString()}] gece penceresi (TR 02:00–05:00) — atlandı`); return; }
   const sonuc = await G.calistir({
-    kok: KOK, onayla, kuru: arg.includes('--kuru'),
+    kok: KOK, onayla, kuru: arg.includes('--kuru'), kuruFarkOnay: !!onayla && arg.includes('--kuru-fark-onay'), kuruDeneme,
     git: (a) => calistirSenk(GIT, a),
     npmKur: () => { const [k, a, kabuk] = npmKomut(['install', '--no-audit', '--no-fund']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },
     nodeCheck: (yol) => calistirSenk(process.execPath, ['--check', yol], { sure: 30000 }),

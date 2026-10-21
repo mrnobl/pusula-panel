@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 19 denetim dört grupta: **Pusula ve sunucu**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk ve yedek saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 24 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -36,6 +36,7 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 | Son yoklama | Son yoklamanın saati ve sonrakinin. **Şimdi yokla** hemen yoklar |
 | Bot kartı | Yalnız güvenli kipteki ya da kapalı bot için çıkar: sebep, **Sebebi okudum ve düzelttim** kutusu ve **Botu yeniden aç** / **Güvenli kipi kaldır** düğmesi. Kutu işaretlenmeden düğme çalışmaz |
 | Denetim satırı | Nokta (yeşil tamam · sarı uyarı · kırmızı hata · gri ölçülemedi), denetimin adı, kademesi, son sonuç ve varsa son onarım. Sorunlu satırlar grubun üstünde durur |
+| Olay raporları | Bot güvenli kipe girince ya da kapanınca yazılan "kara kutu" dosyaları; adına tıklayınca iner. **Şimdi rapor al** o anın raporunu elle yazar |
 | Onarım ve olay kaydı | Son 30 gün: **ONARILDI**, **ONARILAMADI**, **GÜVENLİ KİP**, **TAMAMEN KAPANDI**, **UYARI**, **HATA**, **DÜZELDİ** |
 | Bot ne zaman tamamen kapanır | Tam kapanma ve güvenli kip sebeplerinin listesi (aşağıda) |
 
@@ -43,9 +44,34 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 
 Sebep belirsiz ya da geçici olabilir; devam etmek risk büyütmesin diye bot **yeni işlem açmaz**. Açık pozisyonun stopu yerinde kalır, dakikalık koruma ve marj denetimi sürer. Bot "durdu" sayılmaz.
 
-- **Ne zaman:** aynı hata 30 dakikada 3 kez tekrarlanınca (21 Ekim'deki "fiyat yok" hatası gibi) ya da borsanın fiyatı ikinci bir kaynaktan (OKX) %3'ten fazla saptığında.
-- **Ne zaman kalkar:** öz denetim koyduysa sebep geçince kendiliğinden: 60 dakika aynı hata tekrarlanmazsa, fiyat farkı %1'in altına inerse. İsterseniz Sağlık sayfasından ya da botun sayfasındaki sarı banttan **Güvenli kipi kaldır**.
+- **Ne zaman:** aynı hata 30 dakikada 3 kez tekrarlanınca (21 Ekim'deki "fiyat yok" hatası gibi), borsanın fiyatı ikinci bir kaynaktan (OKX) %3'ten fazla saptığında ya da Binance bakım penceresinde.
+- **Ne zaman kalkar:** öz denetim koyduysa sebep geçince kendiliğinden: 60 dakika aynı hata tekrarlanmazsa, fiyat farkı %1'in altına inerse, bakım bittikten 15 dakika sonra. İsterseniz Sağlık sayfasından ya da botun sayfasındaki sarı banttan **Güvenli kipi kaldır**.
 - Kısa internet kesintilerinin ağ hataları (zaman aşımı, bağlantı koptu, 429 / 418 geri çekilme) tekrar sayılmaz; onları **Borsa bağlantısı** ve **İnternet** denetimleri izler.
+
+## Sunucu bilgisayarı {#sunucu-bilgisayari}
+
+Pusula'yı en çok Windows durdurur. Bu grup saatte bir yalnız **okur**, hiçbir ayarı değiştirmez:
+
+| Denetim | Sarı / kırmızı ne zaman | Ne yapmalı |
+|---|---|---|
+| Windows yeniden başlatması | Güncelleme yeniden başlatma bekliyor. Windows **etkin saatler** dışında kendiliğinden yeniden başlatır; 03:02'deki günlük çalışma bu aralığın dışındaysa gece yeniden başlatabilir | Yeniden başlatmayı gündüz uygun bir saatte elle yapın. Kalıcı çözüm: Ayarlar › Windows Update › Gelişmiş seçenekler › **Etkin saatler**'i 03:00'ı kapsayacak biçimde ayarlayın (ör. 00:00–18:00) |
+| Uyku ve hazırda bekleme | Prize takılıyken bilgisayar boşta uyuyor ya da hazırda bekliyor | Denetim Masası › Güç Seçenekleri › "Bilgisayarı uyku moduna geçir": **Asla** (prizdeyken) |
+| Güç ve beklenmeyen kapanma | **Kırmızı:** dizüstü pilden çalışıyor — elektrik kesik olabilir, pil bitince Pusula durur. **Sarı:** son 7 günde beklenmeyen kapanma (elektrik kesintisi ya da donma) | Elektriği kontrol edin; sık oluyorsa kesintisiz güç kaynağı düşünülebilir |
+
+## Borsa bakımı ve delist {#borsa-takvimi}
+
+Pusula Binance'in ücretsiz, anahtarsız duyurularını saatte bir okur:
+
+- **Borsa bakımı:** vadeli işlem ya da sistem bakımı duyurusunun saat aralığında (10 dakika önce … 15 dakika sonra) botlar **güvenli kipe** girer, bakım bitince kendiliğinden çıkar. Binance sistem durumu "bakım" derse de aynı. 48 saat içindeki bir bakım 03:02 çalışmasıyla çakışıyorsa önceden sarı uyarı gelir. Cüzdan, ağ yükseltmesi, hisse işlemleri gibi duyurular botları etkilemez, sayılmaz.
+- **Delist:** botların evrenindeki bir vadeli sözleşme ya da coin borsadan çıkarılacaksa tarihiyle **haber** verir. Evreni değiştirmez; evren seçimi stratejinin işidir.
+
+## Olay raporları (kara kutu) {#kara-kutu}
+
+Bir bot güvenli kipe girince ya da tamamen kapanınca (öz denetim koysa da, botun kendi ENGEL'i olsa da) Pusula o anın raporunu yazar: botun ve borsa bağlantısının durumu, son 30 dakikanın günlüğü, sorunlu denetimler, son olaylar, son güncelleme. Telegram iletisinde raporun adı yazar. Sorunu geliştirme sohbetinde incelerken bu dosyayı verin; günlüğü elle kopyalamaya gerek kalmaz.
+
+- Rapor **sır içermez**: API anahtarı, Telegram jetonu ve sağlık sinyali adresi yazılmaz.
+- En çok 200 rapor tutulur; eskiler silinir. Yeri: `data/oz-denetim/kara-kutu/`.
+- **Şimdi rapor al:** bir şey tuhaf göründüğünde o anın raporunu elle yazar.
 
 ## Tam kapanma {#tam-kapanma}
 

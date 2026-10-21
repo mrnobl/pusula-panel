@@ -2,6 +2,7 @@
  * SİSTEM › SAĞLIK — Öz denetim (69.1, lib/ozDenetim.js, PLAN-OZ-DENETIM.md) `AG.pages.saglik`
  * ═══════════════════════════════════════════════════════════════════════════
  * GET /api/saglik/oz: 19 denetimin son sonucu (4 grup), botların güvenli kip / tam kapanma durumu, son 30 günün olayları.
+ * 69.2: "Olay raporları" kartı — bot güvenli kipe girince / kapanınca yazılan kara kutu raporları (indir) + "Şimdi rapor al".
  * Üstte özet; kapanan ya da güvenli kipteki bot için kart ("Sebebi okudum" kutusu + "Botu yeniden aç" / "Güvenli kipi kaldır");
  * ortada gruplu denetimler; altta onarım kaydı ve tam kapanma tetikleri. Menüdeki "Sağlık" öğesinin noktası (sarı/kırmızı)
  * 5 dk'da bir tazelenir (rozetGuncelle). Geliştirme bilgisayarında sunucunun yanıtı gelir (lib/evOkuma.js).
@@ -19,7 +20,7 @@
   const KADEME_AD = { onar: 'Kendisi onarır', koru: 'Korur, sonra sorar', haber: 'Yalnız haber verir' };
   const OLAY_AD = {
     onarildi: ['ONARILDI', 'pos'], onarilamadi: ['ONARILAMADI', 'neg'], 'guvenli-kip': ['GÜVENLİ KİP', 'warn'], 'guvenli-kip-kalkti': ['GÜVENLİ KİP KALKTI', 'pos'],
-    'tam-kapanma': ['TAMAMEN KAPANDI', 'neg'], uyari: ['UYARI', 'warn'], hata: ['HATA', 'neg'], duzeldi: ['DÜZELDİ', 'pos'],
+    'tam-kapanma': ['TAMAMEN KAPANDI', 'neg'], uyari: ['UYARI', 'warn'], hata: ['HATA', 'neg'], duzeldi: ['DÜZELDİ', 'pos'], 'kara-kutu': ['OLAY RAPORU', ''],
   };
   const SIRA = { tamam: 0, kapali: 0, bilinmiyor: 1, uyari: 2, hata: 3 };
   let veri = null;
@@ -61,6 +62,15 @@
     return (g.gruplar || []).map(gr => {
       const l = g.denetimler.filter(d => d.grup === gr.kimlik).slice().sort((a, b) => (SIRA[b.durum] || 0) - (SIRA[a.durum] || 0));
       return { ...gr, denetimler: l, uyari: l.filter(d => d.durum === 'uyari').length, hata: l.filter(d => d.durum === 'hata').length };
+    });
+  }
+
+  const KAYNAK_AD = { tekrar: 'tekrarlayan hata', fiyat: 'fiyat sapması', bakim: 'borsa bakımı', engel: 'ENGEL', guvenlikip: 'güvenli kip', elle: 'elle', cokme: 'döngü çöküyor', stop: 'koruma stopu', emirRet: 'emir reddi', emirret: 'emir reddi' };
+  /** Saf: olay raporu listesi → satırlar (bot adı, sebep, boyut). */
+  function raporModeli(l, botlar) {
+    return (l || []).map(r => {
+      const b = (botlar || []).find(x => x.ad === r.bot);
+      return { dosya: r.dosya, zaman: r.zaman, bot: b ? b.adGorunen : (r.bot === 'sistem' ? 'Sistem' : r.bot || '—'), sebep: KAYNAK_AD[r.kaynak] || r.kaynak || '—', boyut: Number.isFinite(r.bayt) ? `${Math.max(1, Math.round(r.bayt / 1024))} KB` : '' };
     });
   }
 
@@ -147,6 +157,21 @@
     ]);
   }
 
+  function karaKutuKarti(v, simdi) {
+    const l = raporModeli(v.karaKutular, v.botlar);
+    const al = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnOzRaporAl', disabled: v.calisiyor === false ? 'disabled' : null }, [el('i', { 'data-lucide': 'file-down' }), el('span', { text: 'Şimdi rapor al' })]);
+    al.addEventListener('click', () => eylem(al, () => AG.api.saglikOz.karaKutuAl('sistem'), 'Olay raporu yazıldı — listede'));
+    return el('section', { class: 'p-kart mt-4', id: 'saglikRaporlar' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Olay raporları (kara kutu)' }), al]),
+      el('p', { class: 'hint hint-sm', text: 'Bir bot güvenli kipe girince ya da tamamen kapanınca Pusula o anın raporunu yazar: botun ve borsa bağlantısının durumu, son 30 dakikanın günlüğü, denetim sonuçları, son güncelleme. Sorunu birlikte incelerken bu dosyayı paylaşın; günlük kopyalamaya gerek kalmaz. Sır (anahtar, jeton) içermez.' }),
+      l.length ? el('ul', { class: 'oz-olaylar' }, l.slice(0, 20).map(r => el('li', { class: 'oz-olay' }, [
+        el('span', { class: 'oz-sag sayi', text: saat(r.zaman, simdi) }),
+        el('span', { class: 'p-rozet', text: r.bot }),
+        el('span', { class: 'oz-olay-metin' }, [el('span', { text: `${r.sebep}${r.boyut ? ` · ${r.boyut}` : ''} · ` }), el('a', { href: AG.api.saglikOz.karaKutuYolu(r.dosya), download: r.dosya, text: r.dosya })]),
+      ]))) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Henüz olay raporu yok. Bir bot güvenli kipe girdiğinde ya da kapandığında burada görünür.' })]),
+    ]);
+  }
+
   function ciz() {
     const k = bul('saglikKok');
     if (!k || !veri) return;
@@ -158,7 +183,7 @@
     doldur(k, [
       el('div', { class: 'p-serit mb-4', id: 'saglikOzet' }, ozetModeli(veri, simdi).map(gosterge)),
       el('div', { class: 'row-between row-wrap gap-2 mb-4' }, [
-        el('p', { class: 'hint mb-0', text: veri.calisiyor === false ? 'Bu bilgisayar geliştirme kopyası: öz denetim sunucuda çalışır.' : 'Pusula her 5 dakikada bir kendini yoklar; disk ve yedek saatte bir.' }), yoklaDugme]),
+        el('p', { class: 'hint mb-0', text: veri.calisiyor === false ? 'Bu bilgisayar geliştirme kopyası: öz denetim sunucuda çalışır.' : 'Pusula her 5 dakikada bir kendini yoklar; disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir.' }), yoklaDugme]),
       sorunluBot.length ? el('div', { class: 'oz-botlar mb-4', id: 'saglikBotlar' }, sorunluBot.map(botKarti)) : null,
       el('div', { class: 'oz-gruplar', id: 'saglikDenetimler' }, gruplaModeli(veri).map(gr => el('section', { class: 'p-kart oz-grup', 'data-grup': gr.kimlik }, [
         el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: gr.ad }),
@@ -178,6 +203,7 @@
           ]);
         })) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Son 30 günde onarım ya da olay yok.' })]),
       ]),
+      karaKutuKarti(veri, simdi),
       el('details', { class: 'p-kart mt-4 oz-tetikler', id: 'saglikTetikler' }, [
         el('summary', { class: 'p-kart-baslik', text: 'Bot ne zaman tamamen kapanır' }),
         el('p', { class: 'hint hint-sm', text: 'Para kaybettirebilecek bir sebepte bot tamamen kapanır ve siz açana kadar kapalı kalır. Diğerlerinde yalnız yeni işlem açmaz (güvenli kip). Zarar sınırları (kill-switch, günlük zarar limiti) ayrıca ve aynen çalışır.' }),
@@ -222,6 +248,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, rozetTonu, rozetGuncelle, saat, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.saglik;
 })(typeof window !== 'undefined' ? window : globalThis);

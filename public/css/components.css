@@ -3355,3 +3355,6 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .oz-tetikler[open] summary { margin-bottom: var(--sp-3); }
 .ana-saglik-ac { font-size: var(--fs-sm); }
 .bot-gk-bandi { border-color: var(--warn-border); border-left-color: var(--warn); background: var(--warn-soft); }
+.gunc-kuru { border: 1px solid var(--warn-border); border-left: 3px solid var(--warn); border-radius: var(--radius-md); background: var(--warn-soft); padding: var(--sp-3); }
+.gunc-kuru-liste, .gunc-kuru-fark { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.gunc-kuru-fark { color: var(--text-soft); }

@@ -51,13 +51,24 @@ Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API a
 
 **Şimdi kontrol et** ya da **Güncellemeyi kur**'a bastığınızda (ya da 12:00 görevi çalışırken sayfayı açtığınızda) kartın altında işlem baştan sona görünür:
 
-- **Adımlar:** GitHub bağlantısı → değişikliklerin incelenmesi → yeni kodun indirilmesi → paketler → sözdizimi denetimi → Pusula'nın yeniden başlatılması → yeni sürümün açılışı → **kararlılık gözlemi** (8 dk boyunca 15 sn'de bir sağlık kontrolü; "12/32 kontrol · kalan ~5 dk" gibi). ✓ bitti, ◐ sürüyor, – atlandı (ör. paket değişikliği yok), ✗ hata; işlem bir adıma varmadan bittiyse (yeni sürüm yok, onay bekleniyor) kalan adımlar soluk görünür.
+- **Adımlar:** GitHub bağlantısı → değişikliklerin incelenmesi → yeni kodun indirilmesi → paketler → sözdizimi denetimi → **kuru deneme** (aşağıda) → Pusula'nın yeniden başlatılması → yeni sürümün açılışı → **kararlılık gözlemi** (8 dk boyunca 15 sn'de bir sağlık kontrolü; "12/32 kontrol · kalan ~5 dk" gibi). ✓ bitti, ◐ sürüyor, – atlandı (ör. paket değişikliği yok), ✗ hata; işlem bir adıma varmadan bittiyse (yeni sürüm yok, onay bekleniyor) kalan adımlar soluk görünür.
 - **Çubuk ve süre:** ne kadarının bittiği, ne zaman başladığı, kaç dakikadır sürdüğü.
 - **Günlük:** güncelleyicinin yazdığı her satır, saatiyle. Pusula yeniden başlarken panel birkaç saniye yanıt vermez — günlükte *"Panel yanıt vermiyor — bekleniyor…"* ve geri gelince *"Panel yeniden yanıt veriyor"* yazar; bu beklenen bir durumdur.
 - **Bitince:** başlık sonucu söyler (**Kuruldu ✓**, **Güncel ✓**, **onayınız bekleniyor**, **eski sürüme dönüldü** …). Yeni sürüm kurulduysa sayfa 5 sn içinde kendiliğinden yeni panelle yenilenir. Son işlemin adımları ve günlüğü bir sonraki işleme kadar burada kalır.
 - **Yarıda kaldı:** güncelleyici işlem bitmeden kapandıysa (ör. bilgisayar kapandı) bu yazar; **Şimdi kontrol et** ile yeniden başlatın.
 
 İşlem sürerken düğmeler kapalıdır (aynı anda ikinci güncelleme başlamaz).
+
+### Kuru deneme (bot kodu değişince) {#kuru-deneme}
+
+Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bugünkü kararını** eski ve yeni kodla, **emir göndermeden** hesaplayıp karşılaştırır (1–3 dakika). Pusula bu sırada eski sürümle çalışmaya devam eder.
+
+- **Kâğıt hesaptaki bot (Denge):** botun kayıtlarının kopyası ve borsanın açık piyasa verisiyle tam karar: trend rejimi, BTC hedefi ve yönü, kol evreni, risk kademesi, mutabakat.
+- **Demo hesaptaki bot (Hücum):** demo hesaba bağlanılmaz (demo kabul); yalnız yeni kodun botun kayıtlarını sorunsuz açtığı denetlenir.
+- **Karar aynı** → kurulum sürer.
+- **Yeni kod hata verdi** → **kurulmaz**; kod eski sürüme döndürülür, Pusula yeniden başlamaz, Telegram'a haber gider.
+- **Karar farklı** → **kurulmaz**; Durum satırı farkı ve kutu eski → yeni değerleri gösterir. Fark bekleniyorsa (ör. bir hata düzeltmesi — 69.0'daki "fiyat yok" düzeltmesi böyle görünürdü) **Farkı gördüm, yine de kur**; beklenmiyorsa kurmayın ve geliştirme sohbetine haber verin.
+- İki sürüm de aynı hatayı veriyorsa (yeni kodun getirdiği değil) ya da deneme yapılamazsa (internet yok) kurulum uyarıyla sürer.
 
 ## Bildirimler {#bildirimler}
 

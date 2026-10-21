@@ -53,7 +53,10 @@
     switch (g.durum) {
       case 'guncel': return { metin: `Güncel ✓ — son kontrol ${zaman(g.kontrol)}`, ton: 'tone-success', onay: null, kontrolDugmesi: true };
       case 'kuruldu': return { metin: `${(g.kurulu && g.kurulu.surum) || s} kuruldu ✓ (${zaman(g.kontrol)}, ${g.onayli ? 'onayınızla' : 'otomatik'})`, ton: 'tone-success', onay: null, kontrolDugmesi: true };
-      case 'onay': return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}). Kurulunca Pusula ~30 sn yeniden başlar; açılmazsa eski sürüme kendiliğinden döner.`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
+      case 'onay':
+        // 69.2: kuru denemede karar farkı — kurulum ancak "Farkı gördüm, yine de kur" ile.
+        if (g.kuruFark && g.kuruFark.hedef === g.hedef) return { metin: `${s} kurulmadı: kuru denemede botun kararı değişti — ${g.kuruFark.ozet || ''}. Fark bekleniyorsa (ör. bir düzeltme) yine de kurabilirsiniz.`, ton: 'tone-warning', onay: g.hedef || null, kuruFark: true, kontrolDugmesi: true };
+        return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme kendiliğinden döner.`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
       case 'elle': return { metin: `Elle bakılmalı: ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'geri-alindi': return { metin: `${s} kurulamadı, geri alındı (${g.geriDonus || ''}): ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'yeniden-baslat': return { metin: g.neden || 'Yeniden başlatma gerekli.', ton: 'tone-warning', onay: null, kontrolDugmesi: true };
@@ -68,7 +71,7 @@
   const GUNC_ADIMLAR = [
     { kod: 'baglanti', ad: 'GitHub bağlantısı' }, { kod: 'plan', ad: 'Değişikliklerin incelenmesi' },
     { kod: 'indir', ad: 'Yeni kodun indirilmesi' }, { kod: 'paket', ad: 'Paketler' }, { kod: 'denetim', ad: 'Sözdizimi denetimi' },
-    { kod: 'baslat', ad: "Pusula'nın yeniden başlatılması" }, { kod: 'acilis', ad: 'Yeni sürümün açılışı' }, { kod: 'kararlilik', ad: 'Kararlılık gözlemi' }
+    { kod: 'kuru', ad: 'Kuru deneme (bot kararı)' }, { kod: 'baslat', ad: "Pusula'nın yeniden başlatılması" }, { kod: 'acilis', ad: 'Yeni sürümün açılışı' }, { kod: 'kararlilik', ad: 'Kararlılık gözlemi' }
   ];
   const saatYaz = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); };
   const sureYaz = (ms) => { if (!(ms >= 0)) return ''; const sn = Math.round(ms / 1000); return sn < 60 ? `${sn} sn` : `${Math.floor(sn / 60)} dk ${String(sn % 60).padStart(2, '0')} sn`; };
@@ -201,9 +204,10 @@
         el('dt', { text: 'Durum' }), el('dd', { class: o.ton || null, id: 'ayGuncDurum' }, [el('span', { text: surer ? 'Güncelleme işlemi sürüyor — aşağıda adım adım' : o.metin }), el('span', { text: ' · ' }), el('a', { href: '#/kilavuz/kurulum/adim-22', text: 'Nasıl çalışır?' })])
       ]),
       o.kontrolDugmesi || o.onay ? el('div', { class: 'pf-dugmeler mt-3' }, [
-        o.onay ? dugme(`Güncellemeyi kur (${(g && g.hedefSurum) || 'yeni sürüm'})`, () => kur(g), 'btn-primary', 'btnGuncKur') : null,
+        o.onay ? dugme(o.kuruFark ? `Farkı gördüm, yine de kur (${(g && g.hedefSurum) || 'yeni sürüm'})` : `Güncellemeyi kur (${(g && g.hedefSurum) || 'yeni sürüm'})`, () => kur(g, !!o.kuruFark), o.kuruFark ? 'btn-danger' : 'btn-primary', 'btnGuncKur') : null,
         o.kontrolDugmesi ? dugme('Şimdi kontrol et', () => kontrol(g), 'btn-secondary', 'btnGuncKontrol') : null
       ]) : null,
+      o.kuruFark ? kuruFarkTablosu(g.kuruFark) : null,
       g && g.islem && !g.gelistirme ? cizIzleme(g) : null
     ]);
     const k = bul('guncKonsol');
@@ -237,11 +241,26 @@
     izle({ ...(g || {}), yeniIslem: true });
   }
 
-  async function kur(g) {
-    const metin = `Bu güncelleme bot kodunu değiştiriyor (${(g.dosyalar || []).join(', ')}). Kod indirilir, Pusula yaklaşık 30 saniye yeniden başlar; açılmazsa eski sürüme kendiliğinden döner ve Telegram'dan haber verir. Açık pozisyonlar borsada kalır.`;
-    const cevap = await AG.onayla({ baslik: `Pusula ${g.hedefSurum || ''} kurulsun mu?`, metin, onay: 'Kur ve yeniden başlat', ...(telefonMu() ? { alanlar: PIN_ALANLARI } : {}) });
+  /** 69.2: kuru denemenin bot bot sonucu ve farklı çıkan alanlar (eski → yeni). */
+  function kuruFarkTablosu(kd) {
+    const { el } = AG.dom;
+    const yaz = (v) => (v == null ? '—' : Array.isArray(v) ? (v.length > 4 ? `${v.slice(0, 4).join(', ')} … (${v.length})` : v.join(', ')) : typeof v === 'object' ? JSON.stringify(v) : String(v));
+    return el('div', { class: 'gunc-kuru mt-3', id: 'guncKuruFark' }, [
+      el('p', { class: 'hint mb-2', text: 'Kuru deneme: botların bugünkü kararı eski ve yeni kodla, emir göndermeden hesaplandı.' }),
+      el('ul', { class: 'gunc-kuru-liste' }, (kd.botlar || []).map(b => el('li', null, [
+        el('strong', { text: `${b.adGorunen || b.ad} (${b.kip === 'karar' ? 'karar' : 'yalnız yükleme'}): ` }), el('span', { text: b.metin || b.durum }),
+        (b.farklar || []).length ? el('ul', { class: 'gunc-kuru-fark' }, b.farklar.map(x => el('li', { text: `${x.ad}: ${yaz(x.eski)} → ${yaz(x.yeni)}` }))) : null
+      ])))
+    ]);
+  }
+
+  async function kur(g, farkOnay = false) {
+    const metin = farkOnay
+      ? `Kuru denemede botun kararı yeni kodla farklı çıktı: ${(g.kuruFark && g.kuruFark.ozet) || ''}. Bu fark bekleniyorsa (ör. bir hata düzeltmesi) kurun; beklenmiyorsa kurmayın ve geliştirme sohbetine haber verin. Pusula yaklaşık 30 saniye yeniden başlar.`
+      : `Bu güncelleme bot kodunu değiştiriyor (${(g.dosyalar || []).join(', ')}). Önce botların kararı eski ve yeni kodla emir göndermeden karşılaştırılır (1–3 dk); fark ya da hata çıkarsa kurulmaz. Sonra kod indirilir, Pusula yaklaşık 30 saniye yeniden başlar; açılmazsa eski sürüme kendiliğinden döner ve Telegram'dan haber verir. Açık pozisyonlar borsada kalır.`;
+    const cevap = await AG.onayla({ baslik: farkOnay ? `Fark onaylansın ve Pusula ${g.hedefSurum || ''} kurulsun mu?` : `Pusula ${g.hedefSurum || ''} kurulsun mu?`, metin, onay: farkOnay ? 'Farkı gördüm, kur' : 'Kur ve yeniden başlat', tehlikeli: farkOnay || undefined, ...(telefonMu() ? { alanlar: PIN_ALANLARI } : {}) });
     if (!cevap) return;
-    const r = await AG.api.guncelleme.uygula(g.hedef, telefonMu() ? pinGovdesi(cevap) : {});
+    const r = await AG.api.guncelleme.uygula(g.hedef, { ...(telefonMu() ? pinGovdesi(cevap) : {}), ...(farkOnay ? { kuruFarkOnay: true } : {}) });
     if (!r || !r.success) { AG.bildir(`Kurulmadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 12000 }); return; }
     AG.bildir('Kurulum başladı — adımlar aşağıda canlı görünür; bitince sayfa kendiliğinden yenilenir.', 'ok', { sure: 10000 });
     izle({ ...(g || {}), yeniIslem: true });

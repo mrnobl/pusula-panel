@@ -1,5 +1,5 @@
 {
-  "surum": "69.1",
+  "surum": "69.2",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -56,6 +56,13 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {
+      "surum": "69.2", "tarih": "2026-10-21",
+      "yeni": [
+        "Güncellemeden önce kuru deneme: botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; hata ya da beklenmeyen fark kurulumu durdurur.",
+        "Sağlık: olay raporları (kara kutu), sunucu bilgisayarı (Windows yeniden başlatması, uyku, güç), borsa bakımı ve delist duyuruları."
+      ]
+    },
     {
       "surum": "69.1", "tarih": "2026-10-21",
       "yeni": [

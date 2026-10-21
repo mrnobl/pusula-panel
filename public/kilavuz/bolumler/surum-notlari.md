@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.2 — Kuru deneme, olay raporları, sunucu bilgisayarı, borsa bakımı ve delist (2026-10-21) {#s69-2}
+
+- **Kuru deneme:** bot kodunu değiştiren güncelleme kurulmadan önce botların bugünkü kararı eski ve yeni kodla, emir göndermeden karşılaştırılır. Yeni kod hata verirse kurulmaz; karar farklıysa siz "Farkı gördüm, yine de kur" diyene kadar kurulmaz ([Kuru deneme](#/kilavuz/ayarlar/kuru-deneme)). Hücum'un demo hesabına bağlanılmaz.
+- **Olay raporları (kara kutu):** bot güvenli kipe girince ya da kapanınca o anın raporu yazılır; Sağlık sayfasından indirilir, sır içermez ([Olay raporları](#/kilavuz/saglik/kara-kutu)).
+- **Sunucu bilgisayarı:** bekleyen Windows yeniden başlatması ve 03:02'nin etkin saatlerin dışında kalması, uyku / hazırda bekleme, pilden çalışma ve beklenmeyen kapanmalar ([Sunucu bilgisayarı](#/kilavuz/saglik/sunucu-bilgisayari)).
+- **Borsa bakımı ve delist:** Binance bakım penceresinde botlar güvenli kipe girer, sonra çıkar; botların evrenindeki delist duyurusu tarihiyle haber verilir ([Borsa takvimi](#/kilavuz/saglik/borsa-takvimi)).
+- Öz denetim artık 24 denetim, beş grup.
+
 ## 69.1 — Öz denetim: Pusula kendini yokluyor, güvenli onarım, güvenli kip, tam kapanma (2026-10-21) {#s69-1}
 
 - **Yeni sayfa — Sistem › Sağlık:** Pusula kendini 5 dakikada bir 19 denetimle yoklar (sunucu, borsa ve veri, botlar, bildirimler). Güvenli işleri kendisi onarır (sahipsiz kilit, disk dolarken eski günlükleri sıkıştırma, takılan botta yeniden başlatma; bellek şişmesinde yalnız sessiz saatte). Aynı onarım günde en çok 5 kez denenir ([Sağlık](#/kilavuz/saglik)).
