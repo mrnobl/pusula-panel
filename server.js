@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '69.9';
+const APP_VERSION = '70.1';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1084,7 +1084,7 @@ const ozDenetim = new OzDenetim({
     gunlukDizin: () => yollar.veri('gunluk'),
     ag: ozAgOlc,
     // 69.6: güvenlik ölçümü de (antivirüs, güvenlik duvarı, port, RDP, Pusula klasör izinleri)
-    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir, process.platform, { port: PORT, klasorler: [__dirname, yollar.kok()] }),
+    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir, process.platform),
     borsaTakvimi: () => require('./lib/borsaTakvimi').getir(fetch),
     // 69.3 funding: tek istek, tüm semboller (anahtarsız) → { oranlar: { ETHUSDT: 0.0001, … } }
     funding: async () => {

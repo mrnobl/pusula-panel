@@ -2,6 +2,19 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 70.1 — Sağlık sayfasında eski kapanma sayacı (2026-10-22) {#s70-1}
+
+- **Pusula süreci ayakta:** açılıştan ÖNCEKİ hızlı kapanmalar (ör. antivirüsün dosya sildiği gece) Pusula sağlıklı çalışırken kırmızı görünmez; "bu açılıştan önce … olmuştu (geçti)" diye yazılır.
+- "API anahtarları şifreli" satırının adı **API anahtarları** oldu (şifreleme 70.0'da kaldırıldı).
+
+## 70.0 — 69.1–69.9 bir arada, antivirüse uyumlu (2026-10-22) {#s70-0}
+
+21–22 Ekim'de sunucudaki Kaspersky, Pusula'nın arka planda PowerShell açmasını virüs sandı ve dosyalarını sildi; sunucu 69.0'a döndürüldü. 70.0, 69.1–69.9'un bütün işlerini (öz denetim, kuru deneme, emir freni, sürpriz sermaye, masaüstü PIN, kod imzası, para güvenliği, ccxt güvenlik güncellemesi …) **antivirüsü kızdıran kodlar olmadan** bir araya getirir:
+
+- **Şifreleme kodu tamamen çıkarıldı;** anahtarlar düz dosyada, koruma çekim izni kapalı ve IP kısıtlı anahtar ([API anahtarları](#/kilavuz/saglik/sir-kasasi)).
+- **Arka planda PowerShell yok:** pil, beklenmeyen kapanma, disk sağlığı, antivirüs, güvenlik duvarı ve port sorguları kaldırıldı; öz denetim 31 denetim.
+- **Klasör izni betiği kaldırıldı** (dosya izinlerini değiştiriyordu).
+
 ## 69.9 — Pusula arka planda PowerShell açmıyor (antivirüs) (2026-10-22) {#s69-9}
 
 - **Kaspersky sorunu kökten:** Pusula artık arka planda hiç PowerShell açmıyor. API anahtarı şifrelemesi (69.4) kapatıldı; anahtarlar 69.0'daki gibi düz durur — koruma, çekim izni kapalı ve IP kısıtlı anahtar ([API anahtarları](#/kilavuz/saglik/sir-kasasi)).

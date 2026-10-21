@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 34 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 31 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -58,7 +58,6 @@ Pusula'yı en çok Windows durdurur. Bu grup saatte bir yalnız **okur**, hiçbi
 |---|---|---|
 | Windows yeniden başlatması | Güncelleme yeniden başlatma bekliyor. Windows **etkin saatler** dışında kendiliğinden yeniden başlatır; 03:02'deki günlük çalışma bu aralığın dışındaysa gece yeniden başlatabilir | Yeniden başlatmayı gündüz uygun bir saatte elle yapın. Kalıcı çözüm: sunucuda **yönetici** PowerShell'de `powershell -ExecutionPolicy Bypass -File scripts\windows-etkin-saat.ps1` — etkin saatleri **21:00–15:00** sabitler (03:02 ve 12:00 güncellemesi korunur; Windows yalnız 15:00–21:00 arasında yeniden başlatabilir). Durum: aynı komut `-Durum` ile |
 | Uyku ve hazırda bekleme | Prize takılıyken bilgisayar boşta uyuyor ya da hazırda bekliyor | Denetim Masası › Güç Seçenekleri › "Bilgisayarı uyku moduna geçir": **Asla** (prizdeyken) |
-| Güç ve beklenmeyen kapanma | **Kırmızı:** dizüstü pilden çalışıyor — elektrik kesik olabilir, pil bitince Pusula durur. **Sarı:** son 7 günde beklenmeyen kapanma (elektrik kesintisi ya da donma) | Elektriği kontrol edin; sık oluyorsa kesintisiz güç kaynağı düşünülebilir |
 
 ## ADL, likidasyon ve funding {#adl-funding}
 
@@ -134,11 +133,10 @@ Telegram tek kanal olursa, Telegram düştüğünde (ya da jeton geçersizleşin
 
 ## API anahtarları {#sir-kasasi}
 
-69.4–69.8 arasında API anahtarları Windows DPAPI ile şifreli tutuluyordu. Pusula bunu arka planda PowerShell açarak yapıyordu; 21–22 Ekim'de sunucudaki Kaspersky bu davranışı virüs sanıp Pusula'yı (server.js) iki kez sildi. **69.9'dan beri şifreleme kapalı** ve Pusula arka planda hiç PowerShell açmıyor: anahtarlar 69.0'daki gibi `secrets.json` dosyasında düz durur.
+API anahtarları, Telegram jetonu ve sağlık adresleri `secrets.json` dosyasında **düz** durur (69.0'daki gibi). 69.4–69.8 arasında bu dosya Windows'un şifrelemesiyle korunuyordu; Pusula bunun için arka planda PowerShell açıyordu ve 21–22 Ekim'de sunucudaki Kaspersky bu davranışı virüs sanıp Pusula'yı sildi. **70.0'da şifreleme kodu tamamen çıkarıldı.**
 
-- **Koruma:** Binance anahtarında **para çekme izni kapalı** ve canlı hesapta **IP kısıtı zorunlu** — dosya çalınsa bile anahtar başka bir yerden kullanılamaz, para çekilemez.
-- **Şifreli kalmış dosya:** 69.4–69.8 sırasında şifrelenen dosyayı Pusula çözmeye çalışmaz; Sağlık kırmızı gösterir ve komutu söyler. Sunucuda bir kez (yönetici gerekmez): `powershell -ExecutionPolicy Bypass -File C:\Pusula\scripts\sir-coz.ps1`, sonra Pusula'yı yeniden başlatın. Şifreli hâli yanında `.dpapi-yedek` olarak kalır.
-- Pil, beklenmeyen kapanma ve disk sağlığı da aynı sebeple artık okunmuyor (Sağlık'ta **kapalı**).
+- **Koruma anahtarın kendisinde:** Binance anahtarında **para çekme izni kapalı** ve canlı hesapta **IP kısıtı zorunlu** — dosya kopyalansa bile anahtar başka bir yerden kullanılamaz, para çekilemez.
+- **Şifreli kalmış dosya:** o sürümlerde şifrelenmiş bir dosyayı Pusula çözmeye çalışmaz; Sağlık kırmızı gösterir. Çözümü: masaüstüne verilen **Pusula-69.0** paketindeki `scripts\sir-coz.ps1` (bir kez, Pusula'yı çalıştıran kullanıcıyla), sonra Pusula'yı yeniden başlatın.
 
 ## Saldırılara karşı korumalar {#guvenlik}
 
@@ -148,14 +146,12 @@ Telegram tek kanal olursa, Telegram düştüğünde (ya da jeton geçersizleşin
 - **Yabancı siteler paneli kullanamaz:** isteği gönderen sayfanın adresi panelin kendi adresiyle birebir aynı olmalı; başka bir sitenin (başka bir Tailscale adresi dahil) gizlice "acil kapat", "engeli kaldır" gibi istek göndermesi ve canlı yayını okuması kapalı. Panel başka bir sitede görünmez çerçeveye de konamaz.
 - **Taşıma paketi haberi:** her taşıma paketi oluşturulduğunda Telegram'a haber gelir. Siz yapmadıysanız API anahtarlarını hemen yenileyin.
 - **Yalnız imzalı kod kurulur:** sunucu, geliştirme bilgisayarında imzalanmamış güncellemeyi kurmaz; Telegram'a kritik uyarı gider. Kurulum bir kerelik: [Kod imzası](#/kilavuz/ayarlar/kod-imzasi).
-- **Klasör izinleri:** Pusula klasörlerine yalnız Pusula'yı çalıştıran kullanıcı, SYSTEM ve yöneticiler erişir (`scripts\klasor-izin.ps1`).
-- **Virüs koruması** ve **Dış erişim ve izinler** denetimleri **kapalı** (69.8): antivirüs ürünlerini, güvenlik duvarını ve açık portları soran bir arka plan programı antivirüse virüs gibi görünüyor — 21 Ekim'de sunucudaki Kaspersky bu yüzden Pusula'yı durdurdu. Bu ikisini elle kontrol edin: antivirüs simgesi yeşil mi, Windows Güvenliği › Güvenlik duvarı açık mı.
+- **Antivirüse uyum (70.0):** Pusula arka planda **hiç PowerShell açmaz**; antivirüs ürünlerini, güvenlik duvarını, açık portları, pili ve olay günlüğünü sorgulamaz. Bu ölçümler (Virüs koruması, Dış erişim, Güç ve beklenmeyen kapanma, disk sağlığı) kaldırıldı: arka planda bunları soran bir program antivirüse virüs gibi görünüyordu. Antivirüsün açık olduğunu ve güvenlik duvarını Windows Güvenliği'nden elle kontrol edin.
 
 ## Paket güvenliği ve Node desteği {#paket-guvenligi}
 
 - **Paket güvenliği:** günde bir `npm audit` (ücretsiz) yapılır; yüksek açık sarı, kritik açık kırmızı. Düzeltme geliştirme tarafında yapılır ve güncellemeyle gelir. 2025'te popüler npm paketlerine kripto işlemlerini hedefleyen zararlı kod eklenmişti; bu yüzden paketler tam sürüme sabitlidir, sunucu yalnız kilit dosyasındaki sürümleri kurar (`npm ci`), kurulum betikleri çalıştırılmaz ve yeni sürümler en az 7 gün beklemeden önerilmez. Bot kodu güncellemesinde paket değişikliği varsa onay ekranı hangi paketin hangi sürümden hangisine geçtiğini gösterir.
 - **Node.js desteği:** çalışan Node sürümünün güvenlik desteğinin bitmesine 6 aydan az kaldıysa sarı, bittiyse kırmızı.
-- **Disk sağlığı:** Windows'un diskler için verdiği sağlık değerlendirmesi "Healthy" değilse **Disk alanı** satırı kırmızıya döner — yedeğin taze olduğundan emin olun ve diski değiştirmeyi planlayın.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 

@@ -1,5 +1,5 @@
 {
-  "surum": "69.9",
+  "surum": "70.1",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -56,6 +56,8 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"70.1","tarih":"2026-10-22","yeni":["Sağlık: açılıştan önceki hızlı kapanmalar Pusula sağlıklıyken kırmızı görünmez.","\"API anahtarları şifreli\" satırının adı \"API anahtarları\" oldu."]},
+    {"surum":"70.0","tarih":"2026-10-22","yeni":["69.1–69.9 bir arada, antivirüse uyumlu: şifreleme kodu ve arka planda PowerShell açan bütün ölçümler çıkarıldı.","Öz denetim 31 denetim; anahtar koruması çekim izni kapalı ve IP kısıtlı anahtar."]},
     {"surum":"69.9","tarih":"2026-10-22","yeni":["Kaspersky sorunu kökten: Pusula arka planda hiç PowerShell açmıyor; API anahtarı şifrelemesi kapatıldı (koruma: çekim izni kapalı, IP kısıtlı anahtar).","Şifreli kalmış anahtar dosyası bir kez scripts\\sir-coz.ps1 ile düz hâle getirilir."]},
     {"surum":"69.8","tarih":"2026-10-22","yeni":["Antivirüs yanlış alarmı giderildi: Pusula artık antivirüsü, güvenlik duvarını ve portları sormuyor (Sağlık'ta bu iki madde kapalı, elle kontrol).","Güncelleme, eski sürümün değiştirdiği paket listesine takılıp \"elle bakılmalı\" demez."]},
     {"surum":"69.7","tarih":"2026-10-21","yeni":["Borsa kütüphanesi ccxt 4.5.89: içindeki ağ paketinin yüksek önemli güvenlik açığı kapandı; Binance davranışı yeniden doğrulandı.","Kurulum programı derlemesinde eklentiler commit kimliğine sabit; örnek portföy adı Fırat."]},
