@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 69.8 — Antivirüs uyumu, güncellemenin takılmaması (2026-10-22) {#s69-8}
+
+- **Antivirüs yanlış alarmı giderildi:** 21 Ekim'de sunucudaki Kaspersky Pusula'yı virüs sanıp durdurdu. Pusula artık saatte bir antivirüs ürünlerini, güvenlik duvarını ve açık portları sormuyor; Sağlık sayfasında bu iki madde **kapalı** görünür, elle kontrol edilir.
+- **Güncelleme kendi izine takılmaz:** eski sürümün paket kurulumunda değiştirdiği paket listesi güncellemeyi artık "elle bakılmalı" diye durdurmaz; güncelleyici onu kendisi geri alır. Sizin ayar dosyalarınıza yine dokunulmaz.
+
 ## 69.7 — Borsa kütüphanesi güvenlik güncellemesi, örnek ad (2026-10-21) {#s69-7}
 
 - **Borsa kütüphanesi (ccxt) 4.5.89:** içindeki ağ paketinin (undici) yüksek önemli güvenlik açığı kapandı; paket taramasında açık kalmadı. Binance hata eşlemesinin bütün hücreleri ve gerçek Binance yoklaması (prod + demo) yeni sürümle yeniden doğrulandı.

@@ -148,7 +148,7 @@ API anahtarları, Telegram jetonu ve sağlık adresleri `data/secrets.json` dosy
 - **Taşıma paketi haberi:** her taşıma paketi oluşturulduğunda Telegram'a haber gelir. Siz yapmadıysanız API anahtarlarını hemen yenileyin.
 - **Yalnız imzalı kod kurulur:** sunucu, geliştirme bilgisayarında imzalanmamış güncellemeyi kurmaz; Telegram'a kritik uyarı gider. Kurulum bir kerelik: [Kod imzası](#/kilavuz/ayarlar/kod-imzasi).
 - **Klasör izinleri:** Pusula klasörlerine yalnız Pusula'yı çalıştıran kullanıcı, SYSTEM ve yöneticiler erişir (`scripts\klasor-izin.ps1`).
-- **İki yeni denetim:** **Virüs koruması** (antivirüs gerçek zamanlı koruması açık mı, tanımlar güncel mi) ve **Dış erişim ve izinler** (güvenlik duvarı, panelin yalnız bu bilgisayarda dinlemesi, Uzak Masaüstü, klasör izinleri). İkisi de yalnız haber verir.
+- **Virüs koruması** ve **Dış erişim ve izinler** denetimleri **kapalı** (69.8): antivirüs ürünlerini, güvenlik duvarını ve açık portları soran bir arka plan programı antivirüse virüs gibi görünüyor — 21 Ekim'de sunucudaki Kaspersky bu yüzden Pusula'yı durdurdu. Bu ikisini elle kontrol edin: antivirüs simgesi yeşil mi, Windows Güvenliği › Güvenlik duvarı açık mı.
 
 ## Paket güvenliği ve Node desteği {#paket-guvenligi}
 
