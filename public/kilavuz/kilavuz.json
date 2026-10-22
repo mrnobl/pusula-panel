@@ -1,5 +1,5 @@
 {
-  "surum": "72.0",
+  "surum": "72.1",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -48,7 +48,8 @@
     { "id": "kagit-risk", "baslik": "Kâğıt test riski", "grup": "Diğer ekranlar", "rota": "arsiv/kagit-risk", "dosya": "bolumler/kagit-risk.md", "dosyalar": ["js/app/riskEkrani.js"] },
     { "id": "pine", "baslik": "Pine betikleri", "grup": "Diğer ekranlar", "rota": "arastirma/pine", "dosya": "bolumler/pine.md", "dosyalar": ["js/pages/pine.js"], "arastirma": true },
     { "id": "defter", "baslik": "Araştırma defteri", "grup": "Diğer ekranlar", "rota": "arastirma/defter", "dosya": "bolumler/defter.md", "dosyalar": ["js/pages/defter.js"], "arastirma": true },
-    { "id": "kitapcik", "baslik": "Kitapçık", "grup": "Diğer ekranlar", "rota": "kitapcik", "dosya": "bolumler/kitapcik.md", "dosyalar": ["js/pages/kitapcik.js", "kitapcik/bot-stratejileri.html", "kitapcik/ict-kitabi.html", "kitapcik/ict-modelleri.html", "kitapcik/grafik-stilleri.html", "kitapcik/strateji-kitaplari.html"], "arastirma": true },
+    { "id": "pusula-kitabi", "baslik": "Pusula Kitabı", "grup": "Diğer ekranlar", "rota": "kitap", "dosya": "bolumler/pusula-kitabi.md", "dosyalar": ["js/pages/kitapcik.js", "kitapcik/pusula-kitabi.html"] },
+    { "id": "kitapcik", "baslik": "Kitapçık", "grup": "Diğer ekranlar", "rota": "kitapcik", "dosya": "bolumler/kitapcik.md", "dosyalar": ["js/pages/kitapcik.js", "kitapcik/bot-stratejileri.html", "kitapcik/ict-kitabi.html", "kitapcik/ict-modelleri.html", "kitapcik/grafik-stilleri.html", "kitapcik/strateji-kitaplari.html", "kitapcik/pusula-kitabi.html"], "arastirma": true },
     { "id": "kilavuz-kullanimi", "baslik": "Kılavuzu kullanmak", "grup": "Diğer ekranlar", "rota": "kilavuz", "dosya": "bolumler/kilavuz-kullanimi.md", "dosyalar": ["js/pages/kilavuz.js", "js/core/md.js"] },
 
     { "id": "sss", "baslik": "Sık sorulanlar", "grup": "Başvuru", "dosya": "bolumler/sss.md" },
@@ -56,6 +57,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"72.1","tarih":"2026-10-22","yeni":["Bilgi › Pusula Kitabı: Pusula'nın kendi kitabı panelde (Pusula, güvenlik, botlar, testler, sözlük); Kılavuz'un hemen altında, her kurulumda görünür.","Kitap panelin temasıyla açılır; Yeni sekmede aç ile tam ekran okunur.","Kitapçık listesine de son satır olarak eklendi."]},
     {"surum":"72.0","tarih":"2026-10-22","yeni":["Botların yeni adları: Kairos (eski Hücum), Tao (Denge), Nova (QQQ M10), Lydia (BIST M10), Simurg (837). Yalnız görünen ad değişti; adresler ve kayıtlar aynı.","Bot başlığında ad + kısa alt yazı; adın üzerine gelince anlamı görünür.","Telegram mesajları da yeni adlarla."]},
     {"surum":"71.1","tarih":"2026-10-22","yeni":["Geliştirme bilgisayarında sunucu bağlantı dosyası okunamıyorsa (eski şifreli ya da bozuk) üstteki sarı bant bunu açıkça söyler; panel sessizce eski kopyaya düşmez."]},
     {"surum":"71.0","tarih":"2026-10-22","yeni":["Bot sayfasında günlük defter: getiri, BTC farkı, kim kazandırdı, takvim (güne dokun → işlemler).","Getiri eğrisi: % ↔ $, BTC al-tut kıyası, işlem günleri nokta; bot sayfası her zaman gerçek sonuçla açılır.","Botlar › Özet: bütün botlar kart + karşılaştırma tablosu."]},

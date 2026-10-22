@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 72.1 — Pusula Kitabı panelde: Bilgi › Pusula Kitabı (2026-10-22) {#s72-1}
+
+- **Bilgi › Pusula Kitabı** (Kılavuz'un hemen altında): Pusula'nın kendi kitabı panelin içinde — Pusula nedir, güvenlik, botlar (Kairos, Tao, Nova, Lydia, Simurg), testler ve sözlük ([Pusula Kitabı](#/kilavuz/pusula-kitabi)).
+- **Her kurulumda görünür:** araştırma eklentisi yüklü olmayan kurulumda Kitapçık gizlenir, Pusula Kitabı gizlenmez.
+- Kitap panelin açık/koyu temasıyla açılır; **Yeni sekmede aç** ile panelsiz, tam ekran okunur. Yalnız bu ekran açılınca yüklenir (yaklaşık 1 MB).
+- [Kitapçık](#/kilavuz/kitapcik) listesine de son satır olarak eklendi.
+
 ## 72.0 — Botların yeni adları: Kairos, Tao, Nova, Lydia, Simurg (2026-10-22) {#s72-0}
 
 - **Yalnız görünen ad değişti:** Hücum → **Kairos**, Denge → **Tao**, QQQ M10 → **Nova**, BIST M10 → **Lydia**, 837 → **Simurg** (küçük hesap kipi Hücum-S → **Kairos-S**). Adresler (`#/botlar/hucum` …), kayıtlar, hesaplar ve ayarlar aynı; eski yer imleri çalışır.

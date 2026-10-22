@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Botlarımızı tanımak için okunacak kitapçıklar panelin içinde (63.4'ten beri). Üstte kitapçık listesi, altında seçilen kitapçık panelden ayrılmadan açılır. Beş kitapçık var:
+Botlarımızı tanımak için okunacak kitapçıklar panelin içinde (63.4'ten beri). Üstte kitapçık listesi, altında seçilen kitapçık panelden ayrılmadan açılır. Altı kitapçık var:
 
 | Kitapçık | İçinde ne var |
 |---|---|
@@ -11,6 +11,7 @@ Botlarımızı tanımak için okunacak kitapçıklar panelin içinde (63.4'ten b
 | **ICT modelleri** | ICT kavramları, 16 alım satım modeli, gerçek işlem grafikleri ve BTC / EUR/USD backtest sonuçları (63.5). |
 | **Grafik stilleri** | Harmonik, Elliott, formasyonlar, mumlar, DeMark, Wyckoff, seviyeler ve trend göstergeleri: anlatım ve 7 piyasada test (63.8). |
 | **Strateji kitapları** | Connors & Raschke, Kratter, Kuepper, price action kitapları (Galen Woods, Candlestick Trading Bible, Damir), Volman ve psikoloji kitaplarının kuralları: anlatım ve 7 piyasada test (63.9; 64.0'da 64 kuruluma genişletildi). |
+| **Pusula Kitabı** | Pusula'nın kendi kitabı: Pusula nedir, güvenlik, botlar, testler ve sözlük (72.1). Kendi menü öğesi de var: **Bilgi › Pusula Kitabı** — [Pusula Kitabı](#/kilavuz/pusula-kitabi); o öğe araştırma eklentisi yokken de görünür. |
 
 Kitapçık kendi başına bir sayfadır: solda kendi içindekiler menüsü, sağ üstte kendi **Tema** (açık/koyu) düğmesi vardır. Panelin temasını değiştirince kitapçık da aynı temaya geçer.
 

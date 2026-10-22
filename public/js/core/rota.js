@@ -25,6 +25,7 @@
  *   arsiv[/kagit|kagit-risk]
  *   kilavuz[/…] · kitapcik[/…] → Bilgi (K-D) — ALT YOLLARI KORUNUR: `#/kilavuz/botlar/acil-fren`,
  *                          `#/kitapcik/bot-stratejileri`; `ag:rota` olayında `detail.alt` gider.
+ *   kitap                → tab-kitap           Bilgi › Pusula Kitabı (72.1) — HER ZAMAN açık (araştırma eklentisi gizlemesine girmez).
  *
  * ESKİ SEKME KİMLİKLERİ (`tab-dashboard`, `tab-risk`…) hâlâ kabul edilir:
  * `AG.rota.git('tab-risk')` doğru yola gider. İç bağlantılar
@@ -76,6 +77,8 @@
     'ayarlar': { bolum: 'tab-settings', menu: 'ayarlar', baslik: 'Ayarlar', altYol: true },
     // 63.4: Kitapçık — alt yol seçili kitapçığı taşır (#/kitapcik/bot-stratejileri); js/pages/kitapcik.js.
     'kilavuz': { bolum: 'tab-kilavuz', menu: 'bilgi', baslik: 'Kılavuz', altYol: true },
+    // 72.1: Pusula Kitabı — kendi yolu ve bölümü; gizle({ yollar: ['kitapcik'] }) bunu etkilemez (js/pages/kitapcik.js kitapAc).
+    'kitap': { bolum: 'tab-kitap', menu: 'bilgi', baslik: 'Pusula Kitabı' },
     'kitapcik': { bolum: 'tab-kitapcik', menu: 'bilgi', baslik: 'Kitapçık', altYol: true },
     'kurulum': { bolum: 'tab-kurulum', menu: 'bilgi', baslik: 'Kurulum sihirbazı' },
     // 68.3 (PLAN-TASIMA F4): Sistem › Kurulum denetimi — görevler, veri yeri, Git, sürüm, jeton, uyku (js/pages/kurulumDenetimi.js).
