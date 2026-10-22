@@ -12,7 +12,7 @@ Pusula'nın kendi kitabı panelin içinde (72.1'den beri): sol menüde **Bilgi �
 | **Testler** (Bölüm 14–27) | Bir kural nasıl sınanır: backtest, ücret ve kayma, saklı dönem ("gömlek"), walk-forward, Monte Carlo, ayar duyarlılığı, başka varlık ve borsa, çok deneme tuzağı, düşüş kuralı, felaket testleri, ileri test ve gölge, kâğıt ve demo hesap, elenen fikirler. |
 | **Sözlük** (Ek) | Kitapta geçen terimlerin kısa açıklamaları. |
 
-Kitap **her kurulumda görünür**: araştırma eklentisi yüklü olmayan bir kurulumda Bilgi › Kitapçık gizlenir, Pusula Kitabı gizlenmez. Kitap kendi başına bir sayfadır: solda kendi içindekiler menüsü, menünün başında (telefonda üstte) kendi **Açık tema / Koyu tema** düğmesi vardır. Panelin temasını değiştirince kitap da aynı temaya geçer.
+Kitap botların test sonuçlarını içerdiği için **yalnız kendi kurulumunuzda** (araştırma paketiyle) bulunur; herkese açık dağıtımda yoktur (72.2). Araştırma paketi yüklü olmayan bir kurulumda Bilgi › Pusula Kitabı, Kitapçık gibi gizlenir; kitap dosyası yoksa ekran boş kalmaz, "bu kurulumda yok" açıklaması çıkar. Kitap kendi başına bir sayfadır: solda kendi içindekiler menüsü, menünün başında (telefonda üstte) kendi **Açık tema / Koyu tema** düğmesi vardır. Panelin temasını değiştirince kitap da aynı temaya geçer.
 
 ## Ne zaman kullanılır {#ne-zaman}
 

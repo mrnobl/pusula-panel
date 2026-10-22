@@ -143,7 +143,7 @@
   function arastirmaEklentisiniUygula(yuklu) {
     arastirmaEklentisi = yuklu !== false;
     doc.querySelectorAll('[data-arastirma]').forEach(d => d.classList.toggle('is-hidden', !arastirmaEklentisi));
-    if (AG.rota && AG.rota.gizle) AG.rota.gizle(arastirmaEklentisi ? {} : { menuler: ['arastirma'], yollar: ['kitapcik'] });
+    if (AG.rota && AG.rota.gizle) AG.rota.gizle(arastirmaEklentisi ? {} : { menuler: ['arastirma'], yollar: ['kitapcik', 'kitap'] });   // 72.2: + Pusula Kitabı (araştırma paketiyle gelir)
     try { doc.dispatchEvent(new global.CustomEvent('ag:eklenti', { detail: { arastirma: arastirmaEklentisi } })); } catch (e) { /* eski tarayıcı */ }
   }
 

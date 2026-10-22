@@ -13,9 +13,11 @@
  * iframe adresi YALNIZ ekran açıkken yazılır (kitapçık ~1 MB; panel açılışında indirilmez).
  *
  * 72.1 PUSULA KİTABI — #/kitap (Bilgi › Pusula Kitabı, bölüm #tab-kitap, okuyucu #kitapOkuyucu / #kitapCerceve / #kitapYeniSekme):
- * Pusula'nın kendi kitabı (Pusula, güvenlik, botlar, testler, sözlük) HER KURULUMDA görünür. Kitapçık ekranı (#/kitapcik) araştırma
- * eklentisi yokken gizlenir (js/pages/kabuk.js arastirmaEklentisiniUygula → AG.rota.gizle yollar ['kitapcik'], menü [data-arastirma]);
- * Pusula Kitabı bu yüzden AYRI YOL + AYRI BÖLÜM: gizleme listesine hiç girmez, menü öğesi data-arastirma taşımaz. Okuyucu kodu
+ * Pusula'nın kendi kitabı (Pusula, güvenlik, botlar, testler, sözlük); AYRI YOL + AYRI BÖLÜM.
+ * 72.2 (kullanıcı: "depo şu an herkese açık, kitabı çıkaralım"): kitap test sonuçları içerir → herkese açık dağıtıma GİRMEZ
+ * (scripts/dagitim.js), araştırma paketiyle gelir (lib/tasima.js EKLENTI_PROGRAM). Araştırma eklentisi yokken Kitapçık gibi gizlenir:
+ * menü öğesi [data-arastirma], yol js/pages/kabuk.js arastirmaEklentisiniUygula → AG.rota.gizle yollar ['kitapcik', 'kitap']
+ * (adresle açılış ana sayfaya düşer; boş sayfa açılmaz). Kendi kurulumunuzda (araştırma verisi / eklenti var) görünür. Okuyucu kodu
  * (tembel src, tema aktarımı, yeni sekme) iki ekranda ORTAK (okuyucuAc / temaIlet). Kitapçık listesinde de son satır olarak durur.
  */
 (function (global) {
@@ -65,7 +67,7 @@
     }
   ];
 
-  /** 72.1: Bilgi › Pusula Kitabı (#/kitap) — kitapçık eklentisinden bağımsız. */
+  /** 72.1: Bilgi › Pusula Kitabı (#/kitap). 72.2: araştırma eklentisi yokken yol + menü gizli (kabuk.js). */
   const PUSULA_KITABI = KITAPCIKLAR[KITAPCIKLAR.length - 1];
 
   /** Okuyucu kimlikleri: Kitapçık ekranı ve Pusula Kitabı ekranı aynı okuyucu kodunu kullanır. */
@@ -135,7 +137,27 @@
   }
 
   /** 72.1: Bilgi › Pusula Kitabı (#/kitap). */
-  function kitapAc() { return okuyucuAc(OKUYUCU_KITAP, PUSULA_KITABI); }
+  function kitapAc() { const k = okuyucuAc(OKUYUCU_KITAP, PUSULA_KITABI); kitapYoklama(); return k; }
+
+  /**
+   * 72.2 güvence: menü/yol gizlemesine rağmen ekran açılır ama kitap dosyası bu kurulumda yoksa (ör. araştırma verisi olan ama
+   * araştırma paketi olmayan bir dağıtım kurulumu → sunucu 404) boş/hata sayfası yerine açıklama (#kitapYok) gösterilir.
+   * Yüklenen belgenin başlığı "Pusula Kitabı" değilse kitap yok sayılır. Erişilemezse (aynı köken değil) dokunulmaz.
+   */
+  function kitapYoklama() {
+    const c = bul(OKUYUCU_KITAP.cerceve), okuyucu = bul(OKUYUCU_KITAP.okuyucu), yok = bul('kitapYok');
+    if (!c || !yok || !c.getAttribute('src')) return null;
+    let var_;
+    try {
+      const d = c.contentDocument;
+      // Henüz yüklenmemiş (about:blank / yükleniyor) belge karar vermez.
+      if (!d || d.readyState !== 'complete' || !(d.location && /pusula-kitabi\.html$/.test(String(d.location.pathname || '')))) return null;
+      var_ = /Pusula Kitabı/.test(String(d.title || ''));
+    } catch (e) { return null; }
+    yok.classList.toggle('is-hidden', var_);
+    if (okuyucu && !var_) okuyucu.classList.add('is-hidden');
+    return var_;
+  }
 
   if (doc && doc.addEventListener) {
     doc.addEventListener('ag:rota', (e) => {
@@ -145,11 +167,11 @@
     doc.addEventListener('ag:tema', temaIlet);
     for (const id of [OKUYUCU_KTP.cerceve, OKUYUCU_KITAP.cerceve]) {
       const c = bul(id);
-      if (c) c.addEventListener('load', () => temaYaz(id));
+      if (c) c.addEventListener('load', () => { temaYaz(id); if (id === OKUYUCU_KITAP.cerceve) kitapYoklama(); });
     }
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, sec, ac, kitapAc, temaIlet };
+  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, sec, ac, kitapAc, kitapYoklama, temaIlet };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.kitapcik;
 })(typeof window !== 'undefined' ? window : globalThis);

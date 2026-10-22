@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 72.2 — Pusula Kitabı yalnız kendi kurulumunuzda (2026-10-22) {#s72-2}
+
+- **Pusula Kitabı herkese açık dağıtımdan çıkarıldı:** kitap botların test sonuçlarını içerir; araştırma kitapçıkları gibi yalnız kendi kurulumunuzda (araştırma paketiyle) bulunur.
+- Kendi kurulumunuzda **Bilgi › Pusula Kitabı** aynen görünür ([Pusula Kitabı](#/kilavuz/pusula-kitabi)).
+- Araştırma paketi olmayan kurulumda menü öğesi Kitapçık gibi gizlenir; adresle açılırsa ana sayfaya döner. Kitap dosyası yoksa ekran boş kalmaz, "bu kurulumda yok" açıklaması çıkar.
+
 ## 72.1 — Pusula Kitabı panelde: Bilgi › Pusula Kitabı (2026-10-22) {#s72-1}
 
 - **Bilgi › Pusula Kitabı** (Kılavuz'un hemen altında): Pusula'nın kendi kitabı panelin içinde — Pusula nedir, güvenlik, botlar (Kairos, Tao, Nova, Lydia, Simurg), testler ve sözlük ([Pusula Kitabı](#/kilavuz/pusula-kitabi)).
