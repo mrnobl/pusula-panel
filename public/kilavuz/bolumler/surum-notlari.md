@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 71.0 — Botların gerçek sonucu: günlük defter ve Botlar › Özet (2026-10-22) {#s71-0}
+
+- **Botlar › <bot> › Genel › günlük defter:** başlangıçtan getiri ve BTC al-tut farkı (puan), sekiz kutu (kazanan gün, ortalama / en iyi / en kötü gün, en derin düşüş, işlem, ücret, gerçekleşen K/Z), **kim kazandırdı** (BTC ayağı · coin sepeti; Donchian / DCA gerçekleşen K/Z), **takvim** (her günün sonucu; güne dokununca o günün işlemleri).
+- **Getiri eğrisi:** botun gerçek sonucu + BTC al-tut; **% getiri ↔ $ değer** düğmesi; **işlem olan günler nokta** (dokununca takvimde o gün). Simülasyon çizgisi kaldırıldı ("Simülasyona göre" kutusu duruyor).
+- Bot sayfası **her zaman gerçek sonuçla** açılır (eskiden kayıt 20 günden azken backtest açılıyordu); backtest **Geçmiş — backtest** düğmesinde.
+- **Botlar › Özet** (Botlar'a tıklayınca açılır): her bot kart + karşılaştırma tablosu (Hücum, Denge ve portföy botları: getiri, kıyas, fark, en derin düşüş, işlem).
+
 ## 70.1 — Sağlık sayfasında eski kapanma sayacı (2026-10-22) {#s70-1}
 
 - **Pusula süreci ayakta:** açılıştan ÖNCEKİ hızlı kapanmalar (ör. antivirüsün dosya sildiği gece) Pusula sağlıklı çalışırken kırmızı görünmez; "bu açılıştan önce … olmuştu (geçti)" diye yazılır.

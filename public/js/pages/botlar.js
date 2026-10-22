@@ -684,15 +684,26 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   async function grafikYukle(ad, zorla) {
     const g = grafikVeri[ad];
     if (!zorla && g && Date.now() - g.zaman < GRAFIK_MS) { grafikCiz(ad); return; }
-    grafikVeri[ad] = { zaman: Date.now(), oz: g ? g.oz : null };
+    grafikVeri[ad] = { zaman: Date.now(), oz: g ? g.oz : null, islemler: g ? g.islemler : null };
     try {
       const r = await AG.api.bindirmeGrafik(ad);
       if (!r.success) throw new Error(r.error);
-      grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye || { egri: [] } };
+      grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye || { egri: [] }, islemler: Array.isArray(r.islemler) ? r.islemler : null };
     } catch (e) { grafikVeri[ad] = { zaman: Date.now(), oz: null, hata: e.message }; }
+    defterCiz(ad);
     grafikCiz(ad); sayilarCiz(ad); aylikCiz(ad);
   }
-  const kipAl = (ad) => grafikKip[ad] || ((((grafikVeri[ad] || {}).oz || {}).egri || []).length < 20 ? 'gecmis' : 'canli');
+  /** 71.0 (kullanıcı S6): her zaman GERÇEK sonuç önce; backtest ayrı düğmede (eskiden kayıt < 20 günse backtest açılıyordu). */
+  const kipAl = (ad) => grafikKip[ad] || 'canli';
+  const grafikBirim = {};             // ad → 'yuzde' | 'dolar' (71.0, kullanıcı S2: % ↔ $ düğmesi)
+  /** 71.0 Genel › günlük defter: özet + kim kazandırdı + takvim (js/pages/botGetiri.js). */
+  function defterCiz(ad) {
+    const BG = AG.pages && AG.pages.botGetiri, g = grafikVeri[ad] || {}, k = bul(`botDefterOzet-${ad}`);
+    if (!BG || !k) return;
+    if (g.hata) { doldur(k, [el('p', { class: 'tone-danger mb-0', text: `Kayıt okunamadı: ${g.hata}` })]); return; }
+    if (!g.oz) return;
+    BG.defterCiz(ad, g.oz, g.islemler || []);
+  }
 
   /** `zorla`: tema değişince renkler için yeniden kur; yoksa aynı veriyle çizili grafik KORUNUR (tazelemede titremez). */
   function grafikCiz(ad, zorla) {
@@ -700,9 +711,14 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const g = grafikVeri[ad] || {};
     const egri = (g.oz && g.oz.egri) || [];
     const kip = kipAl(ad);
-    if (kipK) doldur(kipK, [['canli', `Canlı (${egri.length} gün)`], ['gecmis', 'Geçmiş — backtest (2020\'den)']].map(([a, t]) =>
-      el('button', { type: 'button', class: `btn btn-xs bot-serbest ${kip === a ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': kip === a ? 'true' : 'false', id: `btnBotKip-${a}-${ad}`,
-        onclick: () => { grafikKip[ad] = a; grafikCiz(ad, true); } }, [el('span', { text: t })])));
+    const birim = grafikBirim[ad] || 'yuzde';
+    if (kipK) doldur(kipK, [
+      ...(kip === 'canli' ? [['yuzde', '% getiri'], ['dolar', '$ değer']].map(([a, t]) =>
+        el('button', { type: 'button', class: `btn btn-xs bot-serbest ${birim === a ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': birim === a ? 'true' : 'false', id: `btnBotBirim-${a}-${ad}`,
+          onclick: () => { grafikBirim[ad] = a; grafikCiz(ad, true); } }, [el('span', { text: t })])) : []),
+      ...[['canli', `Gerçek sonuç (${egri.length} gün)`], ['gecmis', 'Geçmiş — backtest (2020\'den)']].map(([a, t]) =>
+        el('button', { type: 'button', class: `btn btn-xs bot-serbest ${kip === a ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': kip === a ? 'true' : 'false', id: `btnBotKip-${a}-${ad}`,
+          onclick: () => { grafikKip[ad] = a; grafikCiz(ad, true); } }, [el('span', { text: t })]))]);
     if (kutuK) kutuK.classList.toggle('is-hidden', kip !== 'canli' || egri.length < 2);
     if (gecmisK) gecmisK.classList.toggle('is-hidden', kip !== 'gecmis');
     if (kip === 'gecmis') {
@@ -719,24 +735,32 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     }
     if (not) not.textContent = g.hata ? `Grafik verisi alınamadı: ${g.hata}` : !g.oz ? 'Yükleniyor…'
       : egri.length < 2 ? 'Henüz grafik yok — bot her günlük çalışmada bir hesap değeri kaydı yazar; iki gün sonra eğri görünür. O zamana kadar "Geçmiş" grafiğine bakın.'
-        : `Başlangıç = 1 · ${egri[0].gun} → ${egri[egri.length - 1].gun}${tabanMetni(g.oz.taban) ? ` · ${tabanMetni(g.oz.taban)}: eğri botun kendi sermayesi üstünden (hesaptaki fazla para eğriye katılmaz)` : ''}${g.oz.golgeEksik ? ` · simülasyon kaydı eksik gün: ${g.oz.golgeEksik}` : ''}`;
+        : `${birim === 'dolar' ? 'Bot değeri ($); BTC al-tut aynı başlangıç tutarıyla' : 'Başlangıçtan getiri (%)'} · ${egri[0].gun} → ${egri[egri.length - 1].gun} · noktalar işlem olan günler (dokununca o gün açılır)${tabanMetni(g.oz.taban) ? ` · ${tabanMetni(g.oz.taban)}: eğri botun kendi sermayesi üstünden (hesaptaki fazla para eğriye katılmaz)` : ''}${g.oz.golgeEksik ? ` · simülasyon kaydı eksik gün: ${g.oz.golgeEksik}` : ''}`;
     if (!tuval || egri.length < 2 || typeof global.Chart === 'undefined') return;
-    if (grafikler[ad] && grafikler[ad].agVeri === g.oz && !zorla) return;
+    if (grafikler[ad] && grafikler[ad].agVeri === g.oz && grafikler[ad].agBirim === birim && !zorla) return;
     if (grafikler[ad]) { grafikler[ad].destroy(); grafikler[ad] = null; }
-    const p = AG.tema.palet();
-    const seri = (label, data, renk, ek = {}) => ({ label, data, borderColor: renk, backgroundColor: renk, borderWidth: 1.2, pointRadius: egri.length < 30 ? 2 : 0, tension: 0.05, ...ek });
+    const p = AG.tema.palet(), BG = AG.pages.botGetiri;
+    // 71.0: seriler botGetiri.grafikSerileri — ölçüm günü (yerel), % ya da $; kıyas yalnız BTC al-tut (S3); işlem günleri nokta (S5).
+    const G = BG ? BG.gunler(egri) : egri.map(x => ({ gun: x.gun, gercek: x.gercek, btc: x.btc, deger: x.botDeger }));
+    const S = BG ? BG.grafikSerileri(G, BG.islemGunleri(g.islemler || []), birim) : { etiketler: G.map(x => x.gun), bot: G.map(x => x.gercek), btc: G.map(x => x.btc), nokta: [], noktaIslem: [], dolar: false };
+    const seri = (label, data, renk, ek = {}) => ({ label, data, borderColor: renk, backgroundColor: renk, borderWidth: 1.2, pointRadius: 0, tension: 0.05, ...ek });
+    const bicim = (v) => (v == null ? '—' : S.dolar ? `${para2(v)} $` : `${v > 0 ? '+' : v < 0 ? '−' : ''}%${Math.abs(v).toFixed(2).replace('.', ',')}`);
     grafikler[ad] = new global.Chart(tuval.getContext('2d'), {
       type: 'line',
-      data: { labels: egri.map(x => x.gun), datasets: [
-        seri(tabanMetni(g.oz.taban) ? `Bot değeri (${D().para(g.oz.taban.sermaye)} $ tavan)` : 'Hesap değeri', egri.map(x => x.gercek), p.seri1, { borderWidth: 2.4 }),
-        seri('Simülasyon (aynı kurallar)', egri.map(x => x.golge), p.seri2, { borderDash: [5, 3] }),
-        seri('BTC al-tut', egri.map(x => x.btc), p.notr, { borderWidth: 1 })
+      data: { labels: S.etiketler, datasets: [
+        seri(tabanMetni(g.oz.taban) ? `Bot değeri (${D().para(g.oz.taban.sermaye)} $ tavan)` : 'Hesap değeri', S.bot, p.seri1, { borderWidth: 2.4 }),
+        seri('BTC al-tut', S.btc, p.notr, { borderWidth: 1.4, borderDash: [6, 4] }),
+        seri('İşlem olan gün', S.nokta, p.seri1, { showLine: false, pointRadius: 4, pointHoverRadius: 6, pointBackgroundColor: p.bg, pointBorderWidth: 2 })
       ] },
       options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'bottom', labels: { color: p.text, boxWidth: 10, font: { size: 11 } } } },
-        scales: { x: { grid: { color: p.grid }, ticks: { color: p.text, maxTicksLimit: 6 } }, y: { grid: { color: p.grid }, ticks: { color: p.text, maxTicksLimit: 5 } } } }
+        onClick: (ev, el2) => { const i = el2 && el2.length ? el2[0].index : null; if (i != null && BG) BG.gunSec(ad, S.etiketler[i]); },
+        plugins: { legend: { position: 'bottom', labels: { color: p.text, boxWidth: 10, font: { size: 11 } } },
+          tooltip: { callbacks: {
+            label: (c) => (c.datasetIndex === 2 ? null : `${c.dataset.label}: ${bicim(c.raw)}`),
+            afterBody: (l) => { const i = l && l.length ? l[0].dataIndex : null; const isl = i != null ? S.noktaIslem[i] : null; return isl && isl.length && BG ? [`${isl.length} işlem — ${BG.kolOzeti(isl)}`, 'dokunun: o günün işlemleri'] : []; } } } },
+        scales: { x: { grid: { color: p.grid }, ticks: { color: p.text, maxTicksLimit: 6 } }, y: { grid: { color: p.grid }, ticks: { color: p.text, maxTicksLimit: 5, callback: (v) => (S.dolar ? para2(v, 0) : `${v < 0 ? '−' : ''}%${String(Math.abs(v)).replace('.', ',')}`) } } } }
     });
-    grafikler[ad].agVeri = g.oz;
+    grafikler[ad].agVeri = g.oz; grafikler[ad].agBirim = birim;
   }
   async function gecmisYukle(ad) {
     if (gecmisVeri[ad] === null) return;
@@ -755,13 +779,20 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       el('div', { id: `botKartUst-${ad}`, class: 'bot-kart-bolum' }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]),
       el('div', { id: `botSayilar-${ad}`, class: 'ana-sayilar bot-sayilar' }),
       el('div', { id: `botBinance-${ad}`, class: 'bot-blok' }),
-      el('div', { class: 'bot-blok' }, [
-        el('div', { class: 'row-between row-wrap gap-2 mb-2' }, [el('h4', { class: 'pf-bolum-baslik m-0', text: 'Hesap değeri · BTC al-tut · simülasyon' }), el('div', { id: `botGrafikKip-${ad}`, class: 'pf-dugmeler' })]),
-        el('div', { id: `botGrafikKutu-${ad}`, class: 'canvas-box bot-grafik-tuval is-hidden' }, [
-          el('canvas', { id: `botGrafik-${ad}`, role: 'img', 'aria-label': 'Hesap değeri, simülasyon ve BTC eğrileri — başlangıç 1' })
-        ]),
-        el('div', { id: `botGecmis-${ad}`, class: 'is-hidden' }),
-        el('p', { id: `botGrafikNot-${ad}`, class: 'hint hint-sm mb-0 mt-2', text: 'Yükleniyor…' })
+      // 71.0 günlük defter (taslak C): solda özet + kim kazandırdı, sağda takvim + getiri eğrisi (js/pages/botGetiri.js)
+      el('div', { class: 'bot-defter' }, [
+        el('section', { id: `botDefterOzet-${ad}`, class: 'bot-blok bot-defter-ozet', 'aria-label': 'Özet' }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]),
+        el('div', { class: 'bot-defter-sag' }, [
+          el('section', { id: `botTakvim-${ad}`, class: 'bot-blok', 'aria-label': 'Takvim' }),
+          el('section', { class: 'bot-blok', 'aria-label': 'Getiri eğrisi' }, [
+            el('div', { class: 'row-between row-wrap gap-2 mb-2' }, [el('h4', { class: 'pf-bolum-baslik m-0', text: 'Getiri eğrisi · BTC al-tut' }), el('div', { id: `botGrafikKip-${ad}`, class: 'pf-dugmeler' })]),
+            el('div', { id: `botGrafikKutu-${ad}`, class: 'canvas-box bot-grafik-tuval is-hidden' }, [
+              el('canvas', { id: `botGrafik-${ad}`, role: 'img', 'aria-label': 'Bot getirisi ve BTC al-tut; noktalar işlem olan günler' })
+            ]),
+            el('div', { id: `botGecmis-${ad}`, class: 'is-hidden' }),
+            el('p', { id: `botGrafikNot-${ad}`, class: 'hint hint-sm mb-0 mt-2', text: 'Yükleniyor…' })
+          ])
+        ])
       ]),
       el('div', { class: 'mp-iki' }, [el('div', { id: `botDagilim-${ad}`, class: 'bot-blok' }), el('div', { id: `botKz-${ad}`, class: 'bot-blok' })]),
       el('div', { id: `botAylik-${ad}`, class: 'bot-blok' }),
@@ -810,6 +841,13 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const b = bul('tab-botlar');
     if (b) b.classList.toggle('pbot-acik', !!acik);
     if (!acik && AG.pages && AG.pages.portfoyBotlari && AG.pages.portfoyBotlari.acik()) AG.pages.portfoyBotlari.kapat();
+  }
+  /** 71.0 Botlar › Özet: açıkken bölüme .bozet-acik (bot görünümleri CSS ile gizli) ve #botOzetKap görünür. */
+  function ozetGorunumu(acik) {
+    const b = bul('tab-botlar'), k = bul('botOzetKap');
+    if (b) b.classList.toggle('bozet-acik', !!acik);
+    if (k) k.classList.toggle('is-hidden', !acik);
+    if (acik && AG.pages.botGetiri) AG.pages.botGetiri.ozetYukle(false);
   }
   /** Yeni panel F2/F5: seçili bot + görünüm adreste (#/botlar/hucum/hesap) — yan menüde Botlar › Hücum işaretlenir, yenileme aynısını açar. */
   const GORUNUMLER = ['genel', 'hesap', 'islemler', 'yonetim'];
@@ -860,7 +898,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   }
   function sec(ad) {
     if (!ADLAR.includes(ad)) return;
-    portfoyGorunumu(false);
+    portfoyGorunumu(false); ozetGorunumu(false);
     secili = ad;
     adresYaz(ad);
     try { if (global.localStorage) global.localStorage.setItem(SECILI_ANAHTAR, ad); } catch (e) { /* özel pencere */ }
@@ -912,7 +950,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   }
 
   if (doc && doc.addEventListener) {
-    doc.addEventListener('ag:tema', () => ADLAR.forEach(ad => { if (grafikVeri[ad]) grafikCiz(ad, true); }));
+    doc.addEventListener('ag:tema', () => ADLAR.forEach(ad => { if (grafikVeri[ad]) { grafikCiz(ad, true); defterCiz(ad); } }));
     // 62.6: Ayarlar açılınca bot yönetimi tablosu
     doc.addEventListener('ag:rota', (e) => { if (e.detail && e.detail.bolum === 'tab-settings') ayarYukle(); });
     // Yeni panel F2/F5: #/botlar/<bot>/<görünüm> seçili botu ve görünümü açar; eksik parça son seçilenle tamamlanıp adrese yazılır.
@@ -920,7 +958,10 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       if (!e.detail || e.detail.bolum !== 'tab-botlar') return;
       const [alt, g] = String(e.detail.alt || '').split('/');
       // 68.8: #/botlar/m-qqq-m10 · m-bist-m10 · m-837 → portföy botu sayfası (js/pages/portfoyBotlari.js); Hücum/Denge görünümleri gizli.
-      if (portfoyBotuMu(alt)) { portfoyGorunumu(true); AG.pages.portfoyBotlari.ac(alt); return; }
+      if (portfoyBotuMu(alt)) { ozetGorunumu(false); portfoyGorunumu(true); AG.pages.portfoyBotlari.ac(alt); return; }
+      // 71.0: #/botlar ve #/botlar/ozet → Botlar › Özet (kullanıcı S7: Botlar ana sayfası) (kartlar + karşılaştırma tablosu, js/pages/botGetiri.js)
+      if (alt === 'ozet' || alt === '') { portfoyGorunumu(false); ozetGorunumu(true); return; }
+      ozetGorunumu(false);
       portfoyGorunumu(false);
       if (GORUNUMLER.includes(g)) gorunum = g;
       if (ADLAR.includes(alt) && alt !== secili) sec(alt); else adresYaz(secili);
@@ -936,5 +977,10 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.botlar = { portfoyGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  /** Kılavuz ekran görüntüsü (scripts/kilavuz-ekran.js): örnek grafik yanıtını (botGetiri.ornekVeri) yükler — sunucuya istek yok. */
+  function _ornekGrafik(ad, r) {
+    grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye, islemler: r.islemler };
+    defterCiz(ad); grafikCiz(ad, true); sayilarCiz(ad); aylikCiz(ad);
+  }
+  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);

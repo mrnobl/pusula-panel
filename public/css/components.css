@@ -3359,3 +3359,66 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .gunc-kuru-liste, .gunc-kuru-fark { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: var(--fs-sm); overflow-wrap: anywhere; }
 .gunc-kuru-fark { color: var(--text-soft); }
 .oz-kanal-alanlar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); margin-bottom: var(--sp-3); }
+
+/* 71.0 Botlar › <bot> › Genel — günlük defter (taslak C, js/pages/botGetiri.js): solda özet + kim kazandırdı, sağda takvim + eğri */
+.bot-defter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: var(--sp-3); align-items: start; }
+.bot-defter-sag { display: flex; flex-direction: column; gap: var(--sp-3); min-width: 0; }
+.bot-defter-ozet { display: flex; flex-direction: column; gap: var(--sp-4); }
+.bot-defter-bas { display: flex; flex-direction: column; gap: var(--sp-1); }
+.bot-defter-etiket { font-size: var(--fs-sm); color: var(--text-muted); }
+.bot-defter-getiri { font-size: 2.25rem; font-weight: var(--fw-semibold); line-height: 1.1; color: var(--text-strong); }
+.bot-defter-kiyas { font-size: var(--fs-sm); color: var(--text-soft); }
+.bot-defter-kutular { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.bot-defter-kutu { display: flex; flex-direction: column; gap: 2px; background: var(--surface-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--sp-2) var(--sp-3); min-width: 0; }
+.bot-defter-kutu-ad { font-size: var(--fs-xs); color: var(--text-muted); }
+.bot-defter-kutu-deger { font-size: var(--fs-lg); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.bot-defter-kutu-deger.tone-success { color: var(--pos-metin); }
+.bot-defter-kutu-deger.tone-danger { color: var(--neg-metin); }
+.bot-katki { display: flex; flex-direction: column; gap: var(--sp-2); }
+.bot-katki-satir { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: var(--sp-2); align-items: center; }
+.bot-katki-ad { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text); }
+.bot-katki-cubuk { width: 100%; height: 14px; display: block; }
+.bot-katki-sifir { stroke: var(--border-strong); stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.bot-katki-arti { fill: var(--pos); }
+.bot-katki-eksi { fill: var(--neg); }
+.bot-katki-deger { font-size: var(--fs-sm); font-weight: var(--fw-semibold); white-space: nowrap; }
+.bot-katki-alt { grid-column: 2 / -1; color: var(--text-muted); }
+.bot-takvim-hafta, .bot-takvim-izgara { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.bot-takvim-hafta { font-size: var(--fs-xs); color: var(--text-muted); text-align: center; margin-bottom: 4px; }
+.bot-takvim-gun { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 2px; min-height: 58px; padding: 5px 6px; border-radius: var(--radius-sm);
+  background: var(--surface-inset); border: 1px solid var(--border); color: var(--text-muted); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.bot-takvim-gun:hover { border-color: var(--border-strong); }
+.bot-takvim-gun:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bot-takvim-gun.is-secili { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.bot-takvim-bos { min-height: 58px; }
+.bot-takvim-no { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-soft); }
+.bot-takvim-deger { font-size: var(--fs-sm); font-weight: var(--fw-semibold); white-space: nowrap; }
+.bot-takvim-islem { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.bot-takvim-arti-1 { background: color-mix(in srgb, var(--pos) 14%, var(--surface-inset)); border-color: transparent; }
+.bot-takvim-arti-2 { background: color-mix(in srgb, var(--pos) 28%, var(--surface-inset)); border-color: transparent; }
+.bot-takvim-arti-3 { background: color-mix(in srgb, var(--pos) 44%, var(--surface-inset)); border-color: transparent; }
+.bot-takvim-eksi-1 { background: color-mix(in srgb, var(--neg) 14%, var(--surface-inset)); border-color: transparent; }
+.bot-takvim-eksi-2 { background: color-mix(in srgb, var(--neg) 28%, var(--surface-inset)); border-color: transparent; }
+.bot-takvim-eksi-3 { background: color-mix(in srgb, var(--neg) 44%, var(--surface-inset)); border-color: transparent; }
+[class*="bot-takvim-arti-"] .bot-takvim-deger { color: var(--pos-metin); }
+[class*="bot-takvim-eksi-"] .bot-takvim-deger { color: var(--neg-metin); }
+[class*="bot-takvim-arti-"] .bot-takvim-no, [class*="bot-takvim-eksi-"] .bot-takvim-no { color: var(--text-strong); }
+.bot-takvim-bas { background: var(--accent-soft); border-color: var(--accent-border); }
+.bot-takvim-bas .bot-takvim-deger { color: var(--text-strong); font-weight: var(--fw-normal); font-size: var(--fs-xs); }
+.bot-takvim-bugun .bot-takvim-no { text-decoration: underline; text-underline-offset: 2px; }
+.bot-takvim-ayrinti { border-top: 1px solid var(--border); padding-top: var(--sp-2); min-width: 0; }
+
+/* 71.0 Botlar › Özet (#/botlar): kartlar + karşılaştırma tablosu */
+#tab-botlar.bozet-acik #botGorunumler, #tab-botlar.bozet-acik #botSekmeler, #tab-botlar.bozet-acik [data-bot-gorunum-kap], #tab-botlar.bozet-acik #pbotKap { display: none; }
+.bot-ozet-kartlar { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: var(--sp-3); }
+.bot-ozet-kart { display: flex; flex-direction: column; gap: var(--sp-1); padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-2); color: var(--text); min-width: 0; }
+.bot-ozet-kart:hover { border-color: var(--accent-border); }
+.bot-ozet-kart:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bot-ozet-ad { color: var(--text-strong); }
+.bot-ozet-getiri { font-size: var(--fs-xl); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.bot-ozet-kivrim { width: 100%; height: 44px; display: block; margin-top: var(--sp-1); }
+.bot-ozet-kivrim polyline { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.bot-ozet-kivrim-arti { stroke: var(--pos); }
+.bot-ozet-kivrim-eksi { stroke: var(--neg); }
+.bot-ozet-kivrim-taban { stroke: var(--chart-grid); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.bot-ozet-kivrim-bos { min-height: 44px; display: flex; align-items: center; }

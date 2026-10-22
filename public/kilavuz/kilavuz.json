@@ -1,5 +1,5 @@
 {
-  "surum": "70.1",
+  "surum": "71.0",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -56,6 +56,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"71.0","tarih":"2026-10-22","yeni":["Bot sayfasında günlük defter: getiri, BTC farkı, kim kazandırdı, takvim (güne dokun → işlemler).","Getiri eğrisi: % ↔ $, BTC al-tut kıyası, işlem günleri nokta; bot sayfası her zaman gerçek sonuçla açılır.","Botlar › Özet: bütün botlar kart + karşılaştırma tablosu."]},
     {"surum":"70.1","tarih":"2026-10-22","yeni":["Sağlık: açılıştan önceki hızlı kapanmalar Pusula sağlıklıyken kırmızı görünmez.","\"API anahtarları şifreli\" satırının adı \"API anahtarları\" oldu."]},
     {"surum":"70.0","tarih":"2026-10-22","yeni":["69.1–69.9 bir arada, antivirüse uyumlu: şifreleme kodu ve arka planda PowerShell açan bütün ölçümler çıkarıldı.","Öz denetim 31 denetim; anahtar koruması çekim izni kapalı ve IP kısıtlı anahtar."]},
     {"surum":"69.9","tarih":"2026-10-22","yeni":["Kaspersky sorunu kökten: Pusula arka planda hiç PowerShell açmıyor; API anahtarı şifrelemesi kapatıldı (koruma: çekim izni kapalı, IP kısıtlı anahtar).","Şifreli kalmış anahtar dosyası bir kez scripts\\sir-coz.ps1 ile düz hâle getirilir."]},

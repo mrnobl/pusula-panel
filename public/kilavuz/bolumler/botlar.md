@@ -2,11 +2,11 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Bot ne yapıyor, ne kadar kazandı?" sorusunun ekranı. Bot yan menüden seçilir — **Botlar › Hücum** ya da **Botlar › Denge** — ve her botun dört görünümü vardır (adres görünümü taşır, ör. `#/botlar/hucum/hesap`):
+"Bot ne yapıyor, ne kadar kazandı?" sorusunun ekranı. **Botlar**'a tıklayınca önce **Botlar › Özet** açılır: bütün botlar kart ve karşılaştırma tablosu olarak ([aşağıda](#/kilavuz/botlar/ozet)). Bir bot yan menüden ya da özetteki kartından seçilir — **Botlar › Hücum** ya da **Botlar › Denge** — ve her botun dört görünümü vardır (adres görünümü taşır, ör. `#/botlar/hucum/hesap`):
 
 | Görünüm | İçinde ne var |
 |---|---|
-| **Genel** | durum, kural, **Durdur / Başlat** ve **Acil fren**, sayılar, grafik, paranın nerede durduğu, aylık getiri, künye |
+| **Genel** | durum, kural, **Durdur / Başlat** ve **Acil fren**, sayılar, **günlük defter** (özet, kim kazandırdı, takvim, getiri eğrisi), paranın nerede durduğu, aylık getiri, künye |
 | **Hesap** | botun borsadaki hesabı: bağlantı sağlığı, bakiye, pozisyonlar, emirler, geçmiş ([Bot hesabı](#/kilavuz/hesaplar)) ve **Binance bakiyesi** kartı |
 | **İşlemler** | coin grafiği + açık pozisyonlar · bekleyen emirler · işlem geçmişi · dağılım geçmişi |
 | **Yönetim** | hesap türü, para kaydı, küçük hesap kipi, şimdi çalıştır, kontroller ve (Hücum'da) demo kabul süreci |
@@ -34,7 +34,13 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 1. **Başlık:** botun adı, büyük durum rozeti, hesap türü (kâğıt / Binance demo / CANLI HESAP), kuralı tek cümle ve **Son karar** satırı (ör. "13 Ekim: BTC değişmedi · BTC trendi yükselişte — BTC tutuluyor"). Sağda yalnız **Durdur / Başlat** ve kırmızı **Acil fren**.
 2. **Sayılar:** **hesap değeri** (altında Binance "Avbl") · **başlangıçtan** getiri · aynı dönemde **BTC al-tut** · **simülasyona göre** (30 gün) · **en derin düşüş** · **BTC trendi** (yükselişte / düşüşte).
-3. **Grafik:** **Canlı** (botun değeri, aynı kurallarla hesaplanan simülasyon ve BTC al-tut; başlangıç 1) ↔ **Geçmiş — backtest** (kuralın 2020'den beri nasıl davranırdığı, aylık, başlangıç 100, BTC al-tut ile; iyimser — gelecekte aynısı olmayabilir). Kayıt 20 günden azken ekran Geçmiş ile açılır.
+3. **Günlük defter** (71.0) — solda özet, sağda takvim ve eğri:
+   - **Başlangıçtan bugüne** büyük getiri ve aynı dönemde **BTC al-tut**: bot BTC'nin kaç puan önünde ya da gerisinde.
+   - Sekiz kutu: **kazanan gün** (ör. 6 / 11), **ortalama gün**, **en iyi gün**, **en kötü gün**, **en derin düşüş**, **işlem** sayısı, **ödenen ücret**, **gerçekleşen K/Z** (kapanan işlemler).
+   - **Kim kazandırdı, kim kaybettirdi:** **BTC ayağı** (her gün tutulan BTC tutarı × BTC'nin o günkü değişimi) ve **coin sepeti** (kalan: Donchian + DCA, ücret ve fonlama dahil), botun sermayesine oranla puan. Altında Donchian ve DCA'nın **gerçekleşen** kâr/zararı (Binance "Realized Profit"; açık pozisyonlar dahil değil). Yaklaşık bir dökümdür — günlük ölçümlerden.
+   - **Takvim:** her gün o günün sonucu; yeşil kazanan, kırmızı kaybeden gün, renk ne kadar koyuysa hareket o kadar büyük. Mor gün botun başladığı gün. **‹ ›** ile ay değişir. Bir güne dokununca altında o günün sonucu ve **işlemleri** açılır (saat, coin, AL/SAT, kol, miktar, fiyat, ücret, K/Z).
+   - **Getiri eğrisi:** botun gerçek sonucu ve **BTC al-tut** (kesikli). **% getiri ↔ $ değer** düğmesiyle yüzde ya da dolar. **Noktalar işlem olan günlerdir**: üstüne gelince kaç işlem olduğu (ör. "Donchian 2 · DCA 1"), dokununca takvimde o gün açılır. **Geçmiş — backtest** düğmesi kuralın 2020'den beri nasıl davranırdığını gösterir (aylık, başlangıç 100; iyimser — gelecekte aynısı olmayabilir). Ekran her zaman **gerçek sonuçla** açılır, bot yeni olsa da.
+   - **Gün** = botun ölçüm günü: bot her gün ~03:00'te hesap değerini yazar; bir günün sonucu bir önceki ölçümden o güne kadarki değişimdir. İlk ölçümden sonra ikinci günlük çalışmada sayılar dolar.
 4. **Para nerede duruyor?** BTC / coin sepeti / nakit (hesap değerine oranla; coin sepeti ×3 kaldıraçlı nominal) ve yanında **coin bazında kâr / zarar** çubukları (açık pozisyonların girişten bugüne).
 5. **Aylık getiri** tablosu (yıl yıl, ay ay; yıl toplamı).
 6. Katlı **Botun künyesi:** son çalışma, coin sepeti payları, koruma stopu, teminat durumu, açık pozisyon, küçük hesap kipi, hesap koruması (canlı hesapta), demo/gerçek farkı.
@@ -47,7 +53,7 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 ![Botlar › Hücum › İşlemler](ekran:botlar-islemler-1400)
 
-**Pozisyon büyüklüğü** sekmesi (67.5'e kadar adı "Dağılım geçmişi"): her bölümün (BTC · trend takibi · kademeli alım) **açık pozisyon büyüklüğü** USDT olarak, gün gün. **Kâr/zarar değildir** — kademeli alım fiyat düştükçe ek alım yaptığı için alanı büyür; bu büyüme kazanç demek değildir. Grafiğin altında her bölümün son değeri ve dönem başına göre değişimi yazar. Kâr/zarar için Genel görünümdeki grafik ve "coin bazında kâr / zarar" çubukları.
+**Pozisyon büyüklüğü** sekmesi (67.5'e kadar adı "Dağılım geçmişi"): her bölümün (BTC · trend takibi · kademeli alım) **açık pozisyon büyüklüğü** USDT olarak, gün gün. **Kâr/zarar değildir** — kademeli alım fiyat düştükçe ek alım yaptığı için alanı büyür; bu büyüme kazanç demek değildir. Grafiğin altında her bölümün son değeri ve dönem başına göre değişimi yazar. Kâr/zarar için Genel görünümdeki günlük defter (takvim, kim kazandırdı) ve "coin bazında kâr / zarar" çubukları.
 
 ![Pozisyon büyüklüğü — her bölümün açık pozisyonu (USDT)](ekran:botlar-pozisyon-buyuklugu-1400)
 
@@ -56,6 +62,19 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 **Yönetim** görünümü: [aşağıda](#/kilavuz/botlar/ayarlar).
 
 ![Botlar — telefon](ekran:botlar-390)
+
+![Günlük defter — telefon: özet üstte, takvim ve eğri altta](ekran:botlar-defter-390)
+
+## Botlar › Özet {#ozet}
+
+**Botlar**'a tıklayınca (ya da yan menüde **Botlar › Özet**) bütün botlar tek sayfada:
+
+- **Kartlar:** her bot için başlangıçtan getiri, kıyası (Hücum / Denge: BTC al-tut; portföy botları: kendi al-tut kıyası, ör. QQQ) ve kaç puan önde / geride; küçük eğri. Karta dokununca botun kendi sayfası açılır.
+- **Karşılaştırma tablosu:** bot, tür (kripto / portföy), başlangıç, gün, getiri, kıyas ve kıyas getirisi, **fark (puan)**, en derin düşüş, işlem sayısı.
+
+Kripto botları günlük ölçümle (~03:00), portföy botları kâğıt hesabın günlük değeriyle karşılaştırılır. Kısa kayıtta sayılar şansa çok bağlıdır; geçmiş sonuç geleceği göstermez.
+
+![Botlar › Özet](ekran:botlar-ozet-1400)
 
 ## Botlarımızın gerçekleşmiş sonuçları {#bot-performansi}
 

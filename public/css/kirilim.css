@@ -25,6 +25,8 @@
   /* 69.1 Sistem › Sağlık: denetim grupları alt alta. */
   .oz-gruplar { grid-template-columns: minmax(0, 1fr); }
   .oz-kanal-alanlar { grid-template-columns: minmax(0, 1fr); }
+  /* 71.0 Botlar › Genel günlük defter: özet üstte, takvim + eğri altta. */
+  .bot-defter { grid-template-columns: minmax(0, 1fr); }
   /* Araştırma defteri hikâye kartı: dört adım alt alta; teknik alanlar tek sütun. */
   .df-hikaye { grid-template-columns: minmax(0, 1fr); }
   .df-kv { grid-template-columns: minmax(0, 1fr); }
@@ -243,6 +245,15 @@
   .pm-grup th:nth-child(1), .pm-grup th:nth-child(8) { width: auto; }
   /* Portföy alt sekmeleri (61.0, D6): telefonda dar dolgu + sağ kenarda solma — kaydırılabildiği görünsün. */
   .pf-alt-sekme { padding: var(--sp-2) var(--sp-2); }
+  /* 71.0 bot takvimi: dar hücre — yalnız gün no + değer, işlem sayısı gizli (ayrıntı güne dokununca). */
+  .bot-takvim-gun { min-height: 46px; padding: 3px 4px; }
+  .bot-takvim-bos { min-height: 46px; }
+  .bot-takvim-gun { overflow: hidden; }
+  .bot-takvim-hafta, .bot-takvim-izgara { gap: 3px; }
+  .bot-takvim-deger { font-size: 9px; letter-spacing: -0.03em; }
+  .bot-takvim-bas .bot-takvim-deger { display: none; }
+  .bot-takvim-islem { display: none; }
+  .bot-defter-getiri { font-size: 1.75rem; }
   /* 62.3 Model portföyler: üç model seçici telefonda alt alta. */
   .mp-secici { grid-template-columns: minmax(0, 1fr); }
   /* 67.3 Para ekle planı: alanlar tam genişlik; düzeltme kutuları ikişer; kural seçicisi kartta sarılır. */
@@ -266,7 +277,8 @@
   .control-xxs, .table-dense, .pick-list-sm, .param-desc, .param-range, .catalog-group, .wl-status, .run-dot,
   .liq-note, .lev-badge, .badge, .mode-badge, .dock-badge, .pf-rozet, .pf-kucuk, .pf-alan > span,
   .eylem-aciklama, .hs-alt, .hs-kaynak, .pn-oge-alt, .pn-p-alt, .strat-grup-baslik, .strat-satir-alt, .kur-kaynak, .pm-gun-sira, .pn-isi-hucre,
-  .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .menu-alt-ayrac, .df-adim-baslik, .kr-no, .oz-kademe, .oz-sag { font-size: var(--fs-sm); }
+  .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .menu-alt-ayrac, .df-adim-baslik, .kr-no, .oz-kademe, .oz-sag,
+  .bot-defter-kutu-ad, .bot-takvim-hafta, .bot-takvim-no, .bot-takvim-bas .bot-takvim-deger { font-size: var(--fs-sm); }
   /* F4: iki sütunlu gösterge şeridinde büyük tutar bölünmesin ($4.114,2 | 0). */
   .p-gosterge-deger { font-size: var(--fs-lg); overflow-wrap: normal; }
   .p-dugme-simge, .p-dugme-simge.p-dugme-kucuk { width: var(--dokunma); }

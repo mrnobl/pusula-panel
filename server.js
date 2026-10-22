@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '70.1';
+const APP_VERSION = '71.0';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -2075,7 +2075,7 @@ app.post('/api/bindirme/:ad/acil-dene', async (req, res) => {
  *   · günlük mumlar: sembol başına 10 dk
  * Bot bağlı değilse borsaya bağlanılmaz (yalnız kayıtlı geçmiş gösterilir).
  */
-const { grafikIsaretleri, ozsermayeKarsilastir } = require('./lib/live/islemGecmisi');
+const { grafikIsaretleri, grafikIslemleri, ozsermayeKarsilastir } = require('./lib/live/islemGecmisi');
 const bindirmeGorunumOnbellek = {};
 const bindirmeMumOnbellek = new Map();
 let bindirmeVeriIstemcisi = null;
@@ -2226,6 +2226,7 @@ app.get('/api/bindirme/:ad/grafik', async (req, res) => {
     const golge = isletim.golgeOku(GOLGE_DOSYA);
     res.json({ success: true, sembol, semboller, mumlar: mumlar || [], mumHata,
       isaretler: grafikIsaretleri(satirlar, sembol),
+      islemler: grafikIslemleri(satirlar),   // 71.0: Botlar › Genel takvim + getiri grafiği noktaları (tüm semboller)
       ozsermaye: ozsermayeKarsilastir(b.bot.ozsermayeOku(), golge, b.ad, b.bot.durum.sermayeAkislari) });
   } catch (err) { borsaHata(res, err, 500); }
 });
