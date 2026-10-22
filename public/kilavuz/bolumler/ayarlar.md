@@ -73,6 +73,10 @@ Sunucu yalnız sizin geliştirme bilgisayarınızda imzalanan kodu kurar; GitHub
 
 Kurulmadan önce sunucu imzasız kodu da kurar; Sağlık bunu sarı gösterir. Not: GitHub web arayüzünde birleştirilen değişiklikler (ör. Dependabot) GitHub'ın imzasını taşır ve kurulmaz — birleştirme geliştirme bilgisayarında yapılır.
 
+### Paketler (72.3) {#paketler}
+
+Paket listesi (`package-lock.json` ya da `package.json`'daki bağımlılıklar) **gerçekten değiştiyse** güncelleyici önce Pusula'yı kendi durdurma yoluyla kapatır, eski paket klasörünü yedekler, paketleri kurar, sonra Pusula'yı başlatır; kurulum başarısız olursa yedeği geri koyup eski sürümü başlatır. `package.json`'da yalnız test satırları gibi betik satırları değiştiyse paket adımı **atlanır** ("paket değişikliği yok — yalnız betik satırları"). Yine de "Eski sürüm de açılmadı — elle bakın" görürseniz: [Güncelleme başarısız olursa](#/kilavuz/kurulum/guncelleme-kurtarma).
+
 ### Kuru deneme (bot kodu değişince) {#kuru-deneme}
 
 Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bugünkü kararını** eski ve yeni kodla, **emir göndermeden** hesaplayıp karşılaştırır (1–3 dakika). Pusula bu sırada eski sürümle çalışmaya devam eder.

@@ -1,5 +1,5 @@
 {
-  "surum": "72.2",
+  "surum": "72.3",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -57,6 +57,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"72.3","tarih":"2026-10-22","yeni":["Güncelleme paketleri yalnız gerçekten gerektiğinde kurar: yalnız test satırları değiştiyse paket adımı atlanır.","Paket kurulumu gerekiyorsa Pusula önce durdurulur, eski paket klasörü yedeklenir; kurulum başarısız olursa yedek geri konur ve eski sürüm başlar.","Kılavuz: güncelleme başarısız olursa elle kurtarma adımları (Sunucuya kurulum › Adım 22)."]},
     {"surum":"72.2","tarih":"2026-10-22","yeni":["Pusula Kitabı test sonuçları içerdiği için herkese açık dağıtımdan çıkarıldı; yalnız kendi kurulumunuzda (araştırma paketiyle) bulunur.","Kendi kurulumunuzda Bilgi › Pusula Kitabı aynen görünür; araştırma paketi olmayan kurulumda menü öğesi gizlenir, kitap dosyası yoksa ekran boş kalmaz, açıklama gösterir."]},
     {"surum":"72.1","tarih":"2026-10-22","yeni":["Bilgi › Pusula Kitabı: Pusula'nın kendi kitabı panelde (Pusula, güvenlik, botlar, testler, sözlük); Kılavuz'un hemen altında, her kurulumda görünür.","Kitap panelin temasıyla açılır; Yeni sekmede aç ile tam ekran okunur.","Kitapçık listesine de son satır olarak eklendi."]},
     {"surum":"72.0","tarih":"2026-10-22","yeni":["Botların yeni adları: Kairos (eski Hücum), Tao (Denge), Nova (QQQ M10), Lydia (BIST M10), Simurg (837). Yalnız görünen ad değişti; adresler ve kayıtlar aynı.","Bot başlığında ad + kısa alt yazı; adın üzerine gelince anlamı görünür.","Telegram mesajları da yeni adlarla."]},

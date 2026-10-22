@@ -1,5 +1,7 @@
 # Bağımlılıklar
 node_modules/
+# 72.3: güncelleyicinin paket kurulumundan önce aldığı yedek (başarıda silinir)
+node_modules.yedek-*/
 
 # Çalışma verisi: mum önbelleği, cüzdan durumu, loglar, gizli anahtarlar.
 # `data/secrets.json` özellikle burada — API anahtarı asla depoya girmez.

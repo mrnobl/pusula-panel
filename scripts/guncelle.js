@@ -11,6 +11,7 @@
  * Yeniden başlatma: önce POST /api/sistem/yeniden-baslat (61.3+ sunucu; denetleyici 10 sn sonra yeni kodla açar);
  * eski sunucuda bu uç yoksa scripts/pusula-sunucu.ps1 -Islem Durdur -Evet, sonra PusulaBot görevi (yoksa -Islem Baslat
  * -PanelAcma). Süreç kapatma YALNIZ o betiğin kendi PID kaydıyla (toplu kapatma yok).
+ * 72.3: paket kurulumu gerekiyorsa (lib/guncelleme.js paketKurulumuGerekli) Pusula önce `durdur` ile kapatılır, npm ci, sonra `baslat`.
  */
 'use strict';
 // D3 (62.1): zamanlanmış görevde git kimlik penceresi açamaz — giriş isterse beklemeden hata versin (spawn 180 sn takılmasın).
@@ -87,11 +88,40 @@ async function yenidenBaslat() {
 }
 
 /**
+ * 72.3 PAKET KURULUMU İÇİN DURDUR / BAŞLAT — npm ci Pusula çalışırken koşarsa Windows node_modules'ü kilitli tutar (EPERM,
+ * sunucu olayı 2026-10-22). Durdurma Pusula'nın KENDİ yolu: pusula-sunucu.ps1 -Islem Durdur -Evet (Pusula-Durdur kısayolunun
+ * aynısı: önce nazik Ctrl+C — bot işini bitirip kaydı diske yazar — sonra YALNIZ data\pusula.pid'deki PID'ler; toplu kapatma yok).
+ * Güncelleyicinin kendisi ayrı (detached) süreç olduğundan durdurmadan etkilenmez.
+ */
+async function durdur() {
+  if (!WIN) return { tamam: false, hata: 'bu bilgisayar Windows değil' };
+  const d = ps(['-File', path.join(KOK, 'scripts', 'pusula-sunucu.ps1'), '-Islem', 'Durdur', '-Evet']);
+  if (d.kod !== 0) return { tamam: false, hata: `Durdur başarısız (Pusula kısayolla ya da PusulaBot göreviyle başlatılmamış olabilir): ${d.cikti.trim().split('\n').slice(-2).join(' ')}` };
+  for (let i = 0; i < 15; i++) { if (!(await saglik())) return { tamam: true }; await bekle(1000); }
+  return { tamam: false, hata: 'Pusula durdurulduktan sonra hâlâ yanıt veriyor (başka bir yoldan da başlatılmış olabilir)' };
+}
+/** Pusula'yı aç: PusulaBot görevi (yanıt gelene kadar en çok 2 dk), olmazsa pusula-sunucu.ps1 -Islem Baslat -PanelAcma. */
+async function baslat() {
+  if (!WIN) return { tamam: false, yol: 'yok', hata: 'bu bilgisayar Windows değil' };
+  const betik = path.join(KOK, 'scripts', 'pusula-sunucu.ps1');
+  const gorev = ps(['-Command', "if (Get-ScheduledTask -TaskName PusulaBot -ErrorAction SilentlyContinue) { Start-ScheduledTask -TaskName PusulaBot; exit 0 } else { exit 3 }"]);
+  if (gorev.kod === 0) { for (let i = 0; i < 60; i++) { if (await saglik()) return { tamam: true, yol: 'görev' }; await bekle(2000); } }
+  const b = ps(['-File', betik, '-Islem', 'Baslat', '-PanelAcma']);
+  return b.kod === 0 ? { tamam: true, yol: 'betik' } : { tamam: false, yol: 'betik', hata: b.cikti.trim().split('\n').slice(-2).join(' ') };
+}
+
+/**
  * 69.2 KURU DENEME (lib/kuruDeneme.js): botların listesi çalışan sunucudan (GET /api/guncelleme/kuru-bilgi); koşucu ayrı süreçte
  * (scripts/kuru-deneme.js). Sunucu yanıt vermezse deneme yapılmaz (uyarı ile kurulum sürer).
+ * 72.3: paket kurulumunda Pusula kuru denemeden ÖNCE durur — liste durmadan alınır (`kuruHazirla`).
  */
-async function kuruDeneme({ eskiRev, yeniRev, ilerleme }) {
+let kuruBilgi = null;
+async function kuruHazirla() {
   const r = await istek('GET', '/api/guncelleme/kuru-bilgi', 5000);
+  if (r && r.j && r.j.success) kuruBilgi = r.j;
+}
+async function kuruDeneme({ eskiRev, yeniRev, ilerleme }) {
+  const r = kuruBilgi ? { j: kuruBilgi } : await istek('GET', '/api/guncelleme/kuru-bilgi', 5000);
   if (!r || !r.j || !r.j.success) throw new Error('sunucu bot listesini vermedi (Pusula kapalı ya da eski sürüm)');
   const node = (args, o) => new Promise((coz) => {
     const c = spawn(process.execPath, args, { cwd: KOK, env: o.env, windowsHide: true });
@@ -123,7 +153,8 @@ const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
     // 69.4: npm ci — yalnız kilit dosyasındaki sürümler; kurulum betikleri çalışmaz (.npmrc ignore-scripts + açık bayrak).
     npmKur: () => { const [k, a, kabuk] = npmKomut(['ci', '--no-audit', '--no-fund', '--ignore-scripts']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },
     nodeCheck: (yol) => calistirSenk(process.execPath, ['--check', yol], { sure: 30000 }),
-    yenidenBaslat, saglik, bildir: telegram(), bekle
+    yenidenBaslat, saglik, bildir: telegram(), bekle,
+    durdur, baslat, kuruHazirla   // 72.3: paket kurulumu yalnız Pusula durmuşken
   });
   console.log(`[${new Date().toISOString()}] ${sonuc.durum}${sonuc.hedefSurum ? ` → ${sonuc.hedefSurum}` : ''}${sonuc.neden ? ` — ${sonuc.neden}` : ''}`);
   if (sonuc.durum === 'kuru') console.log(JSON.stringify(sonuc.plan, null, 1));

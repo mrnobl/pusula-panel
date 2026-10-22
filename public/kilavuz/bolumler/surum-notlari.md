@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 72.3 — Güncelleme sırasında paket kurulumu düzeltildi (2026-10-22) {#s72-3}
+
+- **Ne oldu:** 71.0 → 72.2 güncellemesinde paket listesi aslında değişmemişti (yalnız test satırları eklenmişti), ama güncelleyici paketleri yine baştan kurmaya çalıştı — hem de Pusula çalışırken. Windows, çalışan Pusula'nın kullandığı paket dosyalarını kilitli tuttuğu için kurulum "izin yok" hatasıyla yarıda kaldı; eski sürüme dönerken de aynı hata çıktı ve Pusula kapandı.
+- **Artık:** paketler yalnız paket listesi **gerçekten** değiştiyse kurulur; yalnız test satırları değiştiyse bu adım atlanır ("paket değişikliği yok — yalnız betik satırları").
+- Paket kurmak gerekiyorsa sıra: **Pusula durdurulur → eski paket klasörü yedeklenir → paketler kurulur → Pusula başlatılır.** Kurulum başarısız olursa yedek geri konur ve eski sürüm başlatılır; Pusula durdurulamazsa paketlere hiç dokunulmaz.
+- Yine de "Eski sürüm de açılmadı — elle bakın" görürseniz adım adım kurtarma: [Güncelleme başarısız olursa](#/kilavuz/kurulum/guncelleme-kurtarma) ([Ayarlar › Güncelleme › Paketler](#/kilavuz/ayarlar/paketler)).
+
 ## 72.2 — Pusula Kitabı yalnız kendi kurulumunuzda (2026-10-22) {#s72-2}
 
 - **Pusula Kitabı herkese açık dağıtımdan çıkarıldı:** kitap botların test sonuçlarını içerir; araştırma kitapçıkları gibi yalnız kendi kurulumunuzda (araştırma paketiyle) bulunur.

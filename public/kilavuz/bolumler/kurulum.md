@@ -549,6 +549,20 @@ node scripts\guncelle.js --kuru
 - Geçmiş: `Get-Content C:\Pusula\data\guncelleme.log -Tail 20`; görevin çıktısı `data\guncelleme-gorev.log`; görev durumu `powershell -ExecutionPolicy Bypass -File scripts\install-guncelleme-gorev.ps1 -Durum`.
 - Kaldırmak için: aynı komutun sonuna ` -Kaldir`. Bu görev **geliştirme bilgisayarına kurulmaz** (betik reddeder).
 
+### Güncelleme başarısız olursa — "Eski sürüm de açılmadı — elle bakın" {#guncelleme-kurtarma}
+
+Telegram ya da **Ayarlar › Güncelleme** "kurulamadı — geri alındı" ve **"Eski sürüm de açılmadı — elle bakın"** derse Pusula kapalıdır; çoğunlukla paket klasörü (`node_modules`) yarım kalmıştır. 72.3'ten beri güncelleyici paketleri yalnız gerektiğinde ve **Pusula durmuşken** kurar, başarısızlıkta eski paket klasörünü geri koyar; yine de olursa sırayla, her satırda tek komut:
+
+1. Masaüstündeki **Pusula'yı durdur** kısayoluna çift tıklayın (zaten kapalı diyebilir).
+2. **Görev Yöneticisi** (Ctrl+Shift+Esc) › **Ayrıntılar**: listede `node.exe` kalmadığını görün. Kaldıysa 1. adımı bir kez daha yapın; yine kalırsa bilgisayarı yeniden başlatın (tek tek süreç kapatmayın).
+3. Başlat menüsüne `cmd` yazıp **Komut İstemi**'ni açın.
+4. `cd /d C:\Pusula`
+5. `git log -1 --oneline` — hangi sürümün diskte olduğunu gösterir (ekran görüntüsünü geliştirme sohbetine gönderebilirsiniz).
+6. `npm ci --no-audit --no-fund --ignore-scripts` — paketleri kilit dosyasından baştan kurar (1–3 dakika; sonunda `added … packages` yazar).
+7. Masaüstündeki **Pusula** kısayoluna çift tıklayın.
+
+**Kontrol:** panel açılır, **Ayarlar › Güncelleme** çalışan sürümü gösterir. 6. adım `EPERM` / "operation not permitted" derse Pusula ya da bir Node süreci hâlâ açıktır: 2. adıma dönün. Kesilen güncelleme silinmez; ertesi kontrolde (ya da **Şimdi kontrol et**) yeniden denenir.
+
 ## 23. Geliştirme bilgisayarı sunucudaki botu canlı görsün (sunucu bağlantısı) {#adim-23}
 
 Bot sunucuda çalışır; geliştirme bilgisayarındaki panel kendi eski kopyasını gösteriyordu (61.7'den önce). **Sunucu bağlantısı** kurulunca geliştirme bilgisayarındaki panelin **bot, işlem, hesap işlemleri, ileri test** ekranları sunucudaki panelden **canlı ve yalnız okuma** ile gelir: veri kopyalanmaz, tutarlar Tailscale ağınızın dışına çıkmaz, sunucudaki panel bu bağlantıdan gelen hiçbir yazma isteğini kabul etmez (telefon kademesi; 64.8: ayrı yazma jetonuyla yalnız Portföyüm ve İşlem defterim kayıtları — [Adım 25](#/kilavuz/kurulum/adim-25)). Portföy tasarımcısı, backtest ve güncelleme ekranları yerel kalır.
