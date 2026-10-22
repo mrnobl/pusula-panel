@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 71.1 — Sunucu bağlantı dosyası okunamazsa uyarı (2026-10-22) {#s71-1}
+
+- **Geliştirme bilgisayarı, araştırma bandı:** sunucu bağlantı dosyası (`dataev-baglanti.json`) varsa ama okunamıyorsa bant bunu açıkça yazar: **eski sürümün şifreli biçiminde** (69.x; 70.0 şifre çözmüyor) ya da **eksik / bozuk** (adres https değil, jeton kısa). Eskiden panel bu durumda sessizce bu bilgisayardaki eski kopyaya düşüyor, bot grafikleri boş görünüyordu. Çözüm: bağlantıyı yeniden kurun ([Kurulum, adım 23](#/kilavuz/kurulum/adim-23)).
+
 ## 71.0 — Botların gerçek sonucu: günlük defter ve Botlar › Özet (2026-10-22) {#s71-0}
 
 - **Botlar › <bot> › Genel › günlük defter:** başlangıçtan getiri ve BTC al-tut farkı (puan), sekiz kutu (kazanan gün, ortalama / en iyi / en kötü gün, en derin düşüş, işlem, ücret, gerçekleşen K/Z), **kim kazandırdı** (BTC ayağı · coin sepeti; Donchian / DCA gerçekleşen K/Z), **takvim** (her günün sonucu; güne dokununca o günün işlemleri).

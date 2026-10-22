@@ -569,6 +569,7 @@ npm run sunucu-baglanti -- --adres https://<sunucu>.<ag>.ts.net --jeton <jeton>
 **Sorun olursa:**
 - "Sunucudaki panele ulaşılamadı … 10 sn": geliştirme bilgisayarında Tailscale açık mı; sunucu bilgisayar açık mı; sunucuda `tailscale serve status` adresi gösteriyor mu.
 - "sunucudaki panel reddetti (403) — jeton": jeton yanlış ya da sunucuda yenilenmiş (`--yeni`) — 2. adımdaki jetonla komutu yeniden çalıştırın.
+- Bant "bağlantı dosyası eski sürümün şifreli biçiminde" ya da "eksik ya da bozuk" diyorsa (71.1) dosya okunamıyor: 3. adımdaki komutu yeniden çalıştırın.
 - Sunucu kapalıyken panel son okunan kopyayı gösterir; bant bunu söyler. Kapatmak için: `npm run sunucu-baglanti -- --sil`.
 - Bu ayar **yalnız geliştirme bilgisayarında** çalışır (araştırma modu); sunucuda kurulsa da etkisizdir.
 

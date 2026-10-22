@@ -125,6 +125,8 @@
     const n = bul('evKaynakNotu');
     if (!n) return;
     if (!ev || !ev.etkin) { n.textContent = ''; return; }
+    if (!ev.kurulu && ev.sorun === 'eski-sifreli') { n.textContent = 'Sunucu bağlantı dosyası (data\\ev-baglanti.json) eski sürümün şifreli biçiminde, okunamıyor — bot ve işlem ekranları bu bilgisayardaki ESKİ kopyayı gösterir. Bağlantıyı yeniden kurun (Kılavuz › Kurulum, adım 23).'; return; }
+    if (!ev.kurulu && ev.sorun === 'gecersiz') { n.textContent = 'Sunucu bağlantı dosyası (data\\ev-baglanti.json) eksik ya da bozuk (adres https, jeton) — bot ve işlem ekranları bu bilgisayardaki ESKİ kopyayı gösterir. Bağlantıyı yeniden kurun (Kılavuz › Kurulum, adım 23).'; return; }
     if (!ev.kurulu) { n.textContent = 'Bot ve işlem ekranları bu bilgisayardaki ESKİ kopyayı gösterir; güncel veri için sunucu bağlantısını kurun (Kılavuz › Kurulum, adım 23).'; return; }
     const hataSonra = ev.sonHata && (!ev.sonBasari || ev.sonHataZaman > ev.sonBasari);
     n.textContent = hataSonra ? `Bot ve işlem ekranları sunucudaki panelden okunuyor, ama son deneme başarısız (${ev.sonHata}) — gösterilen, son okunan kopya.`
