@@ -2,23 +2,37 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Bot ne yapıyor, ne kadar kazandı?" sorusunun ekranı. **Botlar**'a tıklayınca önce **Botlar › Özet** açılır: bütün botlar kart ve karşılaştırma tablosu olarak ([aşağıda](#/kilavuz/botlar/ozet)). Bir bot yan menüden ya da özetteki kartından seçilir — **Botlar › Hücum** ya da **Botlar › Denge** — ve her botun dört görünümü vardır (adres görünümü taşır, ör. `#/botlar/hucum/hesap`):
+"Bot ne yapıyor, ne kadar kazandı?" sorusunun ekranı. **Botlar**'a tıklayınca önce **Botlar › Özet** açılır: bütün botlar kart ve karşılaştırma tablosu olarak ([aşağıda](#/kilavuz/botlar/ozet)). Bir bot yan menüden ya da özetteki kartından seçilir — **Botlar › Kairos** ya da **Botlar › Tao** — ve her botun dört görünümü vardır (adres görünümü taşır, ör. `#/botlar/hucum/hesap`):
 
 | Görünüm | İçinde ne var |
 |---|---|
 | **Genel** | durum, kural, **Durdur / Başlat** ve **Acil fren**, sayılar, **günlük defter** (özet, kim kazandırdı, takvim, getiri eğrisi), paranın nerede durduğu, aylık getiri, künye |
 | **Hesap** | botun borsadaki hesabı: bağlantı sağlığı, bakiye, pozisyonlar, emirler, geçmiş ([Bot hesabı](#/kilavuz/hesaplar)) ve **Binance bakiyesi** kartı |
 | **İşlemler** | coin grafiği + açık pozisyonlar · bekleyen emirler · işlem geçmişi · dağılım geçmişi |
-| **Yönetim** | hesap türü, para kaydı, küçük hesap kipi, şimdi çalıştır, kontroller ve (Hücum'da) demo kabul süreci |
+| **Yönetim** | hesap türü, para kaydı, küçük hesap kipi, şimdi çalıştır, kontroller ve (Kairos'ta) demo kabul süreci |
 
 İki bot:
 
-- **Hücum** — BTC trendi yükselişteyken BTC tutar (düşüşe dönünce nakde geçer); yanında 15 coinlik **coin sepeti**nde trend takibi ve kademeli alım (×3). Getiri öncelikli.
-- **Denge** — Hücum'un sakin hâli: BTC oranı en çok %50 + aynı coin sepeti. Gün içi riski daha düşük.
+- **Kairos** — BTC trendi yükselişteyken BTC tutar (düşüşe dönünce nakde geçer); yanında 15 coinlik **coin sepeti**nde trend takibi ve kademeli alım (×3). Getiri öncelikli.
+- **Tao** — Kairos'un sakin hâli: BTC oranı en çok %50 + aynı coin sepeti. Gün içi riski daha düşük.
 
-Yan menüde Hücum ve Denge'nin altında **Portföy botları** ara başlığıyla üç bot daha durur: **QQQ M10**, **BIST M10**, **837 · QQQ + Hücum** — model portföylerin kâğıt hesapları, her biri kendi sayfasında ([Portföy botları](#/kilavuz/portfoy-botlari)). Bu sayfa Hücum ve Denge'yi anlatır.
+Yan menüde Kairos ve Tao'nun altında **Portföy botları** ara başlığıyla üç bot daha durur: **Nova**, **Lydia**, **Simurg · %50 QQQ + %50 Kairos** — model portföylerin kâğıt hesapları, her biri kendi sayfasında ([Portföy botları](#/kilavuz/portfoy-botlari)). Bu sayfa Kairos ve Tao'yu anlatır.
 
 Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiyle 03:00 civarı) çalışır: önce kayıtlarını borsayla karşılaştırır, sonra yalnız **bugünkü hedefe** gider.
+
+## Bot adları {#bot-adlari}
+
+72.0'dan beri botların ekranda görünen adları kısa birer addır; adın yanında ya da altında botun ne yaptığını söyleyen bir alt yazı durur. Adın üstüne gelince anlamı görünür.
+
+| Ad | Alt yazı | Anlamı | Eski adı |
+|---|---|---|---|
+| **Kairos** | BTC trendi + coin sepeti | "Doğru an"ın tanrısı — kırılımı geçerken yakalayan bot | Hücum (küçük hesap kipi: Hücum-S → **Kairos-S**) |
+| **Tao** | yarı BTC + coin sepeti, sakin | "Yol" — inişle çıkışın dengesi | Denge |
+| **Nova** | Nasdaq Momentum 10 | Gökte birden parlayan yeni yıldız — teknoloji | QQQ M10 / Nasdaq M10 |
+| **Lydia** | BIST Momentum 10 | Dünyada ilk parayı basan Anadolu krallığı | BIST M10 |
+| **Simurg** | %50 QQQ + %50 Kairos | İki diyarı birleştiren efsanevi kuş — iki piyasayı birleştiren bot | 837 · QQQ + Hücum (%50 QQQ + %50 Hücum) |
+
+**Yalnız görünen ad değişti.** Botların kuralları, adresleri (`#/botlar/hucum`, `#/botlar/denge`, `#/botlar/m-qqq-m10`, `#/botlar/m-bist-m10`, `#/botlar/m-837`), kayıtları, kâğıt/demo hesapları ve geçmişi aynıdır. Araştırma kayıtlarında geçen deneme numaraları (ör. **deneme 837**) da aynı kalır; eski sürüm notlarında ve eski kayıtlarda botlar eski adlarıyla geçer.
 
 ## Ne zaman kullanılır {#ne-zaman}
 
@@ -28,7 +42,7 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 ## Ekran {#ekran}
 
-![Botlar › Hücum › Genel](ekran:botlar-1400)
+![Botlar › Kairos › Genel](ekran:botlar-1400)
 
 Üstte dört görünüm düğmesi (**Genel · Hesap · İşlemler · Yönetim**). Hangi botun açık olduğu yan menüde ve sayfanın kırıntısında yazar; son seçilen bot hatırlanır. **Genel** görünümü yukarıdan aşağıya:
 
@@ -47,17 +61,17 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 **Hesap** görünümü: botun borsadaki hesabı (bağlantı sağlığı, bakiye, açık pozisyonlar, bekleyen emirler, geçmiş işlemler — [Bot hesabı](#/kilavuz/hesaplar)) ve altında **Binance bakiyesi** kartı: Binance'in kendi hesap alanları, Binance'teki adlarıyla ([aşağıda](#/kilavuz/botlar/binance-bakiyesi)).
 
-![Botlar › Hücum › Hesap (bakiyeler görüntüde maskeli)](ekran:hesaplar-1400)
+![Botlar › Kairos › Hesap (bakiyeler görüntüde maskeli)](ekran:hesaplar-1400)
 
 **İşlemler** görünümü: **Coin grafiği — <bot>** — yalnız o botun işlem yaptığı coinler (● = açık pozisyon); ▲ alış, ▼ satış / kâr al, ● kademeli alım; kesikli çizgi = bekleyen emir. Zaman dilimi (varsayılan 1d) ve mum sayısı seçilir. Altında **İşlemler** paneli ([ayrıntı](#/kilavuz/botlar/islemler)): Açık pozisyonlar · Bekleyen emirler · İşlem geçmişi · Pozisyon büyüklüğü. Bir satıra tıklamak grafikte o coine ve mumuna gider.
 
-![Botlar › Hücum › İşlemler](ekran:botlar-islemler-1400)
+![Botlar › Kairos › İşlemler](ekran:botlar-islemler-1400)
 
 **Pozisyon büyüklüğü** sekmesi (67.5'e kadar adı "Dağılım geçmişi"): her bölümün (BTC · trend takibi · kademeli alım) **açık pozisyon büyüklüğü** USDT olarak, gün gün. **Kâr/zarar değildir** — kademeli alım fiyat düştükçe ek alım yaptığı için alanı büyür; bu büyüme kazanç demek değildir. Grafiğin altında her bölümün son değeri ve dönem başına göre değişimi yazar. Kâr/zarar için Genel görünümdeki günlük defter (takvim, kim kazandırdı) ve "coin bazında kâr / zarar" çubukları.
 
 ![Pozisyon büyüklüğü — her bölümün açık pozisyonu (USDT)](ekran:botlar-pozisyon-buyuklugu-1400)
 
-**BTC ayağı bilerek stopsuz (Hücum demo):** Hücum'un BTC ayağı koruma stopundan **bilerek** hariç tutulur (kullanıcı kararı 2026-10-07; trend ayağı kendi kuralıyla çıkar). Hesap görünümünde BTC pozisyonunun koruma sütununda **bilerek stopsuz** rozeti görünür ve bu pozisyon "Koruma stopu eksik" uyarısına sayılmaz. BTC pozisyonunda trend takibi kolunun da payı varsa o pay için koruma stopu yine beklenir.
+**BTC ayağı bilerek stopsuz (Kairos demo):** Kairos'un BTC ayağı koruma stopundan **bilerek** hariç tutulur (kullanıcı kararı 2026-10-07; trend ayağı kendi kuralıyla çıkar). Hesap görünümünde BTC pozisyonunun koruma sütununda **bilerek stopsuz** rozeti görünür ve bu pozisyon "Koruma stopu eksik" uyarısına sayılmaz. BTC pozisyonunda trend takibi kolunun da payı varsa o pay için koruma stopu yine beklenir.
 
 **Yönetim** görünümü: [aşağıda](#/kilavuz/botlar/ayarlar).
 
@@ -69,7 +83,7 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 **Botlar**'a tıklayınca (ya da yan menüde **Botlar › Özet**) bütün botlar tek sayfada:
 
-- **Kartlar:** her bot için başlangıçtan getiri, kıyası (Hücum / Denge: BTC al-tut; portföy botları: kendi al-tut kıyası, ör. QQQ) ve kaç puan önde / geride; küçük eğri. Karta dokununca botun kendi sayfası açılır.
+- **Kartlar:** her bot için başlangıçtan getiri, kıyası (Kairos / Tao: BTC al-tut; portföy botları: kendi al-tut kıyası, ör. QQQ) ve kaç puan önde / geride; küçük eğri. Karta dokununca botun kendi sayfası açılır.
 - **Karşılaştırma tablosu:** bot, tür (kripto / portföy), başlangıç, gün, getiri, kıyas ve kıyas getirisi, **fark (puan)**, en derin düşüş, işlem sayısı.
 
 Kripto botları günlük ölçümle (~03:00), portföy botları kâğıt hesabın günlük değeriyle karşılaştırılır. Kısa kayıtta sayılar şansa çok bağlıdır; geçmiş sonuç geleceği göstermez.
@@ -80,8 +94,8 @@ Kripto botları günlük ölçümle (~03:00), portföy botları kâğıt hesabı
 
 Yeni kurulumda Botlar sayfasının en üstünde (ve Ana sayfada kısa hâliyle) **Botlarımızın gerçekleşmiş sonuçları** kartı durur: kullanacağın botların, Pusula'yı geliştirenin **kendi hesaplarındaki** sonuçları.
 
-- **Hücum / Denge**: Binance **Demo Trading** (sanal para) hesabındaki değer eğrisi, gün gün; aynı dönemde **BTC al-tut** kıyası (kesikli çizgi), getiri, en derin düşüş, işlem sayısı. Henüz demo hesapta çalışmayan bot için "gerçekleşmiş sonuç yok" yazar.
-- **Model portföyler** (Nasdaq Momentum 10, BIST Momentum 10, %50 QQQ + %50 Hücum): kâğıt hesap endeksi (gerçek fiyatlarla, emir yok) ve kıyasları (QQQ al-tut, BTC al-tut …).
+- **Kairos / Tao**: Binance **Demo Trading** (sanal para) hesabındaki değer eğrisi, gün gün; aynı dönemde **BTC al-tut** kıyası (kesikli çizgi), getiri, en derin düşüş, işlem sayısı. Henüz demo hesapta çalışmayan bot için "gerçekleşmiş sonuç yok" yazar.
+- **Model portföyler** (Nova, Lydia, Simurg): kâğıt hesap endeksi (gerçek fiyatlarla, emir yok) ve kıyasları (QQQ al-tut, BTC al-tut …).
 
 Her şey **yüzde / endekstir** (başlangıç = 100): bakiye, tutar, coin miktarı, emir kimliği ya da anahtar içermez. Backtest ve araştırma sonucu girmez — yalnız gerçekleşmiş demo / kâğıt sonuçları. Veri her sürümle yenilenir; kartta kaynak, tarih aralığı ve **"geçmiş sonuç geleceği göstermez"** notu vardır.
 
@@ -91,7 +105,7 @@ Kendi botların çalıştıkça sonuçların bot sayfasında görünür; kendi v
 
 ## Binance bakiyesi — Avbl neden hesap değerinden küçük? {#binance-bakiyesi}
 
-Binance emir kutusunda **Avbl** (kullanılabilir) yazan sayı ile Pusula'daki **Hesap değeri** farklıdır; ikisi de doğrudur, farklı şeyleri gösterir. Botlar › Hücum › **Hesap** görünümündeki **Binance bakiyesi** kartı yalnız bakiye dökümüdür: Binance'in kendi alanları, Binance ekranındaki adlarıyla (sayfa açıkken 12 sn'de bir yenilenir). **Paneldeki Kullanılabilir, Binance'in Avbl sayısının kendisidir** — Pusula onu hesaplamaz, Binance'ten okur.
+Binance emir kutusunda **Avbl** (kullanılabilir) yazan sayı ile Pusula'daki **Hesap değeri** farklıdır; ikisi de doğrudur, farklı şeyleri gösterir. Botlar › Kairos › **Hesap** görünümündeki **Binance bakiyesi** kartı yalnız bakiye dökümüdür: Binance'in kendi alanları, Binance ekranındaki adlarıyla (sayfa açıkken 12 sn'de bir yenilenir). **Paneldeki Kullanılabilir, Binance'in Avbl sayısının kendisidir** — Pusula onu hesaplamaz, Binance'ten okur.
 
 | Ekranda | Binance'teki adı | Ne demek |
 |---|---|---|
@@ -111,7 +125,7 @@ Bu bilgisayar araştırma kopyasıysa Binance'e bağlanılmaz: bölüm bunu aç�
 
 ### Botun kendi getirisi (hesap tavandan büyükken) {#bot-sermayesi}
 
-Demo hesapta ~5.000 $ var, Hücum-S ise 1.000 $ sermaye tavanıyla çalışıyor. Bu durumda grafik, **Başlangıçtan** ve **En derin düşüş** botun **kendi sermayesi** üstünden hesaplanır: **bot değeri = 1.000 $ + (bugünkü hesap değeri − ilk gün hesap değeri)** (hesapta yalnız bot işlem yapar). Hesabın tamamına bölmek kâr/zararı beş kat küçültürdü; tavana kırpmak ise eğriyi düz 1,00 yapardı (64.5'ten önceki hata). Başlangıçtan kutusunda "bot sermayesi 1.000 $ (tavan) — hesap 4.949 $" yazar; grafikteki çizginin adı **Bot değeri (1.000 $ tavan)**. Botun Yönetim görünümünden kaydedilen para yatırma/çekme bot değerinden düşülür (yatırılan para kâr sayılmaz).
+Demo hesapta ~5.000 $ var, Kairos-S ise 1.000 $ sermaye tavanıyla çalışıyor. Bu durumda grafik, **Başlangıçtan** ve **En derin düşüş** botun **kendi sermayesi** üstünden hesaplanır: **bot değeri = 1.000 $ + (bugünkü hesap değeri − ilk gün hesap değeri)** (hesapta yalnız bot işlem yapar). Hesabın tamamına bölmek kâr/zararı beş kat küçültürdü; tavana kırpmak ise eğriyi düz 1,00 yapardı (64.5'ten önceki hata). Başlangıçtan kutusunda "bot sermayesi 1.000 $ (tavan) — hesap 4.949 $" yazar; grafikteki çizginin adı **Bot değeri (1.000 $ tavan)**. Botun Yönetim görünümünden kaydedilen para yatırma/çekme bot değerinden düşülür (yatırılan para kâr sayılmaz).
 
 ## İşlemler: pozisyonlar, emirler, işlem geçmişi — tek yer {#islemler}
 
@@ -144,7 +158,7 @@ Her terimin yanındaki **?** sade açıklamayı gösterir.
 
 ## Yönetim (eskiden Ayarlar › Botlar) {#ayarlar}
 
-![Botlar › Hücum › Yönetim](ekran:botlar-eylem-1400)
+![Botlar › Kairos › Yönetim](ekran:botlar-eylem-1400)
 
 Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun **Yönetim** görünümünde (`#/botlar/<bot>/yonetim`), yalnız seçili bot için:
 
@@ -161,30 +175,30 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 
 ### Kâğıt hesabı sıfırla (temiz başla) {#kagit-sifirla}
 
-Kâğıt hesaptaki bir botu (ör. Denge) sıfırdan başlatmak için: önce **Durdur**, sonra Yönetim'de **Kâğıt hesabı sıfırla (temiz başla)…** ve onay. Bot yeni bir kâğıt hesapla başlar: sermaye ayarlardaki kâğıt bakiyesi (`kagitBakiye`, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş. **İlk çalışmada geçmiş günler telafi edilmez** — bot bugünkü hedefe gider ve oradan devam eder.
+Kâğıt hesaptaki bir botu (ör. Tao) sıfırdan başlatmak için: önce **Durdur**, sonra Yönetim'de **Kâğıt hesabı sıfırla (temiz başla)…** ve onay. Bot yeni bir kâğıt hesapla başlar: sermaye ayarlardaki kâğıt bakiyesi (`kagitBakiye`, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş. **İlk çalışmada geçmiş günler telafi edilmez** — bot bugünkü hedefe gider ve oradan devam eder.
 
 - **Eski kayıtlar silinmez:** botun klasörü `data/live/<bot>-onceki-<tarih saat>` yedeğine taşınır (ör. `denge-onceki-20261020T083005Z`); istenirse oradan incelenir. Bildirim yedek klasörünün adını yazar.
-- **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Hücum'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
+- **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Kairos'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
 - **Bot çalışırken** düğme pasiftir ("Önce botu durdurun"); sıfırladıktan sonra **Başlat**.
 - Telefondan ve araştırma kopyasından yapılamaz (yalnız sunucudaki masaüstü panel).
-- **Kötümser dolum (69.5):** sıfırlamadan sonra açılan yeni kâğıt hesap gerçeğe daha yakın çalışır — felaket stopu 1 dakikalık mumda tetiklenir ve tetik fiyatı ile kapanıştan **kötü olanından** 5 baz puan kaymayla dolar; piyasa emri 5 baz puan kaymayla dolar; stoplar diske yazılır. Sıfırlanmamış eski kâğıt hesap eski (iyimser) modelde kalır, böylece süren ölçüm (ör. Denge) ortasında kurallar değişmez.
+- **Kötümser dolum (69.5):** sıfırlamadan sonra açılan yeni kâğıt hesap gerçeğe daha yakın çalışır — felaket stopu 1 dakikalık mumda tetiklenir ve tetik fiyatı ile kapanıştan **kötü olanından** 5 baz puan kaymayla dolar; piyasa emri 5 baz puan kaymayla dolar; stoplar diske yazılır. Sıfırlanmamış eski kâğıt hesap eski (iyimser) modelde kalır, böylece süren ölçüm (ör. Tao) ortasında kurallar değişmez.
 
 ### BTC ayağı: spot ya da çoklu varlık {#btc-ayagi}
 
-![Botlar › Denge › Yönetim: BTC ayağı (kâğıt)](ekran:botlar-denge-yonetim-1400)
+![Botlar › Tao › Yönetim: BTC ayağı (kâğıt)](ekran:botlar-denge-yonetim-1400)
 
 Botun BTC payı kâğıt hesapta iki biçimde tutulabilir:
 
 - **spot** (varsayılan): BTC doğrudan alınır, tutulur.
 - **çoklu varlık (canlı tasarımı):** canlı hesapta kullanılacak biçim — BTC spotta alınır ve vadeli cüzdana **teminat** olarak aktarılır (Binance çoklu varlık modu; teminat BTC değerinin %95'i sayılır). Kâğıt hesapta bu akış taklit edilir: alım, aktarım, satış, iade, borsayla karşılaştırma her gün aynı adımlarla çalışır.
 
-Canlı hesaba geçiş şartlarından **G7**, çoklu varlık akışının kâğıt hesapta **en az 14 gün** sorunsuz çalışmasını ister. Hücum demo kabul testinde olduğu için (demo hesapta BTC ayağı her zaman perp) bu deneme kâğıt hesaptaki bot (Denge) ile yapılır: önce **Durdur**, Yönetim'de **BTC ayağı (kâğıt)** → **çoklu varlık**, onay, sonra **Başlat**.
+Canlı hesaba geçiş şartlarından **G7**, çoklu varlık akışının kâğıt hesapta **en az 14 gün** sorunsuz çalışmasını ister. Kairos demo kabul testinde olduğu için (demo hesapta BTC ayağı her zaman perp) bu deneme kâğıt hesaptaki bot (Tao) ile yapılır: önce **Durdur**, Yönetim'de **BTC ayağı (kâğıt)** → **çoklu varlık**, onay, sonra **Başlat**.
 
 - Biçim değişince kâğıt hesap **sıfırlanmak zorunda** (iki biçimin kayıtları birbirine taşınmaz); eski kayıtlar [sıfırlamadaki gibi](#/kilavuz/botlar/kagit-sifirla) yedek klasöre taşınır.
 - Demo hesapta bu satır görünmez (demo: perp); canlı hesap her zaman çoklu varlıkla çalışır.
 - Telefondan ve araştırma kopyasından yapılamaz.
 
-Hücum'un Yönetim görünümünün altında **Demo kabul süreci** kartı da durur (aynı kart [İleri test](#/kilavuz/ileri-test)'te). İki botun salt okunur özeti (durum, hesap türü, küçük hesap kipi, hesap değeri) **Ayarlar › Botlar (özet)**'te; her satırdaki **Yönet →** buraya getirir.
+Kairos'un Yönetim görünümünün altında **Demo kabul süreci** kartı da durur (aynı kart [İleri test](#/kilavuz/ileri-test)'te). İki botun salt okunur özeti (durum, hesap türü, küçük hesap kipi, hesap değeri) **Ayarlar › Botlar (özet)**'te; her satırdaki **Yönet →** buraya getirir.
 
 ## Adım adım: botu demo modunda başlatmak {#demo-baslat}
 
@@ -192,10 +206,10 @@ Canlı hesap yoktur; demo hesap Binance'in sahte paralı ortamıdır.
 
 1. Önce demo API anahtarını girin: [Ayarlar › Bağlantılar](#/kilavuz/hesaplar/anahtar).
 2. Hesaplarda elle açılmış demo pozisyon varsa kapatın — bot tanımadığı pozisyonu görünce kendini durdurur (bilinçli güvenlik).
-3. **Botlar › Hücum › Yönetim**'de **Hesap türü**nü **demo** yapın ve onaylayın. Aynı anda yalnız **bir** bot demo'da olabilir.
+3. **Botlar › Kairos › Yönetim**'de **Hesap türü**nü **demo** yapın ve onaylayın. Aynı anda yalnız **bir** bot demo'da olabilir.
 4. **Deneme (emirsiz)** ile bugünkü planı görün.
 5. İsterseniz **Acil freni dene** — sonucu "önce 1 emir → sonra 0 emir / 0 pozisyon · borsayla uyumlu" olmalı.
-6. **Botlar › Hücum › Genel**'de **Başlat**. Bot her gün kendiliğinden çalışır; hemen çalıştırmak için Yönetim › **Şimdi çalıştır**.
+6. **Botlar › Kairos › Genel**'de **Başlat**. Bot her gün kendiliğinden çalışır; hemen çalıştırmak için Yönetim › **Şimdi çalıştır**.
 7. Ertesi gün künyedeki **Son çalışma** ve **Koruma stopu** satırlarını kontrol edin ([Kurulum › Adım 16](#/kilavuz/kurulum/adim-16)).
 
 ## Canlı hesap modu {#gercek-para}
@@ -259,7 +273,7 @@ Sermaye artışları her ay ama tutarı belli olmadan yapılacağı için bot ha
 
 ## Hisse yapıları {#hisse-yapilari}
 
-Üç model portföyün (Nasdaq Momentum 10, BIST Momentum 10, %50 QQQ + %50 Hücum) sanal hesapları Botlar sayfasında değil, **Portföy › Modeller**'de (model seçiciyle) ([Model portföyler](#/kilavuz/model-portfoy)).
+Üç model portföyün (Nova, Lydia, Simurg) sanal hesapları Botlar sayfasında değil, **Portföy › Modeller**'de (model seçiciyle) ([Model portföyler](#/kilavuz/model-portfoy)).
 
 ## Grafik ve işlemler {#grafik}
 

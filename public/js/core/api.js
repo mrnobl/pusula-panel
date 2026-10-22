@@ -75,6 +75,18 @@
    * PIN'le 10 dakikalık oturum açınca istek BİR KEZ yinelenir.
    */
   let pinIsteyici = null;
+
+  /**
+   * 72.0 BOT ADLARI: yanıttaki { ad: 'hucum', adGorunen: 'Hücum' } gibi bot nesnelerinde görünen ad KİMLİKTEN
+   * yeniden yazılır (js/core/sozluk.js AG.botAd) — sunucu eski sürümdeyse eski adı gönderir; ekranda yine yeni ad görünür.
+   * Kimlik tanınmazsa ad metnindeki eski adlar çevrilir. AG.botAd yoksa (Node testi) dokunulmaz.
+   */
+  function botAdCanlandir(anahtar, deger) {
+    const B = global.AG && global.AG.botAd;
+    if (!B || !deger || typeof deger !== 'object' || Array.isArray(deger) || typeof deger.adGorunen !== 'string') return deger;
+    deger.adGorunen = B.ad(deger.ad) || B.cevir(deger.adGorunen);
+    return deger;
+  }
   const pinGerekliMi = (status, veri) => status === 403 && veri && typeof veri === 'object' && veri.kod === 'pin-gerekli';
 
   /**
@@ -109,7 +121,7 @@
     if (metin === '') veri = {};
     else {
       try {
-        veri = JSON.parse(metin);
+        veri = JSON.parse(metin, botAdCanlandir);
       } catch (e) {
         /**
          * Gövde HTML ise sebep neredeyse her zaman AYNI: uç yok, çünkü

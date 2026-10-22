@@ -24,7 +24,7 @@
   const AG = global.AG;
   const { el, doldur, bul } = AG.dom;
 
-  const ADLAR = [['hucum', 'Hücum'], ['denge', 'Denge']];
+  const ADLAR = [['hucum', 'Kairos'], ['denge', 'Tao']];
   // 62.6: performans grafiği botun kartında; burada sepet dağılımının geçmişi. Sade terimler: kol → bölüm (BTC / trend takibi / kademeli alım).
   const SEKMELER = [['pozisyon', 'Açık pozisyonlar'], ['emir', 'Bekleyen emirler'], ['gecmis', 'İşlem geçmişi'], ['performans', 'Pozisyon büyüklüğü']];   // 67.5: eski adı 'Dağılım geçmişi' (büyüme kâr sanılıyordu)
   const KOL_AD = { 'BTC ayağı': 'BTC', Donchian: 'trend takibi', donchian: 'trend takibi', DCA: 'kademeli alım', dca: 'kademeli alım' };
@@ -47,7 +47,7 @@
   const grafikSembolu = (s) => String(s || '').replace(' (spot)', '').split(':')[0];
   const ayniSembol = (a, b) => grafikSembolu(a) === grafikSembolu(b);
   const G = () => AG.canliGrafik;
-  const adGorunen = () => (ADLAR.find(a => a[0] === durum.ad) || [])[1] || durum.ad;
+  const adGorunen = () => (AG.botAd && AG.botAd.ad(durum.ad)) || (ADLAR.find(a => a[0] === durum.ad) || [])[1] || durum.ad;
 
   /** Sıralanabilir tablo (js/core/tablo.js); `anahtar` sıralama seçimini tazelemeler arasında korur. Sayfalı geçmişte gösterilen sayfa sıralanır. */
   function tablo(basliklar, satirlar, bos, anahtar) {

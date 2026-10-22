@@ -34,6 +34,8 @@
   const tonla = (tr, i, sinif) => { if (tr.children[i] && sinif) tr.children[i].className = sinif; return tr; };
 
   // ── 1. BACKTEST SONUCU: botun tamamı ───────────────────────────────────────
+  /** 72.0: görünen ad strateji kimliğinden (js/core/sozluk.js AG.botAd); sunucu eski adı gönderebilir. */
+  const adi = (ek) => (AG.botAd && AG.botAd.ad(ek.strateji)) || (AG.botAd ? AG.botAd.cevir(ek.ad) : ek.ad);
   function sonucKutusu(res) {
     const kutu = bul('btBindirmeEk');
     if (!kutu) return;
@@ -43,7 +45,7 @@
     if (ek.hata) { doldur(kutu, [el('div', { class: 'trace-note trace-note-warn', text: ek.hata })]); return; }
     const k = ek.kapsam || {};
     const notlar = (k.not || []).map(n => el('div', { class: 'trace-note trace-note-warn mb-2', text: `⚠️ ${n}` }));
-    const baslik = `Botun tamamı — ${ek.ad} (Kalkan kolu ×3 dahil, 15 coin — tek grafiğe çizilemez)`;
+    const baslik = `Botun tamamı — ${adi(ek)} (Kalkan kolu ×3 dahil, 15 coin — tek grafiğe çizilemez)`;
     if (ek.yok) {
       doldur(kutu, [el('div', { class: 'sunken-panel panel-pad' }, [el('strong', { text: baslik }), ...notlar])]);
       return;
@@ -63,16 +65,16 @@
       ...notlar,
       el('div', { class: 'canvas-box canvas-260 mb-5' }, [el('canvas', { id: 'btBindirmeGrafik', role: 'img', 'aria-label': 'Botun tamamı, BTC ayağı ve BTC al-tut eğrileri (log ölçek)' })]),
       tablo(['Koşu', 'Yıllık (CAGR)', 'Holdout (2024 →)', 'En büyük düşüş', 'Gün içi en kötü', 'Sharpe', 'Toplam'], [
-        satir(`Botun tamamı — ${ek.ad} (kol ×3 dahil)`, S, { class: 'row-best' }),
+        satir(`Botun tamamı — ${adi(ek)} (kol ×3 dahil)`, S, { class: 'row-best' }),
         satir('BTC ayağı (araştırma: ertesi gün açılış, %0,12/yön, %100)', A),
         satir('BTC al-tut', T)
       ]),
       el('p', { class: 'hint hint-sm mt-3 mb-5', text: `Gün içi en kötü: hesabın gün içi kötümser değeri (tüm diplerin aynı anda). Tasfiye: ${S.tasfiye == null ? '—' : S.tasfiye}. Standart koşunun BTC ayağı ile araştırmanın BTC ayağı arasındaki küçük fark: motor sinyal gününün KAPANIŞINDA %0,15 komisyonla doldurur, araştırma ve Pine ertesi gün AÇILIŞINDA %0,12 ile (TradingView işlem tarihleri bu yüzden bir gün sonra görünür). Piyasa = Vadeli seçilirse motor gerçek funding da öder (long için yılda ~%10) ve fark büyür — Pine ile kıyas için Piyasa = Spot seçin.` }),
       el('div', { class: 'bt-metric-label mb-2', text: 'Yıllık getiri' }),
-      tablo(['Yıl', `Botun tamamı (${ek.ad})`, 'BTC ayağı', 'BTC al-tut'], yillik)
+      tablo(['Yıl', `Botun tamamı (${adi(ek)})`, 'BTC ayağı', 'BTC al-tut'], yillik)
     ]);
     doldur(kutu, [...anaSayilar(ek), detay,
-      el('div', { class: 'bt-metric-label mt-5', text: `Aşağıdaki sayılar ve grafik yalnız BTC AYAĞI (botun BTC işlemleri; Kalkan kolu hariç) — ${ek.ad}'un sonucu yukarıdaki satırdır.` })]);
+      el('div', { class: 'bt-metric-label mt-5', text: `Aşağıdaki sayılar ve grafik yalnız BTC AYAĞI (botun BTC işlemleri; Kalkan kolu hariç) — botun tamamının (${adi(ek)}) sonucu yukarıdaki satırdır.` })]);
     sonEk = ek;
   }
 
@@ -90,7 +92,7 @@
     ]);
     const fark = S.toplam != null && T.toplam != null ? (S.toplam - T.toplam) * 100 : null;
     return [
-      el('div', { class: 'bt-metric-label mb-2', text: `Botun tamamı — ${ek.ad} (Kalkan kolu ×3 dahil): asıl sonuç` }),
+      el('div', { class: 'bt-metric-label mb-2', text: `Botun tamamı — ${adi(ek)} (Kalkan kolu ×3 dahil): asıl sonuç` }),
       el('div', { class: 'ana-sayilar mb-5', id: 'btBindirmeAnaSayilar' }, [
         kutu('Yıllık bileşik (CAGR)', yuzde(S.cagr), `BTC al-tut ${yuzde(T.cagr)}`, ton(S.cagr)),
         kutu('Toplam getiri', yuzde(S.toplam, 0), fark == null ? null : `al-tut'a göre ${fark >= 0 ? '+' : '−'}${Math.abs(fark).toLocaleString('tr-TR', { maximumFractionDigits: 0 })} puan`, ton(S.toplam)),
@@ -109,7 +111,7 @@
     grafik = new global.Chart(tuval.getContext('2d'), {
       type: 'line',
       data: { labels: sonEk.strateji.egri.map(x => x.t), datasets: [
-        ds(`Botun tamamı (${sonEk.ad})`, sonEk.strateji.egri, p.accent, { borderWidth: 2 }),
+        ds(`Botun tamamı (${adi(sonEk)})`, sonEk.strateji.egri, p.accent, { borderWidth: 2 }),
         ds('BTC ayağı', sonEk.btcAyagi.egri, p.warn),
         ds('BTC al-tut', sonEk.alTut.egri, p.muted, { borderDash: [4, 3] })
       ] },

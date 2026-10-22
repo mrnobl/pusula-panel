@@ -391,7 +391,9 @@
   }
 
   // ═══ 4 · PORTFÖY BOTLARI NE TUTUYOR (en altta) ══════════════════════════════
-  const MODELLER = [['m-qqq-m10', 'Nasdaq Momentum 10', 'USD'], ['m-bist-m10', 'BIST Momentum 10', 'TRY'], ['m-837', '%50 QQQ + %50 Hücum', 'USD']];
+  /** 72.0: görünen model adı kimlikten (AG.botAd yüklenmemişse yedek). */
+  const botTam = (k, yedek) => (AG.botAd && AG.botAd.tam(k)) || yedek;
+  const MODELLER = [['m-qqq-m10', botTam('m-qqq-m10', 'Nova · Nasdaq Momentum 10'), 'USD'], ['m-bist-m10', botTam('m-bist-m10', 'Lydia · BIST Momentum 10'), 'TRY'], ['m-837', botTam('m-837', 'Simurg · %50 QQQ + %50 Kairos'), 'USD']];
   const DURUM_AD = { kaliyor: ['Tutuyor', 'vurgu'], girecek: ['Girecek', 'pos'], cikacak: ['Çıkacak', 'warn'], yedek: ['Yedek', ''], bot: ['Bot', ''] };
   const KESINLIK = { kesin: 'kesin', 'kesine-yakin': 'tahmin: kesine yakın', tahmin: 'tahmin' };
   const bot = { model: 'm-qqq-m10', veri: null, zaman: 0, is: null, hata: null };
@@ -445,11 +447,11 @@
     const q = sayiMi(kq) ? kq : kq && sayiMi(kq.toplam) ? kq.toplam : null;
     const basari = met == null ? '' : `Başladığından beri${mo.baslangic ? ` (${gunKisa(mo.baslangic)})` : ''} ${AG.fmt.oranYuzde(met, 1, { isaretli: true })}${q != null ? ` · aynı dönemde QQQ ${AG.fmt.oranYuzde(q, 1, { isaretli: true })}` : ''}`;
     const satirlar = id === 'm-837'
-      ? [{ sira: 1, s: 'QQQ', durum: 'kaliyor', ad: 'Invesco QQQ Trust · çekirdek %50' }, { sira: null, s: 'Hücum', durum: 'bot', ad: 'Binance botu · uydu %50' }]
+      ? [{ sira: 1, s: 'QQQ', durum: 'kaliyor', ad: 'Invesco QQQ Trust · çekirdek %50' }, { sira: null, s: 'Kairos', durum: 'bot', ad: 'Binance botu · uydu %50' }]
       : (h.satirlar || []).map(x => ({ ...x, ad: adlar.get(x.s) || '' }));
     const paraAd = birimAd(paraM);
     const uygunHesap = m ? m.hesaplar.find(x => x.para === paraM) : null;
-    let not = id === 'm-837' ? 'Hücum yarısı Binance\'teki botun işidir; bu plana eklenmez.' : '';
+    let not = id === 'm-837' ? 'Kairos yarısı Binance\'teki botun işidir; bu plana eklenmez.' : '';
     if (!ctx.salt && m && m.hesap && m.B !== paraM) not = uygunHesap ? `Bu hisseler ${paraAd}; plan şu an ${m.hesap.ad} (${m.B}) hesabında — eklemek için 1. bölümden ${uygunHesap.ad} hesabını seç.` : `${ctx.pAd(ctx.pid)} portföyünde ${paraAd} hesap yok. Bu hisseleri eklemek için önce Portföy › Hesaplar'da ${paraAd} bir hesap aç.`;
     const satir = (x) => {
       const d = DURUM_AD[x.durum] || [x.durum, ''];

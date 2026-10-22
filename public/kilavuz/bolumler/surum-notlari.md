@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 72.0 — Botların yeni adları: Kairos, Tao, Nova, Lydia, Simurg (2026-10-22) {#s72-0}
+
+- **Yalnız görünen ad değişti:** Hücum → **Kairos**, Denge → **Tao**, QQQ M10 → **Nova**, BIST M10 → **Lydia**, 837 → **Simurg** (küçük hesap kipi Hücum-S → **Kairos-S**). Adresler (`#/botlar/hucum` …), kayıtlar, hesaplar ve ayarlar aynı; eski yer imleri çalışır.
+- **Ad + alt yazı + anlam:** bot sayfalarının başlığında adın yanında kısa alt yazı (ör. **Kairos · BTC trendi + coin sepeti**, **Simurg · %50 QQQ + %50 Kairos**); adın üzerine gelince (telefonda uzun dokununca) anlamı görünür. Beş adın anlamı ve eski adları: [Bot adları](#/kilavuz/botlar/bot-adlari).
+- **Her yerde aynı ad:** yan menü, Ana sayfa, Botlar, Portföy › Modeller, Tasarımcı, İleri test, Sinyaller, Veri, Ayarlar, Sağlık, Raporlar ve Telegram mesajları. Ad botun kimliğinden üretilir; sunucu eski sürümdeyken gönderdiği eski ad ("Hücum") ekranda yeni adla görünür.
+- Araştırma arşivi, ön kayıt belgeleri ve eski sürüm notları tarihsel kayıt olarak eski adlarla kalır; Kitapçık'ın başında geçiş notu var.
+
 ## 71.1 — Sunucu bağlantı dosyası okunamazsa uyarı (2026-10-22) {#s71-1}
 
 - **Geliştirme bilgisayarı, araştırma bandı:** sunucu bağlantı dosyası (`dataev-baglanti.json`) varsa ama okunamıyorsa bant bunu açıkça yazar: **eski sürümün şifreli biçiminde** (69.x; 70.0 şifre çözmüyor) ya da **eksik / bozuk** (adres https değil, jeton kısa). Eskiden panel bu durumda sessizce bu bilgisayardaki eski kopyaya düşüyor, bot grafikleri boş görünüyordu. Çözüm: bağlantıyı yeniden kurun ([Kurulum, adım 23](#/kilavuz/kurulum/adim-23)).

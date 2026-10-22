@@ -30,6 +30,10 @@
   const AG = global.AG;
   const { el, doldur, bul } = AG.dom;
   const T = () => AG.api.tasarimci;
+  /** 72.0: görünen bot/model adı kimlikten (AG.botAd); sunucu metni eski adla gelebilir → cevir. */
+  const cv = s => (AG.botAd ? AG.botAd.cevir(s) : s);
+  const sablonAdi = (id, ad) => (id && AG.botAd && AG.botAd.kimlik(id) ? AG.botAd.tam(id) : null) || cv(ad);
+  const modelAdi = (m) => (m && AG.botAd && AG.botAd.ad(m.id)) || cv(m && m.ad);
 
   // ═══ BİÇİM ══════════════════════════════════════════════════════════════
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
@@ -134,7 +138,7 @@
 
   /** Kurucu → halka dilimleri. düzey 'varlik': M10 kolları bu ayın listesine açılır (kol ağırlığı / 10). ≤ 7 dilim + "Diğer". */
   function dilimler(kr, dz, oneri, kollarTanim) {
-    const ad = (s) => { const t = (kollarTanim || []).find(k => k.strateji === s); return t ? t.ad : s; };
+    const ad = (s) => { const t = (kollarTanim || []).find(k => k.strateji === s); return t ? cv(t.ad) : s; };
     const liste = (mid) => { const m = ((oneri && oneri.modeller) || []).find(x => x.id === mid); return m && m.hedef && m.hedef.length ? m.hedef : null; };
     const top = ((kr && kr.kollar) || []).reduce((a, k) => a + (Number(k.agirlik) > 0 ? Number(k.agirlik) : 0), 0) || 1;
     const l = [];
@@ -177,8 +181,8 @@
   const kv = (ciftler) => el('dl', { class: 'kv-list kv-sik mb-0' }, ciftler.filter(Boolean).flatMap(([a, b, sinif, yk]) => [yk ? el('dt', null, [el('span', { text: a }), yardim(yk)]) : el('dt', { text: a }), el('dd', { class: `${sayisal(b) ? 'sayi ' : ''}${sinif || ''}`.trim() || null, text: b })]));
   const KIYAS_AD = { 'yahoo:QQQ': 'QQQ al-tut', 'strateji:btc-altut': 'BTC al-tut', 'yahoo:XU100.IS': 'XU100 (BIST vekili, USD)', '60/40': '60/40 QQQ/IEF' };
   const kiyasAd = (x) => KIYAS_AD[x] || x;
-  const KOL_AD = { cekirdek: 'QQQ al-tut (çekirdek)', uydu: 'Hücum (uydu)' };
-  const kolAdi = (s) => { if (KOL_AD[s]) return KOL_AD[s]; const t = ((K && K.kollar) || []).find(k => k.strateji === s); return t ? t.ad : s; };
+  const KOL_AD = { cekirdek: 'QQQ al-tut (çekirdek)', uydu: 'Kairos (uydu)' };
+  const kolAdi = (s) => { if (KOL_AD[s]) return KOL_AD[s]; const t = ((K && K.kollar) || []).find(k => k.strateji === s); return t ? cv(t.ad) : s; };
   const stresMetni = (x) => (x && sayiMi(x.getiri) ? `${yz(x.getiri)} (DD ${yz(x.maxDD, 0)})` : 'dönem dışı');
   const kutu = (etiket, deger, alt, sinif, yardimK) => el('div', { class: 'sunken' }, [
     el('div', { class: 'metric-label' }, [el('span', { text: etiket }), yardimK ? yardim(yardimK) : null]),
@@ -205,7 +209,7 @@
     const sk = mm && mm.sonKarar;
     const kat = ((K && K.stratejiler) || []).find(s => s.model === km.id);
     return el('article', { class: 'ts-kart ts-model-kart', 'data-model': km.id }, [
-      el('div', { class: 'ts-kart-ust' }, [el('strong', { class: 'ts-kart-ad', text: km.ad }), rozet(KABUL[kat ? kat.kabul : 'h1'] || KABUL.h1, km.kabul)]),
+      el('div', { class: 'ts-kart-ust' }, [el('strong', { class: 'ts-kart-ad', text: (AG.botAd && AG.botAd.tam(km.id)) || cv(km.ad) }), rozet(KABUL[kat ? kat.kabul : 'h1'] || KABUL.h1, km.kabul)]),
       el('p', { class: 'hint hint-sm mb-2', text: `Kaynak deneme ${km.kaynakDeneme} · ${km.kollar.map(k => `${kolAdi(k.strateji)} %${Math.round(k.agirlik * 100)}`).join(' + ')}` }),
       basladi ? kv([['Endeks (100 taban)', sy(met.son, 2)], ['Başlangıçtan', isaretli(met.toplam), ton(met.toplam)], ['En büyük düşüş', yz(met.maxDD)], ['Son gün', met.bit || '—']])
         : el('p', { class: 'hint mb-2', text: `Henüz başlamadı — ilk uygulama günü ${gunMetni(km.baslangic && km.baslangic.ilkUygulamaGunu)} (karar ${gunMetni(km.baslangic && km.baslangic.ilkKararGunu)}).` }),
@@ -234,8 +238,8 @@
       baslik('Karar takvimi', yardim('kararGunu')),
       !l.length ? el('p', { class: 'hint mb-0', text: 'Takvim alınamadı.' }) : el('ol', { class: 'ts-takvim' }, l.map((a, i) => el('li', { class: `ts-takvim-ay${i === 0 ? ' is-active' : ''}` }, [
         el('strong', { text: ayMetni(a.ay) }),
-        ...a.kararlar.map(x => el('span', { class: 'hint hint-sm mb-0', text: `${x.borsa === 'NYSE' ? 'Nasdaq M10' : 'BIST M10'}: karar ${gunMetni(x.karar)} kapanışı → uygulama ${gunMetni(x.uygulama)} açılışı` })),
-        el('span', { class: 'hint hint-sm mb-0', text: '837: her QQQ işlem günü kapanışında bant denetimi (Hücum %40–%60 dışına çıkarsa tam 50/50)' })
+        ...a.kararlar.map(x => el('span', { class: 'hint hint-sm mb-0', text: `${x.borsa === 'NYSE' ? 'Nova' : 'Lydia'}: karar ${gunMetni(x.karar)} kapanışı → uygulama ${gunMetni(x.uygulama)} açılışı` })),
+        el('span', { class: 'hint hint-sm mb-0', text: 'Simurg: her QQQ işlem günü kapanışında bant denetimi (Kairos %40–%60 dışına çıkarsa tam 50/50)' })
       ]))),
       el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Karar = ayın son işlem günü kapanışı (NYSE / BIST takvimi, tatiller dahil); uygulama = ertesi işlem günü açılışı. Türkiye saatiyle ABD kararı gece, emir ertesi gün 17:30 (1 Kasım 2026 – 14 Mart 2027 kış saati), sonra 16:30 sonra.' })
     ]);
@@ -261,7 +265,7 @@
   function kiyasMetni(kx) {
     if (!kx) return null;
     const p = [kx.gel != null ? `gel ${puan(kx.gel)}` : null, kx.hol != null ? `hol ${puan(kx.hol)}` : null, kx.tum != null ? `tüm ${puan(kx.tum)}` : null, kx.maxDD != null ? `DD ${puan(kx.maxDD)}` : null].filter(Boolean);
-    return `Kıyas — ${kx.ad}: ${p.join(' · ')}`;
+    return `Kıyas — ${cv(kx.ad)}: ${p.join(' · ')}`;
   }
   /** Kıyas adındaki kısaltmanın sözlük anahtarı (XU030, EW BIST30, QQQ, BTC al-tut). */
   const kiyasYardimK = (ad) => (/EW[ -]?BIST/i.test(ad || '') ? 'ewBist30' : /XU030/.test(ad || '') ? 'xu030' : /XU100/.test(ad || '') ? 'xu100' : /QQQ/.test(ad || '') ? 'qqq' : null);
@@ -271,12 +275,12 @@
     const taze = DU && DU.tazelik ? DU.tazelik : null;
     return el('article', { class: `ts-kart${s.kabul === 'red' ? ' ts-kart-red' : ''}`, 'data-strateji': s.id }, [
       el('div', { class: 'ts-kart-ust' }, [
-        el('strong', { class: 'ts-kart-ad', text: s.ad }),
+        el('strong', { class: 'ts-kart-ad', text: (s.model && AG.botAd && AG.botAd.tam(s.model)) || cv(s.ad) }),
         s.tur === 'kiyas' && kiyasYardimK(s.ad) ? yardim(kiyasYardimK(s.ad)) : null,
         rozet(KABUL[s.kabul] || KABUL.olcum),
         ...(s.rozetler || []).map(r => rozet(ROZET[r] || [r, 'pf-rozet-bilgi']))
       ]),
-      el('p', { class: 'ts-aciklama mb-2', text: s.aciklama }),
+      el('p', { class: 'ts-aciklama mb-2', text: cv(s.aciklama) }),
       kv(kunyeSatirlari(s.kunye || {})),
       el('p', { class: 'hint hint-sm mt-2 mb-1', text: s.kunye && s.kunye.donem ? `Dönem: ${s.kunye.donem}` : '' }),
       s.kiyas ? el('p', { class: 'hint hint-sm mb-1' }, [el('span', { text: kiyasMetni(s.kiyas) }), kiyasYardimK(s.kiyas.ad) ? yardim(kiyasYardimK(s.kiyas.ad)) : null]) : null,
@@ -342,19 +346,19 @@
     const et = etiketle(kurucu.kollar, kurucu.dengeleme, K.sablonlar);
     const satirlar = kurucu.kollar.map((kol, i) => {
       const sec = el('select', { class: 'control-sm', 'aria-label': 'Kol stratejisi', onchange: (e) => { kurucu.kollar[i].strateji = e.target.value; kurucuYaz(); kurucuCiz(); } },
-        kollarTanim.map(t => { const o = el('option', { value: t.strateji, text: t.ad }); if (t.strateji === kol.strateji) o.selected = true; return o; }));
+        kollarTanim.map(t => { const o = el('option', { value: t.strateji, text: cv(t.ad) }); if (t.strateji === kol.strateji) o.selected = true; return o; }));
       sec.value = kol.strateji;
       const ag = el('input', { type: 'number', min: '0', max: '100', step: '1', class: 'control-sm pf-sayi-girdi', 'aria-label': 'Ağırlık %', onchange: (e) => { kurucu.kollar[i].agirlik = Number(e.target.value) || 0; kurucuYaz(); kurucuCiz(); } });
       ag.value = String(kol.agirlik);
       const t = kollarTanim.find(x => x.strateji === kol.strateji);
-      return el('tr', null, [el('td', null, [sec]), el('td', null, [ag]), hucre(t ? (t.not ? `${t.ad} — ${t.not}` : t.ad) : '—', 'pf-kucuk', t ? t.labKimlik : null),
+      return el('tr', null, [el('td', null, [sec]), el('td', null, [ag]), hucre(t ? (t.not ? `${cv(t.ad)} — ${cv(t.not)}` : cv(t.ad)) : '—', 'pf-kucuk', t ? t.labKimlik : null),
         el('td', null, [dugme('Çıkar', () => { kurucu.kollar.splice(i, 1); kurucuYaz(); kurucuCiz(); }, 'btn-secondary btn-xs')])]);
     });
     const dSec = el('select', { id: 'tsDengeleme', class: 'control-sm', 'aria-label': 'Dengeleme', onchange: (e) => { kurucu.dengeleme = e.target.value; kurucuYaz(); kurucuCiz(); } },
       SIKLIK.map(([v, t]) => { const o = el('option', { value: v, text: t }); if (v === kurucu.dengeleme) o.selected = true; return o; }));
     dSec.value = kurucu.dengeleme;
     const senaryoVar = kurucu.kollar.some(x => SENARYOLU.has(x.strateji) && Number(x.agirlik) > 0);
-    const sSec = el('select', { id: 'tsSenaryo', class: 'control-sm', 'aria-label': 'Hücum serisi senaryosu', onchange: (e) => { kurucu.senaryo = e.target.value; kurucuYaz(); } },
+    const sSec = el('select', { id: 'tsSenaryo', class: 'control-sm', 'aria-label': 'Kairos serisi senaryosu', onchange: (e) => { kurucu.senaryo = e.target.value; kurucuYaz(); } },
       SENARYO.map(([v, t]) => { const o = el('option', { value: v, text: t }); if (v === (kurucu.senaryo || 'olculen')) o.selected = true; return o; }));
     sSec.value = kurucu.senaryo || 'olculen';
     const yeni = kollarTanim.find(t => !kurucu.kollar.some(x => x.strateji === t.strateji));
@@ -370,16 +374,16 @@
     doldur(k, [
       baslik('Tasarım kurucu', yardim('cekirdekUydu')),
       el('p', { class: 'hint hint-sm mb-2', text: 'Kolları ve ağırlıkları seçin, "Riski dene" ile geçmişte nasıl davranacağını görün; beğendiğiniz birleşimi kaydedip izlemeye alabilirsiniz. Kendi tasarımınız ölçülmemiştir: izlenir ama emir listesi açılmaz. Takip edilen üç model sabitlemeyle donmuştur — kurucu onları değiştirmez.' }),
-      el('div', { class: 'pf-dugmeler mb-3', role: 'group', 'aria-label': 'Şablonlar' }, (K.sablonlar || []).map(s => dugme(s.ad, () => sablonUygula(s.id), `btn-xs ${et.sablon === s.id ? 'btn-primary' : 'btn-secondary'}`, { id: 'tsSablon-' + s.id }))),
+      el('div', { class: 'pf-dugmeler mb-3', role: 'group', 'aria-label': 'Şablonlar' }, (K.sablonlar || []).map(s => dugme(sablonAdi(s.id, s.ad), () => sablonUygula(s.id), `btn-xs ${et.sablon === s.id ? 'btn-primary' : 'btn-secondary'}`, { id: 'tsSablon-' + s.id }))),
       tablo(['Kol', 'Ağırlık %', 'Geçmiş serisi', ''], satirlar, 'tblTsKollar'),
       el('div', { class: 'row-between row-wrap gap-3 mt-2' }, [
         el('div', { class: 'row-inline row-wrap gap-2' }, [yeni ? dugme('Kol ekle', () => kolEkle(yeni.strateji), 'btn-secondary btn-xs', { id: 'btnTsKolEkle' }) : null,
           el('label', { class: 'pf-alan' }, [el('span', null, [el('span', { text: 'Dengeleme' }), yardim('bantDengeleme')]), dSec]),
-          senaryoVar ? el('label', { class: 'pf-alan' }, [el('span', null, [el('span', { text: 'Hücum serisi' }), yardim('hucumSenaryo')]), sSec]) : null]),
+          senaryoVar ? el('label', { class: 'pf-alan' }, [el('span', null, [el('span', { text: 'Kairos serisi' }), yardim('hucumSenaryo')]), sSec]) : null]),
         el('span', { id: 'tsToplam', class: `sayi ${Math.abs(top - 100) < 0.01 ? 'pf-toplam-iyi' : 'pf-toplam-kotu'}`, text: toplamMetni(top, kurucu.kollar) })
       ]),
-      el('p', { id: 'tsEtiket', class: `ts-etiket ${et.kabul ? 'ts-etiket-kabul' : 'ts-etiket-olculmemis'}`, text: et.kabul ? `${et.etiket}: ${et.ad}` : et.etiket }),
-      eski837Mi(kurucu) ? el('p', { id: 'tsEski837', class: 'hint hint-sm tone-warning mb-1', text: '837\'nin ESKİ kuralı (sürüm 1, aylık) — izlenen model sürüm 2\'den beri bant ±10 puan kuralıyla işler. Kabul edilmiş kural için dengelemeyi "Bant ±10 puan (her işlem günü)" seçin.' }) : null,
+      el('p', { id: 'tsEtiket', class: `ts-etiket ${et.kabul ? 'ts-etiket-kabul' : 'ts-etiket-olculmemis'}`, text: et.kabul ? `${et.etiket}: ${sablonAdi(et.sablon, et.ad)}` : et.etiket }),
+      eski837Mi(kurucu) ? el('p', { id: 'tsEski837', class: 'hint hint-sm tone-warning mb-1', text: 'Simurg\'un ESKİ kuralı (sürüm 1, aylık) — izlenen model sürüm 2\'den beri bant ±10 puan kuralıyla işler. Kabul edilmiş kural için dengelemeyi "Bant ±10 puan (her işlem günü)" seçin.' }) : null,
       el('div', { class: 'pf-dugmeler mt-2' }, [
         dugme('Riski dene', (e) => riskDene(e.currentTarget), 'btn-primary btn-sm ts-yazma', { id: 'btnTsRisk' }),
         telefonNotu('Riski dene ve tasarım kaydı yalnız sunucudaki panelden (telefon yalnız izler).')
@@ -535,8 +539,8 @@
   function senaryoTablosu(sen, r) {
     if (!sen || !Object.keys(sen).length) return null;
     return el('div', { class: 'mt-3' }, [
-      el('h4', { class: 'title-sm', text: 'Hücum serisi senaryoları (aynı birleşim)' }),
-      tablo(['Hücum serisi', 'CAGR', 'En büyük düşüş', 'Sharpe'], SENARYO.filter(([k]) => sen[k]).map(([k, ad]) => el('tr', { class: k === (r.senaryo || 'olculen') ? 'is-active' : null }, [
+      el('h4', { class: 'title-sm', text: 'Kairos serisi senaryoları (aynı birleşim)' }),
+      tablo(['Kairos serisi', 'CAGR', 'En büyük düşüş', 'Sharpe'], SENARYO.filter(([k]) => sen[k]).map(([k, ad]) => el('tr', { class: k === (r.senaryo || 'olculen') ? 'is-active' : null }, [
         hucre(`${ad}${k === (r.senaryo || 'olculen') ? ' — grafikteki' : ''}`), hucre(yz(sen[k].cagr), 'sayi'), hucre(yz(sen[k].maxDD), 'sayi'), hucre(sy(sen[k].sharpe, 2), 'sayi')])), 'tblTsSenaryo'),
       el('p', { class: 'hint hint-sm mt-1 mb-0', text: 'Ölçülen seri yüzlerce denemeden seçildiği için iyimserdir; karar vermeden önce kötümser satırın (BTC al-tut) da kabul edilebilir olduğuna bakın.' })
     ]);
@@ -547,7 +551,7 @@
     const ad = (x) => adlar.get(x) || kiyasAd(x);
     const kimlikSade = (m) => m.replace(/\b(?:yahoo|strateji|tefas|tr|nakit):[A-Za-z0-9.^_=-]+/g, (x) => ad(x));
     switch (u.kod) {
-      case 'iyimser-strateji': return { seviye: u.seviye, metin: `Hücum/Denge serisi iyimser: yüzlerce denemeden seçildi ve aynı veride ölçüldü${r && r.senaryo && r.senaryo !== 'olculen' ? ` (şu an: ${senaryoAd(r.senaryo).toLowerCase()})` : ''}. Karar vermeden önce kurucuda "Hücum serisi: BTC al-tut (kötümser)" seçip yeniden deneyin; senaryo tablosu üçünü yan yana gösterir.` };
+      case 'iyimser-strateji': return { seviye: u.seviye, metin: `Kairos/Tao serisi iyimser: yüzlerce denemeden seçildi ve aynı veride ölçüldü${r && r.senaryo && r.senaryo !== 'olculen' ? ` (şu an: ${senaryoAd(r.senaryo).toLowerCase()})` : ''}. Karar vermeden önce kurucuda "Kairos serisi: BTC al-tut (kötümser)" seçip yeniden deneyin; senaryo tablosu üçünü yan yana gösterir.` };
       case 'elle-secim': return { seviye: u.seviye, metin: 'Ağırlıkları siz verdiniz: bu dönemin sonuçlarına bakarak seçtiyseniz sonuç geçmişe uydurulmuş (iyimser) sayılır.' };
       case 'in-sample': return { seviye: u.seviye, metin: 'Ağırlıklar tüm dönemin verisinden hesaplandı (geçmişe bakarak) — sonuç iyimserdir.' };
       default: {
@@ -555,7 +559,7 @@
           .replace(/\s*eksikVeri:[^.]*\./g, ' Daha uzun dönem için kısa geçmişli kolu çıkarabilir ya da uzun geçmişli bir benzeriyle değiştirebilirsiniz.')
           .replace(/\s*\(senaryolar alanı\)/g, '').replace(/\s*Senaryo '[a-z]+'\./g, '').replace(/\s*\(?karsiKip\)?/g, '')
           .replace(/'(olculen|yari|btc)'/g, (x, k) => `"${senaryoAd(k).toLowerCase()}"`).replace(/in-sample/g, 'geçmişe bakarak');
-        return { seviye: u.seviye, metin: m.replace(/\s{2,}/g, ' ').trim() };
+        return { seviye: u.seviye, metin: cv(m.replace(/\s{2,}/g, ' ').trim()) };
       }
     }
   }
@@ -568,7 +572,7 @@
     }
     const s = r.s, o = s.olculer || {};
     const kiyas = (s.kiyaslar || []).filter(x => !x.hata && x.egri);
-    const adlar = new Map((s.varliklar || []).map(v => [v.kimlik, v.ad || v.kimlik]));
+    const adlar = new Map((s.varliklar || []).map(v => [v.kimlik, cv(v.ad) || v.kimlik]));
     const kor = s.korelasyon || {};
     const ciftler = [];
     const ids = kor.kimlikler || [];
@@ -577,8 +581,8 @@
     const bs = s.bootstrap;
     doldur(k, [
       baslik('Risk özeti'),
-      el('p', { class: `ts-etiket ${r.etiket.kabul ? 'ts-etiket-kabul' : 'ts-etiket-olculmemis'}`, text: r.etiket.kabul ? `${r.etiket.etiket}: ${r.etiket.ad} — ölçülmüş künye katalogda; aşağıdaki Laboratuvar simülasyonudur` : r.etiket.etiket }),
-      el('p', { id: 'tsRiskDonem', class: 'ts-donem', text: `Dönem: ${o.bas || '—'} → ${o.bit || '—'} (${sy(o.yilSayisi, 1)} yıl) — tüm kolların verisinin olduğu ortak dönem; geçmişe bakarak sabit ağırlık, ${siklikAd(r.dengeleme || (r.tanim.dengeleme || {}).siklik).toLowerCase()} dengeleme, maliyet %0,05 + hesaplar arası %0,1${r.senaryolu ? `, Hücum serisi: ${senaryoAd(r.senaryo || 'olculen').toLowerCase()}` : ''}. Ölçülmüş künyeyle (PLAN SONUÇ) birebir DEĞİL.` }),
+      el('p', { class: `ts-etiket ${r.etiket.kabul ? 'ts-etiket-kabul' : 'ts-etiket-olculmemis'}`, text: r.etiket.kabul ? `${r.etiket.etiket}: ${sablonAdi(r.etiket.sablon, r.etiket.ad)} — ölçülmüş künye katalogda; aşağıdaki Laboratuvar simülasyonudur` : r.etiket.etiket }),
+      el('p', { id: 'tsRiskDonem', class: 'ts-donem', text: `Dönem: ${o.bas || '—'} → ${o.bit || '—'} (${sy(o.yilSayisi, 1)} yıl) — tüm kolların verisinin olduğu ortak dönem; geçmişe bakarak sabit ağırlık, ${siklikAd(r.dengeleme || (r.tanim.dengeleme || {}).siklik).toLowerCase()} dengeleme, maliyet %0,05 + hesaplar arası %0,1${r.senaryolu ? `, Kairos serisi: ${senaryoAd(r.senaryo || 'olculen').toLowerCase()}` : ''}. Ölçülmüş künyeyle (PLAN SONUÇ) birebir DEĞİL.` }),
       el('div', { class: 'ts-sayilar mb-3' }, [
         kutu('CAGR', yz(o.cagr), null, ton(o.cagr), 'cagr'),
         kutu('En büyük düşüş', yz(o.maxDD), o.maxDDTarih ? `dip ${o.maxDDTarih}` : null, 'tone-danger', 'maxdd'),
@@ -751,7 +755,7 @@
         katlar[m.id] = false; buAyEmirCiz();
         const kap = bul('tsEmirKartlar'), c = kap && kap.querySelector ? kap.querySelector(`[data-model="${m.id}"]`) : null;
         if (c && c.scrollIntoView) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      } }, [el('strong', { class: 'ts-ozet-ad', text: m.ad }), rozet(DURUM_ROZET[m.durum] || [m.durum, 'pf-rozet-bilgi']), el('span', { class: 'ts-ozet-is', text: yapilacak(m) })])
+      } }, [el('strong', { class: 'ts-ozet-ad', text: modelAdi(m) }), rozet(DURUM_ROZET[m.durum] || [m.durum, 'pf-rozet-bilgi']), el('span', { class: 'ts-ozet-is', text: yapilacak(m) })])
     ])));
   }
   /** Kararın ayrıntısı (eski "Bu ayın kararları" kartı; /oneri): doğrulama, üyelik, liste, eksik veri, 837 bant bilgisi. */
@@ -764,7 +768,7 @@
       k && k.dogrulama ? ['Doğrulama', k.dogrulama === 'birebir' ? 'betikle birebir' : k.dogrulama] : null,
       k && k.uyelik ? ['Üyelik', `${k.uyelik.ay} · ${k.uyelik.uyeSay} üye${k.uyelik.bayat ? ' (bayat)' : ''}`, k.uyelik.bayat ? 'tone-warning' : ''] : null,
       k ? ['Model portföy', oM.uygulandi ? 'uygulama günü açılışında sanal olarak uygulandı' : 'uygulama günü açılışında sanal olarak uygulanacak (otomatik)'] : null,
-      ...(m.id === 'm-837' && oM.hedef ? oM.hedef.map(h => [h.kol === 'cekirdek' ? 'Çekirdek: QQQ al-tut' : h.kol === 'uydu' ? 'Uydu: Hücum (demo bot)' : h.kol, yz(h.agirlik, 0)]) : [])
+      ...(m.id === 'm-837' && oM.hedef ? oM.hedef.map(h => [h.kol === 'cekirdek' ? 'Çekirdek: QQQ al-tut' : h.kol === 'uydu' ? 'Uydu: Kairos (demo bot)' : h.kol, yz(h.agirlik, 0)]) : [])
     ];
   }
   function kararAyrinti(m, oM) {
@@ -772,18 +776,18 @@
     const k = oM.karar, m10 = m.id !== 'm-837', son = m10 ? null : dengeleme837(D837);
     return [
       m10 && oM.hedef && oM.hedef.length
-        ? el('div', { class: 'ts-liste mt-2', 'aria-label': `${m.ad} listesi` }, oM.hedef.map(h => el('span', { class: 'ts-hisse', title: `ağırlık ${yz(h.agirlik, 1)}` }, [el('strong', { text: h.s }), el('span', { class: 'sayi', text: ' ' + yz(h.agirlik, 0) })]))) : null,
+        ? el('div', { class: 'ts-liste mt-2', 'aria-label': `${modelAdi(m)} listesi` }, oM.hedef.map(h => el('span', { class: 'ts-hisse', title: `ağırlık ${yz(h.agirlik, 1)}` }, [el('strong', { text: h.s }), el('span', { class: 'sayi', text: ' ' + yz(h.agirlik, 0) })]))) : null,
       k && k.eksikVeri && k.eksikVeri.length ? el('p', { class: 'pf-uyari pf-uyari-uyari mt-2', text: `Eksik veri: ${eksikMetni(k.eksikVeri)} — bu hisseler listeye alınamadı/nakitte.` }) : null,
       k && k.uyelik && k.uyelik.uyari ? el('p', { class: 'pf-uyari pf-uyari-uyari mt-2', text: `Üyelik: ${k.uyelik.uyari}` }) : null,
       !m10 ? el('p', { class: 'hint hint-sm mt-2 mb-0', text: son
-        ? `Bant dengelemesi (±10 puan): son ${gunMetni(son.kararGunu)} — önceki ağırlık QQQ ${yz(son.dengeleme && son.dengeleme.oncekiAgirlik && son.dengeleme.oncekiAgirlik.cekirdek, 1)} / Hücum ${yz(son.dengeleme && son.dengeleme.oncekiAgirlik && son.dengeleme.oncekiAgirlik.uydu, 1)}, aktarılan ${yz(son.dengeleme && son.dengeleme.aktarim, 1)}.`
-        : 'Hücum payı %40–%60 bandının dışına çıkınca (QQQ işlem günü kapanışında denetlenir) tam 50/50\'ye dengelenir; hesaplar arası aktarımın maliyeti %0,1 + kayma %0,05. Henüz dengeleme olmadı.' }) : null
+        ? `Bant dengelemesi (±10 puan): son ${gunMetni(son.kararGunu)} — önceki ağırlık QQQ ${yz(son.dengeleme && son.dengeleme.oncekiAgirlik && son.dengeleme.oncekiAgirlik.cekirdek, 1)} / Kairos ${yz(son.dengeleme && son.dengeleme.oncekiAgirlik && son.dengeleme.oncekiAgirlik.uydu, 1)}, aktarılan ${yz(son.dengeleme && son.dengeleme.aktarim, 1)}.`
+        : 'Kairos payı %40–%60 bandının dışına çıkınca (QQQ işlem günü kapanışında denetlenir) tam 50/50\'ye dengelenir; hesaplar arası aktarımın maliyeti %0,1 + kayma %0,05. Henüz dengeleme olmadı.' }) : null
     ].filter(Boolean);
   }
   /** B-09 (2): sermaye girilmemişse kartın içinde satır içi sermaye kutusu. */
   function sermayeSatiri(m) {
     return el('div', { id: `tsSermayeSatir-${m.id}`, class: 'ts-sermaye-satir ts-yazma mt-2' }, [
-      alan(`${m.ad} için ayıracağınız gerçek tutar (${m.id === 'm-bist-m10' ? '₺' : '$'})`, girdi({ id: `inpTsSermayeTek-${m.id}`, inputmode: 'decimal', placeholder: m.id === 'm-bist-m10' ? 'ör. 300000' : 'ör. 10000' })),
+      alan(`${modelAdi(m)} için ayıracağınız gerçek tutar (${m.id === 'm-bist-m10' ? '₺' : '$'})`, girdi({ id: `inpTsSermayeTek-${m.id}`, inputmode: 'decimal', placeholder: m.id === 'm-bist-m10' ? 'ör. 300000' : 'ör. 10000' })),
       dugme('Sermayeyi kaydet', (e) => sermayeTek(m.id, e.currentTarget), 'btn-primary btn-sm', { id: `btnTsSermayeTek-${m.id}` })
     ]);
   }
@@ -798,12 +802,12 @@
     // 62.4: model sekmesine gömülü "Bu ay" şeridi — başlık ay + durum + yapılacak iş (model adı sekmede zaten yazıyor)
     return el('article', { class: `ts-kart ts-emir-kart${gomulu ? ' ts-emir-gomulu' : ''}${katli ? ' ts-kart-kapali' : ''}`, 'data-model': m.id }, [
       gomulu ? el('div', { class: 'ts-kart-ust' }, [el('strong', { class: 'ts-kart-ad', text: `Bu ay${EM ? ` — ${ayMetni(EM.ay)}` : ''}` }), rozet(d), el('span', { class: 'ts-ozet-is', text: yapilacak(m) })])
-        : el('div', { class: 'ts-kart-ust' }, [el('strong', { class: 'ts-kart-ad', text: m.ad }), rozet(d),
-        el('button', { type: 'button', class: 'btn btn-ghost btn-sm ts-kat-dugme', 'aria-expanded': katli ? 'false' : 'true', 'aria-label': `${m.ad} kartını ${katli ? 'aç' : 'katla'}`, onclick: () => { katlar[m.id] = !katli; buAyEmirCiz(); } }, [el('span', { text: katli ? 'Aç' : 'Katla' })])]),
+        : el('div', { class: 'ts-kart-ust' }, [el('strong', { class: 'ts-kart-ad', text: modelAdi(m) }), rozet(d),
+        el('button', { type: 'button', class: 'btn btn-ghost btn-sm ts-kat-dugme', 'aria-expanded': katli ? 'false' : 'true', 'aria-label': `${modelAdi(m)} kartını ${katli ? 'aç' : 'katla'}`, onclick: () => { katlar[m.id] = !katli; buAyEmirCiz(); } }, [el('span', { text: katli ? 'Aç' : 'Katla' })])]),
       kv([k && k.kararGunu ? ['Karar', `${gunMetni(k.kararGunu)} kapanışı → ${gunMetni(k.uygulamaGunu)} açılışı`] : null,
         m.sermaye ? ['Model sermayesi', m.sermaye.baslangic != null && Math.abs(m.sermaye.tutar - m.sermaye.baslangic) > 0.5 ? `${para(m.sermaye.baslangic, m.sermaye.para, 0)} → hedef tabanı ${para(m.sermaye.tutar, m.sermaye.para, 0)} (endeks ${sy(m.sermaye.endeks, 1)})` : para(m.sermaye.tutar, m.sermaye.para, 0)] : EM && EM.tutarGizli ? null : ['Model sermayesi', 'girilmedi', 'tone-warning'],
         hesaplar.length ? ['Hesap', hesaplar.join(' + ')] : null,
-        k8 ? ['Şimdi', k8.ilk || k8.hucumPay == null ? `QQQ ${para(k8.cekirdekUSD, 'USD', 0)} + Binance ${para(k8.uyduUSD, 'USD', 0)} — Hücum payı ilk yerleşimden sonra hesaplanır` : `QQQ ${para(k8.cekirdekUSD, 'USD', 0)} + Binance ${para(k8.uyduUSD, 'USD', 0)} → Hücum ${yz(k8.hucumPay, 1)}`, k8.disi && !k8.ilk ? 'tone-warning' : ''] : null]),
+        k8 ? ['Şimdi', k8.ilk || k8.hucumPay == null ? `QQQ ${para(k8.cekirdekUSD, 'USD', 0)} + Binance ${para(k8.uyduUSD, 'USD', 0)} — Kairos payı ilk yerleşimden sonra hesaplanır` : `QQQ ${para(k8.cekirdekUSD, 'USD', 0)} + Binance ${para(k8.uyduUSD, 'USD', 0)} → Kairos ${yz(k8.hucumPay, 1)}`, k8.disi && !k8.ilk ? 'tone-warning' : ''] : null]),
       m.durum === 'sermaye-yok' && !(EM && EM.tutarGizli) ? sermayeSatiri(m) : null,
       ...((L && L.uyarilar) || []).filter(u => !(m.durum === 'sermaye-yok' && /Model sermayesi girilmedi/.test(u))).map(u => el('p', { class: 'pf-uyari pf-uyari-uyari mt-2', text: u })),
       ortak ? el('p', { class: 'pf-uyari pf-uyari-uyari mt-2 ts-ortak-engel', text: `Bu modelin satırları uygulanamaz: ${ortak}` }) : null,
@@ -813,7 +817,7 @@
       L && L.esikAlti && L.esikAlti.length ? el('p', { class: 'hint hint-sm mt-1 mb-0', text: `Eşik altı (${para(L.minIslemUSD, 'USD', 0)} altı, işlem yazılmadı): ${L.esikAlti.map(x => `${x.sembol} ${adetMetni(x.adet)}`).join(', ')}` }) : null,
       // 62.3: kararın künyesi ve bilgi notları katlı (kart yalnız "ne yapmalıyım"ı gösterir)
       (() => {
-        const ic = [kv([m.id === 'm-837' ? ['Kural', k8 ? k8.kural : 'bant ±10 puan (Hücum %40–%60), QQQ işlem günü'] : null, ...kararSatirlari(m, oM)]), ...kararAyrinti(m, oM),
+        const ic = [kv([m.id === 'm-837' ? ['Kural', k8 ? cv(k8.kural) : 'bant ±10 puan (Kairos %40–%60), QQQ işlem günü'] : null, ...kararSatirlari(m, oM)]), ...kararAyrinti(m, oM),
           ...((L && L.bilgi) || []).map(u => el('p', { class: 'pf-uyari pf-uyari-bilgi mt-2', text: u }))];
         return el('details', { class: 'hs-kat-mini mt-3 ts-ayrinti', id: `tsAyrinti-${m.id}` }, [el('summary', { text: 'Ayrıntı: kararın künyesi, hedef liste ve notlar' }), ...ic]);
       })(),
@@ -862,7 +866,7 @@
   function sermayePaneli() {
     const a = (EM && EM.ayarlar) || {};
     const sm = Object.fromEntries(((EM && EM.modeller) || []).map(m => [m.id, m.sermaye]));
-    const ad = Object.fromEntries(((EM && EM.modeller) || []).map(m => [m.id, m.ad]));
+    const ad = Object.fromEntries(((EM && EM.modeller) || []).map(m => [m.id, modelAdi(m)]));
     const coklu = ['abd-araci', 'bist-araci', 'binance'].map(t => [t, ((EM && EM.hesaplar) || []).filter(h => h.hesapTuru === t)]).filter(([, l]) => l.length > 1);
     const secim = (t, l) => { const s = el('select', { class: 'form-control control-sm', id: `selTsHesap-${t}` }, l.map(h => el('option', { value: h.id, text: h.ad }))); s.value = (a.hesaplar || {})[t] || l[0].id; return s; };
     return el('div', { class: 'ts-yazma' }, [
@@ -890,9 +894,9 @@
         on && on.success ? dugme('Onayla — Portföyüm hedefi olarak kaydet', (e) => hedefAktar(true, e.currentTarget), 'btn-primary btn-sm', { id: 'btnTsHedefOnay' }) : null
       ]),
       on ? el('div', { id: 'tsHedefOnizleme', class: `ts-onizleme mt-2 ${on.success ? 'ts-onizleme-iyi' : 'ts-onizleme-kotu'}` }, [
-        el('p', { class: 'mb-1', text: on.success ? `Önizleme (${on.duzey === 'varlik' ? 'varlık' : 'sınıf'} düzeyi, bant ±${on.bant} puan) — henüz YAZILMADI. ${on.not || ''}` : `Kaydedilemez: ${on.error || ''}` }),
-        on.cevrim && on.cevrim.length ? el('p', { id: 'tsHedefKur', class: 'hint hint-sm mb-1', text: on.cevrim.map(c => `${c.ad} ${para(c.tutar, 'TRY', 0)} ≈ ${para(c.usd, 'USD', 0)}`).join(' · ') + ` (USD/TRY ${sy(on.usdtry, 2)}${on.kurTarih ? `, ${gunMetni(on.kurTarih)}` : ''})` }) : null,
-        on.satirlar ? el('ul', { class: 'ts-onizleme-liste' }, on.satirlar.map(x => el('li', { class: 'pf-kucuk', text: `${x.ad} %${virgul(x.yuzde.toFixed(2))}` }))) : null
+        el('p', { class: 'mb-1', text: on.success ? `Önizleme (${on.duzey === 'varlik' ? 'varlık' : 'sınıf'} düzeyi, bant ±${on.bant} puan) — henüz YAZILMADI. ${cv(on.not || '')}` : `Kaydedilemez: ${on.error || ''}` }),
+        on.cevrim && on.cevrim.length ? el('p', { id: 'tsHedefKur', class: 'hint hint-sm mb-1', text: on.cevrim.map(c => `${cv(c.ad)} ${para(c.tutar, 'TRY', 0)} ≈ ${para(c.usd, 'USD', 0)}`).join(' · ') + ` (USD/TRY ${sy(on.usdtry, 2)}${on.kurTarih ? `, ${gunMetni(on.kurTarih)}` : ''})` }) : null,
+        on.satirlar ? el('ul', { class: 'ts-onizleme-liste' }, on.satirlar.map(x => el('li', { class: 'pf-kucuk', text: `${cv(x.ad)} %${virgul(x.yuzde.toFixed(2))}` }))) : null
       ]) : null
     ]);
   }

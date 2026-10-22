@@ -18,6 +18,8 @@
   'use strict';
   const AG = global.AG || (global.AG = {});
   const el = (t, p, c) => AG.dom.el(t, p, c);
+  /** 72.0: katalog metni eski bot adıyla gelebilir (sunucu eski sürüm) → yeni ad. */
+  const cv = (s) => (AG.botAd ? AG.botAd.cevir(s) : s);
 
   const DURUM = {
     'GEÇTİ': { sinif: 'badge badge-success', metin: '✅ Geçti', kenar: 'durum-pos' },
@@ -90,7 +92,7 @@
           title: s.key,
           onclick: () => sec && sec(s.key)
         }, [
-          el('span', { class: 'strat-satir-ad', text: s.label }),
+          el('span', { class: 'strat-satir-ad', text: cv(s.label) }),
           el('span', { class: 'strat-satir-alt' }, [
             durumRozeti(s),
             s.pine ? el('span', { class: 'badge tint-primary', text: 'Pine' }) : kaynakRozeti(s, adaylar),
@@ -132,25 +134,25 @@
         el('span', { text: 'İçe aktarılan TradingView betiği. Kurallar betiğin kendisi; motorla bilinen farklar (dolum zamanı, desteklenmeyen yapılar) Pine ekranındaki denetim raporunda. ' }),
         el('button', { type: 'button', class: 'btn btn-secondary btn-sm', text: 'Betiği aç', onclick: () => { if (AG.rota) AG.rota.git('arastirma/pine'); if (AG.pages.pine) AG.pages.pine.ac(s.key); } })
       ]));
-    } else if (s.note) parcalar.push(el('p', { class: 'hint text-base leading-relaxed mb-7', text: s.note }));
+    } else if (s.note) parcalar.push(el('p', { class: 'hint text-base leading-relaxed mb-7', text: cv(s.note) }));
     if (s.archived) {
       parcalar.push(el('p', { class: 'text-warn mb-7', text: 'Arşivde: bot başlatılamaz; backtestte kıyas ölçütü olarak durur.' }));
     }
     for (const a of kayitlar) {
       parcalar.push(el('div', { class: 'mb-7' }, [
-        kayitlar.length > 1 ? el('div', { class: 'label-strong mb-2', text: a.ad }) : null,
+        kayitlar.length > 1 ? el('div', { class: 'label-strong mb-2', text: cv(a.ad) }) : null,
         el('p', { class: 'mono-note mb-5', text: `${a.piyasa} · kaynak: ${a.kaynak}` }),
         el('div', { class: 'grid-2' }, [
           el('div', null, [
             el('div', { class: 'bt-metric-label mb-2', text: 'Kurallar' }),
-            el('ul', { class: 'aday-liste' }, (a.kurallar || []).map(k => el('li', { text: k })))
+            el('ul', { class: 'aday-liste' }, (a.kurallar || []).map(k => el('li', { text: cv(k) })))
           ]),
           el('div', null, [
             el('div', { class: 'bt-metric-label mb-2', text: 'Dikkat' }),
             (a.uyarilar || []).length
-              ? el('ul', { class: 'aday-liste aday-uyari' }, a.uyarilar.map(k => el('li', { text: k })))
+              ? el('ul', { class: 'aday-liste aday-uyari' }, a.uyarilar.map(k => el('li', { text: cv(k) })))
               : el('p', { class: 'tone-muted', text: 'Kayıtlı uyarı yok.' }),
-            a.canli ? el('p', { class: 'hint hint-sm mt-5' }, [el('strong', { text: 'Canlıya geçiş: ' }), el('span', { text: a.canli })]) : null
+            a.canli ? el('p', { class: 'hint hint-sm mt-5' }, [el('strong', { text: 'Canlıya geçiş: ' }), el('span', { text: cv(a.canli) })]) : null
           ])
         ])
       ]));

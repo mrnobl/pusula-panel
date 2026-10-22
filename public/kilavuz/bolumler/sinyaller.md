@@ -6,11 +6,11 @@
 
 | Kural | Bugün ne diyor | Karara uzaklık | Kim uyguluyor |
 |---|---|---|---|
-| **BTC trendi** | yükselişte (BTC tut) / düşüşte (nakitte bekle) | içerideyken kapanışın 100 günlük ortalamaya uzaklığı (ortalamanın altına inerse çıkar); dışarıdayken girmek için eksik koşul | Hücum, Denge |
-| **Coin sepeti trendi** | 15 coinden kaçı trendde (en az bir Donchian penceresi açık) | en yakın iki çıkış (kapanışın pencere stopuna uzaklığı) | Hücum, Denge |
-| **Nasdaq momentum (M10)** | elde tutulan 10 hisse | sıradaki ay sonu kararında çıkacak / girecek hisseler; değişiklik yoksa 10. ile 11. sıranın farkı | Nasdaq M10 |
-| **Dengeleme bandı** | dengede / bant dışında | Hücum payı ve banda kalan puan (%40–60 dışına çıkınca 50/50'ye dönülür) | %50 QQQ + %50 Hücum |
-| **BIST momentum (M10)** — gri | aynı kural, BIST'te | sıradaki kararın **tahmini** (evren karar günü yeniden hesaplanır) | BIST M10 (kâğıt model, canlıya alınmaz) |
+| **BTC trendi** | yükselişte (BTC tut) / düşüşte (nakitte bekle) | içerideyken kapanışın 100 günlük ortalamaya uzaklığı (ortalamanın altına inerse çıkar); dışarıdayken girmek için eksik koşul | Kairos, Tao |
+| **Coin sepeti trendi** | 15 coinden kaçı trendde (en az bir Donchian penceresi açık) | en yakın iki çıkış (kapanışın pencere stopuna uzaklığı) | Kairos, Tao |
+| **Nasdaq momentum (M10)** | elde tutulan 10 hisse | sıradaki ay sonu kararında çıkacak / girecek hisseler; değişiklik yoksa 10. ile 11. sıranın farkı | Nova |
+| **Dengeleme bandı** | dengede / bant dışında | Kairos payı ve banda kalan puan (%40–60 dışına çıkınca 50/50'ye dönülür) | Simurg |
+| **BIST momentum (M10)** — gri | aynı kural, BIST'te | sıradaki kararın **tahmini** (evren karar günü yeniden hesaplanır) | Lydia (kâğıt model, canlıya alınmaz) |
 
 "Karara uzaklık" çubuğu kısaldıkça kural fikir değiştirmeye yaklaşır; %3'ten yakınsa sarı yazılır.
 
@@ -19,7 +19,7 @@ Kripto kuralları botların **kendi kural koduyla** (BTC: 50/100/200 günlük or
 ## Ne zaman kullanılır {#ne-zaman}
 
 - "Bot bugün neden BTC tutuyor, ne olursa satar?" sorusunda.
-- Ay sonu yaklaşırken: M10'da hangi hisse çıkıp hangisi girecek.
+- Ay sonu yaklaşırken: Nova ve Lydia'da hangi hisse çıkıp hangisi girecek.
 - Bir gölge kural (İleri test) bugün uygulanan kuraldan farklı bir şey söylüyorsa görmek için.
 
 ## Ekran {#ekran}
@@ -30,10 +30,10 @@ Kripto kuralları botların **kendi kural koduyla** (BTC: 50/100/200 günlük or
 
 - **Uygulanan kurallar** — yukarıdaki tablo.
 
-![Coin sepeti coin coin ve Nasdaq M10 sınırı (katlı, açılmış)](ekran:sinyaller-ayrinti-1400)
+![Coin sepeti coin coin ve Nova sınırı (katlı, açılmış)](ekran:sinyaller-ayrinti-1400)
 
 - **Coin sepeti — coin coin** (katlı): her coin için açık pencere sayısı (9 üzerinden), en yakın çıkış ve en yakın giriş (kapalı pencerenin kırılım seviyesine uzaklık; eksi = altında). Bir pencerenin kapanması coinin payını 1/9 azaltır, coin bütünüyle satılmaz. Yıllık oynaklık %130'un üstündeyse yeni pencere açılmaz (not sütununda yazar). Liste o ayın 30 günlük ortalama işlem hacmine göre ilk 15 coindir (botun evren kuralı).
-- **Nasdaq M10 — sıralamanın sınırı** (katlı): 8.–13. sıradaki hisseler ve çıkacak / girecek olanlar, 12 aylık getirileriyle. Sıralama geçmiş ay sonu kapanışlarıyla yapıldığından karar gününden önce de kesine yakındır.
+- **Nova — sıralamanın sınırı** (katlı): 8.–13. sıradaki hisseler ve çıkacak / girecek olanlar, 12 aylık getirileriyle. Sıralama geçmiş ay sonu kapanışlarıyla yapıldığından karar gününden önce de kesine yakındır.
 - **Gölge kurallar** — yalnız izlenen, **uygulanmayan** kurallar: Bollinger'li kural, 3 günlük karar, yatay piyasa filtresi. "Bugün ne derdi" ve uygulanan kurala göre farkı (farklıysa sarı). Ayrıntı ve grafikler: [İleri test](#/kilavuz/ileri-test).
 
 ## Uyarılar ve ne yapmalı {#uyarilar}

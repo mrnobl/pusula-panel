@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Bugün bir şey yapmam gerekiyor mu, her şey yolunda mı?" sorusunun cevabı. Yukarıdan aşağıya: en üstte **Yapman gerekenler**; altında geniş **Portföyüm** kartı (Portföy › Pano'nun kısası) ve yanında **Sistem** ışıkları; en altta **Botlar** (Hücum ve Denge yan yana). Grafik yoktur — grafikler [Portföy](#/kilavuz/portfoy) ve [Botlar](#/kilavuz/botlar) sayfalarındadır. Yeni bir sürüm geldiğinde en üstte bir kez ince **"bu sürümde yeni"** şeridi çıkar. **Yeni kurulumda** (kurulum programıyla, henüz kendi verin yokken) üstte kısa bir **"Botlarımızın gerçekleşmiş sonuçları"** kartı da durur — grafikli hâli ve açıklaması [Botlar](#/kilavuz/botlar/bot-performansi) sayfasında.
+"Bugün bir şey yapmam gerekiyor mu, her şey yolunda mı?" sorusunun cevabı. Yukarıdan aşağıya: en üstte **Yapman gerekenler**; altında geniş **Portföyüm** kartı (Portföy › Pano'nun kısası) ve yanında **Sistem** ışıkları; en altta **Botlar** (Kairos ve Tao yan yana). Grafik yoktur — grafikler [Portföy](#/kilavuz/portfoy) ve [Botlar](#/kilavuz/botlar) sayfalarındadır. Yeni bir sürüm geldiğinde en üstte bir kez ince **"bu sürümde yeni"** şeridi çıkar. **Yeni kurulumda** (kurulum programıyla, henüz kendi verin yokken) üstte kısa bir **"Botlarımızın gerçekleşmiş sonuçları"** kartı da durur — grafikli hâli ve açıklaması [Botlar](#/kilavuz/botlar/bot-performansi) sayfasında.
 
 ## Ne zaman kullanılır {#ne-zaman}
 
@@ -25,15 +25,15 @@ Her sayfada olan **üst çubuk**: solda kırıntı ve sayfa adı (ör. "Günlük
 | Bu sürümde yeni | İnce şerit: **Sürüm notlarını oku** · **Kılavuzu aç** · **Tamam, gördüm** (bir daha göstermez); ayrıntı [Sürüm notları](#/kilavuz/surum-notlari) |
 | **Yapman gerekenler** | Yalnız sizin elinizle yapacağınız işler; aynı iş tek satır, gecikme etiketiyle. Satıra tıklayınca ilgili ekran açılır |
 | **Portföyüm** | Portföy hesaplarınızın toplamı (USD), bu ayki getiri (zaman ağırlıklı), ≈ TL. Altta **Pano ›**; hedef bandı dışı varlık varsa "N varlık hedef bandı dışında ›" (Hedefim'i açar); kayıt yoksa **Hesaplar ›** |
-| **Sistem sağlığı** | En üstte **öz denetim** ([Sağlık](#/kilavuz/saglik)): tamamen kapalı ya da güvenli kipteki bot, sonra sarı / kırmızı denetimler (en çok 3); sorun yoksa "19 / 19 denetim tamam". Altında dört ışık: **veri** (güncel / N kaynak güncellenemedi / bayat), **bot hesapları** (okunuyor / okunamıyor / borsaya bağlı hesap yok), **günlük** (son 24 saatte hata yok / N uyarı / N hata — [Günlükler](#/kilavuz/gunluk)), **Pusula sürümü** (kurulu / onay bekliyor / elle bakılmalı). Işığa tıklayınca ilgili sayfa açılır (Sağlık · Veri · Botlar › Hücum › Hesap · Günlükler · Ayarlar › Güncelleme); altta **Sağlık sayfasını aç →** |
-| **Botlar** | Hücum ve Denge yan yana: büyük durum (Çalışıyor / Durdu / Durduruldu — onay bekliyor), hesap türü (kâğıt / Binance demo — canlı hesap değil). Sağ üstte **Ayrıntı ve yönetim: Botlar ›** |
+| **Sistem sağlığı** | En üstte **öz denetim** ([Sağlık](#/kilavuz/saglik)): tamamen kapalı ya da güvenli kipteki bot, sonra sarı / kırmızı denetimler (en çok 3); sorun yoksa "19 / 19 denetim tamam". Altında dört ışık: **veri** (güncel / N kaynak güncellenemedi / bayat), **bot hesapları** (okunuyor / okunamıyor / borsaya bağlı hesap yok), **günlük** (son 24 saatte hata yok / N uyarı / N hata — [Günlükler](#/kilavuz/gunluk)), **Pusula sürümü** (kurulu / onay bekliyor / elle bakılmalı). Işığa tıklayınca ilgili sayfa açılır (Sağlık · Veri · Botlar › Kairos › Hesap · Günlükler · Ayarlar › Güncelleme); altta **Sağlık sayfasını aç →** |
+| **Botlar** | Kairos ve Tao yan yana: büyük durum (Çalışıyor / Durdu / Durduruldu — onay bekliyor), hesap türü (kâğıt / Binance demo — canlı hesap değil). Sağ üstte **Ayrıntı ve yönetim: Botlar ›** |
 | Hesap değeri | Botun hesabındaki toplam (USDT, pozisyonlar dahil) |
 | Başlangıçtan | Botun başladığı günden bu yana getiri; parantezde aynı dönemde BTC al-tut |
 | Son karar | Botun son günlük kararı (üstüne gelince son çalışma zamanı) |
 | Koruma stopu | Borsada bekleyen koruma emirleri ("N pozisyon korunuyor"; kâğıtta gerekmez) |
-| Ne yapmalı | Yalnız bot durduysa ya da onay bekliyorsa: ör. "Botlar › Denge › Başlat" |
+| Ne yapmalı | Yalnız bot durduysa ya da onay bekliyorsa: ör. "Botlar › Tao › Başlat" |
 
-Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ayki emirler, ay sonu listesi) **Yapman gerekenler**'de yazar, ayrıntısı [Portföy](#/kilavuz/portfoy)'de. Modeller satırının altındaki **Portföy botları** bağlantıları (QQQ M10 · BIST M10 · 837) her modelin kâğıt hesabını bot sayfası olarak açar ([Portföy botları](#/kilavuz/portfoy-botlari)).
+Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ayki emirler, ay sonu listesi) **Yapman gerekenler**'de yazar, ayrıntısı [Portföy](#/kilavuz/portfoy)'de. Modeller satırının altındaki **Portföy botları** bağlantıları (Nova · Lydia · Simurg) her modelin kâğıt hesabını bot sayfası olarak açar ([Portföy botları](#/kilavuz/portfoy-botlari)).
 
 > **Not:** Portföy hesaplarındaki tutarlar elle girilir; Binance/OKX borsa bakiyeleri salt okuma anahtarıyla Portföy toplamına kendiliğinden katılır. Model portföyler sanaldır (canlı hesap değil). Bot hesapları (kâğıt/demo) portföy toplamına katılmaz.
 
@@ -45,7 +45,7 @@ Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ay
 - **Model "DUR" verdi:** simülasyonun alarm eşiği aşıldı; [İleri test](#/kilavuz/ileri-test).
 - **N modelin bu ayki emirleri Midas'a girilmedi** (tek satır, en uzun gecikme etiketiyle; 3 günü geçince kırmızı): modelin **Bu ay** kartındaki emirleri ([ayrıntı](#/kilavuz/tasarimci)) aracı kurumda girin, sonra **Uyguladım**.
 - **Ay sonu listesi hazır** (emir beklemiyorsa): yeni karar alındı, uygulama günü gelmedi.
-- **%50 QQQ + %50 Hücum: Hücum payı bant dışında:** QQQ ↔ Binance dengeleme.
+- **Simurg: Kairos payı bant dışında:** QQQ ↔ Binance dengeleme.
 - **Pusula X kurulmayı bekliyor / güncellemeye elle bakılmalı:** [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme).
 - **Portföyüne hesap ve varlıklarını gir (Portföy › Hesaplar) / N varlık hedef bandının dışında (Portföy › Hedefim):** [Portföy](#/kilavuz/portfoy).
 

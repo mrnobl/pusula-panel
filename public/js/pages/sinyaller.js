@@ -18,6 +18,8 @@
   const AG = global.AG;
   const doc = global.document;
   const bul = (id) => (doc ? doc.getElementById(id) : null);
+  /** 72.0: görünen bot adı kimlikten (AG.botAd yoksa yedek ad). */
+  const botAdi = (k, yedek) => (AG && AG.botAd && AG.botAd.ad(k)) || yedek;
 
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
   const yuzde = (x, n = 1) => (sayiMi(x) ? `${x < 0 ? '−' : ''}%${(Math.abs(x) * 100).toLocaleString('tr-TR', { minimumFractionDigits: n, maximumFractionDigits: n })}` : '—');
@@ -34,7 +36,7 @@
 
   /** BTC trendi (O-GC). `b` = /api/sinyaller `btc`. */
   function btcSatiri(b) {
-    const s = { kimlik: 'btc', kural: 'BTC trendi', aciklama: 'kapanış 100 günlük ortalamanın altına inerse nakde geç', kim: ['Hücum', 'Denge'], sonraki: 'her gün 03:00' };
+    const s = { kimlik: 'btc', kural: 'BTC trendi', aciklama: 'kapanış 100 günlük ortalamanın altına inerse nakde geç', kim: [botAdi('hucum', 'Kairos'), botAdi('denge', 'Tao')], sonraki: 'her gün 03:00' };
     if (!b || b.hata || !b.hazir) return { ...s, ne: b && b.hata ? `okunamadı: ${b.hata}` : 'henüz hesaplanmadı', ton: 'notr', uzaklik: '', alt: '', dolu: 0 };
     if (b.icerde) {
       return { ...s, ne: 'yükselişte — BTC tut', ton: 'iyi',
@@ -49,7 +51,7 @@
 
   /** Coin sepeti (Donchian, 15 coin × 9 pencere). `p` = /api/sinyaller `sepet`. */
   function sepetSatiri(p) {
-    const s = { kimlik: 'sepet', kural: 'Coin sepeti trendi', aciklama: `${(p && p.toplam) || 15} coin, her biri 9 ayrı Donchian penceresiyle`, kim: ['Hücum', 'Denge'], sonraki: 'her gün 03:00 · liste ayın 1\'i' };
+    const s = { kimlik: 'sepet', kural: 'Coin sepeti trendi', aciklama: `${(p && p.toplam) || 15} coin, her biri 9 ayrı Donchian penceresiyle`, kim: [botAdi('hucum', 'Kairos'), botAdi('denge', 'Tao')], sonraki: 'her gün 03:00 · liste ayın 1\'i' };
     if (!p || p.hata) return { ...s, ne: p && p.hata ? `okunamadı: ${p.hata}` : 'henüz hesaplanmadı', ton: 'notr', uzaklik: '', alt: '', dolu: 0 };
     const en = p.enYakin || [];
     return { ...s, ne: `${p.trendde} / ${p.toplam} coin trendde`, ton: p.trendde ? 'iyi' : 'uyari',
@@ -78,14 +80,14 @@
 
   /** Dengeleme bandı (m-837). `poz` = model/m-837 pozisyon, `bant` = katalog dengeleme.bantPuan, `hedef` = 0,5. */
   function bantSatiri(poz, bant = 0.10, hedef = 0.5) {
-    const s = { kimlik: 'bant', kural: 'Dengeleme bandı', aciklama: `Hücum payı %${Math.round((hedef - bant) * 100)}–${Math.round((hedef + bant) * 100)} dışına çıkınca 50/50'ye dön`,
-      kim: ['%50 QQQ + %50 Hücum'], sonraki: 'her işlem günü' };
+    const s = { kimlik: 'bant', kural: 'Dengeleme bandı', aciklama: `${botAdi('hucum', 'Kairos')} payı %${Math.round((hedef - bant) * 100)}–${Math.round((hedef + bant) * 100)} dışına çıkınca 50/50'ye dön`,
+      kim: [botAdi('m-837', 'Simurg')], sonraki: 'her işlem günü' };
     const k = poz && poz.kollar;
     const top = k ? (k.cekirdek || 0) + (k.uydu || 0) : 0;
     if (!top) return { ...s, ne: 'henüz pozisyon yok', ton: 'notr', uzaklik: '', alt: '', dolu: 0 };
     const pay = k.uydu / top, kalan = bant - Math.abs(pay - hedef);
     return { ...s, ne: kalan > 0 ? 'dengede' : 'bant dışında — dengelenecek', ton: kalan > 0 ? 'iyi' : 'uyari',
-      uzaklik: `Hücum payı ${yuzde(pay)} · banda ${puan(Math.max(0, kalan))}`, alt: poz.gun ? `model ${gunAdi(poz.gun)}` : '',
+      uzaklik: `${botAdi('hucum', 'Kairos')} payı ${yuzde(pay)} · banda ${puan(Math.max(0, kalan))}`, alt: poz.gun ? `model ${gunAdi(poz.gun)}` : '',
       dolu: doluluk(kalan, bant), yakin: kalan < 0.03 };
   }
 
@@ -138,9 +140,9 @@
     const bant = kd && kd.dengeleme && sayiMi(kd.dengeleme.bantPuan) ? kd.dengeleme.bantPuan : 0.10;
     const satirlar = [
       btcSatiri(si && si.btc), sepetSatiri(si && si.sepet),
-      m10Satiri(hm['m-qqq-m10'], { id: 'm10', ad: 'Nasdaq momentum (M10)', kim: 'Nasdaq M10' }),
+      m10Satiri(hm['m-qqq-m10'], { id: 'm10', ad: 'Nasdaq momentum (M10)', kim: botAdi('m-qqq-m10', 'Nova') }),
       bantSatiri(m837 && m837.pozisyon, bant, kd && kd.dengeleme && sayiMi(kd.dengeleme.hedef) ? kd.dengeleme.hedef : 0.5),
-      m10Satiri(hm['m-bist-m10'], { id: 'bist', ad: 'BIST momentum (M10)', kim: 'BIST M10', gri: true })
+      m10Satiri(hm['m-bist-m10'], { id: 'bist', ad: 'BIST momentum (M10)', kim: botAdi('m-bist-m10', 'Lydia'), gri: true })
     ];
     const gun = si && si.btc && si.btc.gun;
     doldur(kok, [

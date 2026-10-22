@@ -16,6 +16,8 @@
 (function (global) {
   'use strict';
   const AG = global.AG;
+  /** 72.0: aday/kayıt adı eski bot adıyla gelebilir → yeni ad (AG.botAd). */
+  const cv = (t) => (AG && AG.botAd ? AG.botAd.cevir(t) : t);
   const { el, doldur, bul } = AG.dom;
 
   let grafik = null;
@@ -88,10 +90,10 @@
           class: `btn btn-sm ${x.anahtar === a.anahtar ? 'btn-primary' : 'btn-secondary'}`,
           'aria-pressed': x.anahtar === a.anahtar ? 'true' : 'false',
           onclick: () => olcumCiz(kutu, kayitlar, x.anahtar)
-        }, [el('span', { text: x.ad })]))));
+        }, [el('span', { text: cv(x.ad) })]))));
     }
-    parcalar.push(el('div', { class: 'row-between row-wrap gap-5 mb-3' }, [el('strong', { text: a.ad }), rozet(a.durum)]));
-    if (a.ozet) parcalar.push(el('p', { class: 'hint hint-sm mb-5', text: a.ozet }));
+    parcalar.push(el('div', { class: 'row-between row-wrap gap-5 mb-3' }, [el('strong', { text: cv(a.ad) }), rozet(a.durum)]));
+    if (a.ozet) parcalar.push(el('p', { class: 'hint hint-sm mb-5', text: cv(a.ozet) }));
     const satirlar = kayitSatirlari(a);
     if (satirlar.length) {
       parcalar.push(el('div', { class: 'bt-metric-label mb-2', text: 'Kayıtlı ölçüm' }));

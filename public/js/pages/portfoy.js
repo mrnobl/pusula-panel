@@ -564,7 +564,7 @@
       return el('tr', null, [
         el('td', null, [dugme(var_ ? '✓' : 'Ekle', (ev) => { varlikEkle(v); ev.currentTarget.disabled = true; }, 'btn-primary btn-xs', var_ ? { disabled: 'disabled', title: 'Kurucuda' } : { 'aria-label': `${v.kimlik} ekle` })]),
         el('td', { class: 'pf-sola', title: v.not || null }, [
-          el('div', { class: 'fw-semibold', text: v.ad || v.kimlik }),
+          el('div', { class: 'fw-semibold', text: cvAd(v.ad) || v.kimlik }),
           el('div', { class: 'pf-kucuk', text: v.kimlik }),
           rozetler(v)
         ]),
@@ -706,7 +706,7 @@
       oninput: (ev) => { v[alanAd] = ev.target.value === '' ? '' : Number(ev.target.value); taslakKaydet(); denetimCiz(); }
     }, alanAd === 'agirlik' && !elle ? '' : v[alanAd]);
     const satirlar = D.varliklar.map((v, i) => el('tr', null, [
-      el('td', { class: 'pf-sola' }, [el('div', { class: 'fw-semibold', text: v.ad || v.kimlik }), el('div', { class: 'pf-kucuk', text: v.kimlik })]),
+      el('td', { class: 'pf-sola' }, [el('div', { class: 'fw-semibold', text: cvAd(v.ad) || v.kimlik }), el('div', { class: 'pf-kucuk', text: v.kimlik })]),
       el('td', null, [secici({ class: 'form-control control-sm w-auto', 'aria-label': `${v.kimlik} hesap`, onchange: (ev) => { v.hesap = ev.target.value; taslakKaydet(); } },
         Object.entries(HESAP_AD), v.hesap || 'yok')]),
       el('td', null, [yuzdeGirdi(v, 'agirlik', 'ağırlık %')]),
@@ -1089,7 +1089,7 @@
     const son = (s.sonHedef && s.sonHedef.w) || s.gecmisAgirlik || null;
     const rk = s.riskKatkisi || {};
     const satirlar = (s.varliklar || []).map(v => el('tr', null, [
-      el('td', { class: 'pf-sola' }, [el('div', { text: v.ad || v.kimlik }), el('div', { class: 'pf-kucuk', text: `${v.kimlik}${v.seri && v.seri !== v.kimlik ? ` (seri: ${v.seri})` : ''}${v.senaryo ? ` · senaryo ${v.senaryo}` : ''}` })]),
+      el('td', { class: 'pf-sola' }, [el('div', { text: cvAd(v.ad) || v.kimlik }), el('div', { class: 'pf-kucuk', text: `${v.kimlik}${v.seri && v.seri !== v.kimlik ? ` (seri: ${v.seri})` : ''}${v.senaryo ? ` · senaryo ${v.senaryo}` : ''}` })]),
       hucre(HESAP_AD[v.hesap] || v.hesap),
       hucre(son ? yz(son[v.kimlik] || 0) : '—'),
       hucre(yz((s.ortAgirlik || {})[v.kimlik] || 0)),
@@ -1323,7 +1323,7 @@
     const gecerli = (s.satirlar || []).filter(x => !x.hata);
     let sira = 0;
     const satirlar = (s.satirlar || []).map(x => {
-      if (x.hata) return el('tr', null, [hucre('—'), el('td', { class: 'pf-sola' }, [el('div', { text: x.ad || x.kimlik }), el('div', { class: 'pf-kucuk', text: x.kimlik })]), el('td', { class: 'tone-danger pf-sola', colspan: '9', text: `koşulamadı: ${x.hata}` })]);
+      if (x.hata) return el('tr', null, [hucre('—'), el('td', { class: 'pf-sola' }, [el('div', { text: cvAd(x.ad) || x.kimlik }), el('div', { class: 'pf-kucuk', text: x.kimlik })]), el('td', { class: 'tone-danger pf-sola', colspan: '9', text: `koşulamadı: ${x.hata}` })]);
       sira++;
       const o = x.olculer || {}, f = x.fark || {};
       const tr = el('tr', {
@@ -1332,7 +1332,7 @@
         onclick: x.mevcut ? null : () => varyasyonuYukle(s.degistir, x)
       }, [
         hucre(String(sira)),
-        el('td', { class: 'pf-sola' }, [el('div', { text: `${x.ad || x.kimlik}${x.mevcut ? ' (mevcut)' : ''}` }), el('div', { class: 'pf-kucuk', text: x.kimlik })]),
+        el('td', { class: 'pf-sola' }, [el('div', { text: `${cvAd(x.ad) || x.kimlik}${x.mevcut ? ' (mevcut)' : ''}` }), el('div', { class: 'pf-kucuk', text: x.kimlik })]),
         hucre(yz(o.cagr), ton(o.cagr)), hucre(yz(o.maxDD)), hucre(sy(o.sharpe)),
         hucre(x.mevcut ? '—' : (sayiMi(f.sharpe) ? `${f.sharpe > 0 ? '+' : ''}${sy(f.sharpe)}` : '—'), x.mevcut ? '' : ton(f.sharpe)),
         hucre(x.mevcut ? '—' : (sayiMi(x.pMevcuttanIyi) ? yz(x.pMevcuttanIyi, 0) : '—'), sayiMi(x.pMevcuttanIyi) && x.pMevcuttanIyi >= 0.9 ? 'tone-success' : 'tone-muted'),
@@ -1527,8 +1527,11 @@
    *  Gezinme yan menüden (adres #/portfoy/<alt>); üst sekme şeridi ve özet şeridi gizli (toplam yalnız Pano'da — §3).
    *  Pano / Varlıklar / Hedefim / Takvim: js/pages/pano.js. Eski "Portföyüm" sayfası (#pfBolum-portfoyum) gizli kalır — portfoyum.js
    *  Hesaplar'ı aynı veriden kurar; eski adres #/portfoy/portfoyum → Pano. */
+  /** 72.0: model sekme adı kimlikten (AG.botAd yüklenmemişse yedek). */
+  const cvAd = (s) => (AG.botAd ? AG.botAd.cevir(s) : s);
+  const botTam = (k, yedek) => (AG.botAd && AG.botAd.tam(k)) || yedek;
   const UST = [['pano', 'Pano'], ['hesaplar', 'Hesaplar'], ['varliklar', 'Varlıklar'], ['islem-defteri', 'İşlem defteri'], ['hedefim', 'Hedefim'],
-    ['nasdaq', 'Nasdaq Momentum 10'], ['bist', 'BIST Momentum 10'], ['q837', '%50 QQQ + %50 Hücum'], ['takvim', 'Takvim ve akış'], ['rapor', 'Rapor']];
+    ['nasdaq', botTam('m-qqq-m10', 'Nova · Nasdaq Momentum 10')], ['bist', botTam('m-bist-m10', 'Lydia · BIST Momentum 10')], ['q837', botTam('m-837', 'Simurg · %50 QQQ + %50 Kairos')], ['takvim', 'Takvim ve akış'], ['rapor', 'Rapor']];
   const PANO_SAYFA = new Set(['pano', 'varliklar', 'hedefim', 'takvim']);
   const MODEL_SEKME = { nasdaq: 'm-qqq-m10', bist: 'm-bist-m10', q837: 'm-837' };
   const modelMi = (ad) => ad in MODEL_SEKME;

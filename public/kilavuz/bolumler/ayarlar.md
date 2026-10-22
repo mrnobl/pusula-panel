@@ -77,8 +77,8 @@ Kurulmadan önce sunucu imzasız kodu da kurar; Sağlık bunu sarı gösterir. N
 
 Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bugünkü kararını** eski ve yeni kodla, **emir göndermeden** hesaplayıp karşılaştırır (1–3 dakika). Pusula bu sırada eski sürümle çalışmaya devam eder.
 
-- **Kâğıt hesaptaki bot (Denge):** botun kayıtlarının kopyası ve borsanın açık piyasa verisiyle tam karar: trend rejimi, BTC hedefi ve yönü, kol evreni, risk kademesi, mutabakat.
-- **Demo hesaptaki bot (Hücum):** demo hesaba bağlanılmaz (demo kabul); yalnız yeni kodun botun kayıtlarını sorunsuz açtığı denetlenir.
+- **Kâğıt hesaptaki bot (Tao):** botun kayıtlarının kopyası ve borsanın açık piyasa verisiyle tam karar: trend rejimi, BTC hedefi ve yönü, kol evreni, risk kademesi, mutabakat.
+- **Demo hesaptaki bot (Kairos):** demo hesaba bağlanılmaz (demo kabul); yalnız yeni kodun botun kayıtlarını sorunsuz açtığı denetlenir.
 - **Karar aynı** → kurulum sürer.
 - **Yeni kod hata verdi** → **kurulmaz**; kod eski sürüme döndürülür, Pusula yeniden başlamaz, Telegram'a haber gider.
 - **Karar farklı** → **kurulmaz**; Durum satırı farkı ve kutu eski → yeni değerleri gösterir. Fark bekleniyorsa (ör. bir hata düzeltmesi — 69.0'daki "fiyat yok" düzeltmesi böyle görünürdü) **Farkı gördüm, yine de kur**; beklenmiyorsa kurmayın ve geliştirme sohbetine haber verin.
@@ -109,17 +109,17 @@ Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "ince
 
 ![Sağlık sinyali (adresler görüntüde gizli)](ekran:ayarlar-saglik-1400)
 
-1. healthchecks.io'da ücretsiz hesap açın ve kontrolleri oluşturun: **"Pusula Hücum"** (Period 1 gün, Grace 3 saat), **"Pusula Denge"** (aynı ayar — Denge çalışıyorsa) ve **"Pusula sunucu"** (Period 1 saat, Grace 1 saat). Ücretsiz plan bunlara yeter.
-2. Ping adreslerini **Hücum ping URL'si**, **Denge ping URL'si** ve **Sunucu kalp atışı URL'si** alanlarına yazın, kaydedin, **Test sinyali gönder**. Test her adresi ayrı dener ve satır satır yazar (Hücum · Denge · Sunucu kalp atışı).
+1. healthchecks.io'da ücretsiz hesap açın ve kontrolleri oluşturun: **"Pusula Kairos"** (Period 1 gün, Grace 3 saat), **"Pusula Tao"** (aynı ayar — Tao çalışıyorsa) ve **"Pusula sunucu"** (Period 1 saat, Grace 1 saat). Ücretsiz plan bunlara yeter.
+2. Ping adreslerini **Kairos ping URL'si**, **Tao ping URL'si** ve **Sunucu kalp atışı URL'si** alanlarına yazın, kaydedin, **Test sinyali gönder**. Test her adresi ayrı dener ve satır satır yazar (Kairos · Tao · Sunucu kalp atışı).
 3. healthchecks.io'da kontrollerin hepsi "up" olmalı. Bir bot günlük çalışmasını yapmazsa ya da bilgisayar kapanırsa healthchecks size haber verir — Telegram'ın yetişemediği durumlar için "ölü adam anahtarı".
 
 Formun altındaki durum satırı her botu ayrı gösterir: adres kayıtlı mı ve **son ping** ne zaman gitti (gönderildi / GÖNDERİLEMEDİ), ayrıca sunucu kalp atışı.
 
-**Her bot kendi check'ine (68.8):** 68.8'e kadar Hücum ve Denge **aynı** adrese sinyal gönderiyordu; biri durduğunda öbürünün başarılı sinyali check'i "up" tuttuğu için durma fark edilmiyordu. Artık Hücum eski alanı (**Hücum ping URL'si**) kullanır, Denge **kendi** adresini. **Denge'nin adresi boşsa Denge hiç sinyal göndermez** — Hücum'un check'ine de göndermez; yani Denge'yi izlemek için healthchecks.io'da **ikinci bir ücretsiz check** açıp adresini girmeniz gerekir. Aynı adres iki alana yazılamaz (panel ve sunucu reddeder): her bot ve sunucu kalp atışı ayrı check olmalı — sunucu açık ama bir bot durmuşsa yalnız o botun kontrolü düşer.
+**Her bot kendi check'ine (68.8):** 68.8'e kadar Kairos ve Tao **aynı** adrese sinyal gönderiyordu; biri durduğunda öbürünün başarılı sinyali check'i "up" tuttuğu için durma fark edilmiyordu. Artık Kairos eski alanı (**Kairos ping URL'si**) kullanır, Tao **kendi** adresini. **Tao'nun adresi boşsa Tao hiç sinyal göndermez** — Kairos'un check'ine de göndermez; yani Tao'yu izlemek için healthchecks.io'da **ikinci bir ücretsiz check** açıp adresini girmeniz gerekir. Aynı adres iki alana yazılamaz (panel ve sunucu reddeder): her bot ve sunucu kalp atışı ayrı check olmalı — sunucu açık ama bir bot durmuşsa yalnız o botun kontrolü düşer.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 
-- Bot token ve healthchecks adresleri (Denge'ninki dahil) **sırdır**: `data/secrets.json`'a yazılır, panelde gösterilmez, `config.json` / `ayarlar.json`'a girmez.
+- Bot token ve healthchecks adresleri (Tao'nunki dahil) **sırdır**: `data/secrets.json`'a yazılır, panelde gösterilmez, `config.json` / `ayarlar.json`'a girmez.
 - **Chat id** gizli bilgi sayılmaz: `config.json`'da durur, ama panelde **maskeli** gösterilir.
 - **Canlı hesap izni** (`canliIzin`) ve canlı / Kalkan emir-sermaye tavanları (`canli`, `kalkan`) bu ekrandan ya da panelin herhangi bir kaydından **değiştirilemez**: sunucu bu alanları her kayıtta yok sayar. Yalnız sunucuda ayar dosyası elle düzenlenerek açılır: veri klasöründeki `ayarlar.json` (68.0 öncesinden kalan, henüz ayar kaydı yapılmamış kurulumda kökteki `config.json`); değişiklik Pusula yeniden başlayınca geçerli olur (bkz. [Bot hesabı](#/kilavuz/hesaplar/anahtar)).
 - **Araştırma kopyasında** (bot sunucudayken bu bilgisayarda) bu ekrandaki **bütün kayıtlar kilitlidir** (Araştırma'daki piyasa verisi ve izleme listesi de): Telegram "Ayarları kaydet" ve test, sağlık sinyali kaydet/kaldır/test; sunucu da reddeder. Telegram bu bilgisayarda bilinçli kapalıdır ve bu kapalılık `config.json`'a asla yazılmaz — sunucudaki ayar korunur.

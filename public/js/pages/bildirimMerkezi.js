@@ -10,6 +10,8 @@
   const AG = global.AG;
   const doc = global.document;
   const el = (...a) => AG.dom.el(...a);
+  /** 72.0: katalog metni eski bot adıyla gelebilir (sunucu eski sürüm) → yeni ad. */
+  const cv = (t) => (AG.botAd ? AG.botAd.cevir(t) : t);
   const doldur = (...a) => AG.dom.doldur(...a);
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
 
@@ -65,11 +67,11 @@
     const tg = veri.telegram || {};
     const salt = telefon();
     const satir = (t) => {
-      const kutu = el('input', { type: 'checkbox', id: `chkBildirim-${t.id}`, class: 'bm-kutu', 'aria-label': `${t.ad} ${t.acik ? 'açık' : 'kapalı'}`,
+      const kutu = el('input', { type: 'checkbox', id: `chkBildirim-${t.id}`, class: 'bm-kutu', 'aria-label': `${cv(t.ad)} ${t.acik ? 'açık' : 'kapalı'}`,
         disabled: t.kilitli || salt ? '' : null, onchange: (e) => degistir(t.id, e.target.checked, e.target) });
       kutu.checked = !!t.acik;
       return el('div', { class: `bm-satir${t.acik ? '' : ' bm-kapali'}`, 'data-tur': t.id }, [
-        el('div', { class: 'bm-ad' }, [el('strong', { text: t.ad }), el('span', { class: 'df-soluk', text: t.kilitli ? `${t.aciklama} — kapatılamaz` : t.aciklama })]),
+        el('div', { class: 'bm-ad' }, [el('strong', { text: cv(t.ad) }), el('span', { class: 'df-soluk', text: t.kilitli ? `${cv(t.aciklama)} — kapatılamaz` : cv(t.aciklama) })]),
         el('span', null, [el('span', { class: `p-rozet p-rozet-${ONEM_TON[t.onem] || 'info'}`, text: ONEM_AD[t.onem] || t.onem })]),
         el('span', { class: 'df-soluk bm-son', text: ne(t.sonGonderim) }),
         el('label', { class: 'bm-ac', for: `chkBildirim-${t.id}` }, [kutu]),
@@ -93,7 +95,7 @@
           (veri.gecmis || []).length ? el('ul', { class: 'bm-liste' }, veri.gecmis.slice(0, 20).map(g => {
             const t = (veri.katalog || []).find(x => x.id === g.tur);
             return el('li', { class: `bm-oge${g.sonuc === 'hata' ? ' bm-oge-hata' : g.sonuc === 'kapali' ? ' bm-oge-kapali' : ''}` }, [
-              el('span', { class: 'df-soluk bm-oge-ust', text: `${ne(g.zaman)} · ${t ? t.ad : g.tur} · ${SONUC_AD[g.sonuc] || g.sonuc}` }),
+              el('span', { class: 'df-soluk bm-oge-ust', text: `${ne(g.zaman)} · ${t ? cv(t.ad) : g.tur} · ${SONUC_AD[g.sonuc] || g.sonuc}` }),
               el('span', { text: g.baslik || '—' }),
               g.hata ? el('span', { class: 'df-soluk', text: g.hata }) : null,
             ]);

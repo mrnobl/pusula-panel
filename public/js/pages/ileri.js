@@ -118,13 +118,13 @@
    * üzerine kurulu. Ayrı simülasyonu yok — eşik Hücum simülasyonuna uygulanır. `hs` = /api/ileri/kabul hucumDenge.hucumS.
    */
   function hucumSSatiri(hs, hucum) {
-    const etiket = '1000 $’lık Hücum alarm eşiği';
+    const etiket = '1000 $’lık Kairos alarm eşiği';
     if (!hs || !Array.isArray(hs.bantlar) || !hs.bantlar.length) return { etiket, deger: '—', alt: 'eşik bilgisi alınamadı', yardim: 'p95p99' };
     const ufuk = hucum && hucum.ufuk;
     const b = hs.bantlar.find(x => x.ufuk === ufuk) || hs.bantlar[0];
     const asim = hucum && sayiMi(hucum.maxdd) ? (hucum.maxdd > b.p99 ? 'tone-danger' : hucum.maxdd > b.p95 ? 'tone-warning' : '') : '';
     return { etiket, yardim: 'p95p99', deger: yuzde(b.p99), ton: asim,
-      alt: `${hs.bantlar.map(x => `${x.ufuk} g ${yuzde(x.p99)}`).join(' / ')} · ayrı simülasyonu yok, Hücum simülasyonuna uygulanıyor` };
+      alt: `${hs.bantlar.map(x => `${x.ufuk} g ${yuzde(x.p99)}`).join(' / ')} · ayrı simülasyonu yok, Kairos simülasyonuna uygulanıyor` };
   }
 
   /** Hücum / Denge simülasyonu (model izleme). `k` = /api/ileri/kabul yanıtı (kontrol noktaları). */
@@ -133,7 +133,7 @@
     const m = g && g.model;
     const kontrol = (k && k.hucumDenge && k.hucumDenge.kontrol) || [];
     const kutu = (ad, x) => {
-      const etiket = `${ad === 'hucum' ? 'Hücum' : 'Denge'} simülasyonu en derin düşüş`;
+      const etiket = `${ad === 'hucum' ? 'Kairos' : 'Tao'} simülasyonu en derin düşüş`;
       if (!x) return { etiket, deger: '—', alt: 'ilk ileri gün 2026-10-07', yardim: 'golgeMaxdd' };
       return {
         etiket, yardim: 'golgeMaxdd',
@@ -150,9 +150,9 @@
     const hs = hucumSSatiri(k && k.hucumDenge && k.hucumDenge.hucumS, m && m.hucum);
     const hx = m && m.hucum, dx = m && m.denge;
     const ozet = !m ? 'Simülasyon kaydı bekleniyor.'
-      : `Hücum simülasyonunun en derin düşüşü ${yuzde(hx && hx.maxdd)} (alarm eşiği ${yuzde(hx && hx.p99)})${dx ? `, Denge ${yuzde(dx.maxdd)} (alarm ${yuzde(dx.p99)})` : ''} — ${enKotu === 'normal' ? 'eşiğin altında' : enKotu === 'uyari' ? 'uyarı eşiği aşıldı' : 'alarm eşiği aşıldı'}. Sıradaki kontrol ${sonraki ? tarihAdi(sonraki.tarih) : '—'}.`;
+      : `Kairos simülasyonunun en derin düşüşü ${yuzde(hx && hx.maxdd)} (alarm eşiği ${yuzde(hx && hx.p99)})${dx ? `, Tao ${yuzde(dx.maxdd)} (alarm ${yuzde(dx.p99)})` : ''} — ${enKotu === 'normal' ? 'eşiğin altında' : enKotu === 'uyari' ? 'uyarı eşiği aşıldı' : 'alarm eşiği aşıldı'}. Sıradaki kontrol ${sonraki ? tarihAdi(sonraki.tarih) : '—'}.`;
     return {
-      baslik: 'Hücum / Denge simülasyonu',
+      baslik: 'Kairos / Tao simülasyonu',
       ozet,
       durum: !m ? { metin: 'Simülasyon kaydı bekleniyor', ton: 'uyari' }
         : enKotu === 'DUR' ? { metin: 'Alarm eşiği aşıldı', ton: 'tehlike' }
@@ -169,7 +169,7 @@
       ],
       hukumTarihi: son ? son.tarih : '—',
       hukumAlt: kontrol.length ? `kontrol noktaları ${kontrol.map(n => `${n.gun} g (${n.tarih})`).join(' · ')}; 365. günde BTC al-tut kıyası raporlanır` : '',
-      not: 'Simülasyon = araştırma modelinin aynı günlerdeki "olması gereken" sonucu (emir yok). Eşikler önceden kayda geçirildi; uyarı eşiği aşımı neden analizi ister, alarm eşiği aşımı modeli geçersiz sayar — kural DEĞİŞMEZ.'
+      not: 'Kairos / Tao (eski adları Hücum / Denge) simülasyonu = araştırma modelinin aynı günlerdeki "olması gereken" sonucu (emir yok). Eşikler önceden kayda geçirildi; uyarı eşiği aşımı neden analizi ister, alarm eşiği aşımı modeli geçersiz sayar — kural DEĞİŞMEZ.'
     };
   }
 
@@ -195,7 +195,8 @@
     return x.toLocaleString('tr-TR');
   };
   /** Sunucu notundaki iç adlar sade dile (plan dosya adı, ön koşul kodları). */
-  const sadeNot = (s) => String(s || '').replace(/PLAN-ILERI A: DUR/g, 'simülasyonda DUR').replace(/PLAN-ILERI C1/g, 'ön koşul: 30 gün kesintisiz')
+  const cv = s => (AG.botAd ? AG.botAd.cevir(s) : s);
+  const sadeNot = (s) => cv(String(s || '')).replace(/PLAN-ILERI A: DUR/g, 'simülasyonda DUR').replace(/PLAN-ILERI C1/g, 'ön koşul: 30 gün kesintisiz')
     .replace(/PLAN-ILERI C2/g, 'ön koşul: acil durdurma ve mutabakat denemesi').replace(/PLAN-ILERI C3/g, 'ön koşul: sermaye belgesi onayı')
     .replace(/PLAN-ILERI C4/g, 'ön koşul: simülasyonda DUR yok').replace(/PLAN-[A-Z0-9-]+(\.md)?/g, 'ön kayıt').replace(/felaket stopu/g, 'koruma stopu');
 
@@ -269,13 +270,13 @@
     const bantMetni = { normal: 'normal', incele: 'incelenmeli', engel: 'sınır aşıldı' };
     // Denetim A-14: protokol başlamadıysa nedeni ve yapılacak iş (63.1: güncel yol — Eylemler menüsü 62.6'da kalktı).
     const basBekliyor = !d.veriVar && !c.calisiyor;
-    const ozet = basBekliyor ? 'Protokol başlamadı: Hücum demo botu durmuş. Başlatmak için sunucuda Botlar › Hücum › Yönetim\'de hesap türü demo, sonra Genel görünümünde Başlat gerekiyor. İlk günlük çalışma Gün 0 olur; karar Gün 63.'
+    const ozet = basBekliyor ? 'Protokol başlamadı: Kairos demo botu durmuş. Başlatmak için sunucuda Botlar › Kairos › Yönetim\'de hesap türü demo, sonra Genel görünümünde Başlat gerekiyor. İlk günlük çalışma Gün 0 olur; karar Gün 63.'
       : !d.veriVar ? 'Bot çalışıyor; ilk günlük çalışma kaydı (Gün 0) bekleniyor.'
         : `${d.gecenGun}. gün / 63${sayiMi(u.sonFark) ? `, simülasyondan sapma ${yuzde(u.sonFark, 2)}` : ''}. Karar ${faz2 && faz2.tarih ? tarihAdi(faz2.tarih) : 'Gün 0 + 63 gün'}.`;
     return {
-      baslik: 'Demo kabul — Hücum demo hesabı',
+      baslik: 'Demo kabul — Kairos demo hesabı',
       ozet,
-      eylem: basBekliyor ? { metin: 'Hücum › Genel (Başlat)', href: '#/botlar/hucum/genel' } : null,
+      eylem: basBekliyor ? { metin: 'Kairos › Genel (Başlat)', href: '#/botlar/hucum/genel' } : null,
       durum: basBekliyor ? { metin: 'Protokol başlamadı — bot durmuş', ton: 'uyari' } : !d.veriVar ? { metin: 'Gün 0 bekleniyor', ton: 'uyari' } : u.engel ? { metin: 'Bot durduruldu — onay bekliyor', ton: 'tehlike' } : { metin: 'Ölçüm sürüyor', ton: '' },
       ana: [0, 1],
       sayilar: [
@@ -376,14 +377,14 @@
     const kalan = Math.round((Date.parse(`${rapor}T00:00:00Z`) - Date.parse(`${gun}T00:00:00Z`)) / 864e5);
     const ilkKur = (t.kuruluslar || [])[0] || '2026-11-01';
     const kurAdi = (t.kuruluslar || ['2026-11-01', '2026-12-01']).map(tarihAdi).join(' ve ');
-    const ozet = `Geçmiş testte yalnız en derin düşüş sınırını aştığı için elenen TVL long/short kuralı (876), emirsiz gölge olarak Hücum'la birlikte izlenir: Hücum %90 + 876 %10. Kuruluşlar ${kurAdi}; rapor ${tarihAdi(rapor)}. Para yok, emir yok. İki ay istatistiksel kanıt değildir.`;
-    const ortak = { baslik: '876 gölge — Hücum %90 + TVL L/S %10', ozet, hukumTarihi: rapor, hukumEtiket: 'Rapor günü',
+    const ozet = `Geçmiş testte yalnız en derin düşüş sınırını aştığı için elenen TVL long/short kuralı (876), emirsiz gölge olarak Kairos'la birlikte izlenir: Kairos %90 + 876 %10. Kuruluşlar ${kurAdi}; rapor ${tarihAdi(rapor)}. Para yok, emir yok. İki ay istatistiksel kanıt değildir.`;
+    const ortak = { baslik: '876 gölge — Kairos %90 + TVL L/S %10', ozet, hukumTarihi: rapor, hukumEtiket: 'Rapor günü',
       hukumAlt: [kalan > 0 ? kalanMetin(kalan) : '', `kuruluşlar ${kurAdi}`].filter(Boolean).join(' · ') };
     if (!o) {
       return { ...ortak, durum: { metin: 'İzleyici henüz çalışmadı', ton: 'uyari' }, ana: [0, 1, 2], sayilar: [
         { etiket: 'Bu ayın sepeti', deger: '—', alt: `ilk kuruluş ${tarihAdi(ilkKur)}` },
         { etiket: 'Bu ay (876)', deger: '—', alt: 'ilk kuruluştan sonra dolar' },
-        { etiket: 'Birlikte − Hücum', deger: '—', alt: 'ilk kuruluştan sonra dolar' }
+        { etiket: 'Birlikte − Kairos', deger: '—', alt: 'ilk kuruluştan sonra dolar' }
       ], not: 'Kayıt sunucunun ileri test işiyle her gün 00:15 UTC sonrası yazılır. İki ay istatistiksel kanıt değildir.' };
     }
     const a = o.ay, b = o.birlesim, h = o.hucum, d = o.durdurma || {};
@@ -402,16 +403,16 @@
           alt: a ? `${tarihAdi(a.F)} kuruluşu · ${a.N} coinde sinyal (evren ${a.evren})${a.gecikmeli ? ' · gecikmeli kuruldu' : ''}` : `ilk kuruluş ${tarihAdi(ilkKur)}` },
         { etiket: 'Bu ay (876)', deger: yuzde(o.mtd), alt: o.sonGun ? `${tarihAdi(o.sonGun)} kapanışı${o.sonGunKesin ? '' : ' · bugün kapatılsa (maliyet dahil)'}` : 'ilk işaretlemeyle dolar',
           ton: sayiMi(o.mtd) ? (o.mtd > 0 ? 'tone-success' : o.mtd < 0 ? 'tone-danger' : '') : '' },
-        { etiket: 'Birlikte − Hücum', deger: puan(fark),
-          alt: bVar ? `birlikte ${yuzde(b.getiri)} · yalnız Hücum ${yuzde(h.getiri)} · ${b.gun} gün` : (b && b.eksikHucum ? `Hücum simülasyon satırı bekleniyor (${b.eksikHucum})` : 'ilk işaretlemeyle dolar') },
+        { etiket: 'Birlikte − Kairos', deger: puan(fark),
+          alt: bVar ? `birlikte ${yuzde(b.getiri)} · yalnız Kairos ${yuzde(h.getiri)} · ${b.gun} gün` : (b && b.eksikHucum ? `Kairos simülasyon satırı bekleniyor (${b.eksikHucum})` : 'ilk işaretlemeyle dolar') },
         { etiket: 'Başlangıçtan beri (876)', deger: yuzde(o.toplam876), alt: `en derin düşüş ${yuzde(o.mdd876)} · başlangıç ${tarihAdi(t.bas || '2026-10-31')} kapanışı` },
-        { etiket: 'En derin düşüş — birlikte / Hücum', deger: bVar ? `${yuzde(b.maxDD)} / ${yuzde(h.maxDD)}` : '—', alt: 'günlük kapanışla, aynı günler' },
+        { etiket: 'En derin düşüş — birlikte / Kairos', deger: bVar ? `${yuzde(b.maxDD)} / ${yuzde(h.maxDD)}` : '—', alt: 'günlük kapanışla, aynı günler' },
         { etiket: 'Vazgeçme kuralı', deger: dur ? `tetiklendi (${dur.kural === 'D1' ? '876 düşüşü' : 'birlikte düşüşü'})` : 'tetiklenmedi', ton: dur ? 'tone-warning' : '',
-          alt: `876 en derin düşüş ${yuzde(d.D1 && d.D1.deger)} (sınır −%20) · birlikte − Hücum düşüş farkı ${puan(d.D2 && d.D2.fark)} (sınır −3 puan)${dur ? ` · ${tarihAdi(dur.gun)}` : ''}` }
+          alt: `876 en derin düşüş ${yuzde(d.D1 && d.D1.deger)} (sınır −%20) · birlikte − Kairos düşüş farkı ${puan(d.D2 && d.D2.fark)} (sınır −3 puan)${dur ? ` · ${tarihAdi(dur.gun)}` : ''}` }
       ],
       not: [
-        'Kural (değişmez, 95404dd): her ayın 1’inde Binance vadeli coinlerinden DefiLlama TVL’si son 30 günde en çok artanlar long, en çok azalanlar short; dolar ve BTC-beta nötr, ay boyu tutulur. Hücum tarafı sunucunun Hücum simülasyonu (model). Her gün %90 Hücum + %10 876 olarak birleştirilir.',
-        'Vazgeçme (önceden yazıldı): 876’nın en derin düşüşü −%20’ye ulaşırsa ya da birlikte düşüş Hücum’un düşüşünden 3 puandan fazla kötüyse gölge durur ve rapor yazılır. 1 Ocak 2027’de uzatma ya da canlı hesap kararı sizindir. İki ay istatistiksel kanıt değildir.',
+        'Kural (değişmez, 95404dd): her ayın 1’inde Binance vadeli coinlerinden DefiLlama TVL’si son 30 günde en çok artanlar long, en çok azalanlar short; dolar ve BTC-beta nötr, ay boyu tutulur. Kairos tarafı sunucunun Kairos simülasyonu (model). Her gün %90 Kairos + %10 876 olarak birleştirilir.',
+        'Vazgeçme (önceden yazıldı): 876’nın en derin düşüşü −%20’ye ulaşırsa ya da birlikte düşüş Kairos’un düşüşünden 3 puandan fazla kötüyse gölge durur ve rapor yazılır. 1 Ocak 2027’de uzatma ya da canlı hesap kararı sizindir. İki ay istatistiksel kanıt değildir.',
         o.zaman ? `Son çalışma ${AG.fmt ? AG.fmt.tarihSaat(o.zaman) : o.zaman}.` : '',
         eks.length ? `Eksik veri: ${eks.length} kalem (${eks.slice(0, 3).map(x => x.seri).join(', ')}) — sonraki çalışmada tamamlanır.` : '',
         deg.length ? `UYARI: ${deg.length} kayıtlı satırın yeniden hesabı farklı — kayıt değişmedi, incelenmeli.` : ''
@@ -428,7 +429,7 @@
     const l = [];
     const ekle = (tarih, etiket) => { if (!tarih) { l.push({ tarih: null, etiket }); return; } const x = l.find(y => y.tarih === tarih); if (x) x.etiket += ` · ${etiket}`; else l.push({ tarih, etiket }); };
     const kontrol = (k && k.hucumDenge && k.hucumDenge.kontrol) || [];
-    for (const n of kontrol) ekle(n.tarih, `Hücum/Denge ${n.gun}. gün ${n.gun === 365 ? 'kararı' : 'kontrolü'}`);
+    for (const n of kontrol) ekle(n.tarih, `Kairos/Tao ${n.gun}. gün ${n.gun === 365 ? 'kararı' : 'kontrolü'}`);
     const d = k && k.demo;
     if (d) { const f2 = (d.asamalar || []).find(a => a.hukum); ekle(f2 && f2.tarih ? f2.tarih : null, f2 && f2.tarih ? 'Demo kabul kararı (Gün 63)' : 'Demo kabul kararı — Gün 0 + 63 (bot başlayınca)'); }
     const r = v && v.rapor;
@@ -463,12 +464,12 @@
     const demoVar = !!(k && k.demo && k.demo.veriVar);
     const cr = c && c.success && c.rapor, cs = (cr && cr.seri) || [];
     return [
-      ddGrafik('hucum', 'Hücum'),
-      ddGrafik('denge', 'Denge'),
+      ddGrafik('hucum', 'Kairos'),
+      ddGrafik('denge', 'Tao'),
       { kimlik: 'ileriGrafik-bollinger', baslik: 'Bollinger — BTC en derin düşüş', isik: 'notr', durum: 'ölçüm sürüyor',
         seriler: [{ ad: 'mevcut kural', sinif: 'ilg-c0', noktalar: bs.map(s => ({ gun: s.gun, v: s.C0 })) }, { ad: 'Bollinger’li kural', sinif: 'ilg-c1', noktalar: bs.map(s => ({ gun: s.gun, v: s.C1 })) }],
         esikler: [], alt: b && b.gun ? `mevcut ${yuzde(b.C0.maxdd)} · Bollinger’li ${yuzde(b.C1.maxdd)} · düşüş olayı ${v.rapor.dusus.sayi}` : 'BTC kaydı bekleniyor', bos: bs.length ? null : 'BTC kaydı bekleniyor.' },
-      { kimlik: 'ileriGrafik-yan', baslik: 'Yan denemeler — günlüğe göre fark (Hücum)', isik: (z && z.A && z.A.durum === 'vazgeçildi') || (d3 && d3.durum === 'vazgeçildi') ? 'uyari' : 'notr', durum: 'ölçüm sürüyor', sifirli: true, puan: true,
+      { kimlik: 'ileriGrafik-yan', baslik: 'Yan denemeler — günlüğe göre fark (Kairos)', isik: (z && z.A && z.A.durum === 'vazgeçildi') || (d3 && d3.durum === 'vazgeçildi') ? 'uyari' : 'notr', durum: 'ölçüm sürüyor', sifirli: true, puan: true,
         seriler: [{ ad: '3 günlük karar', sinif: 'ilg-uc', noktalar: zs.map(s => ({ gun: s.gun, v: s.fark })) }, { ad: 'yatay piyasa filtresi', sinif: 'ilg-d3', noktalar: ds.map(s => ({ gun: s.gun, v: s.fark })) }],
         esikler: [], alt: `3 günlük karar ${z && z.A ? puan(z.A.sumH) : '—'} · yatay piyasa filtresi ${d3 && sayiMi(d3.sumH) ? puan(d3.sumH) : '—'} (artı = günlükten iyi)`, bos: zs.length || ds.length ? null : 'Kayıt bekleniyor.' },
       { kimlik: 'ileriGrafik-demo', baslik: 'Demo kabul — uygulama sapması (30 g)', isik: !demoVar ? 'uyari' : u && u.sonBant === 'engel' ? 'tehlike' : u && u.sonBant === 'incele' ? 'uyari' : 'iyi', durum: !demoVar ? 'başlamadı' : (u && u.sonBant) || 'ölçüm sürüyor',
@@ -548,7 +549,7 @@
   }
 
   /** F5 Genel bakış: beş testin durum tablosu (test · durum · karar günü → alt sayfa). Demo kabul Botlar › Hücum › Yönetim'e götürür. */
-  const SAYFA = [['bollinger', 'Bollinger düşüş azaltıcı', 'ileri/bollinger'], ['hucumDenge', 'Hücum / Denge simülasyonu', 'ileri/hucum-denge'],
+  const SAYFA = [['bollinger', 'Bollinger düşüş azaltıcı', 'ileri/bollinger'], ['hucumDenge', 'Kairos / Tao simülasyonu', 'ileri/hucum-denge'],
     ['demo', 'Demo kabul süreci', 'botlar/hucum/yonetim'], ['cbdr', 'EUR/USD CBDR', 'ileri/cbdr'], ['l876', '876 gölge', 'ileri/876']];
   function durumCiz(modeller) {
     const kap = bul('ileriDurum');

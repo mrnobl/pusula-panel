@@ -1,12 +1,12 @@
 # Başlarken {#baslarken}
 
-Pusula; portföyünüzü, Hücum ve Denge botlarını ve araştırmalarınızı tek yerden izlediğiniz paneldir. Bu kılavuz panelin içindedir ve panelle birlikte güncellenir: üst çubuktaki **? Kılavuz** düğmesi açık ekranın bölümünü açar.
+Pusula; portföyünüzü, Kairos ve Tao botlarını (eski adları Hücum ve Denge) ve araştırmalarınızı tek yerden izlediğiniz paneldir. Bu kılavuz panelin içindedir ve panelle birlikte güncellenir: üst çubuktaki **? Kılavuz** düğmesi açık ekranın bölümünü açar.
 
 ## Ne işe yarar {#ne-ise-yarar}
 
 - **Her gün bir bakış:** Ana sayfa "bugün bir şey yapmam gerekiyor mu?" sorusunu cevaplar (yapılacaklar, portföy özeti, sistem ışıkları, bot durumu).
 - **Portföy:** Pano, Hesaplar, Varlıklar, İşlem defteri, Hedefim, Modeller, Takvim ve akış, Rapor — kendi paranızın tamamı.
-- **Botları yönetmek:** Botlar › Hücum / Denge; her botun dört görünümü var — **Genel** (başlat, durdur, acil fren, sonuç), **Hesap** (borsadaki hesap: bakiye, pozisyonlar, emirler), **İşlemler** (grafik ve işlem kayıtları), **Yönetim** (hesap türü, kontroller).
+- **Botları yönetmek:** Botlar › Kairos / Tao; her botun dört görünümü var — **Genel** (başlat, durdur, acil fren, sonuç), **Hesap** (borsadaki hesap: bakiye, pozisyonlar, emirler), **İşlemler** (grafik ve işlem kayıtları), **Yönetim** (hesap türü, kontroller).
 - **Fikir denemek:** **Araştırma** (özet, stratejiler, backtest, Pine, portföy laboratuvarı, araştırma defteri) ve ayrı **Coin tarama** (tarama, kaçın / izle listeleri, listeler, ayarlar). Kâğıt test ve emekli botlar Arşiv'dedir.
 
 > **Uyarı:** Pusula canlı hesapla işlem yapmaz. Botlar **kâğıt** (sanal hesap) ya da **demo** (Binance Demo Trading, sahte para) modunda çalışır. Canlı mod bilinçli olarak kapalıdır.

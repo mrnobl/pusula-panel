@@ -56,7 +56,7 @@
   };
   /** Hedefim › modelden al: sınıf düzeyinde hazır hedefler (modellerin kendisi Modeller sayfasında). */
   const HAZIR_HEDEF = [
-    { k: 'q837', ad: '%50 QQQ + %50 Hücum', alt: 'modelden · yarı endeks, yarı kripto', agirlik: { 'hisse-endeks': 50, kripto: 50 } },
+    { k: 'q837', ad: 'Simurg · %50 QQQ + %50 Kairos', alt: 'modelden · yarı endeks, yarı kripto', agirlik: { 'hisse-endeks': 50, kripto: 50 } },
     { k: 'm10', ad: 'Nasdaq / BIST Momentum 10', alt: 'modelden · tamamı hisse', agirlik: { hisse: 100 } },
     { k: 'dengeli', ad: 'Dengeli', alt: '%60 endeks · %20 kripto · %20 nakit', agirlik: { 'hisse-endeks': 60, kripto: 20, nakit: 20 } }
   ];
@@ -872,7 +872,7 @@
       doldur(botK, [kart([kartBas('Bot işlemleri — döküm (CSV)'),
         el('p', { class: 'pn-metin', text: 'Botların borsadaki hesaplarında yapılan bütün işlemler; hesap, kimin yaptığı ve tarih aralığıyla CSV olarak indirilir. Son 30 günün tablosu ve açık pozisyonlar botun Hesap ve İşlemler görünümünde.' }),
         el('div', { id: 'hesapDokum', class: 'mt-3' }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]),
-        el('div', { class: 'pn-cipler pn-ust-bosluk' }, [dugme('Hücum › İşlemler', git('botlar/hucum/islemler')), dugme('Denge › İşlemler', git('botlar/denge/islemler')), dugme('Hücum › Hesap', git('botlar/hucum/hesap'))])])]);
+        el('div', { class: 'pn-cipler pn-ust-bosluk' }, [dugme('Kairos › İşlemler', git('botlar/hucum/islemler')), dugme('Tao › İşlemler', git('botlar/denge/islemler')), dugme('Kairos › Hesap', git('botlar/hucum/hesap'))])])]);
       const H = AG.pages.hesaplar;
       if (H) Promise.resolve(H.yukle(false)).then(() => H.dokumCiz());
     }

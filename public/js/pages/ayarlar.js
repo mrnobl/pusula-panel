@@ -249,7 +249,7 @@
     return el('div', { class: 'gunc-kuru mt-3', id: 'guncKuruFark' }, [
       el('p', { class: 'hint mb-2', text: 'Kuru deneme: botların bugünkü kararı eski ve yeni kodla, emir göndermeden hesaplandı.' }),
       el('ul', { class: 'gunc-kuru-liste' }, (kd.botlar || []).map(b => el('li', null, [
-        el('strong', { text: `${b.adGorunen || b.ad} (${b.kip === 'karar' ? 'karar' : 'yalnız yükleme'}): ` }), el('span', { text: b.metin || b.durum }),
+        el('strong', { text: `${(AG.botAd ? AG.botAd.gorunen(b) : (b.adGorunen || b.ad))} (${b.kip === 'karar' ? 'karar' : 'yalnız yükleme'}): ` }), el('span', { text: AG.botAd ? AG.botAd.cevir(b.metin || b.durum) : (b.metin || b.durum) }),
         (b.farklar || []).length ? el('ul', { class: 'gunc-kuru-fark' }, b.farklar.map(x => el('li', { text: `${x.ad}: ${yaz(x.eski)} → ${yaz(x.yeni)}` }))) : null
       ])))
     ]);

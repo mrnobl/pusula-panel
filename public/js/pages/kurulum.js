@@ -131,8 +131,8 @@
       ];
       case 'ilk-deneme': return [
         p('Her şey hazırsa demo hesapta ilk denemeyi yap.'),
-        liste(['Botlar › Hücum › Yönetim\'de hesap türünü "demo" seç.', 'Genel görünümünde "Başlat".', 'Ertesi gün Raporlar\'da ve Telegram\'da günlük raporu gör.', 'Gerçek hesaba geçmeyi düşünmeden önce demo hesabı en az birkaç hafta izle.']),
-        bag('#/botlar/hucum/yonetim', 'Botlar › Hücum › Yönetim →'),
+        liste(['Botlar › Kairos › Yönetim\'de hesap türünü "demo" seç.', 'Genel görünümünde "Başlat".', 'Ertesi gün Raporlar\'da ve Telegram\'da günlük raporu gör.', 'Gerçek hesaba geçmeyi düşünmeden önce demo hesabı en az birkaç hafta izle.']),
+        bag('#/botlar/hucum/yonetim', 'Botlar › Kairos › Yönetim →'),
         k && k.tamamlandi ? durumSatiri(true, 'Kurulum tamamlandı', '') : null,
       ];
       default: return [];
@@ -218,7 +218,7 @@
       const bekleyen = (t.botlar || []).filter(x => !(t.temiz || []).includes(x));
       b.classList.remove('is-hidden');
       doldur(b, [el('span', { text: `Bu kurulum ${t.kaynakMakine || 'başka bir bilgisayar'} adlı bilgisayardan taşındı: botlar kendiliğinden başlamaz. Her bot için önce "Mutabakat", temiz çıkınca "Başlat" (bekleyen: ${bekleyen.join(', ')}). ` }),
-        el('a', { href: '#/botlar/hucum/yonetim', text: 'Botlar › Hücum › Yönetim' })]);
+        el('a', { href: '#/botlar/hucum/yonetim', text: 'Botlar › Kairos › Yönetim' })]);
       return;
     }
     const goster = !!(r && r.success && r.gerekli) && !gecildi();

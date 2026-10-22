@@ -50,7 +50,7 @@ Varsayılan telefon köprüsü **salt okunur**dur. Sunucuda `npm run telefon -- 
 
 ## Model portföy canlı hesapla mı işlem yapıyor? {#model-portfoy}
 
-Hayır. Üç model portföy (837, Nasdaq M10, BIST M10) **sanaldır**: ay sonu kararları otomatik alınır, model uygulama günü açılışında sanal olarak doldurulur ve 100 tabanlı endeksle izlenir. Gerçek hesabınızdaki emirleri aracı kurumda siz girersiniz; portföy kayıtlarınızdaki adetlere göre hazırlanan emir listesi **Portföy › Modeller**'de modelin **Bu ay** kartındadır ([Portföy tasarımcısı](#/kilavuz/tasarimci)). Panel hiçbir aracı kuruma emir göndermez.
+Hayır. Üç model portföy (Simurg, Nova, Lydia) **sanaldır**: ay sonu kararları otomatik alınır, model uygulama günü açılışında sanal olarak doldurulur ve 100 tabanlı endeksle izlenir. Gerçek hesabınızdaki emirleri aracı kurumda siz girersiniz; portföy kayıtlarınızdaki adetlere göre hazırlanan emir listesi **Portföy › Modeller**'de modelin **Bu ay** kartındadır ([Portföy tasarımcısı](#/kilavuz/tasarimci)). Panel hiçbir aracı kuruma emir göndermez.
 
 ## Bu ay listesini uyguladım, portföyüme tek tek mi gireceğim? {#uyguladim}
 
@@ -60,13 +60,13 @@ Hayır. Emirleri aracı kurumda girdikten sonra **Portföy › Modeller › (mod
 
 Midas'ta ABD hisselerinde kesirli alım doğrulanmadığı için liste **tam adet** üretir; hedefin artan kısmı nakitte kalır ve "Tam adet … nakitte kalır" diye yazar. Kesirli alımı doğrularsanız **Model sermayesi** formundaki ayarı açın.
 
-## 837'de neden her ay aktarım yok? {#bant}
+## Simurg'da neden her ay aktarım yok? {#bant}
 
-837 sürüm 2'den beri **bant kuralıyla** dengelenir: Hücum payı %40–%60 aralığındayken hiçbir şey yapılmaz; dışına çıkınca tam 50/50'ye dönülür. Ölçümde bu, 8 yılda 13 aktarım demek (aylık kuralda 105) — Sharpe ve düşüş aynı ([Bu ay](#/kilavuz/tasarimci/bu-ay)).
+Simurg sürüm 2'den beri **bant kuralıyla** dengelenir: Kairos payı %40–%60 aralığındayken hiçbir şey yapılmaz; dışına çıkınca tam 50/50'ye dönülür. Ölçümde bu, 8 yılda 13 aktarım demek (aylık kuralda 105) — Sharpe ve düşüş aynı ([Bu ay](#/kilavuz/tasarimci/bu-ay)).
 
 ## "Ölçülmemiş birleşim — simülasyon, kabul değil" ne demek? {#olculmemis}
 
-Kurucuda kabul edilmiş bir şablonun (837, 830, 840, 847, Hücum) kolları, ağırlıkları ya da aylık dengelemesi değiştiyse o birleşim için ön kayıtlı bir ölçüm yoktur. Risk özeti yine hesaplanır ama bu bir kabul değil, yalnız simülasyondur.
+Kurucuda kabul edilmiş bir şablonun (837, 830, 840, 847, Kairos) kolları, ağırlıkları ya da aylık dengelemesi değiştiyse o birleşim için ön kayıtlı bir ölçüm yoktur. Risk özeti yine hesaplanır ama bu bir kabul değil, yalnız simülasyondur.
 
 ## Model portföylerin canlı grafiği neden boş? {#model-bos}
 

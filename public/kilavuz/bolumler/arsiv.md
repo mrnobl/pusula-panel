@@ -5,7 +5,7 @@
 Artık kullanılmayan bölümler, geri dönmek gerekirse diye durur. Yan menüde Arşiv'in altında (66.0): **Genel · Kâğıt test · Kâğıt test riski · Emekli botlar**.
 
 - **Genel:** **Eski stratejiler** (testte elenenler; tıklayınca Stratejiler'de ayrıntısı açılır), **Elle emir** (botlardan bağımsız tek emir, demo hesap) ve **İzleme listesi taraması** (izleme listesindeki sembollerde en iyi 5 stratejiyi tarar).
-- **Emekli botlar:** **Donchian trend botu** (eski tek-varlık bot) ve **Kalkan botu** (ayrı bot olarak emekli; Hücum/Denge Kalkan kolunu içeriyor) — salt okunur kartlar.
+- **Emekli botlar:** **Donchian trend botu** (eski tek-varlık bot) ve **Kalkan botu** (ayrı bot olarak emekli; Kairos/Tao Kalkan kolunu içeriyor) — salt okunur kartlar.
 - **Kâğıt test** ve **Kâğıt test riski** kendi bölümlerinde: [Kâğıt test](#/kilavuz/kagit-test) (kâğıt test hesabı da orada), [Kâğıt test riski](#/kilavuz/kagit-risk).
 
 Pine ve Araştırma defteri artık Araştırma'da. Kod silinmedi.

@@ -11,7 +11,7 @@ Portföy, **kendi paranın** (aracı kurum, banka, kripto borsası) tek yeridir.
 | **Varlıklar** | Elindeki her şey tek tabloda: adet, maliyet, fiyat, değer, kâr/zarar, gerçekleşen, pay; nakit; kapanan pozisyonlar ([Varlıklar](#/kilavuz/portfoy/varliklar)) |
 | **İşlem defteri** | Kaynak seçici: **Kripto / FX** (OKX, Binance, MetaTrader) · **Yatırım** (Hesaplar'a girdiğin işlemler) · **Bot** (botların işlem dökümü, CSV) ([İşlem defteri](#/kilavuz/islem-defterim)) |
 | **Hedefim** | Paranın nasıl bölünmesini istediğin; olması gereken ↔ şu an; hangi hesapta ne alınıp satılacağı ([Hedefim](#/kilavuz/portfoy/hedefim)) |
-| **Modeller** | Nasdaq Momentum 10 · BIST Momentum 10 · %50 QQQ + %50 Hücum — sayfanın üstündeki seçiciyle; her modelin **Bu ay** emir kartı ve sanal hesabı ([Modeller](#/kilavuz/model-portfoy)) |
+| **Modeller** | Nova · Lydia · Simurg — sayfanın üstündeki seçiciyle; her modelin **Bu ay** emir kartı ve sanal hesabı ([Modeller](#/kilavuz/model-portfoy)) |
 | **Takvim ve akış** | Günlük kâr/zarar takvimi ve işlem / gelir / yaklaşan vade akışı ([Takvim](#/kilavuz/portfoy/takvim)) |
 | **Rapor** | Risk ve getiri ölçütleri (portföy · QQQ · BTC), ay ay karne, kötü senaryolar, korelasyon ([Rapor](#/kilavuz/portfoyum-rapor)) |
 
@@ -104,7 +104,7 @@ Düzeltme (adet, alış fiyatı) burada yapılmaz: [Hesaplar](#/kilavuz/portfoyu
 
 **Hedef**, paranın nasıl bölünmesini istediğindir — ör. "%50 endeks, %40 kripto, %10 nakit". Getiri hedefi değildir. Her portföyün **kendi hedefi** vardır (Ben ve Fırat ayrı); **Tümü** görünümünde hedef girilmez.
 
-1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
+1. **Hedefini seç:** modelden hazır üç seçenek (**Simurg**, **Nova / Lydia**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
 2. **Olması gereken ↔ şu an:** her sınıfın hedef ve gerçek payı, çubuk (dolgu: şu an, çizgi: hedef) ve **Ne yapmalı** ("al $…" / "azalt $…"). Bandın dışındaki satırlar renklidir ve Pano'daki "Yapman gerekenler"e düşer.
 3. **Hangi hesapta ne yapılacak:** alım → en çok nakdi olan hesap; azaltma → o kalemi en çok tutan hesap. **Öneridir, emir gönderilmez.** Yaptıktan sonra işlemi [Hesaplar](#/kilavuz/portfoyum/kayit)'dan gir. Yeni para eklersen önce eksik kalanlara dağıt (satış gerekmez).
 
@@ -135,7 +135,7 @@ Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. 
 
 **Hesap nasıl yapılır:** M = eklenecek para, T0 = hisselerin bugünkü değeri, T = T0 + M. Sabit satırın hedefi kendi yüzdesi; "oranını koru" satırları kalan payı bugünkü değerleri oranında böler. al = hedef pay × T − bugünkü değer; eksiyse satış. Örnek: QQQ 0,49 · SPCX 0,42 · JNJ 0,31 · VOO 0,32 adet, INTC yeni; 60.000 TL (kur 49,5166 → $1.211,71), JNJ %15, INTC %10, diğerleri oranını korur → QQQ $444,48 · VOO $286,93 · JNJ $209,46 · INTC $192,46 · SPCX $78,38 alım, satış yok. "Oranını koru" satırları birlikte büyür ya da küçülür: sabit paylar büyüyüp kalan pay bugünkü değerlerinin altına düşerse hepsi satışa döner.
 
-**Portföy botları ne tutuyor (sayfanın en altı):** **Nasdaq Momentum 10**, **BIST Momentum 10** ve **%50 QQQ + %50 Hücum** botlarının bugünkü listesi: sıra, hisse, durum (**Tutuyor** · **Girecek** · **Çıkacak** · **Yedek**), fiyat (bu ayın emir listesinde varsa), seçili portföyde var mı ve **+ Plana ekle** (Sabit %5 ile gelir; payı değiştirebilir ya da çıkarabilirsin). Eklenemiyorsa nedeni yazar: hesabın para birimi uymuyor (**TL hesap gerekir**), **Binance botunda** (Hücum yarısı plana eklenmez), **botta çıkacak — Sabit %0 ile sat**. Üstte son karar, sıradaki karar ve botun başladığından beri sonucu (QQQ ile kıyaslı). **Bu liste öneri değil; botun kuralının bugünkü sonucudur.**
+**Portföy botları ne tutuyor (sayfanın en altı):** **Nova**, **Lydia** ve **Simurg** botlarının bugünkü listesi: sıra, hisse, durum (**Tutuyor** · **Girecek** · **Çıkacak** · **Yedek**), fiyat (bu ayın emir listesinde varsa), seçili portföyde var mı ve **+ Plana ekle** (Sabit %5 ile gelir; payı değiştirebilir ya da çıkarabilirsin). Eklenemiyorsa nedeni yazar: hesabın para birimi uymuyor (**TL hesap gerekir**), **Binance botunda** (Kairos yarısı plana eklenmez), **botta çıkacak — Sabit %0 ile sat**. Üstte son karar, sıradaki karar ve botun başladığından beri sonucu (QQQ ile kıyaslı). **Bu liste öneri değil; botun kuralının bugünkü sonucudur.**
 
 ## Takvim ve akış {#takvim}
 
@@ -238,7 +238,7 @@ Düzeltme (adet, alış fiyatı) burada yapılmaz: [Hesaplar](#/kilavuz/portfoyu
 
 **Hedef**, paranın nasıl bölünmesini istediğindir — ör. "%50 endeks, %40 kripto, %10 nakit". Getiri hedefi değildir. Her portföyün **kendi hedefi** vardır (Ben ve Fırat ayrı); **Tümü** görünümünde hedef girilmez.
 
-1. **Hedefini seç:** modelden hazır üç seçenek (**%50 QQQ + %50 Hücum**, **Nasdaq / BIST Momentum 10**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
+1. **Hedefini seç:** modelden hazır üç seçenek (**Simurg**, **Nova / Lydia**, **Dengeli**), **Kendim gireyim** (sınıf yüzdeleri) ya da **Varlık varlık gireyim** (her hisse, fon ve nakit için ayrı yüzde; bu portföyde tutulanlar önce, elde olmayanlar "elde yok" notuyla). Toplam %100 olmalı → **Hedefi kaydet**. **Sapma bandı** (varsayılan ±5 puan) aynı formda değiştirilir. Hedef seçili kişinin portföyüne kaydedilir.
 2. **Olması gereken ↔ şu an:** her sınıfın hedef ve gerçek payı, çubuk (dolgu: şu an, çizgi: hedef) ve **Ne yapmalı** ("al $…" / "azalt $…"). Bandın dışındaki satırlar renklidir ve Pano'daki "Yapman gerekenler"e düşer.
 3. **Hangi hesapta ne yapılacak:** alım → en çok nakdi olan hesap; azaltma → o kalemi en çok tutan hesap. **Öneridir, emir gönderilmez.** Yaptıktan sonra işlemi [Hesaplar](#/kilavuz/portfoyum/kayit)'dan gir. Yeni para eklersen önce eksik kalanlara dağıt (satış gerekmez).
 
@@ -269,7 +269,7 @@ Hedefim'deki **Para ekle ve dağılımı değiştir** kartında **Planla →**. 
 
 **Hesap nasıl yapılır:** M = eklenecek para, T0 = hisselerin bugünkü değeri, T = T0 + M. Sabit satırın hedefi kendi yüzdesi; "oranını koru" satırları kalan payı bugünkü değerleri oranında böler. al = hedef pay × T − bugünkü değer; eksiyse satış. Örnek: QQQ 0,49 · SPCX 0,42 · JNJ 0,31 · VOO 0,32 adet, INTC yeni; 60.000 TL (kur 49,5166 → $1.211,71), JNJ %15, INTC %10, diğerleri oranını korur → QQQ $444,48 · VOO $286,93 · JNJ $209,46 · INTC $192,46 · SPCX $78,38 alım, satış yok. "Oranını koru" satırları birlikte büyür ya da küçülür: sabit paylar büyüyüp kalan pay bugünkü değerlerinin altına düşerse hepsi satışa döner.
 
-**Portföy botları ne tutuyor (sayfanın en altı):** **Nasdaq Momentum 10**, **BIST Momentum 10** ve **%50 QQQ + %50 Hücum** botlarının bugünkü listesi: sıra, hisse, durum (**Tutuyor** · **Girecek** · **Çıkacak** · **Yedek**), fiyat (bu ayın emir listesinde varsa), seçili portföyde var mı ve **+ Plana ekle** (Sabit %5 ile gelir; payı değiştirebilir ya da çıkarabilirsin). Eklenemiyorsa nedeni yazar: hesabın para birimi uymuyor (**TL hesap gerekir**), **Binance botunda** (Hücum yarısı plana eklenmez), **botta çıkacak — Sabit %0 ile sat**. Üstte son karar, sıradaki karar ve botun başladığından beri sonucu (QQQ ile kıyaslı). **Bu liste öneri değil; botun kuralının bugünkü sonucudur.**
+**Portföy botları ne tutuyor (sayfanın en altı):** **Nova**, **Lydia** ve **Simurg** botlarının bugünkü listesi: sıra, hisse, durum (**Tutuyor** · **Girecek** · **Çıkacak** · **Yedek**), fiyat (bu ayın emir listesinde varsa), seçili portföyde var mı ve **+ Plana ekle** (Sabit %5 ile gelir; payı değiştirebilir ya da çıkarabilirsin). Eklenemiyorsa nedeni yazar: hesabın para birimi uymuyor (**TL hesap gerekir**), **Binance botunda** (Kairos yarısı plana eklenmez), **botta çıkacak — Sabit %0 ile sat**. Üstte son karar, sıradaki karar ve botun başladığından beri sonucu (QQQ ile kıyaslı). **Bu liste öneri değil; botun kuralının bugünkü sonucudur.**
 
 ## Takvim ve akış {#takvim}
 

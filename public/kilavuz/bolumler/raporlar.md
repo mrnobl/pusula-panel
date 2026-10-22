@@ -6,7 +6,7 @@
 
 Rapor üç şeyi anlatır:
 
-- **Botlar** — Hücum ve Denge'nin hesap değeri, dönemdeki değişimi, yaptığı işlemler (alış / satış, ücret, gerçekleşen kâr/zarar) ve günün kararı.
+- **Botlar** — Kairos ve Tao'nun hesap değeri, dönemdeki değişimi, yaptığı işlemler (alış / satış, ücret, gerçekleşen kâr/zarar) ve günün kararı.
 - **Model emirleri** — model portföylerin bu ayki emirleri uygulandı mı, kaç gündür bekliyor.
 - **Portföy botlarının tercihleri** — her model portföyün kâğıt hesabında bugün neyi tuttuğu (pay ile), döneme giren / çıkan hisseler ve dönemdeki işlemleri.
 

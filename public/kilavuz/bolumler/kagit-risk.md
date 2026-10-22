@@ -4,7 +4,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-**Yalnız kâğıt test botlarının** risk kuralları: pozisyon büyüklüğü, stop/kâr al, volatiliteye göre stop (ATR), açık risk tavanı, düşüş merdiveni (sermaye kademeleri) ve acil fren. Hücum/Denge botlarını ETKİLEMEZ.
+**Yalnız kâğıt test botlarının** risk kuralları: pozisyon büyüklüğü, stop/kâr al, volatiliteye göre stop (ATR), açık risk tavanı, düşüş merdiveni (sermaye kademeleri) ve acil fren. Kairos/Tao botlarını ETKİLEMEZ.
 
 ## Ne zaman kullanılır {#ne-zaman}
 

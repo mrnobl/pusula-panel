@@ -31,14 +31,18 @@
   const SIRA = ['m-qqq-m10', 'm-bist-m10', 'm-837'];
   /** DOM kimliklerinde kısa ad (kılavuz işaretleri: #hisseKart-bist, #tblHissePoz-bist …). */
   const KISA = { 'm-qqq-m10': 'qqq', 'm-bist-m10': 'bist', 'm-837': 'q837' };
-  const AD = { 'm-qqq-m10': 'Nasdaq Momentum 10', 'm-bist-m10': 'BIST Momentum 10', 'm-837': '%50 QQQ + %50 Hücum' };
+  /** 72.0: görünen ad kimlikten (AG.botAd; yoksa yedek). adTam = "Nova · Nasdaq Momentum 10", adKisa = "Nova". */
+  const AD_YEDEK = { 'm-qqq-m10': ['Nova', 'Nasdaq Momentum 10'], 'm-bist-m10': ['Lydia', 'BIST Momentum 10'], 'm-837': ['Simurg', '%50 QQQ + %50 Kairos'] };
+  const adTam = (id) => (AG.botAd && AG.botAd.tam(id)) || (AD_YEDEK[id] ? AD_YEDEK[id].join(' · ') : id);
+  const adKisa = (id) => (AG.botAd && AG.botAd.ad(id)) || (AD_YEDEK[id] ? AD_YEDEK[id][0] : id);
+  const cv = (s) => (AG.botAd ? AG.botAd.cevir(s) : s);
   /** Kural — düz Türkçe (kullanıcı: "botların hisseleri seçerken ne yaptığı anlaşılmıyor"). */
   const NE_YAPAR = {
     'm-qqq-m10': 'Her ayın son işlem günü Nasdaq-100\'deki hisseleri son 12 ayda en çok yükselenden (son ay hariç) en aza sıralar ve en güçlü 10 hisseyi eşit paylarla (her biri %10) tutar. Listeden düşen hisse satılır, yeni giren alınır; alım-satım ertesi işlem günü açılışında yapılır.',
     'm-bist-m10': 'Her ayın son işlem günü Borsa İstanbul\'da son 3 ayda en çok işlem gören 30 hisseyi seçer, bunları son 12 ayda en çok yükselenden (son ay hariç) en aza sıralar ve en güçlü 10 hisseyi eşit paylarla (her biri %10) tutar. Alım-satım ertesi işlem günü açılışında yapılır.',
-    'm-837': 'Paranın yarısı QQQ\'da (Nasdaq-100 fonu, ABD hesabı), yarısı Hücum kripto botunda (Binance) durur. Hücum\'un payı %40\'ın altına düşer ya da %60\'ı geçerse (QQQ işlem günü kapanışında bakılır) ikisi yeniden yarı yarıya yapılır. Hisse seçimi yoktur.'
+    'm-837': 'Paranın yarısı QQQ\'da (Nasdaq-100 fonu, ABD hesabı), yarısı Kairos kripto botunda (Binance) durur. Kairos\'un payı %40\'ın altına düşer ya da %60\'ı geçerse (QQQ işlem günü kapanışında bakılır) ikisi yeniden yarı yarıya yapılır. Hisse seçimi yoktur.'
   };
-  const SIMGE_KISA = { 'm-qqq-m10': 'N10', 'm-bist-m10': 'B10', 'm-837': '837' };
+  const SIMGE_KISA = { 'm-qqq-m10': 'NV', 'm-bist-m10': 'LY', 'm-837': 'SM' };
   const KIYAS = { 'm-qqq-m10': ['k-qqq', 'QQQ al-tut'], 'm-bist-m10': ['k-xu030', 'BIST 30 (XU030)'], 'm-837': ['k-qqq', 'QQQ al-tut'] };
   const DURUM = {
     kaliyor: ['Elde · kalıyor', 'pf-rozet-bilgi'], cikacak: ['Elde · çıkacak', 'pf-rozet-tehlike'],
@@ -55,7 +59,7 @@
   const isaretli = (x, b = 1) => (sayiMi(x) ? AG.fmt.oranYuzde(x, b, { isaretli: true }) : '—');
   const ton = (x) => (!sayiMi(x) || Math.abs(x) < 1e-9 ? 'tone-muted' : x > 0 ? 'tone-success' : 'tone-danger');
   const gunMetni = (g) => { if (!g) return '—'; const d = new Date(g + 'T12:00:00Z'); return Number.isNaN(d.getTime()) ? g : d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }); };
-  const TUR_AD = { al: 'Alış', sat: 'Satış', temettu: 'Temettü', bolunme: 'Bölünme', yatir: 'Para girişi', cek: 'Para çıkışı', aktarim: 'Hücum kolu aktarımı' };
+  const TUR_AD = { al: 'Alış', sat: 'Satış', temettu: 'Temettü', bolunme: 'Bölünme', yatir: 'Para girişi', cek: 'Para çıkışı', aktarim: 'Kairos kolu aktarımı' };
 
   let veri = null, sonraki = null, zaman = 0, yukleniyor = false;
   let havuz = null;                       // GET /aday-havuzu
@@ -80,10 +84,10 @@
       }
     }
     if (o.bekleyenEmir && o.bekleyenEmir.length) uyarilar.push(`Açılış fiyatı gelmediği için bekleyen emir: ${o.bekleyenEmir.join(', ')}`);
-    for (const u of x.uyarilar || []) uyarilar.push(u);
+    for (const u of x.uyarilar || []) uyarilar.push(cv(u));
     const parca = [];
     if (tur === 'hisse' && karar && karar[0]) parca.push(`Sıradaki karar: ${gunMetni(karar[0].karar)} kapanışı → ${gunMetni(karar[0].uygulama)} açılışında alım-satım`);
-    if (tur === '837') parca.push('Dengeleme her QQQ işlem günü kapanışında denetlenir (Hücum payı %40–60 dışına çıkınca)');
+    if (tur === '837') parca.push('Dengeleme her QQQ işlem günü kapanışında denetlenir (Kairos payı %40–60 dışına çıkınca)');
     if (sonK) parca.push(`son karar ${gunMetni(sonK.kararGunu)} → ${gunMetni(sonK.uygulamaGunu)} açılışında uygulandı`);
     parca.push(`son veri ${gunMetni(o.son)}`);
     return { metin: parca.join(' · '), ton: '', uyarilar };
@@ -154,7 +158,7 @@
     const baslik = el('div', { class: `mp-bas mp-r-${k(id)}` }, [
       el('div', { class: 'mp-simge', 'aria-hidden': 'true', text: SIMGE_KISA[id] }),
       el('div', { class: 'mp-bas-metin' }, [
-        el('div', { class: 'row-inline row-wrap gap-2' }, [el('h3', { class: 'card-title m-0', text: x.ad || AD[id] }),
+        el('div', { class: 'row-inline row-wrap gap-2' }, [el('h3', { class: 'card-title m-0', text: adTam(id) }),
           el('span', { class: 'badge', text: 'botun sanal hesabı — canlı hesap değil' }), el('span', { class: 'badge', text: id === 'm-bist-m10' ? 'BIST · TL' : id === 'm-837' ? 'ABD + Binance · USD' : 'ABD · USD' })]),
         el('p', { class: 'mp-ne-yapar mb-0' }, [el('span', { text: NE_YAPAR[id] })])
       ])
@@ -171,7 +175,7 @@
       sayiKutu('Nakit', gizli ? '—' : para(o.nakit, p, 0), sayiMi(o.nakit) && o.ozsermaye > 0 ? `payı ${yz(o.nakit / o.ozsermaye, 0)} · ${o.islemSayisi || 0} emir` : null)
     ]);
     const poz = (x.pozisyonlar || []).map(z => el('tr', null, [
-      el('td', { class: 'pf-sola fw-semibold', text: z.ad || z.s }),
+      el('td', { class: 'pf-sola fw-semibold', text: cv(z.ad) || z.s }),
       el('td', { class: 'sayi', text: z.simulasyon ? '—' : adet(z.adet) }),
       el('td', { class: 'sayi', text: z.simulasyon ? '—' : fiyat(z.ortMaliyet, p) }),
       el('td', { class: 'sayi', text: z.simulasyon ? 'simülasyon' : fiyat(z.kapanis, p) }),
@@ -181,7 +185,7 @@
     ]));
     const islemSatiri = (i) => el('tr', null, [
       el('td', { class: 'sayi', text: i.gun }), el('td', { class: 'pf-sola', text: TUR_AD[i.tur] || i.tur }),
-      el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? 'Hücum kolu' : (i.s || '—') }),
+      el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? 'Kairos kolu' : (i.s || '—') }),
       el('td', { class: 'sayi', text: i.adet != null ? adet(i.adet) : '—' }),
       el('td', { class: 'sayi', text: i.fiyat != null && i.tur !== 'temettu' ? fiyat(i.fiyat, p) : '—' }),
       el('td', { class: 'sayi', text: gizli ? '—' : para(i.tutar, p) }),
@@ -213,7 +217,7 @@
       el('p', { class: 'hint hint-sm mt-3 mb-0', text: `Kâğıt hesabın kuralları: ${p === 'USD' ? `emir başına ${para(a.komisyonSabit, 'USD')} komisyon (Midas)` : (a.komisyonOran ? `komisyon tutarın %${(a.komisyonOran * 100).toLocaleString('tr-TR')}'i` : 'komisyon yok (Midas BIST)')}, kayma %${((a.kayma || 0) * 100).toLocaleString('tr-TR')}, ${a.kesirli ? 'kesirli adet' : 'tam adet'}, temettü stopajı %${Math.round((a.stopaj || 0) * 100)}, nakde faiz yok; mevcut hissede küçük düzeltme (değerin %${Math.round((a.esikOran || 0) * 100)}'sinden az) yapılmaz. Fiyatlar gerçek açılış/kapanış (Yahoo). Sermaye: bu sayfanın altındaki Ayarlar.` })
     ]);
     grafikCiz(id, x);
-    if (AG.grafik && AG.grafik.cubuk) AG.grafik.cubuk(kzKap, (x.pozisyonlar || []).filter(z => !z.simulasyon && sayiMi(z.kzYuzde)).map(z => ({ ad: z.s || z.ad, v: z.kzYuzde, alt: gizli ? null : para(z.kz, p) })), { ad: `${AD[id]} hisse kâr/zarar`, bosMetin: 'Henüz hisse yok.' });
+    if (AG.grafik && AG.grafik.cubuk) AG.grafik.cubuk(kzKap, (x.pozisyonlar || []).filter(z => !z.simulasyon && sayiMi(z.kzYuzde)).map(z => ({ ad: z.s || z.ad, v: z.kzYuzde, alt: gizli ? null : para(z.kz, p) })), { ad: `${adKisa(id)} hisse kâr/zarar`, bosMetin: 'Henüz hisse yok.' });
     buAyDoldur();
   }
   /** Bu ay şeridi tasarimci.js'ten (emir listesi + Uyguladım) — kart yeniden çizilince yeniden doldurulur. */
@@ -229,7 +233,7 @@
       el('button', { type: 'button', id: `btnHisseGrafik-${a}-${k(id)}`, class: `btn btn-sm ${kip === a ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': kip === a ? 'true' : 'false',
         onclick: () => { grafikKip[id] = a; if (veri && veri.modeller && veri.modeller[id]) kartCiz(id, veri.modeller[id]); } }, [el('span', { text: t })])));
     const not = kip === 'gecmis'
-      ? (g ? `${g.uyari}${g.bilesen ? ' Bu modelin tek bir geçmiş eğrisi yok: iki yarısı ayrı çizildi (Hücum simülasyonu iyimser).' : ''} Aylık, başlangıç 100 (${g.birim === 'TL' ? 'TL' : 'USD'}); altın gölgeler kriz dönemleri.` : 'Geçmiş yükleniyor…')
+      ? (g ? `${cv(g.uyari)}${g.bilesen ? ' Bu modelin tek bir geçmiş eğrisi yok: iki yarısı ayrı çizildi (Kairos simülasyonu iyimser).' : ''} Aylık, başlangıç 100 (${g.birim === 'TL' ? 'TL' : 'USD'}); altın gölgeler kriz dönemleri.` : 'Geçmiş yükleniyor…')
       : (canliNokta < 2 ? 'Canlı takip 12 Ekim 2026\'da başladı; çizgi ikinci işlem gününden sonra görünür. O zamana kadar "Geçmiş" grafiğine bakın.' : `Başlangıç 100. Kalın çizgi kâğıt hesap, ince çizgi ${KIYAS[id][1]}; ▲ alış ▼ satış.`);
     return el('div', { class: 'mp-grafik mt-3' }, [secim, el('div', { id: `hisseGrafik-${k(id)}`, class: 'hisse-grafik mt-2' }), el('p', { class: 'hint hint-sm mt-2 mb-0', text: not })]);
   }
@@ -246,16 +250,16 @@
       if (!ana) { doldur(kap, [el('p', { class: 'hint mb-0', text: 'Geçmiş seri bulunamadı.' })]); return; }
       const bas = ana.noktalar[0][0];
       AG.grafik.ana(kap, {
-        ad: `${AD[id]} geçmiş`, etiket: ana.ad, birim: '', dusus: true,
+        ad: `${adKisa(id)} geçmiş`, etiket: cv(ana.ad), birim: '', dusus: true,
         seri: ana.noktalar.map(([tt, v]) => ({ t: tt, v })),
-        kiyas: diger.map(s => ({ ad: s.ad, seri: s.noktalar.map(([tt, v]) => ({ t: tt, v })) })),
+        kiyas: diger.map(s => ({ ad: cv(s.ad), seri: s.noktalar.map(([tt, v]) => ({ t: tt, v })) })),
         krizler: KRIZLER.filter(z => Date.parse(z.bit) > bas)
       });
       return;
     }
     const cs = canliSeriler(id, x);
     AG.grafik.ana(kap, {
-      ad: x.ad, etiket: 'Kâğıt hesap (başlangıç 100)', birim: '', dusus: cs.ana.length > 5,
+      ad: adKisa(id), etiket: 'Kâğıt hesap (başlangıç 100)', birim: '', dusus: cs.ana.length > 5,
       bosMetin: 'Canlı takip 12 Ekim 2026\'da başladı; çizgi ikinci işlem gününden sonra görünür.',
       seri: cs.ana.map(z => ({ t: t(z.gun), v: z.v })),
       kiyas: cs.kiyas.length ? [{ ad: cs.kiyasAd, seri: cs.kiyas.map(z => ({ t: t(z.gun), v: z.v })) }] : [],
@@ -279,7 +283,7 @@
     if (id === 'm-837') {
       return el('div', { id: `hisseHavuz-${k(id)}` }, [
         el('h4', { class: 'pf-bolum-baslik', text: 'Hisse seçimi' }),
-        el('p', { class: 'hint hint-sm mb-0', text: 'Bu modelde aday havuzu yok: hep QQQ ile Hücum botu arasında yarı yarıya bölünür; yalnız paylar bozulunca yeniden dengelenir.' })
+        el('p', { class: 'hint hint-sm mb-0', text: 'Bu modelde aday havuzu yok: hep QQQ ile Kairos botu arasında yarı yarıya bölünür; yalnız paylar bozulunca yeniden dengelenir.' })
       ]);
     }
     const h = havuz && havuz.modeller ? havuz.modeller[id] : null;
@@ -316,7 +320,7 @@
       const kap = bul(`pfModel-${id}`);
       if (!kap) continue;
       kok = kok || kap;
-      if (!bul(`hisseKart-${k(id)}`)) doldur(kap, [el('article', { id: `hisseKart-${k(id)}`, class: `glass-panel panel-pad bot-kart mp-kart mp-r-${k(id)}`, 'aria-label': AD[id] }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })])]);
+      if (!bul(`hisseKart-${k(id)}`)) doldur(kap, [el('article', { id: `hisseKart-${k(id)}`, class: `glass-panel panel-pad bot-kart mp-kart mp-r-${k(id)}`, 'aria-label': adTam(id) }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })])]);
     }
     const ortak = bul('pfModellerKok');
     if (ortak && !bul('pfModelIzlemeKat')) {

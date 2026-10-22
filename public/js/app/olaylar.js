@@ -746,13 +746,13 @@ function bindFormEvents() {
     if (sunucu) govde.healthchecksSunucuUrl = sunucu;
     if (!Object.keys(govde).length) { AG.bildir('Boş — kaydedilecek URL yok. Kaldırmak için "URL\'leri kaldır".', 'uyari'); return; }
     const dolu = [bot, denge, sunucu].filter(Boolean);
-    if (new Set(dolu).size !== dolu.length) { AG.bildir('URL\'ler aynı olamaz: Hücum, Denge ve sunucu kalp atışı healthchecks.io\'da ayrı check olmalı (aynı URL bir botun durmasını gizler).', 'uyari'); return; }
+    if (new Set(dolu).size !== dolu.length) { AG.bildir('URL\'ler aynı olamaz: Kairos, Tao ve sunucu kalp atışı healthchecks.io\'da ayrı check olmalı (aynı URL bir botun durmasını gizler).', 'uyari'); return; }
     try { await saglikKaydet(govde, 'Sağlık sinyali kaydedildi. Şimdi "Test sinyali gönder" ile deneyin.'); }
     catch (err) { AG.bildir('Sunucuya ulaşılamıyor: ' + err.message, 'hata'); }
   });
 
   document.getElementById('btnHcSil')?.addEventListener('click', async () => {
-    const onay = await AG.onayla({ baslik: 'Sağlık sinyali URL\'leri kaldırılsın mı?', metin: 'Hücum, Denge ve sunucu ping URL\'leri silinir; healthchecks.io\'ya sinyal gitmez ve check\'ler bir süre sonra "down" olur (healthchecks\'te check\'leri duraklatmayı unutmayın).', onay: 'Kaldır', tehlikeli: true });
+    const onay = await AG.onayla({ baslik: 'Sağlık sinyali URL\'leri kaldırılsın mı?', metin: 'Kairos, Tao ve sunucu ping URL\'leri silinir; healthchecks.io\'ya sinyal gitmez ve check\'ler bir süre sonra "down" olur (healthchecks\'te check\'leri duraklatmayı unutmayın).', onay: 'Kaldır', tehlikeli: true });
     if (!onay) return;
     try { await saglikKaydet({ healthchecksUrl: '', healthchecksSunucuUrl: '', botSaglik: { denge: '' } }, 'Sağlık sinyali URL\'leri kaldırıldı.'); }
     catch (err) { AG.bildir('Sunucuya ulaşılamıyor: ' + err.message, 'hata'); }
@@ -766,7 +766,7 @@ function bindFormEvents() {
       const s = r.sonuc || {};
       const satir = (ad, x) => !x || !x.ayarli ? `${ad}: ayarlı değil` : (x.ok ? `${ad}: gönderildi ✓` : `${ad}: GÖNDERİLEMEDİ (${x.hata})`);
       // 68.8: bot başına (s.botlar); eski sunucuda tek "bot" satırı
-      const botSatirlari = s.botlar ? [satir('Hücum', s.botlar.hucum), satir('Denge', s.botlar.denge)] : [satir('Bot sinyali', s.bot)];
+      const botSatirlari = s.botlar ? [satir(AG.botAd ? AG.botAd.ad('hucum') : 'Kairos', s.botlar.hucum), satir(AG.botAd ? AG.botAd.ad('denge') : 'Tao', s.botlar.denge)] : [satir('Bot sinyali', s.bot)];
       const metin = [...botSatirlari, satir('Sunucu kalp atışı', s.sunucu)].join('\n');
       if (r.success) AG.bildir('✅ Test sinyali gönderildi — healthchecks.io\'da check "up" görünmeli.\n\n' + metin, 'ok');
       else AG.bildir('❌ ' + (r.error || 'Test başarısız') + (r.sonuc ? '\n\n' + metin : ''), 'hata');

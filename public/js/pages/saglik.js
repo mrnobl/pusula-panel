@@ -9,6 +9,8 @@
  */
 (function (global) {
   'use strict';
+  /** 72.0: görünen bot adı kimlikten (js/core/sozluk.js AG.botAd). */
+  const GA = (b) => (global.AG && global.AG.botAd ? global.AG.botAd.gorunen(b) : (b && (b.adGorunen || b.ad)) || '');
   const AG = global.AG;
   const doc = global.document;
   const el = (...a) => AG.dom.el(...a);
@@ -51,7 +53,7 @@
         alt: `${o.tamam} / ${o.toplam} denetim tamam${o.bilinmiyor ? ` · ${o.bilinmiyor} ölçülemedi` : ''}`, ton: o.hata ? 'p-neg' : o.uyari ? 'p-warn' : 'p-pos' },
       { kimlik: 'onarim', etiket: 'Son 24 saat', deger: `${onarim} onarım`, alt: basarisiz ? `${basarisiz} onarılamadı · sınır günde ${o.onarimSiniri}` : `sınır: aynı onarım günde ${o.onarimSiniri}`, ton: basarisiz ? 'p-warn' : '' },
       { kimlik: 'botlar', etiket: 'Botlar', deger: kapali ? `${kapali} tamamen kapalı` : gk ? `${gk} güvenli kipte` : `${calisan} çalışıyor`,
-        alt: (g.botlar || []).map(b => `${b.adGorunen} ${b.engel ? 'kapalı' : b.guvenliKip ? 'güvenli kipte' : b.calisiyor ? 'çalışıyor' : 'durdu'}`).join(' · ') || '—', ton: kapali ? 'p-neg' : gk ? 'p-warn' : '' },
+        alt: (g.botlar || []).map(b => `${GA(b)} ${b.engel ? 'kapalı' : b.guvenliKip ? 'güvenli kipte' : b.calisiyor ? 'çalışıyor' : 'durdu'}`).join(' · ') || '—', ton: kapali ? 'p-neg' : gk ? 'p-warn' : '' },
       { kimlik: 'yoklama', etiket: 'Son yoklama', deger: saat(o.sonYoklama, simdi), alt: g.calisiyor === false ? 'öz denetim sunucuda çalışır' : `sonraki ${saat(o.sonraki, simdi)} · 5 dk'da bir` },
     ];
   }
@@ -70,7 +72,7 @@
   function raporModeli(l, botlar) {
     return (l || []).map(r => {
       const b = (botlar || []).find(x => x.ad === r.bot);
-      return { dosya: r.dosya, zaman: r.zaman, bot: b ? b.adGorunen : (r.bot === 'sistem' ? 'Sistem' : r.bot || '—'), sebep: KAYNAK_AD[r.kaynak] || r.kaynak || '—', boyut: Number.isFinite(r.bayt) ? `${Math.max(1, Math.round(r.bayt / 1024))} KB` : '' };
+      return { dosya: r.dosya, zaman: r.zaman, bot: b ? GA(b) : (r.bot === 'sistem' ? 'Sistem' : r.bot || '—'), sebep: KAYNAK_AD[r.kaynak] || r.kaynak || '—', boyut: Number.isFinite(r.bayt) ? `${Math.max(1, Math.round(r.bayt / 1024))} KB` : '' };
     });
   }
 
@@ -123,13 +125,13 @@
       [el('span', { text: kapali ? (kolEngeli ? 'Borsayla karşılaştır' : 'Botu yeniden aç') : 'Güvenli kipi kaldır' })]);
     kutu.addEventListener('change', () => { okundu[b.ad] = kutu.checked; ac.disabled = !kutu.checked; });
     ac.addEventListener('click', () => {
-      if (!kapali) return eylem(ac, () => AG.api.saglikOz.guvenliKipKaldir(b.ad), `${b.adGorunen}: güvenli kip kaldırıldı — bot sonraki çalışmada işlem yapabilir`);
-      if (kolEngeli) return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'mutabakat'), `${b.adGorunen}: borsayla karşılaştırıldı`);
-      return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'engel-kaldir'), `${b.adGorunen}: bot yeniden açıldı`);
+      if (!kapali) return eylem(ac, () => AG.api.saglikOz.guvenliKipKaldir(b.ad), `${GA(b)}: güvenli kip kaldırıldı — bot sonraki çalışmada işlem yapabilir`);
+      if (kolEngeli) return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'mutabakat'), `${GA(b)}: borsayla karşılaştırıldı`);
+      return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'engel-kaldir'), `${GA(b)}: bot yeniden açıldı`);
     });
     return el('section', { class: `p-kart oz-bot-kart ${kapali ? 'oz-bot-kapali' : 'oz-bot-gk'}`, id: `ozBot-${b.ad}`, role: 'alert' }, [
       el('div', { class: 'p-kart-bas' }, [
-        el('h3', { class: 'p-kart-baslik', text: `${b.adGorunen} · ${kapali ? 'tamamen kapandı' : 'güvenli kipte'}` }),
+        el('h3', { class: 'p-kart-baslik', text: `${GA(b)} · ${kapali ? 'tamamen kapandı' : 'güvenli kipte'}` }),
         el('span', { class: `p-rozet ${kapali ? 'p-rozet-neg' : 'p-rozet-warn'}`, text: kapali ? 'Kapalı' : 'Yeni işlem yok' }),
       ]),
       el('p', { class: 'oz-sebep' }, [el('strong', { text: 'Sebep: ' }), el('span', { text: sebep })]),
@@ -231,7 +233,7 @@
           return el('li', { class: 'oz-olay' }, [
             el('span', { class: 'oz-sag sayi', text: saat(x.zaman, simdi) }),
             el('span', { class: `p-rozet${ton ? ' p-rozet-' + ton : ''}`, text: ad }),
-            el('span', { class: 'oz-olay-metin', text: [bot ? bot.adGorunen : null, d ? d.ad : x.kimlik, x.metin].filter(Boolean).join(' · ') }),
+            el('span', { class: 'oz-olay-metin', text: [bot ? GA(bot) : null, d ? d.ad : x.kimlik, AG.botAd ? AG.botAd.cevir(x.metin) : x.metin].filter(Boolean).join(' · ') }),
           ]);
         })) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Son 30 günde onarım ya da olay yok.' })]),
       ]),
@@ -244,7 +246,7 @@
           satirlar: (veri.tetikler || []).map(t => el('tr', null, [el('td', { text: t.ad }),
             el('td', null, [el('span', { class: `p-rozet ${t.sonuc === 'tam' ? 'p-rozet-neg' : 'p-rozet-warn'}`, text: t.sonuc === 'tam' ? 'Tamamen kapanır' : 'Güvenli kip' })]),
             el('td', { class: 'df-soluk', text: t.not || '—' })])) }, 'p-tablo-kap'),
-        el('p', { class: 'hint hint-sm mb-0', text: `Demo kipindeki bota (Hücum, demo kabul) ${String(veri.demoKorumaBitis || '').slice(0, 10) || '2026-12-09'} sonuna kadar öz denetim hiçbir şey yapmaz — yalnız haber verir.` }),
+        el('p', { class: 'hint hint-sm mb-0', text: `Demo kipindeki bota (Kairos, demo kabul) ${String(veri.demoKorumaBitis || '').slice(0, 10) || '2026-12-09'} sonuna kadar öz denetim hiçbir şey yapmaz — yalnız haber verir.` }),
       ]),
     ]);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();

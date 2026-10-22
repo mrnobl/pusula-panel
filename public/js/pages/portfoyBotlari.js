@@ -31,11 +31,15 @@
 
   const SIRA = ['m-qqq-m10', 'm-bist-m10', 'm-837'];
   const KISA = { 'm-qqq-m10': 'qqq', 'm-bist-m10': 'bist', 'm-837': 'q837' };
-  const AD = { 'm-qqq-m10': 'QQQ M10', 'm-bist-m10': 'BIST M10', 'm-837': '837 · QQQ + Hücum' };
-  const SIMGE_KISA = { 'm-qqq-m10': 'N10', 'm-bist-m10': 'B10', 'm-837': '837' };
+  /** 72.0: görünen ad kimlikten (js/core/sozluk.js AG.botAd); sunucunun x.ad metni kullanılmaz. */
+  const AD_YEDEK = { 'm-qqq-m10': 'Nova', 'm-bist-m10': 'Lydia', 'm-837': 'Simurg' };
+  const AD = new Proxy(AD_YEDEK, { get: (t, id) => (AG.botAd && AG.botAd.ad(id)) || t[id] });
+  const CV = (s) => (AG.botAd && typeof s === 'string' ? AG.botAd.cevir(s) : s);
+  const KOL = 'Kairos kolu';
+  const SIMGE_KISA = { 'm-qqq-m10': 'NV', 'm-bist-m10': 'LY', 'm-837': 'SM' };   // 72.0: Nova · Lydia · Simurg (hisseYapilari.js ile aynı)
   const PIYASA = { 'm-qqq-m10': 'ABD · USD · Midas', 'm-bist-m10': 'BIST · TL · Midas', 'm-837': 'ABD + Binance · USD' };
   const SIMGE = { USD: '$', TRY: '₺' };
-  const TUR_AD = { al: 'AL', sat: 'SAT', yatir: 'YATIR', cek: 'ÇEK', temettu: 'Temettü', bolunme: 'Bölünme', aktarim: 'Aktarım (Hücum kolu)' };
+  const TUR_AD = { al: 'AL', sat: 'SAT', yatir: 'YATIR', cek: 'ÇEK', temettu: 'Temettü', bolunme: 'Bölünme', aktarim: 'Aktarım (Kairos kolu)' };
   const SONUC = {
     alindi: ['Alındı ✓', 'pf-rozet-iyi'], eldeKaldi: ['Elde kaldı', 'pf-rozet-bilgi'], bekliyor: ['Bekliyor', 'pf-rozet-uyari'],
     alinamadi: ['Alınamadı', 'pf-rozet-uyari'], gelecek: ['Uygulanacak', '']
@@ -91,7 +95,7 @@
     const hucre = (v) => { const s = v == null ? '' : String(v); return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
     const satir = (a) => a.map(hucre).join(';');
     return [satir(['tarih', 'islem', 'hisse', 'adet', 'fiyat', 'tutar', 'komisyon', 'gerceklesen_kz', 'neden', 'para']),
-      ...l.map((i, n) => satir([i.gun, i.tur, i.s === 'HUCUM' ? 'Hücum kolu' : (i.s || ''), i.adet, i.tur === 'temettu' ? '' : i.fiyat, i.tutar, i.komisyon, kz.has(n) ? Math.round(kz.get(n) * 100) / 100 : '', i.neden, x.para]))].join('\n') + '\n';
+      ...l.map((i, n) => satir([i.gun, i.tur, i.s === 'HUCUM' ? KOL : (i.s || ''), i.adet, i.tur === 'temettu' ? '' : i.fiyat, i.tutar, i.komisyon, kz.has(n) ? Math.round(kz.get(n) * 100) / 100 : '', CV(i.neden), x.para]))].join('\n') + '\n';
   }
 
   /** Saf: özet kutuları için sayılar. Gizli (telefon) kipte tutarlar null; yüzdeler yine hesaplanır. */
@@ -119,14 +123,14 @@
   /** Saf: grafik dikeyleri — hisse modelinde uygulanan karar günleri; 837'de yerleşim + dengeleme günleri. */
   function kararGunleri(x) {
     const d = (x && x.kararDefteri) || [];
-    if (x && x.tur === '837') return d.map(z => ({ gun: z.gun, etiket: z.ilk ? 'ilk yerleşim (%50 QQQ + %50 Hücum)' : 'dengeleme (Hücum payı bant dışında)' }));
+    if (x && x.tur === '837') return d.map(z => ({ gun: z.gun, etiket: z.ilk ? 'ilk yerleşim (%50 QQQ + %50 Kairos)' : 'dengeleme (Kairos payı bant dışında)' }));
     return d.filter(z => z.durum !== 'gelecek').map(z => ({ gun: z.uygulamaGunu, etiket: `${z.ilk ? 'ilk liste' : 'aylık karar'} ${gunMetni(z.kararGunu)} kapanışı` }));
   }
 
   /** Saf: karar kartının tek satırlık özeti (imleç ve kart başlığı). */
   function kararOzeti(z) {
     if (!z) return '';
-    if (z.islemler) return z.islemler.map(i => `${TUR_AD[i.tur] || i.tur} ${i.s === 'HUCUM' ? 'Hücum kolu' : i.s}${sayiMi(i.adet) ? ' ' + adet(i.adet) : ''}`).join(', ');
+    if (z.islemler) return z.islemler.map(i => `${TUR_AD[i.tur] || i.tur} ${i.s === 'HUCUM' ? KOL : i.s}${sayiMi(i.adet) ? ' ' + adet(i.adet) : ''}`).join(', ');
     const say = (s) => z.kalemler.filter(x => x.sonuc === s).map(x => x.s);
     const parca = [];
     if (say('alindi').length) parca.push(`alındı: ${say('alindi').join(', ')}`);
@@ -167,7 +171,8 @@
       el('div', { class: 'mp-simge', 'aria-hidden': 'true', text: SIMGE_KISA[id] }),
       el('div', { class: 'mp-bas-metin' }, [
         el('div', { class: 'row-inline row-wrap gap-2' }, [
-          el('h3', { class: 'card-title m-0', text: (x && x.ad) || AD[id] }),
+          el('h3', { class: 'card-title m-0', text: AD[id], title: AG.botAd ? AG.botAd.anlam(id) : null }),
+          AG.botAd && AG.botAd.alt(id) ? el('span', { class: 'hint hint-sm mb-0 bot-ad-alt', text: AG.botAd.alt(id) }) : null,
           el('span', { class: 'badge', text: 'kâğıt hesap — canlı hesap değil' }), el('span', { class: 'badge', text: PIYASA[id] })]),
         el('p', { class: 'mp-ne-yapar mb-0' }, [el('span', { text: kuralMetni(id) })]),
         ...ek
@@ -195,14 +200,14 @@
     const defter = x.kararDefteri || [];
     const vg = vurguGun[id] || null;
     const kiyasAd = x.kiyas ? x.kiyas.ad : 'al-tut';
-    const varsayilan = `Kalın çizgi kâğıt hesap, kesikli çizgi ${kiyasAd} (aynı günler, aynı başlangıç)${s.hucum.length ? ', ince çizgi Hücum kolu (simülasyon)' : ''}; dikey çizgiler karar günleri. İmleci bir günün üstüne getirin.`;
+    const varsayilan = `Kalın çizgi kâğıt hesap, kesikli çizgi ${kiyasAd} (aynı günler, aynı başlangıç)${s.hucum.length ? ', ince çizgi Kairos kolu (simülasyon)' : ''}; dikey çizgiler karar günleri. İmleci bir günün üstüne getirin.`;
     if (bilgi) bilgi.textContent = varsayilan;
     AG.grafik.ana(kap, {
       ad: `${AD[id]} portföy değeri`, etiket: x.gizli ? 'Kâğıt hesap (başlangıç 100)' : 'Kâğıt hesap — özsermaye', birim: s.birim, dusus: s.ana.length > 5,
       bosMetin: 'Çizgi ikinci işlem gününden sonra görünür.',
       seri: s.ana.map(z => ({ t: tms(z.gun), v: z.v })),
       kiyas: [s.kiyas.length ? { ad: kiyasAd, vurgu: true, seri: s.kiyas.map(z => ({ t: tms(z.gun), v: z.v })) } : null,
-        s.hucum.length ? { ad: 'Hücum kolu (simülasyon)', renk: 4, seri: s.hucum.map(z => ({ t: tms(z.gun), v: z.v })) } : null].filter(Boolean),
+        s.hucum.length ? { ad: 'Kairos kolu (simülasyon)', renk: 4, seri: s.hucum.map(z => ({ t: tms(z.gun), v: z.v })) } : null].filter(Boolean),
       dikeyler: kg.map(z => ({ t: tms(z.gun), etiket: z.etiket, vurgu: z.gun === vg })), dikeyEtiketi: x.tur === '837' ? 'Yerleşim / dengeleme günü' : 'Karar uygulama günü',
       imlecFn: (t) => {
         if (!bilgi) return;
@@ -254,7 +259,7 @@
     if (f.hata) { doldur(kap, [el('p', { class: 'hint hint-sm mb-0', text: ucYokMu(f.hata) ? 'Sunucu güncellenince görünür (hisse grafiği Pusula 68.8 ile geldi).' : `Fiyat okunamadı: ${f.hata}` })]); return; }
     const islem = (x.kagit.islemler || []).filter(i => i.s === s && (i.tur === 'al' || i.tur === 'sat' || i.tur === 'temettu' || i.tur === 'bolunme'));
     const defter = x.kararDefteri || [];
-    const kararAd = (i) => { const m = /(ilk liste|aylık karar) (\d{4}-\d{2}-\d{2})/.exec(i.neden || ''); return m ? `${m[1]} ${gunMetni(m[2])}` : (i.neden || ''); };
+    const kararAd = (i) => { const m = /(ilk liste|aylık karar) (\d{4}-\d{2}-\d{2})/.exec(i.neden || ''); return m ? `${m[1]} ${gunMetni(m[2])}` : CV(i.neden || ''); };
     const p = x.para;
     const etiket = (i) => `${TUR_AD[i.tur]} ${adet(i.adet)} adet × ${fiyat(i.fiyat, p)}${x.gizli || !i.komisyon ? '' : ` + ${para(i.komisyon, p)} komisyon`} — ${kararAd(i)}`;
     const varsayilan = `${s} günlük kapanış (ham fiyat, kâğıt hesabın kullandığı seri) · ▲ alış ▼ satış. İmleci bir işaretin üstüne getirin.`;
@@ -271,7 +276,7 @@
         const o = islem.filter(i => i.gun === gun);
         const z = defter.find(d => d.uygulamaGunu === gun && d.kalemler);
         const kalem = z ? z.kalemler.find(y => y.s === s) : null;
-        bilgi.textContent = `${gunMetni(gun, true)} · açılış ${bar ? fiyat(bar.o, p) : '—'} · kapanış ${bar ? fiyat(bar.c, p) : '—'}${o.length ? ' — ' + o.map(i => (i.tur === 'temettu' || i.tur === 'bolunme') ? i.neden : etiket(i)).join(' · ') : ''}${!o.length && kalem && kalem.sonuc === 'alinamadi' ? ` — ${s} alınamadı: ${kalem.neden}` : ''}`;
+        bilgi.textContent = `${gunMetni(gun, true)} · açılış ${bar ? fiyat(bar.o, p) : '—'} · kapanış ${bar ? fiyat(bar.c, p) : '—'}${o.length ? ' — ' + o.map(i => (i.tur === 'temettu' || i.tur === 'bolunme') ? CV(i.neden) : etiket(i)).join(' · ') : ''}${!o.length && kalem && kalem.sonuc === 'alinamadi' ? ` — ${s} alınamadı: ${kalem.neden}` : ''}`;
       }
     });
   }
@@ -279,7 +284,7 @@
   function eldekilerCiz(id, x) {
     const p = x.para, gizli = !!x.gizli, o = x.kagit.ozet || {};
     const satir = (z) => el('tr', null, [
-      el('td', { class: 'pf-sola fw-semibold', text: z.ad || z.s }),
+      el('td', { class: 'pf-sola fw-semibold', text: z.s === 'HUCUM' ? 'Kairos kolu (simülasyon)' : CV(z.ad || z.s) }),
       el('td', { class: 'sayi', text: z.simulasyon ? '—' : adet(z.adet) }),
       el('td', { class: 'sayi', text: z.simulasyon ? '—' : fiyat(z.ortMaliyet, p) }),
       el('td', { class: 'sayi', text: z.simulasyon ? 'simülasyon' : fiyat(z.kapanis, p) }),
@@ -293,7 +298,7 @@
       el('td', { class: 'sayi', text: gizli ? '—' : para(o.nakit, p) }), el('td', { class: 'sayi', text: 'faizsiz' }), el('td', { class: 'sayi', text: gizli ? '—' : yz(nakitPay) })]);
     return blok(`pbotElde-${k(id)}`, 'Eldeki hisseler', [
       tablo(['Hisse', 'Adet', 'Maliyet (komisyon dahil)', 'Son', 'Değer', 'K/Z', 'Pay'], [...poz.map(satir), nakitSatir], `tblPbotElde-${k(id)}`),
-      el('p', { class: 'hint hint-sm mt-2 mb-0', text: `Maliyet = alış fiyatı + komisyon, adet başına. Son = ${gunMetni(o.son)} kapanışı.${x.tur === '837' ? ' Hücum kolu Binance\'teki Hücum botunun getirisiyle büyüyen simülasyondur; hisse değildir.' : ''}` })
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: `Maliyet = alış fiyatı + komisyon, adet başına. Son = ${gunMetni(o.son)} kapanışı.${x.tur === '837' ? ' Kairos kolu Binance\'teki Kairos botunun getirisiyle büyüyen simülasyondur; hisse değildir.' : ''}` })
     ]);
   }
 
@@ -304,9 +309,9 @@
       return el('article', { class: 'pbot-karar', 'data-gun': z.gun }, [
         el('div', { class: 'row-between row-wrap gap-2' }, [el('strong', { text: `${gunMetni(z.gun, true)} · ${z.ilk ? 'ilk yerleşim' : 'dengeleme'}` }), goster]),
         tablo(['İşlem', 'Varlık', 'Adet', 'Fiyat', 'Tutar', 'Komisyon', 'Neden'], z.islemler.map(i => el('tr', null, [
-          el('td', { class: 'pf-sola', text: TUR_AD[i.tur] || i.tur }), el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? 'Hücum kolu' : i.s }),
+          el('td', { class: 'pf-sola', text: TUR_AD[i.tur] || i.tur }), el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? KOL : i.s }),
           el('td', { class: 'sayi', text: adet(i.adet) }), el('td', { class: 'sayi', text: i.fiyat != null ? fiyat(i.fiyat, p) : '—' }),
-          el('td', { class: 'sayi', text: para(i.tutar, p) }), el('td', { class: 'sayi', text: i.komisyon ? para(i.komisyon, p) : '—' }), el('td', { class: 'pf-sola pf-kucuk', text: i.neden })])), null, 'pbot-karar-tablo')
+          el('td', { class: 'sayi', text: para(i.tutar, p) }), el('td', { class: 'sayi', text: i.komisyon ? para(i.komisyon, p) : '—' }), el('td', { class: 'pf-sola pf-kucuk', text: CV(i.neden) })])), null, 'pbot-karar-tablo')
       ]);
     }
     const durum = z.durum === 'gelecek' ? ['Uygulanacak', ''] : z.durum === 'bekliyor' ? ['Kısmen bekliyor', 'pf-rozet-uyari'] : ['Uygulandı', 'pf-rozet-iyi'];
@@ -319,8 +324,8 @@
         el('td', { class: `sayi ${ton(y.p)}`, text: sayiMi(y.p) ? isaretli(y.p, 0) : '—' }),
         el('td', { class: 'pf-sola' }, [rozet(SONUC[y.sonuc] || [y.sonuc, ''])]),
         el('td', { class: 'sayi', text: y.adet != null ? adet(y.adet) : '—' }), el('td', { class: 'sayi', text: y.fiyat != null ? fiyat(y.fiyat, p) : '—' }),
-        el('td', { class: 'pf-sola pf-kucuk', text: y.neden || '' })])), null, 'pbot-karar-tablo'),
-      z.satilanlar.length ? el('p', { class: 'mb-0 mt-2 pf-kucuk' }, [el('strong', { text: 'Satılanlar: ' }), el('span', { text: z.satilanlar.map(s => `${s.s} ${adet(s.adet)} adet × ${fiyat(s.fiyat, p)} (${s.neden})`).join(' · ') })]) : null,
+        el('td', { class: 'pf-sola pf-kucuk', text: CV(y.neden || '') })])), null, 'pbot-karar-tablo'),
+      z.satilanlar.length ? el('p', { class: 'mb-0 mt-2 pf-kucuk' }, [el('strong', { text: 'Satılanlar: ' }), el('span', { text: z.satilanlar.map(s => `${s.s} ${adet(s.adet)} adet × ${fiyat(s.fiyat, p)} (${CV(s.neden)})`).join(' · ') })]) : null,
       el('p', { class: 'hint hint-sm mb-0 mt-1', text: `${z.islemSayisi} emir${sayiMi(z.komisyon) && z.komisyon > 0 ? ` · ${para(z.komisyon, p)} komisyon` : ''}${z.eksikVeri && z.eksikVeri.length ? ` · verisi eksik olduğu için sıralanmayan: ${z.eksikVeri.map(e => e.s || e).join(', ')}` : ''}` })
     ]);
   }
@@ -347,13 +352,13 @@
     const satirlar = l.map((i, n) => ({ i, n })).reverse().map(({ i, n }) => el('tr', null, [
       el('td', { class: 'sayi', text: i.gun }),
       el('td', { class: 'pf-sola' }, [el('span', { class: `pf-rozet ${i.tur === 'al' ? 'pf-rozet-iyi' : i.tur === 'sat' ? 'pf-rozet-tehlike' : ''}`, text: TUR_AD[i.tur] || i.tur })]),
-      el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? 'Hücum kolu' : (i.s || '—') }),
+      el('td', { class: 'pf-sola fw-semibold', text: i.s === 'HUCUM' ? KOL : (i.s || '—') }),
       el('td', { class: 'sayi', text: i.adet != null ? adet(i.adet) : '—' }),
       el('td', { class: 'sayi', text: i.fiyat != null && i.tur !== 'temettu' ? fiyat(i.fiyat, p) : '—' }),
       el('td', { class: 'sayi', text: gizli ? '—' : para(i.tutar, p) }),
       el('td', { class: 'sayi', text: gizli || !i.komisyon ? '—' : para(i.komisyon, p) }),
       el('td', { class: `sayi ${kz.has(n) ? ton(kz.get(n)) : ''}`, text: kz.has(n) && !gizli ? para(kz.get(n), p) : '—' }),
-      el('td', { class: 'pf-sola pf-kucuk', text: i.neden || '' })
+      el('td', { class: 'pf-sola pf-kucuk', text: CV(i.neden || '') })
     ]));
     const csv = el('button', { type: 'button', class: 'btn btn-xs btn-secondary', id: `btnPbotCsv-${k(id)}`, onclick: () => csvIndir(id) }, [el('i', { 'data-lucide': 'download', class: 'icon-13' }), el('span', { text: ' CSV indir' })]);
     return el('section', { id: `pbotIslemler-${k(id)}`, class: 'bot-blok pbot-blok', 'aria-label': 'İşlem geçmişi' }, [
@@ -396,7 +401,7 @@
       return;
     }
     const x = v.r;
-    if (x.bos) { doldur(a, [baslikCiz(id, x), el('p', { class: 'hint mb-0 mt-2', text: x.neden || 'Henüz başlamadı.' })]); return; }
+    if (x.bos) { doldur(a, [baslikCiz(id, x), el('p', { class: 'hint mb-0 mt-2', text: CV(x.neden) || 'Henüz başlamadı.' })]); return; }
     const kg = x.kagit, uy = [...(x.uyarilar || [])];
     const o = kg.ozet || {};
     if (o.bekleyenEmir && o.bekleyenEmir.length) uy.push(`Açılış fiyatı gelmediği için bekleyen emir: ${o.bekleyenEmir.join(', ')}`);

@@ -39,7 +39,9 @@ Panelde ve kılavuzda geçen terimlerin sade açıklaması. Panelin kendi **?** 
 
 | Terim | Anlamı |
 |---|---|
-| Hücum / Denge | İki portföy botu: BTC trend kuralı + 15 coinlik Kalkan kolu ×3; Hücum trendde %100 BTC, Denge %50 |
+| Kairos / Tao | İki kripto botu (eski adları Hücum / Denge): BTC trend kuralı + 15 coinlik Kalkan kolu ×3; Kairos trendde %100 BTC, Tao %50. Kairos: "doğru an"ın tanrısı; Tao: "yol", inişle çıkışın dengesi |
+| Nova / Lydia | Model portföy botları (eski adları QQQ M10 / BIST M10): Nasdaq Momentum 10 ve BIST Momentum 10 — her ay en güçlü 10 hisse. Nova: birden parlayan yeni yıldız; Lydia: ilk parayı basan Anadolu krallığı |
+| Simurg | %50 QQQ + %50 Kairos model portföy botu (eski adı 837 · QQQ + Hücum; araştırmadaki deneme numarası 837). İki diyarı birleştiren efsanevi kuş — iki piyasayı birleştiren bot |
 | BTC trend kuralı (O-GC) | BTC uzun dönem ortalamalarının üstündeyse BTC tutulur, altındaysa USDT'de beklenir |
 | Testere | Fiyat ortalamanın etrafında gidip gelirken trend kuralının sık sık girip çıkması ve her seferinde küçük zarar yazması |
 | Kalkan kolu | BTC dışındaki 15 coinde Donchian (trend takibi) + DCA (kademeli alım) bacakları |
@@ -62,8 +64,8 @@ Panelde ve kılavuzda geçen terimlerin sade açıklaması. Panelin kendi **?** 
 
 | Terim | Anlamı |
 |---|---|
-| Kesitsel momentum (12-1) | Her ay, son 12 ayda en çok yükselen hisseleri seçmek; son ay hariç tutulur (kısa vadeli geri dönüş etkisini dışlamak için). Nasdaq ve BIST Momentum 10 böyle çalışır |
-| Çekirdek-uydu | Portföyün sakin bir "çekirdeği" (ör. QQQ) ile riskli bir "uydusu" (ör. Hücum botu) ayrı hesaplarda tutulur, belirli aralıkla hedef paylara dengelenir (837) |
+| Kesitsel momentum (12-1) | Her ay, son 12 ayda en çok yükselen hisseleri seçmek; son ay hariç tutulur (kısa vadeli geri dönüş etkisini dışlamak için). Nova ve Lydia (Nasdaq / BIST Momentum 10) böyle çalışır |
+| Çekirdek-uydu | Portföyün sakin bir "çekirdeği" (ör. QQQ) ile riskli bir "uydusu" (ör. Kairos botu) ayrı hesaplarda tutulur, belirli aralıkla hedef paylara dengelenir (Simurg) |
 | Nokta-zamanlı (PIT) evren | Her ay yalnız O GÜN endekste olan hisseler aday sayılır; bugünkü listeyi geçmişe uygulamak sonradan batanları dışarıda bırakıp sonucu şişirir (hayatta kalma yanlılığı) |
 | Endeks (100 taban, NAV) | Model portföyün değeri başlangıçta 100 kabul edilir; 112 = başlangıçtan %12 kazanç. Gerçek tutar yalnız sunucuda |
 | H1 | Hisse tarafı kabul ölçütü: en büyük düşüş kıyastan en fazla 5 puan derin olabilir. Sonuçlar görüldükten SONRA kondu; bu kabuller seçim yanlılığı taşır |
@@ -108,7 +110,7 @@ Panelde ve kılavuzda geçen terimlerin sade açıklaması. Panelin kendi **?** 
 | Geçmişe bakarak (in-sample) | Ayarın seçildiği veride ölçmek; sonuç iyimserdir |
 | Vekil (proxy) | Verisi olmayan varlığın yerine kullanılan benzer seri (XU030 yerine XU100) |
 | Eksik veri: kırp / sonradan katıl | Ortak başlangıçtan başla / varlık verisi başlayınca portföye girer |
-| Hücum serisi senaryosu | Ölçülen · yarıya indirilmiş · BTC al-tut ile değiştirilmiş (kötümser) |
+| Kairos serisi senaryosu | Ölçülen · yarıya indirilmiş · BTC al-tut ile değiştirilmiş (kötümser) |
 | Kriz dönemi | 2008, 2020 Mart, 2022 gibi sert düşüş aralıkları |
 | Sabitleme | Model kurallarının ileri izlemeden önce dondurulması |
 | p95 / p99 | Simülasyonların %95'inin / %99'unun altında kaldığı eşik |

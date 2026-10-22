@@ -9,14 +9,14 @@ Yan menüde İleri test'in altında beş sayfa var (66.0):
 | Sayfa | Ne var |
 |---|---|
 | **Genel bakış** | **Testler** tablosu (her test, durumu ve karar günü; ada tıklayınca kendi sayfası açılır) + **Karar takvimi** (bütün karar ve kontrol günleri, bugünden başlayarak) |
-| **Hücum / Denge simülasyonu** | Simülasyon kartı ve en derin düşüş grafikleri, yan denemeler (3 günlük karar, yatay piyasa filtresi) |
+| **Kairos / Tao simülasyonu** | Simülasyon kartı ve en derin düşüş grafikleri, yan denemeler (3 günlük karar, yatay piyasa filtresi) |
 | **Bollinger düşüş azaltıcı** | Bollinger kartı ve BTC en derin düşüş grafiği |
-| **876 gölge** | Hücum %90 + TVL L/S %10 gölge kartı ([aşağıda](#/kilavuz/ileri-test/g876)) |
+| **876 gölge** | Kairos %90 + TVL L/S %10 gölge kartı ([aşağıda](#/kilavuz/ileri-test/g876)) |
 | **EUR/USD CBDR** | Londra girişi gölge kartı ve birikimli R grafiği ([aşağıda](#/kilavuz/ileri-test/cbdr)) |
 
 Sayfanın üstündeki **ara rapor notu** her yerde geçerli: karar günlerine kadar yalnız izlenir, hüküm verilmez, kurala dokunulmaz. Her kart tek cümle, büyük durum, iki ana sayı ve karar günü gösterir; ayrıntı katlıdır.
 
-**Demo kabul süreci** (Hücum demo hesabı, kabul raporu) 66.0'dan beri botun kendi sayfasında: **Botlar › Hücum › Yönetim**. Genel bakıştaki Testler tablosunda satırı durur, tıklayınca oraya gider (aşağıda [Demo kabul raporu](#/kilavuz/ileri-test/demo-rapor)).
+**Demo kabul süreci** (Kairos demo hesabı, kabul raporu) 66.0'dan beri botun kendi sayfasında: **Botlar › Kairos › Yönetim**. Genel bakıştaki Testler tablosunda satırı durur, tıklayınca oraya gider (aşağıda [Demo kabul raporu](#/kilavuz/ileri-test/demo-rapor)).
 
 ## Ne zaman kullanılır {#ne-zaman}
 
@@ -27,13 +27,13 @@ Sayfanın üstündeki **ara rapor notu** her yerde geçerli: karar günlerine ka
 
 ![İleri test › Genel bakış — testler tablosu ve karar takvimi](ekran:ileri-test-1400)
 
-![İleri test › Hücum / Denge simülasyonu — kart ve grafikler](ekran:ileri-hucum-1400)
+![İleri test › Kairos / Tao simülasyonu — kart ve grafikler](ekran:ileri-hucum-1400)
 
 ## Grafikler {#grafikler}
 
 | Grafik | Ne gösterir |
 |---|---|
-| Hücum / Denge simülasyonu — en derin düşüş | Modelin "olması gereken" eğrisinin o güne kadarki en derin düşüşü; kesikli çizgiler **uyarı eşiği** (sarı) ve **alarm eşiği** (kırmızı). Çizgi ne kadar aşağıdaysa o kadar iyi |
+| Kairos / Tao simülasyonu — en derin düşüş | Modelin "olması gereken" eğrisinin o güne kadarki en derin düşüşü; kesikli çizgiler **uyarı eşiği** (sarı) ve **alarm eşiği** (kırmızı). Çizgi ne kadar aşağıdaysa o kadar iyi |
 | Bollinger — BTC en derin düşüş | BTC'de mevcut kural (gri) ile Bollinger'li kural (yeşil) aynı günlerde |
 | Yan denemeler — günlüğe göre fark | **3 günlük karar** ve **yatay piyasa filtresi** denemelerinin günlük kurala göre birikimli farkı (puan); sıfırın üstü = günlükten iyi |
 | Demo kabul — uygulama sapması | 30 günlük gerçek ↔ simülasyon farkı; kesikli çizgiler %3 (incele) ve %5 (sınır — bot durur). Bot başlayınca dolar |
@@ -46,15 +46,15 @@ Seriler izleyici kayıtlarından gün gün çizilir ve 7 Ekim 2026'dan başlar; 
 | Alan | Anlamı |
 |---|---|
 | Durum | Eşiğin altında · Uyarı eşiği aşıldı · Alarm eşiği aşıldı · Ölçüm sürüyor · İzleyici hata verdi · Protokol başlamadı |
-| Karar günü (eski adı hüküm tarihi) | Kararın verileceği gün: Hücum/Denge 90 / 182 / 365. gün (5 Ocak · 7 Nisan · 7 Ekim 2027), Bollinger 7 Ekim 2027 (olay yoksa 2028), demo kabul Gün 0 + 63 |
+| Karar günü (eski adı hüküm tarihi) | Kararın verileceği gün: Kairos/Tao 90 / 182 / 365. gün (5 Ocak · 7 Nisan · 7 Ekim 2027), Bollinger 7 Ekim 2027 (olay yoksa 2028), demo kabul Gün 0 + 63 |
 | Mevcut / Bollinger'li | Soldaki sayı mevcut kural, sağdaki Bollinger eklenmiş kural |
 | Simülasyonun en derin düşüşü | Model eğrisinin ileri dönemdeki en derin düşüşü (eski adı gölge MaxDD); **uyarı eşiği** (eski p95) aşılırsa neden incelenir, **alarm eşiği** (eski p99) aşılırsa model geçersiz sayılır |
-| Ayrıntı (katlı) | Simülasyon günü, sonraki kontrol, **3 günlük karar** (eski adı 3 günlük aday), **yatay piyasa filtresi** (eski adı D3 range vetosu: VR < 1 ve son 10 gün verimliliği < 0,30 iken yeni giriş yok; karar için en az 2 filtre günü + 10 farklı gün; karar 9 Ekim 2027, olay yetmezse 2028), **1000 $'lık Hücum alarm eşiği** (eski adı Hücum-S: 90 / 182 / 365 gün %34,0 / %41,7 / %50,3 — ayrı simülasyonu yok, Hücum simülasyonuna uygulanır) |
+| Ayrıntı (katlı) | Simülasyon günü, sonraki kontrol, **3 günlük karar** (eski adı 3 günlük aday), **yatay piyasa filtresi** (eski adı D3 range vetosu: VR < 1 ve son 10 gün verimliliği < 0,30 iken yeni giriş yok; karar için en az 2 filtre günü + 10 farklı gün; karar 9 Ekim 2027, olay yetmezse 2028), **1000 $'lık Kairos alarm eşiği** (eski adı Kairos-S: 90 / 182 / 365 gün %34,0 / %41,7 / %50,3 — ayrı simülasyonu yok, Kairos simülasyonuna uygulanır) |
 | Uygulama sapması | 30 günlük gerçek − simülasyon farkı; %3 altı normal, %3–5 incele, %5 üstü bot durur |
 
 ## Demo kabul raporu {#demo-rapor}
 
-**Demo kabul — Hücum demo hesabı** kartı (66.0'dan beri **Botlar › Hücum › Yönetim**'de) içinde **Kabul raporu** bölümü var. Komut satırındaki
+**Demo kabul — Kairos demo hesabı** kartı (66.0'dan beri **Botlar › Kairos › Yönetim**'de) içinde **Kabul raporu** bölümü var. Komut satırındaki
 `node scripts/demo-kabul-rapor.js` ile **aynı hesabı** yapar (kod tek yerde: panel kendi başına hesaplamaz); yalnız okur,
 hiçbir dosya yazmaz, internete çıkmaz. Rapor demo botun **sunucudaki** kayıtlarından dolar — bu (geliştirme) bilgisayarında
 "**Gün 0 henüz yok — demo bot sunucuda; rapor orada dolar**" yazması normaldir.
@@ -141,7 +141,7 @@ Karar ölçütü önceden yazıldı ve değişmez: ortalama R sıfırın üstün
 
 **Ne:** 876, Binance vadeli coinlerini her ayın 1'inde DefiLlama'daki **kilitli değerlerinin (TVL) son 30 günlük değişimine** göre sıralar: en çok artanlar **long**, en çok azalanlar **short**; iki taraf eşit tutarda ve BTC'nin etkisi BTC ile dengelenir (piyasa yönünden bağımsız olmaya çalışır), sepet ay boyu tutulur. Geçmiş testte (2024–2026) nakdin yılda ~47 puan üstünde kaldı ama **en derin düşüşü %30,3** ile önceden yazılmış %25 sınırını aştığı için **elendi**. Bu kararla değişmedi.
 
-**Gölge:** sizin kararınızla (17 Ekim 2026) kural **emirsiz** olarak yeni günlerde izlenir ve Hücum simülasyonuyla her gün **%90 Hücum + %10 876** olarak birleştirilir. Para yok, emir yok, borsa anahtarı yok — yalnız herkese açık veri (Binance günlük mumlar ve funding, DefiLlama TVL). Kuruluşlar **1 Kasım** ve **1 Aralık 2026**; **rapor günü 1 Ocak 2027** (31 Aralık kapanışından sonra).
+**Gölge:** sizin kararınızla (17 Ekim 2026) kural **emirsiz** olarak yeni günlerde izlenir ve Kairos simülasyonuyla her gün **%90 Kairos + %10 876** olarak birleştirilir. Para yok, emir yok, borsa anahtarı yok — yalnız herkese açık veri (Binance günlük mumlar ve funding, DefiLlama TVL). Kuruluşlar **1 Kasım** ve **1 Aralık 2026**; **rapor günü 1 Ocak 2027** (31 Aralık kapanışından sonra).
 
 ![876 gölge kartı — masaüstü](ekran:ileri-876-1400)
 
@@ -151,11 +151,11 @@ Karar ölçütü önceden yazıldı ve değişmez: ortalama R sıfırın üstün
 |---|---|
 | Bu ayın sepeti | O ayın kuruluşunda kaç coin long, kaç coin short (ör. "6 long · 6 short"); altında kaç coinde sinyal olduğu. Sinyalli coin 9'dan azsa o ay **boş ay (nakit)** |
 | Bu ay (876) | 876 sepetinin bu ayki getirisi. Son gün için "bugün kapatılsa (maliyet dahil)" yazar: açık pozisyonlar o kapanıştan maliyetiyle kapatılmış sayılır; ertesi gün kesinleşir |
-| Birlikte − Hücum | %90 Hücum + %10 876 birleşiminin getirisi ile yalnız Hücum'un getirisi arasındaki fark (puan) |
+| Birlikte − Kairos | %90 Kairos + %10 876 birleşiminin getirisi ile yalnız Kairos'un getirisi arasındaki fark (puan) |
 | Başlangıçtan beri (876) | 31 Ekim 2026 kapanışından bu yana 876'nın getirisi ve en derin düşüşü |
-| En derin düşüş — birlikte / Hücum | Aynı günlerde birleşimin ve yalnız Hücum'un en derin düşüşü |
-| Vazgeçme kuralı | Önceden yazıldı: 876'nın en derin düşüşü **−%20**'ye ulaşırsa ya da birleşimin düşüşü Hücum'unkinden **3 puandan fazla** kötüyse gölge o gün durur ve rapor yazılır (kart "Durduruldu" der) |
-| Rapor günü | 1 Ocak 2027 — rapor yalnız ne olduğunu anlatır: aylık getiriler, nakde göre fark, BTC ile birlikte hareket (korelasyon), birlikte ↔ Hücum, veri tamlığı |
+| En derin düşüş — birlikte / Kairos | Aynı günlerde birleşimin ve yalnız Kairos'un en derin düşüşü |
+| Vazgeçme kuralı | Önceden yazıldı: 876'nın en derin düşüşü **−%20**'ye ulaşırsa ya da birleşimin düşüşü Kairos'unkinden **3 puandan fazla** kötüyse gölge o gün durur ve rapor yazılır (kart "Durduruldu" der) |
+| Rapor günü | 1 Ocak 2027 — rapor yalnız ne olduğunu anlatır: aylık getiriler, nakde göre fark, BTC ile birlikte hareket (korelasyon), birlikte ↔ Kairos, veri tamlığı |
 
 **İki ay istatistiksel kanıt değildir.** Kartta ya da raporda "işe yarıyor / yaramıyor" denmez; sayılar kabul, ret ya da canlı hesap kararı değildir. 1 Ocak 2027'de uzatma ya da canlı hesap kararını siz verirsiniz.
 
@@ -166,7 +166,7 @@ Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (sunucuda ayr�
 > **Uyarı:** Karar gününden önce sayıları "geçti/kaldı" diye yorumlamayın ve kuralı değiştirmeyin; bu, ölçümü geçersiz kılar.
 
 - **Alarm eşiği aşıldı:** önceden kayda geçirilmiş izleme kuralı tetiklendi — botu durdurup durdurmamak sizin kararınız; kartın ayrıntısını okuyun.
-- **Demo kabul "Protokol başlamadı":** sunucuda **Botlar › Hücum › Yönetim**'de hesap türü **demo**, sonra **Genel** görünümünde **Başlat**. İlk günlük çalışma Gün 0 olur.
+- **Demo kabul "Protokol başlamadı":** sunucuda **Botlar › Kairos › Yönetim**'de hesap türü **demo**, sonra **Genel** görünümünde **Başlat**. İlk günlük çalışma Gün 0 olur.
 - **"İzleyici hata verdi":** genelde internet; 15 dk sonra kendisi yeniden dener. Kalıcıysa sunucuda `npm run ileri:izle`.
 - İzleyiciler sunucu açılışından 1 dk sonra ve her gün 00:15 UTC sonrası çalışır; kayıtlar `data/ileri/` altında (git dışı — [yedekleyin](#/kilavuz/kurulum/adim-20)).
 - "Satır sonradan yazıldı" notu: izleyici o gün çalışmadıysa satır ertesi çalışmada tamamlanır; karar o günün verisiyle yazılır, değişmez.

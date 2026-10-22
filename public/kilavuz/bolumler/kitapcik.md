@@ -16,7 +16,7 @@ Kitapçık kendi başına bir sayfadır: solda kendi içindekiler menüsü, sağ
 
 ## Ne zaman kullanılır {#ne-zaman}
 
-- "Hücum ne zaman alır, ne zaman satar?", "Denge'nin Hücum'dan farkı ne?" gibi sorularda.
+- "Kairos ne zaman alır, ne zaman satar?", "Tao'nun Kairos'tan farkı ne?" gibi sorularda.
 - Botlar ekranında bir kararı anlamadığınızda: kitapçıkta o botun kuralını ve grafikteki örneklerini okuyun.
 - Yeni bir bot ya da model canlıya alınmadan önce kuralını baştan sona görmek için.
 

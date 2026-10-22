@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '71.1';
+const APP_VERSION = '72.0';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1918,7 +1918,7 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
     const onceki = (config.bindirme || {})[b.ad] || {};
     config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, kucukSermaye: v } };
     saveConfig(config);
-    db.addLog('INFO', `[${b.ad}] küçük sermaye (Hücum-S): ${anahtar}`);
+    db.addLog('INFO', `[${b.ad}] küçük sermaye (Kairos-S): ${anahtar}`);
     res.json({ success: true, secim: anahtar, bot: b.bot.ozet() });
   } catch (err) { borsaHata(res, err); }
 });
@@ -2376,7 +2376,7 @@ app.post('/api/secrets', (req, res) => {
   const botGovde = govde.botSaglik && typeof govde.botSaglik === 'object' && !Array.isArray(govde.botSaglik) ? govde.botSaglik : null;
   if (botGovde) {
     for (const [ad, v] of Object.entries(botGovde)) {
-      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return res.status(400).json({ success: false, error: `botSaglik.${ad}: bilinmeyen bot (Hücum'un adresi healthchecksUrl alanında)` });
+      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return res.status(400).json({ success: false, error: `botSaglik.${ad}: bilinmeyen bot (Kairos'un adresi healthchecksUrl alanında)` });
       const u = typeof v === 'string' ? v.trim() : '';
       if (u && !saglikUrlGecerli(u)) return res.status(400).json({ success: false, error: `${bindirmeArastirma.STRATEJILER[ad].ad} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)` });
     }
@@ -2384,7 +2384,7 @@ app.post('/api/secrets', (req, res) => {
   {
     // Kayıttan SONRAKİ adresler birbirinden farklı olmalı: her bot ve sunucu kalp atışı AYRI check (aynı URL bir botun durmasını gizler).
     const yeni = (k, eski) => (k in govde ? (typeof govde[k] === 'string' ? govde[k].trim() : '') : eski);
-    const sonra = [['Hücum', yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
+    const sonra = [[bindirmeArastirma.STRATEJILER.hucum.ad, yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
       ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [bindirmeArastirma.STRATEJILER[a].ad, botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
     for (let i = 0; i < sonra.length; i++) for (let j = i + 1; j < sonra.length; j++) {
       if (sonra[i][1] === sonra[j][1]) return res.status(400).json({ success: false, error: `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.` });

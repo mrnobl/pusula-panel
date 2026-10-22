@@ -1,5 +1,5 @@
 {
-  "surum": "71.1",
+  "surum": "72.0",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -20,7 +20,7 @@
     { "id": "islem-defterim", "baslik": "İşlem defteri (kendi kripto ve FX işlemlerin)", "grup": "Ekranlar", "dosya": "bolumler/islem-defterim.md" },
     { "id": "kur-cevirici", "baslik": "Kur çevirici", "grup": "Ekranlar", "dosya": "bolumler/kur-cevirici.md" },
     { "id": "botlar", "baslik": "Botlar", "grup": "Ekranlar", "rota": "botlar", "dosya": "bolumler/botlar.md", "dosyalar": ["js/pages/botlar.js", "js/pages/botDil.js", "js/pages/bindirmeIslem.js", "js/pages/bindirme.js", "js/pages/botPerformans.js"] },
-    { "id": "portfoy-botlari", "baslik": "Portföy botları (QQQ M10 · BIST M10 · 837)", "grup": "Ekranlar", "dosya": "bolumler/portfoy-botlari.md", "dosyalar": ["js/pages/portfoyBotlari.js"] },
+    { "id": "portfoy-botlari", "baslik": "Portföy botları (Nova · Lydia · Simurg)", "grup": "Ekranlar", "dosya": "bolumler/portfoy-botlari.md", "dosyalar": ["js/pages/portfoyBotlari.js"] },
     { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js"] },
     { "id": "hesaplar", "baslik": "Bot hesabı (Botlar › Hesap)", "grup": "Ekranlar", "dosya": "bolumler/hesaplar.md", "dosyalar": ["js/pages/hesaplar.js", "js/pages/borsa.js"] },
 
@@ -56,6 +56,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"72.0","tarih":"2026-10-22","yeni":["Botların yeni adları: Kairos (eski Hücum), Tao (Denge), Nova (QQQ M10), Lydia (BIST M10), Simurg (837). Yalnız görünen ad değişti; adresler ve kayıtlar aynı.","Bot başlığında ad + kısa alt yazı; adın üzerine gelince anlamı görünür.","Telegram mesajları da yeni adlarla."]},
     {"surum":"71.1","tarih":"2026-10-22","yeni":["Geliştirme bilgisayarında sunucu bağlantı dosyası okunamıyorsa (eski şifreli ya da bozuk) üstteki sarı bant bunu açıkça söyler; panel sessizce eski kopyaya düşmez."]},
     {"surum":"71.0","tarih":"2026-10-22","yeni":["Bot sayfasında günlük defter: getiri, BTC farkı, kim kazandırdı, takvim (güne dokun → işlemler).","Getiri eğrisi: % ↔ $, BTC al-tut kıyası, işlem günleri nokta; bot sayfası her zaman gerçek sonuçla açılır.","Botlar › Özet: bütün botlar kart + karşılaştırma tablosu."]},
     {"surum":"70.1","tarih":"2026-10-22","yeni":["Sağlık: açılıştan önceki hızlı kapanmalar Pusula sağlıklıyken kırmızı görünmez.","\"API anahtarları şifreli\" satırının adı \"API anahtarları\" oldu."]},

@@ -86,7 +86,9 @@
   let csvSonuc = null;
   const suzgec = { hesap: '', islem: '', varlik: '', bas: '', bit: '', durum: 'etkin' };
   const acikPaketler = new Set();   // geri alınmış tasarımcı paketleri: kayıtları açılanlar
-  const MODEL_AD = { 'm-qqq-m10': 'Nasdaq M10', 'm-bist-m10': 'BIST M10', 'm-837': '%50 QQQ + %50 Hücum (837)' };
+  /** 72.0: görünen model adı kimlikten (AG.botAd; yoksa yedek). */
+  const MODEL_AD = { 'm-qqq-m10': 'Nova', 'm-bist-m10': 'Lydia', 'm-837': 'Simurg' };
+  const modelAdi = (id) => (AG.botAd && AG.botAd.ad(id)) || MODEL_AD[id] || id;
 
   function oku(k) { try { return global.localStorage ? global.localStorage.getItem(k) : null; } catch (e) { return null; } }
   /** Üst çubuk seçimi: 'usd' | 'tl' | 'gizli' (okunamazsa 'usd'). */
@@ -432,7 +434,7 @@
   }
   function paketMetni(p) {
     const durum = p.geriAlindi ? 'geri alındı' : p.iptal ? p.iptal + ' iptal' : 'etkin';
-    return 'Tasarımcı ' + p.ay + ' ' + (MODEL_AD[p.model] || p.model) + ' — ' + p.kayitlar.length + ' kayıt (' + durum + ')';
+    return 'Tasarımcı ' + p.ay + ' ' + modelAdi(p.model) + ' — ' + p.kayitlar.length + ' kayıt (' + durum + ')';
   }
 
   /* ── Varlık ekle (61.2 "Hisse ekle"; 67.4 sekmeli). Elimde ZATEN olan varlık = AÇILIŞ BAKİYESİ; her zaman VAR OLAN bir hesaba
@@ -1122,7 +1124,8 @@
     if (liste && liste.B10 && liste.B10.has(s)) return 'B10';
     return null;
   }
-  const etiketCip = (e) => (e ? el('span', { class: `pm-model-cip pm-model-${e.toLowerCase()}`, title: 'Bu varlık modelin son karar listesinde', text: e }) : el('span', { class: 'pf-kucuk tone-muted', text: '—' }));
+  const ETIKET_AD = { 837: modelAdi('m-837'), N10: modelAdi('m-qqq-m10'), B10: modelAdi('m-bist-m10') };
+  const etiketCip = (e) => (e ? el('span', { class: `pm-model-cip pm-model-${e.toLowerCase()}`, title: 'Bu varlık modelin son karar listesinde', text: ETIKET_AD[e] || e }) : el('span', { class: 'pf-kucuk tone-muted', text: '—' }));
 
   /** Saf: günlük endeks serisi [{ tarih, e }] → { yillar: [{ yil, aylar: [12 × oran|null], yil: oran }] } (ay sonu / önceki ay sonu − 1). */
   function aylikGetiri(seri, alan) {
@@ -1292,7 +1295,7 @@
     ]);
     doldur(k, [bas, AG.tablo.kutulu({ id: 'tblPmVarliklar', sinif: 'table-dense pf-tablo', siralanabilir: 'portfoyum-varlik',
       basliklar: ['Varlık', 'Hesap', 'Model', 'Değer', 'Kâr / zarar', 'Pay'], satirlar: l.map(satir).concat(n.map(nakitSatir)) }),
-    el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Model etiketi: varlık, o modelin son karar listesinde (837 = QQQ). Adet, alış fiyatı ve düzeltme: Portföy › Hesaplar.' })]);
+    el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Model etiketi: varlık, o modelin son karar listesinde (Simurg = QQQ). Adet, alış fiyatı ve düzeltme: Portföy › Hesaplar.' })]);
   }
 
   function aylikCiz() {

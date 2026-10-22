@@ -8,7 +8,7 @@ Yan menüde Veri'nin altında üç sayfa var (66.0): **Kaynaklar** (aşağıdaki
 
 - **Kaynaklar sayfasının üstünde üç büyük durum:** Bot ve portföy verisi (ör. "15 / 15 güncel") · Coin tarama kaynakları ("18 / 19 çalışıyor") · Günlük arşiv ("zincir sağlam"). Sorun varsa sarı / kırmızı.
 - **Kullanana göre katlı gruplar:** **Botlar** (Binance günlük, PIT arşivi, TradFi listesi, coin sepeti önbelleği) · **Portföy ve modeller** (USD/TRY, TEFAS, Yahoo Nasdaq, Yahoo BIST, Yahoo kıyas serileri, TÜFE, TL mevduat) · **Araştırma** (Yahoo portföy ekleri, portföy kataloğu, ileri test izleyicisi, coin tarama) · **Coin tarama kaynakları** · **Günlük arşiv**. Sorunsuz grup kapalı gelir (yalnız özet satırı), sorunlu grup açık.
-- Her satırda **Kim kullanıyor** etiketleri (Hücum, Denge, Portföyüm, Nasdaq M10, BIST M10, Laboratuvar…): bir kaynak bozulursa neyin etkileneceği görünür. Kaynaklar kendiliğinden tazelenir; satırdaki **Güncelle** ya da altta **Bayatları güncelle** ile elle de güncellenir.
+- Her satırda **Kim kullanıyor** etiketleri (Kairos, Tao, Portföyüm, Nova, Lydia, Laboratuvar…): bir kaynak bozulursa neyin etkileneceği görünür. Kaynaklar kendiliğinden tazelenir; satırdaki **Güncelle** ya da altta **Bayatları güncelle** ile elle de güncellenir.
 
 ## Ne zaman kullanılır {#ne-zaman}
 

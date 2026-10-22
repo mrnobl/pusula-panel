@@ -13,12 +13,12 @@ Ayrıntı: [Ana sayfa](#/kilavuz/ana).
 
 1. **Ayarlar › Bağlantılar › Demo hesap API anahtarı** → Binance Demo Trading anahtarını iki alana yazın → **Anahtarları kaydet**.
 2. Demo hesapta elle açılmış pozisyon varsa kapatın.
-3. **Botlar › Hücum › Yönetim** → **Hesap türü** → **demo** → onaylayın.
+3. **Botlar › Kairos › Yönetim** → **Hesap türü** → **demo** → onaylayın.
 4. Aynı yerde **Deneme (emirsiz)** ile bugünkü planı görün.
-5. **Botlar › Hücum › Genel** → **Başlat**.
+5. **Botlar › Kairos › Genel** → **Başlat**.
 6. Ertesi gün künyedeki **Son çalışma** ve **Koruma stopu** satırlarını kontrol edin.
 
-![Botlar › Hücum › Yönetim](ekran:botlar-eylem-1400)
+![Botlar › Kairos › Yönetim](ekran:botlar-eylem-1400)
 
 Ayrıntı: [Botlar › demo modunda başlatmak](#/kilavuz/botlar/demo-baslat).
 

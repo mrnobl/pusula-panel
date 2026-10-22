@@ -10,6 +10,10 @@
   const AG = global.AG;
   const doc = global.document;
   const el = (...a) => AG.dom.el(...a);
+  /** 72.0: görünen bot/model adı kimlikten (AG.botAd); yoksa sunucu metni çevrilir (eski sürüm "Hücum" yazabilir). */
+  const cv = (t) => (AG.botAd ? AG.botAd.cevir(t) : t);
+  const botAdi = (b) => (b && AG.botAd && AG.botAd.ad(b.kimlik || b.id)) || cv(b && b.adGorunen);
+  const modelAdi = (m) => (m && AG.botAd && AG.botAd.ad(m.id || m.model)) || cv(m && m.ad);
   const doldur = (...a) => AG.dom.doldur(...a);
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
@@ -110,22 +114,22 @@
         gosterge('Botlar · değer değişimi', isaretli(t.degisim), 'gerçekleşen + açık pozisyon', ton(t.degisim)),
         gosterge('Bot işlemleri', tr(t.islemSayisi, 0), `ücret ${para(t.ucret)}`),
         gosterge('Gerçekleşen kâr/zarar', isaretli(t.gerceklesenKz), 'kapanan pozisyonlar', ton(t.gerceklesenKz)),
-        gosterge('Dikkat', r.dikkat.length ? `${r.dikkat.length} konu` : 'Sorun yok', r.dikkat.length ? r.dikkat[0] : 'bekleyen iş yok', r.dikkat.length ? 'p-warn' : 'p-pos'),
+        gosterge('Dikkat', r.dikkat.length ? `${r.dikkat.length} konu` : 'Sorun yok', r.dikkat.length ? cv(r.dikkat[0]) : 'bekleyen iş yok', r.dikkat.length ? 'p-warn' : 'p-pos'),
       ]),
       kart('Botlar', [
         tablo('tblRaporBot', ['Bot', 'Durum', 'Hesap değeri', 'Değişim', 'İşlem', 'Ücret', 'Karar'], (r.botlar || []).map(b => el('tr', null, [
-          el('td', { text: `${b.adGorunen}${b.mod ? ` (${MOD_AD[b.mod] || b.mod})` : ''}` }),
+          el('td', { text: `${botAdi(b)}${b.mod ? ` (${MOD_AD[b.mod] || b.mod})` : ''}` }),
           el('td', null, [rozet(DURUM_AD[b.durum] || b.durum, DURUM_TON[b.durum])]),
           el('td', { class: 'sayi', text: para(b.deger) }),
           el('td', { class: `sayi ${ton(b.degisim)}`, text: sayiMi(b.degisim) ? `${isaretli(b.degisim)} (${yuzde(b.oran)})` : '—' }),
           el('td', { class: 'sayi', text: b.islemSayisi ? `${b.islemSayisi} (${b.alis} alış · ${b.satis} satış)` : '0' }),
           el('td', { class: 'sayi', text: para(b.ucret) }),
-          el('td', { class: 'df-soluk', text: b.karar || '—' }),
+          el('td', { class: 'df-soluk', text: cv(b.karar) || '—' }),
         ]))),
         (r.botlar || []).some(b => b.islemler && b.islemler.length) ? el('details', { class: 'rp-kat mt-3' }, [
           el('summary', { text: `İşlemler (${t.islemSayisi})` }),
           tablo('tblRaporIslem', ['Zaman', 'Bot', 'Coin', 'Yön', 'Miktar', 'Fiyat', 'Ücret', 'K/Z'], (r.botlar || []).flatMap(b => (b.islemler || []).map(x => el('tr', null, [
-            el('td', { class: 'sayi', text: saat(x.zaman) }), el('td', { text: b.adGorunen }), el('td', { text: x.sembol }), el('td', { text: x.yon }),
+            el('td', { class: 'sayi', text: saat(x.zaman) }), el('td', { text: botAdi(b) }), el('td', { text: x.sembol }), el('td', { text: x.yon }),
             el('td', { class: 'sayi', text: tr(x.miktar, 4) }), el('td', { class: 'sayi', text: tr(x.fiyat, 2) }), el('td', { class: 'sayi', text: para(x.ucret, 'USD', 3) }),
             el('td', { class: `sayi ${ton(x.kz)}`, text: x.kz ? isaretli(x.kz) : '—' }),
           ])))),
@@ -133,7 +137,7 @@
       ], 'raporBotlar'),
       kart('Model emirleri', [
         tablo('tblRaporEmir', ['Model', 'Durum', 'Uygulama günü', 'Bekleme'], (r.modelEmirleri || []).map(m => el('tr', null, [
-          el('td', { text: m.ad }),
+          el('td', { text: modelAdi(m) }),
           el('td', null, [rozet(MODEL_DURUM[m.durum] || m.durum || '—', m.bekliyor ? (m.gecikme > 3 ? 'neg' : 'warn') : m.durum === 'uygulandi' ? 'pos' : '')]),
           el('td', { text: gunTr(m.uygulamaGunu) }),
           el('td', { class: 'sayi', text: m.bekliyor ? (m.gecikme ? `${m.gecikme} gün` : 'bugün') : '—' }),
@@ -142,7 +146,7 @@
       ], 'raporEmirler'),
       kart('Portföy botlarının tercihleri', [
         el('div', { class: 'rp-modeller' }, (r.portfoyBotlari || []).map(m => el('div', { class: 'rp-model' }, [
-          el('strong', { text: m.ad }),
+          el('strong', { text: modelAdi(m) }),
           el('span', { class: 'sayi', text: sayiMi(m.ozsermaye) ? `${para(m.ozsermaye, m.para)}${sayiMi(m.degisim) ? ` · ${isaretli(m.degisim, m.para)} (${yuzde(m.oran)})` : ''}` : 'kâğıt hesap henüz başlamadı' }),
           m.pozisyonlar.length ? el('span', { class: 'df-soluk', text: m.pozisyonlar.slice(0, 10).map(p => `${p.sembol}${sayiMi(p.pay) ? ` %${tr(p.pay * 100, 0)}` : ''}`).join(' · ') + (sayiMi(m.nakit) ? ` · nakit ${para(m.nakit, m.para, 0)}` : '') }) : null,
           m.giren.length || m.cikan.length ? el('span', { text: `${m.giren.length ? `giren: ${m.giren.join(', ')}` : ''}${m.giren.length && m.cikan.length ? ' · ' : ''}${m.cikan.length ? `çıkan: ${m.cikan.join(', ')}` : ''}` }) : null,

@@ -11,7 +11,7 @@ Pusula'yı ilk kez kuran kişiyi adım adım hazırlar. **Zorunlu değildir:** k
 5. **Telegram botun** — @BotFather, chat id, Ayarlar › Bildirimler.
 6. **Telefondan erişim** — Tailscale ve telefon jetonu.
 7. **Acil durdurma** — acil PIN'i tanımlama ve bir kez deneme.
-8. **İlk deneme (demo)** — Hücum'u demo hesapta başlatma; **Kurulumu bitir**.
+8. **İlk deneme (demo)** — Kairos'u demo hesapta başlatma; **Kurulumu bitir**.
 
 Adım 4–7'nin yanında ✓ işareti sunucunun bugünkü durumundan gelir (anahtar kayıtlı mı, Telegram bağlı mı, telefon jetonu ve acil PIN var mı).
 

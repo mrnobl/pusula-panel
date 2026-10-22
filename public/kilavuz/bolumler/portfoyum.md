@@ -179,13 +179,13 @@ Her tutar kendi para biriminde; alış ücreti maliyete eklenir, satış ücreti
 
 ### "Uyguladım" kayıtları (Tasarımcı) {#uyguladim}
 
-Modeller sayfasındaki **Bu ay** kartının emir listesini aracı kurumda uygulayıp **Uyguladım** dediğinizde ([ayrıntı](#/kilavuz/tasarimci/uyguladim)) panel al/sat (ve 837 için hesaplar arası transfer) kayıtlarını **tek onayla** bu deftere yazar:
+Modeller sayfasındaki **Bu ay** kartının emir listesini aracı kurumda uygulayıp **Uyguladım** dediğinizde ([ayrıntı](#/kilavuz/tasarimci/uyguladim)) panel al/sat (ve Simurg için hesaplar arası transfer) kayıtlarını **tek onayla** bu deftere yazar:
 
 - Kayıtlar her elle girilen işlem gibidir; aynı denetimden geçer (bilinmeyen hesap, eksi adet, kapalı hesap, gelecek tarih) ve hepsi birlikte yazılır — biri hatalıysa hiçbiri. Defterde not alanında **"Tasarımcı 2026-10 m-qqq-m10 — listeye girdi"** gibi bir açıklama ve kaynak **tasarimci** görünür.
 - Listede olup kayıtlarında bulunmayan hisse için **varlık kaydı** aynı pakette eklenir (sınıf hisse, fiyat kaynağı Yahoo; BIST hisseleri `.IS` koduyla).
 - Aynı gün içinde gerçek sıra **önce satış, sonra aktarım, sonra alış**tır: panel kayıtlara aynı gün sırası yazar (satış 100, aktarım 200, alış 300), böylece satışın parası alıştan önce sayılır ve yersiz "nakit eksiye düştü" uyarısı çıkmaz. Elle aynı gün girdiğiniz işlemler kendi sıralarına göre araya girer.
 - Açılış gününe tarihli uygulamada işlemler **açılıştan sonra** sayılır (bakiyeye eklenir). Açılışı uygulamadan **sonra** girerseniz panel dahil mi / sonra mı diye sorar ([Açılış kuralı](#/kilavuz/portfoyum/acilis-kurali)).
-- Defterde her uygulama tek satırlık özetle görünür (**"Tasarımcı 2026-10 Nasdaq M10 — 10 kayıt (etkin)"**); **Geri al** ile tamamı iptal edilen paket, Durum süzgeci iptalleri gösterirken tabloda tek satıra iner (**Kayıtları göster** ile açılır).
+- Defterde her uygulama tek satırlık özetle görünür (**"Tasarımcı 2026-10 Nova — 10 kayıt (etkin)"**); **Geri al** ile tamamı iptal edilen paket, Durum süzgeci iptalleri gösterirken tabloda tek satıra iner (**Kayıtları göster** ile açılır).
 - Hisse sizde başka yazımla kayıtlıysa (ör. "ASELS.IS") yeni varlık açılmaz; işlem sizin varlığınıza yazılır.
 - Yanlışsa ya **Modeller › Bu ay › Geri al** (o uygulamanın bütün kayıtları ters kayıtla iptal edilir) ya da burada tek satırı **İptal et**; iptal edilen satır Bu ay listesinde yeniden açılır.
 - **Modeller › Ayarlar › Portföyüm hedefini güncelle**, modellerin hedefini Portföyüm'e yeni hedef kaydı olarak yazar (kaynak "tasarimci …"); öncekiler geçmişte kalır.
@@ -196,7 +196,7 @@ Modeller sayfasındaki **Bu ay** kartının emir listesini aracı kurumda uygula
 
 Hedef [Hedefim](#/kilavuz/portfoy/hedefim) sayfasında seçilir ve kaydedilir; üst çubukta seçili kişinin hedefidir (Ben ve Fırat ayrı), **Tümü**'de girilmez. Hesaplar'da yalnız **Hedefi düzenle → Hedefim** bağlantısı vardır. Eski hedefler geçmişte saklanır.
 
-Model portföylerin (Nasdaq M10, BIST M10, %50 QQQ + %50 Hücum) hedefini Portföyüm'e almanın **tek yolu Modeller › Ayarlar › Portföyüm hedefini güncelle**'dir (önizlemeli). Laboratuvar kararından içe alma 61.1'de kaldırıldı — Laboratuvar araştırma içindir, gerçek emir ve hedef yalnız Modeller sayfasından gelir.
+Model portföylerin (Nova, Lydia, Simurg) hedefini Portföyüm'e almanın **tek yolu Modeller › Ayarlar › Portföyüm hedefini güncelle**'dir (önizlemeli). Laboratuvar kararından içe alma 61.1'de kaldırıldı — Laboratuvar araştırma içindir, gerçek emir ve hedef yalnız Modeller sayfasından gelir.
 
 Laboratuvarın eski **Olsaydı planı** sekmesi ve **Portföyüm'den doldur** düğmesi 67.5'te kaldırıldı. Gerçek portföyün al/sat planı **Portföy › Hedefim › Planla**'dadır; o planı geçmişte denemek için **Bu dağılımı geçmişte dene**.
 

@@ -14,6 +14,8 @@
   const AG = global.AG;
   const doc = global.document;
   const el = (...a) => AG.dom.el(...a);
+  /** 72.0: paket metni eski bot adıyla gelebilir → yeni ad (AG.botAd). */
+  const cv = (t) => (AG.botAd ? AG.botAd.cevir(t) : t);
   const doldur = (...a) => AG.dom.doldur(...a);
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
   const SVG = 'http://www.w3.org/2000/svg';
@@ -69,13 +71,13 @@
   ]);
 
   function kart(x, grafikli) {
-    if (!x.veriVar) return el('div', { class: 'bp-kart' }, [el('h4', { class: 'bp-baslik', text: x.baslik }), el('p', { class: 'hint mb-0', text: x.neden || 'Henüz sonuç yok.' })]);
+    if (!x.veriVar) return el('div', { class: 'bp-kart' }, [el('h4', { class: 'bp-baslik', text: cv(x.baslik) }), el('p', { class: 'hint mb-0', text: x.neden || 'Henüz sonuç yok.' })]);
     const kiyaslar = x.kiyas ? [x.kiyas] : (x.kiyaslar || []);
     return el('div', { class: 'bp-kart', 'data-kimlik': x.ad || x.kimlik }, [
-      el('h4', { class: 'bp-baslik', text: x.baslik }),
+      el('h4', { class: 'bp-baslik', text: cv(x.baslik) }),
       el('p', { class: 'df-soluk bp-kunye', text: `${x.hesap} · ${gunYaz(x.bas)} – ${gunYaz(x.bit)} (${x.gunSayisi} gün)` }),
-      grafikli ? grafik([{ seri: x.seri }, ...(kiyaslar[0] ? [{ seri: kiyaslar[0].seri }] : [])], `${x.baslik}: başlangıç 100, ${kiyaslar[0] ? kiyaslar[0].baslik + ' ile' : ''}`) : null,
-      grafikli && kiyaslar[0] ? el('p', { class: 'bp-lejant df-soluk' }, [el('span', { class: 'bp-l-ana', text: '━ ' + x.baslik }), el('span', { class: 'bp-l-kiyas', text: '  ━ ' + kiyaslar[0].baslik })]) : null,
+      grafikli ? grafik([{ seri: x.seri }, ...(kiyaslar[0] ? [{ seri: kiyaslar[0].seri }] : [])], `${cv(x.baslik)}: başlangıç 100, ${kiyaslar[0] ? kiyaslar[0].baslik + ' ile' : ''}`) : null,
+      grafikli && kiyaslar[0] ? el('p', { class: 'bp-lejant df-soluk' }, [el('span', { class: 'bp-l-ana', text: '━ ' + cv(x.baslik) }), el('span', { class: 'bp-l-kiyas', text: '  ━ ' + kiyaslar[0].baslik })]) : null,
       satirlar(x, kiyaslar),
     ]);
   }
@@ -106,8 +108,8 @@
     const m = (v.modeller || []).filter(x => x.veriVar);
     doldur(kap, [
       el('h3', { class: 'card-title mb-3', text: 'Botlarımızın gerçekleşmiş sonuçları' }),
-      h ? el('p', { class: 'mb-2', text: `${h.baslik} (demo, ${gunYaz(h.bas)} – ${gunYaz(h.bit)}): ${yz(h.getiriYuzde)} · en derin düşüş ${yz(h.enDerinDususYuzde)}${h.kiyas ? ` · aynı dönemde BTC ${yz(h.kiyas.getiriYuzde)}` : ''}.` }) : null,
-      m.length ? el('p', { class: 'mb-2', text: `Model portföyler (kâğıt hesap): ${m.map(x => `${x.baslik} ${yz(x.getiriYuzde)}`).join(' · ')}.` }) : null,
+      h ? el('p', { class: 'mb-2', text: `${cv(h.baslik)} (demo, ${gunYaz(h.bas)} – ${gunYaz(h.bit)}): ${yz(h.getiriYuzde)} · en derin düşüş ${yz(h.enDerinDususYuzde)}${h.kiyas ? ` · aynı dönemde BTC ${yz(h.kiyas.getiriYuzde)}` : ''}.` }) : null,
+      m.length ? el('p', { class: 'mb-2', text: `Model portföyler (kâğıt hesap): ${m.map(x => `${cv(x.baslik)} ${yz(x.getiriYuzde)}`).join(' · ')}.` }) : null,
       el('p', { class: 'hint mb-2', text: v.uyari }),
       el('a', { href: '#/botlar', text: 'Grafikler ve ayrıntı: Botlar' }),
     ]);

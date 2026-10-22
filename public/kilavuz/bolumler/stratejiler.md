@@ -17,7 +17,7 @@ Kullanılan ve aday stratejilerin listesi; her birinin kuralları, parametreleri
 
 | Alan | Anlamı |
 |---|---|
-| Gruplar | **Çalışan botlar** (Hücum, Denge) · **Adaylar** (karar bekleyen) · katlı **Geçti, kullanılmıyor** (ölçütleri geçmiş ama bot olarak çalışmayan: DCA Botu, Donchian topluluğu, Clenow, Connors RSI). Elenenler listede yok: [Arşiv › Eski stratejiler](#/kilavuz/arsiv) |
+| Gruplar | **Çalışan botlar** (Kairos, Tao) · **Adaylar** (karar bekleyen) · katlı **Geçti, kullanılmıyor** (ölçütleri geçmiş ama bot olarak çalışmayan: DCA Botu, Donchian topluluğu, Clenow, Connors RSI). Elenenler listede yok: [Arşiv › Eski stratejiler](#/kilavuz/arsiv) |
 | Durum rozeti | **Geçti** (ölçütleri geçti) · **Beklet** (karar bekliyor) · **Elendi** |
 | Kaynak rozeti | Makale · Kitap · Kendi tasarım · Pine |
 | Kurallar | Stratejinin giriş/çıkış kuralları, sade dille |

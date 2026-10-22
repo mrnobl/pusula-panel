@@ -348,7 +348,7 @@ Kurulum betiği ayrıca üç uyarı yazar: parola **Windows hesap parolası** ol
 **Yap:** Panelde **Botlar** ekranını açın ([Botlar bölümü](#/kilavuz/botlar)).
 
 **Kontrol:**
-- Hücum ve Denge kartlarında mod (**kâğıt** ya da **demo**) beklediğiniz gibi (eski klasördeki gibi; `config.json` taşındı).
+- Kairos ve Tao kartlarında mod (**kâğıt** ya da **demo**) beklediğiniz gibi (eski klasördeki gibi; `config.json` taşındı).
 - **Son çalışma** 26 saatten yeni (bot kapalı kaldıysa bir sonraki günlük çalışmadan sonra düzelir; kaçırılan günler sayılır ama geçmiş günlerin emirleri verilmez).
 - Kırmızı **"Durduruldu — onay bekliyor"** bandı yok.
 
@@ -358,7 +358,7 @@ Kurulum betiği ayrıca üç uyarı yazar: parola **Windows hesap parolası** ol
 
 Bunlar kendiliğinden çalışır; burada yalnız ilk çalışmayı doğrularsınız.
 
-- **Gölge izleyiciler** (Bollinger, Hücum/Denge gölge, 3 günlük aday): sunucu açıldıktan ~1 dakika sonra ve her gün 00:15 UTC sonrası çalışır. **Kontrol:** **İleri test** ekranında kartlarda "son çalışma" bugünün tarihi ([İleri test](#/kilavuz/ileri-test)). Komut satırından: `npm run ileri:rapor` ve `npm run golge3d:rapor`.
+- **Gölge izleyiciler** (Bollinger, Kairos/Tao gölge, 3 günlük aday): sunucu açıldıktan ~1 dakika sonra ve her gün 00:15 UTC sonrası çalışır. **Kontrol:** **İleri test** ekranında kartlarda "son çalışma" bugünün tarihi ([İleri test](#/kilavuz/ileri-test)). Komut satırından: `npm run ileri:rapor` ve `npm run golge3d:rapor`.
 - **Coin tarama:** **Araştırma › Coin tarama** ekranını açın; son tarama 20 saatten eskiyse arka planda başlar (~1 dk, ilerleme çubuğu görünür). **Kontrol:** "Son başarılı tarama" birkaç dakika önce; komut satırından `npm run tarama -- --durum`.
 - **Listeler:** **Araştırma › Coin tarama › Listeler**: zincir göstergesi **"zincir sağlam"** ve en az 1 kayıt (Temmuz listesi `kayitlar/listeler/`den kendiliğinden içe alınır).
 - **Portföy tasarımcısı (model portföy; resmî kayıt yalnız bu bilgisayarda):** bir kez veri hazırlığı gerekir. **Yap:** Pusula'yı durdurun, sonra `cd C:\Pusula`, `git pull`, `npm run tasarimci:hazirla` (Nasdaq + BIST verisi ve Nasdaq-100 üyeliği; ilk sefer ~10 dk) ve Pusula'yı yeniden başlatın. Sunucu model portföyü her 30 dakikada kendisi ilerletir (ilk uygulama günü 2026-10-12). **Kontrol:** `npm run tasarimci:tik` çıktısında "makine sunucu" yazmalı ("DENEME" yazmamalı) ve 2026-09-30 kararları için uyarı olmamalı; tarayıcıda `http://localhost:3000/api/tasarimci/durum` açılıyor. **Sorun olursa:** "veri yok" diyorsa `npm run tasarimci:hazirla` çıktısındaki HATA satırını geliştirme sohbetine iletin. Model portföyün gerçek tutarı (isteğe bağlı) yalnız bu bilgisayarda `data\tasarimci\sermaye.json` dosyasında durur; git'e ve Telegram'a gitmez.
@@ -375,16 +375,16 @@ Telegram bildirimleri ve komutları YALNIZ sunucuda açık olmalı (geliştirme 
 
 **Sorun olursa:** Token/chat id yoksa `data\secrets.json` taşınmamıştır (Adım 5); ya da kurulum: [Ayarlar › Bildirimler › Telegram](#/kilavuz/ayarlar/telegram). Komutlara cevap gelmiyorsa geliştirme bilgisayarında araştırma modu DIŞINDA bir sunucu açık kalmış olabilir (409 çakışması) — onu kapatın.
 
-**Healthchecks (isteğe bağlı ama önerilir):** **Ayarlar › Bildirimler › Sağlık sinyali**: healthchecks.io'daki adresleri girin — Hücum, Denge (68.8: her bot kendi check'i; Denge'ninki boşsa Denge sinyal göndermez) ve sunucu kalp atışı — **Test**. **Kontrol:** healthchecks.io panelinde kontrollerin hepsi yeşil "up". Bilgisayar kapanır ya da bot durursa size e-posta/Telegram gelir. **61.8:** sunucu sinyali artık saatte bir gider — healthchecks.io'da sunucu kontrolünün **Period**unu 1 saat, **Grace**ini 1 saat yapın (bot kontrolü günlük kalır). Telegram'a gidemeyen uyarılar (internet yokken) artık kaybolmaz: internet gelince "[gecikmeli, saat]" önekiyle gönderilir. Sunucunun internetinin dış IP adresi değişirse Telegram haber verir (canlı hesapta Binance API IP kısıtını güncellemek için).
+**Healthchecks (isteğe bağlı ama önerilir):** **Ayarlar › Bildirimler › Sağlık sinyali**: healthchecks.io'daki adresleri girin — Kairos, Tao (68.8: her bot kendi check'i; Tao'nunki boşsa Tao sinyal göndermez) ve sunucu kalp atışı — **Test**. **Kontrol:** healthchecks.io panelinde kontrollerin hepsi yeşil "up". Bilgisayar kapanır ya da bot durursa size e-posta/Telegram gelir. **61.8:** sunucu sinyali artık saatte bir gider — healthchecks.io'da sunucu kontrolünün **Period**unu 1 saat, **Grace**ini 1 saat yapın (bot kontrolü günlük kalır). Telegram'a gidemeyen uyarılar (internet yokken) artık kaybolmaz: internet gelince "[gecikmeli, saat]" önekiyle gönderilir. Sunucunun internetinin dış IP adresi değişirse Telegram haber verir (canlı hesapta Binance API IP kısıtını güncellemek için).
 
 ## 16. Demo modunu ve felaket stopunu doğrula {#adim-16}
 
-Koruma stopu (eski adı felaket stopu — borsada bekleyen koruma emri) yalnız **demo** modunda borsaya konur ve **henüz gerçek demo hesapta doğrulanmadı**. Hücum demo moddaysa bu kontrolü bir kez yapın.
+Koruma stopu (eski adı felaket stopu — borsada bekleyen koruma emri) yalnız **demo** modunda borsaya konur ve **henüz gerçek demo hesapta doğrulanmadı**. Kairos demo moddaysa bu kontrolü bir kez yapın.
 
-**Ön koşul:** Ayarlar › Borsa'da demo API anahtarı kayıtlı ve Ayarlar › Botlar'da Hücum'un hesap türü **demo**. Değilse: [Sık görevler › Botu demo modunda başlatmak](#/kilavuz/gorevler/demo-baslat).
+**Ön koşul:** Ayarlar › Borsa'da demo API anahtarı kayıtlı ve Ayarlar › Botlar'da Kairos'un hesap türü **demo**. Değilse: [Sık görevler › Botu demo modunda başlatmak](#/kilavuz/gorevler/demo-baslat).
 
 **Kontrol:**
-1. **Botlar** → Hücum sekmesi → katlı **Botun künyesi** → **Koruma stopu** satırı: açık pozisyon varsa **"N pozisyon korunuyor"** (satırın üstüne gelince sembol ve stop fiyatı görünür). Pozisyon yoksa "açık pozisyon yok".
+1. **Botlar** → Kairos sekmesi → katlı **Botun künyesi** → **Koruma stopu** satırı: açık pozisyon varsa **"N pozisyon korunuyor"** (satırın üstüne gelince sembol ve stop fiyatı görünür). Pozisyon yoksa "açık pozisyon yok".
 2. **Borsa hesapları** → Binance demo sekmesi → **Her pozisyonun koruma stopu var** kutusu yeşil, pozisyon tablosunda **Koruma stopu** her satırda "yerinde" olmalı.
 3. Binance web → Futures → **Demo Trading** → **Open Orders** → koşullu emirler: her pozisyon için bir **Stop Market** (Close Position) görünmeli, fiyatı paneldekiyle aynı.
 4. Telegram'da "felaket stopu konamadı" alarmı gelmemiş olmalı.
@@ -431,7 +431,7 @@ Set-NetConnectionProfile -InterfaceAlias "Wi-Fi" -NetworkCategory Private
 
 ## 18. BFUSD oran tablosu (bekleyen adım) {#adim-18}
 
-Amaç: Hücum nakitteyken teminatı faiz getiren BFUSD'de tutmanın gerçekte ne kazandıracağını ölçmek. Bu adım **yalnız okur**: emir vermez, botu etkilemez, bir şey satın almaz.
+Amaç: Kairos nakitteyken teminatı faiz getiren BFUSD'de tutmanın gerçekte ne kazandıracağını ölçmek. Bu adım **yalnız okur**: emir vermez, botu etkilemez, bir şey satın almaz.
 
 **Yap:**
 1. Binance (canlı hesap, demo değil) → API Yönetimi → yeni anahtar. Yetki olarak **yalnız "Okumayı etkinleştir"** (işlem/çekim yetkisi VERMEYİN).

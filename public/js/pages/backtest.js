@@ -18,6 +18,8 @@
   'use strict';
 
   const AG = global.AG || (global.AG = {});
+  /** 72.0: kayıtlı strateji adı eski bot adıyla olabilir → yeni ad (AG.botAd). */
+  const cv = (t) => (AG.botAd ? AG.botAd.cevir(t) : t);
   const dom = AG.dom;
   const fmt = AG.fmt;
   const el = (t, p, c) => dom.el(t, p, c);
@@ -97,7 +99,7 @@
       return el('tr', { class: sampiyon ? 'row-champion' : null }, [
         el('td', null, [el('strong', { text: sampiyon ? '🏆 #1 ŞAMPİYON' : `#${idx + 1}` })]),
         el('td', null, [el('strong', { class: 'tone-strong cell-1r', text: item.symbol })]),
-        el('td', null, [el('span', { class: 'tone-cyan fw-semibold', text: item.strategyName })]),
+        el('td', null, [el('span', { class: 'tone-cyan fw-semibold', text: cv(item.strategyName) })]),
         el('td', null, [el('strong', { class: 'tone-warning', text: String(m.score) })]),
         el('td', {
           class: `fw-bold cell-1r ${yuzdeTon(m.totalReturnPct)}`,
@@ -156,7 +158,7 @@
     yaz('txtWfEfficiency', wfe == null ? 'tanımsız' : yuzdeYaz(wfe, 1), wfeTon(wfe));
 
     const kunye = [
-      wf.symbol, wf.timeframe, wf.strategyName,
+      wf.symbol, wf.timeframe, cv(wf.strategyName),
       `${wf.totalCandles || 0} mum`,
       wf.yontem === 'tek-bolme' ? 'tek bölme' : `${kat} katlı kayan pencere`,
       wf.isinmaBar ? `ısınma ${wf.isinmaBar} bar` : null,

@@ -1,7 +1,7 @@
 // Must match APP_VERSION in server.js. If the browser is serving a cached
 // app.js against a newer server, the mismatch is surfaced instead of silently
 // running outdated UI logic.
-const APP_VERSION = '71.1';
+const APP_VERSION = '72.0';
 
 // Global State
 let ws = null;
@@ -1907,7 +1907,7 @@ function saglikFormuDoldur(sirlar) {
   // 68.8: bot başına check — Hücum eski alan, Denge kendi alanı (sirlar.botSaglik.denge)
   const bs = sirlar.botSaglik || {};
   yer('inpHcUrl', sirlar.healthchecksUrl, 'https://hc-ping.com/...');
-  yer('inpHcUrlDenge', bs.denge, 'https://hc-ping.com/... (Denge için ayrı check)');
+  yer('inpHcUrlDenge', bs.denge, 'https://hc-ping.com/... (Tao için ayrı check)');
   yer('inpHcSunucuUrl', sirlar.healthchecksSunucuUrl, 'https://hc-ping.com/... (boş bırakılabilir)');
   const d = document.getElementById('txtHcDurum');
   if (!d) return;
@@ -1926,7 +1926,7 @@ function saglikDurumMetni(sirlar, s) {
   const once = (t) => { if (!t) return ''; const dk = Math.round((Date.now() - t) / 60000); return dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`; };
   const son = (x) => (x && x.son ? ` · son ping ${once(x.son.zaman)} ${x.son.ok ? 'gönderildi' : 'GÖNDERİLEMEDİ'}` : x && x.ayarli ? ' · henüz ping yok' : '');
   const botlar = (s && s.botlar) || (s && s.bot ? { hucum: s.bot } : {});
-  const AD = { hucum: 'Hücum', denge: 'Denge' };
+  const AD = { hucum: (AG.botAd && AG.botAd.ad('hucum')) || 'Kairos', denge: (AG.botAd && AG.botAd.ad('denge')) || 'Tao' };
   const parca = Object.keys(AD).map(ad => `${AD[ad]}: ${bs[ad] ? 'kayıtlı ✓' : 'yok'}${son(botlar[ad])}`);
   parca.push(`Sunucu kalp atışı: ${sirlar.healthchecksSunucuUrl ? 'kayıtlı ✓' : 'yok'}${son(s && s.sunucu)}`);
   const eksik = Object.keys(AD).filter(ad => !bs[ad]).map(ad => AD[ad]);

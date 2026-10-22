@@ -107,7 +107,7 @@ Devam etmek **para kaybettirebilecekse** bot tamamen durur ve siz açana kadar k
 
 ## Demo kabul süresi {#demo-kabul}
 
-Demo kipindeki bota (Hücum) öz denetim **9 Aralık 2026 sonuna kadar hiçbir şey yapmaz**: güvenli kip, tam kapanma ve o bot için yeniden başlatma yok, yalnız haber verir. Demo kabul ölçümü bozulmasın diye. Sonra aynı kurallar Hücum'a da uygulanır.
+Demo kipindeki bota (Kairos) öz denetim **9 Aralık 2026 sonuna kadar hiçbir şey yapmaz**: güvenli kip, tam kapanma ve o bot için yeniden başlatma yok, yalnız haber verir. Demo kabul ölçümü bozulmasın diye. Sonra aynı kurallar Kairos'a da uygulanır.
 
 ## Yeniden başlatma {#yeniden-baslatma}
 

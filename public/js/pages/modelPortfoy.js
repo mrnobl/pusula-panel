@@ -30,7 +30,10 @@
   const puan = (x, b = 2) => (sayiMi(x) ? `${x > 0 ? '+' : x < 0 ? '−' : ''}${virgul(Math.abs(x * 100).toFixed(b))} puan` : '—');
   const tutarMetni = (t) => (t ? `${Math.round(t.guncel).toLocaleString('tr-TR')} ${t.para} (başlangıç ${Math.round(t.baslangic).toLocaleString('tr-TR')}, K/Z ${Math.round(t.kar).toLocaleString('tr-TR')})` : null);
   const MODEL_SIRA = ['m-837', 'm-qqq-m10', 'm-bist-m10'];
-  const KOL_AD = { cekirdek: 'QQQ', uydu: 'Hücum' };
+  const KOL_AD = { cekirdek: 'QQQ', uydu: 'Kairos' };
+  /** 72.0: görünen model adı kimlikten (AG.botAd); sunucu metni eski adla gelebilir → cevir. */
+  const cv = (s) => (AG.botAd ? AG.botAd.cevir(s) : s);
+  const modelAdi = (m) => (m && AG.botAd && AG.botAd.ad(m.id)) || cv(m && m.ad);
   const MAKINE_AD = { ev: 'sunucu', gelistirme: 'geliştirme' };
   const BOS_METIN = 'Model 2026-10-12 açılışında başlıyor; ilk değer o gün kapanıştan sonra.';
 
@@ -82,9 +85,9 @@
     const sutun = KIYAS_SUTUN.filter(([id]) => modeller.some(m => m.kiyas && id in m.kiyas));
     const satirlar = modeller.map(m => {
       const me = m.metrik || {}, basladi = me.gun > 0;
-      return el('tr', null, [hucre(m.ad), hucre(m.baslangic || '—', 'sayi'), hucre(basladi ? me.bit : 'başlamadı', 'sayi'), hucre(basladi ? sy(me.son, 2) : '100', 'sayi'),
+      return el('tr', null, [hucre(modelAdi(m)), hucre(m.baslangic || '—', 'sayi'), hucre(basladi ? me.bit : 'başlamadı', 'sayi'), hucre(basladi ? sy(me.son, 2) : '100', 'sayi'),
         hucre(basladi ? isaretli(me.toplam) : '—', `sayi ${ton(me.toplam)}`), hucre(basladi ? yz(me.maxDD) : '—', 'sayi'),
-        hucre(m.metrikTl && m.metrikTl.gun > 0 ? isaretli(m.metrikTl.toplam) : '—', 'sayi', m.id === 'm-bist-m10' ? null : 'yalnız BIST M10 için (TL)'),
+        hucre(m.metrikTl && m.metrikTl.gun > 0 ? isaretli(m.metrikTl.toplam) : '—', 'sayi', m.id === 'm-bist-m10' ? null : 'yalnız Lydia için (TL)'),
         ...sutun.map(([id]) => { const k = m.kiyas && m.kiyas[id]; return !k ? hucre('—', 'sayi tone-muted', 'bu modelin kıyası değil') : hucre(basladi && k.gun > 0 ? isaretli(k.toplam) : 'başlamadı', `sayi ${basladi && k.gun > 0 ? ton(k.toplam) : 'tone-muted'}`); }),
         ...(tutarVar ? [hucre(tutarMetni(m.tutar) || '—', 'sayi pm-tutar')] : [])]);
     });
@@ -115,9 +118,9 @@
     const m = a.model;
     const me = mm.metrik || {};
     const notlar = veriNotlari(mm.id);
-    const kap = el('div', { id: `mpGrafik-${mm.id}`, class: 'grf-kap', role: 'img', 'aria-label': `${mm.ad}: 100 tabanlı endeks ve kıyaslar` });
+    const kap = el('div', { id: `mpGrafik-${mm.id}`, class: 'grf-kap', role: 'img', 'aria-label': `${modelAdi(mm)}: 100 tabanlı endeks ve kıyaslar` });
     const bolum = el('section', { class: 'glass-panel panel-pad mb-3', 'data-model': mm.id }, [
-      baslik(mm.ad),
+      baslik(modelAdi(mm)),
       el('div', { class: 'ts-sayilar mb-3' }, [
         kutu('Endeks', me.gun > 0 ? sy(me.son, 2) : '100', me.gun > 0 ? `son gün ${me.bit}` : 'taban'),
         kutu('Başlangıçtan', me.gun > 0 ? isaretli(me.toplam) : '—', `başlangıç ${mm.baslangic || '—'}`, ton(me.toplam)),
@@ -158,11 +161,11 @@
     }
     const l = [...satirlar.values()].sort((a, b) => (b.model || 0) - (a.model || 0));
     return tablo(['Kalem', { metin: 'Model katkısı', yardim: 'kolKatkisi' }, 'Gerçek katkısı'], l.map(x => el('tr', null, [
-      hucre(x.ad, 'pf-sola'), hucre(puan(x.model), `sayi ${ton(x.model)}`), hucre(k.gercek ? puan(x.gercek) : '—', `sayi ${ton(x.gercek)}`)])), null);
+      hucre(cv(x.ad), 'pf-sola'), hucre(puan(x.model), `sayi ${ton(x.model)}`), hucre(k.gercek ? puan(x.gercek) : '—', `sayi ${ton(x.gercek)}`)])), null);
   }
   function enCokMetni(k) {
     if (!k || !k.model) return null;
-    const l = (x) => x.map(y => `${y.ad} ${puan(y.katki)}`).join(', ');
+    const l = (x) => x.map(y => `${cv(y.ad)} ${puan(y.katki)}`).join(', ');
     const p = [];
     if ((k.model.enIyi || []).length) p.push(`En çok katkı veren: ${l(k.model.enIyi)}`);
     if ((k.model.enKotu || []).length) p.push(`en çok götüren: ${l(k.model.enKotu)}`);
@@ -194,7 +197,7 @@
     if (kb && kb.model) parca.push(el('details', { class: 'mp-kat' }, [el('summary', { text: `Kol katkısı (başlangıçtan, ${aralikMetni(kb)})` }),
       katkiTablosu(kb, id), enCokMetni(kb),
       el('p', { class: 'hint hint-sm mt-1 mb-0' }, [el('span', { text: 'Günlük katkılar Carino yöntemiyle bağlanır: kalemlerin toplamı dönemin toplam getirisine eşittir. ' }), yardim('carino'),
-        el('span', { text: id === 'm-bist-m10' ? ' BIST M10 model katkıları TL üzerinden.' : '' })])]));
+        el('span', { text: id === 'm-bist-m10' ? ' Lydia model katkıları TL üzerinden.' : '' })])]));
     if ((fk.uyarilar || []).length) parca.push(el('ul', { class: 'pf-uyari-liste mt-2' }, fk.uyarilar.map(u => el('li', { class: 'pf-uyari pf-uyari-bilgi', text: u }))));
     return el('div', { class: 'mp-gercek', 'data-model-fark': id }, parca);
   }
@@ -249,7 +252,7 @@
         el('p', { class: 'hint hint-sm mb-0', text: 'Kararlar dondurulduktan sonra model her işlem günü kapanıştan sonra 100 tabanlı endeksle yazılır (eksik veride o gün yazılmaz). Resmî kayıt sunucuda tutulur; bu makinedeki koşular "deneme" etiketlidir.' })
       ]) : null,
       ozetTablosu(modeller),
-      el('p', { class: 'hint hint-sm mt-2 mb-0', text: `Endeks 100 tabanlı (USD; BIST M10 ayrıca TL). Kıyas çizgileri modelin işlem günlerine tarihe göre ileri doldurulur.${MD.tutarGizli ? ' Tutarlar bu kademede gizli.' : ''}${MD.bozuk && MD.bozuk.length ? ` ⚠ ${MD.bozuk.length} bozuk defter satırı atlandı.` : ''}` }),
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: `Endeks 100 tabanlı (USD; Lydia ayrıca TL). Kıyas çizgileri modelin işlem günlerine tarihe göre ileri doldurulur.${MD.tutarGizli ? ' Tutarlar bu kademede gizli.' : ''}${MD.bozuk && MD.bozuk.length ? ` ⚠ ${MD.bozuk.length} bozuk defter satırı atlandı.` : ''}` }),
       tz ? el('p', { class: `hint hint-sm mt-1 mb-0 ${tz.bayat ? 'tone-warning' : ''}`.trim(), text: tz.bayat ? `Veri bayat: ${(tz.satirlar || []).filter(x => x.bayat).map(x => `${x.sembol} (son ${x.sonGun || 'yok'}, beklenen ${x.beklenen})`).join(', ')}` : `Veri güncel: son işlem günleri ${[...new Set((tz.satirlar || []).map(x => x.sonGun))].join(', ')}.` }) : null
     ]));
     const grafikler = [];

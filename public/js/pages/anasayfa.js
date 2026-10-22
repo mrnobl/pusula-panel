@@ -101,7 +101,10 @@
 
   const MODEL_SEKME = { 'm-qqq-m10': 'nasdaq', 'm-bist-m10': 'bist', 'm-837': 'q837' };
   // Denetim A-15: tek görünen ad — sunucunun model adıyla aynı (lib/tasarimci/katalog.js "%50 QQQ + %50 Hücum").
-  const MODEL_KISA = { 'm-qqq-m10': 'Nasdaq M10', 'm-bist-m10': 'BIST M10', 'm-837': '%50 QQQ + %50 Hücum' };
+  // 72.0: ad kimlikten (js/core/sozluk.js AG.botAd) — Nova / Lydia / Simurg.
+  const BA = (id, yedek) => (AG.botAd && AG.botAd.ad(id)) || yedek;
+  const GA = (b) => (AG.botAd ? AG.botAd.gorunen(b) : (b && (b.adGorunen || b.ad)) || '');
+  const MODEL_KISA = { 'm-qqq-m10': 'Nova', 'm-bist-m10': 'Lydia', 'm-837': 'Simurg' };
   const MODEL_SIRA = ['m-837', 'm-qqq-m10', 'm-bist-m10'];
   /** Portföy ekranını belirli alt sayfada açar (Pano / Hesaplar / Hedefim / model). */
   function portfoyAc(alt) {
@@ -175,9 +178,9 @@
       else if (g.durum === 'yeniden-baslat') ekle('uyari', 'Güncelleme indirildi: Pusula yeniden başlatılmalı', '#/ayarlar/guncelleme', 'güncelleme');
     }
     (durumlar || []).forEach((d, i) => {
-      const adY = BOTLAR[i] === 'hucum' ? 'Hücum' : BOTLAR[i] === 'denge' ? 'Denge' : String(BOTLAR[i] || 'bot');
+      const adY = BA(BOTLAR[i], String(BOTLAR[i] || 'bot'));
       if (!d || !d.success || !d.bot) { ekle('tehlike', `${adY}: durum alınamadı${d && d.error ? ` (${d.error})` : ''}`, '#/botlar', 'bot'); return; }
-      const b = d.bot, ad = b.adGorunen || adY;
+      const b = d.bot, ad = BA(b.ad || BOTLAR[i], adY);
       const du = D().durum(b);
       if (du.onayBekliyor) ekle('tehlike', `${ad} durduruldu — onayınızı bekliyor: ${du.neden}`, '#/botlar', 'onay');
       else if (b.model && b.model.durum === 'DUR') ekle('tehlike', `${ad}: modelin düşüş sınırı aşıldı — durdurmayı değerlendirin`, '#/botlar', 'bot');
@@ -197,7 +200,7 @@
       ekle(mi.emir.ton, `${n > 1 ? `${n} modelin` : `${ilk.ad}:`} bu ayki emirleri Midas'a girilmedi${n > 1 ? ` — ${listele(mi.emir.modeller.map(x => x.ad))}` : ''}. Girdikten sonra Bu ay › Uyguladım.`,
         () => portfoyAc(MODEL_SEKME[ilk.id] || 'nasdaq'), mi.emir.gec > 0 ? `${mi.emir.gec} gün gecikti` : 'bugün');
     }
-    if (mi.bant837) ekle('uyari', `%50 QQQ + %50 Hücum: Hücum payı bant dışında (%${Math.round(mi.bant837.pay * 100)}) — QQQ ↔ Binance dengeleme gerekiyor`, () => portfoyAc('q837'), 'dengele');
+    if (mi.bant837) ekle('uyari', `Simurg: Kairos payı bant dışında (%${Math.round(mi.bant837.pay * 100)}) — QQQ ↔ Binance dengeleme gerekiyor`, () => portfoyAc('q837'), 'dengele');
     if (mi.liste && !mi.emir) ekle('bilgi', `Ay sonu listesi hazır: ${listele(mi.liste.modeller.map(x => x.ad))} — ${D().gunAdi(mi.liste.uygulamaGunu, true)} açılışında uygulanacak`,
       () => portfoyAc(MODEL_SEKME[mi.liste.modeller[0].id] || 'nasdaq'), 'liste hazır');
     // Portföyüm: kayıt yoksa bilgi, hedef bandı aşımı uyarı.
@@ -235,7 +238,7 @@
   }
 
   function botKarti(ad, d, bugun, egri) {
-    const yedekAd = ad === 'hucum' ? 'Hücum' : 'Denge';
+    const yedekAd = BA(ad, ad === 'hucum' ? 'Kairos' : 'Tao');
     if (!d || !d.success || !d.bot) {
       return el('div', { class: `saglik-kart ana-bot ana-bot-${ad}`, id: `anaBot-${ad}` }, [
         el('div', { class: 'saglik-ust' }, [el('strong', { text: yedekAd })]),
@@ -252,11 +255,11 @@
       el('dd', { class: ton(tonAd) || null, text: metin, title: title || null, id: id || null })
     ];
     const getiriMetni = oz.getiri == null ? '—' : `${isaretliYz(oz.getiri)}${oz.btcGetiri != null ? ` (BTC ${isaretliYz(oz.btcGetiri)})` : ''}`;
-    const neYapmali = du.onayBekliyor ? `Botlar › ${b.adGorunen || yedekAd} — nedeni okuyup onaylayın`
-      : !b.calisiyor ? `Botlar › ${b.adGorunen || yedekAd} › Başlat` : null;
+    const neYapmali = du.onayBekliyor ? `Botlar › ${yedekAd} — nedeni okuyup onaylayın`
+      : !b.calisiyor ? `Botlar › ${yedekAd} › Başlat` : null;
     return el('div', { class: `saglik-kart ana-bot ana-bot-${ad}${du.onayBekliyor ? ' saglik-kart-dur' : ''}`, id: `anaBot-${ad}` }, [
       el('div', { class: 'saglik-ust row-between' }, [
-        el('strong', { class: 'ana-bot-ad', text: b.adGorunen || yedekAd }),
+        el('strong', { class: 'ana-bot-ad', text: yedekAd, title: AG.botAd ? AG.botAd.anlam(ad) : null }),
         el('span', { class: `bot-durum-buyuk ${du.ton === 'iyi' ? 'bot-durum-iyi' : du.ton === 'tehlike' ? 'bot-durum-tehlike' : 'bot-durum-uyari'}`, title: du.ham || null }, [
           el('span', { class: 'bot-durum-isik', 'aria-hidden': 'true' }), el('span', { text: du.metin })])
       ]),
@@ -323,7 +326,7 @@
       gitDugme('Modeller ›', () => portfoyAc(hedef || 'nasdaq'), 'btnAnaBuAy'),
       // 68.8: modellerin kâğıt hesapları Botlar'da kendi sayfasında (js/pages/portfoyBotlari.js)
       el('p', { class: 'hint hint-sm mb-0 mt-2', id: 'anaPortfoyBotlari' }, [el('span', { text: 'Portföy botları (kâğıt hesap): ' }),
-        ...[['m-qqq-m10', 'QQQ M10'], ['m-bist-m10', 'BIST M10'], ['m-837', '837']].flatMap(([id, ad], i) => [i ? el('span', { text: ' · ' }) : null, el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: ad })]).filter(Boolean)])
+        ...[['m-qqq-m10', 'Nova'], ['m-bist-m10', 'Lydia'], ['m-837', 'Simurg']].flatMap(([id, ad], i) => [i ? el('span', { text: ' · ' }) : null, el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: BA(id, ad), title: AG.botAd ? AG.botAd.tam(id) : null })]).filter(Boolean)])
     ]);
   }
 
@@ -337,8 +340,8 @@
     if (!oz || !Array.isArray(oz.denetimler)) return [{ kimlik: 'oz', ton: 'notr', metin: 'Öz denetim okunamadı', href: '#/saglik' }];
     const l = [];
     for (const b of oz.botlar || []) {
-      if (b.engel) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'tehlike', metin: `${b.adGorunen} tamamen kapalı — siz açana kadar çalışmaz`, href: '#/saglik' });
-      else if (b.guvenliKip) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'uyari', metin: `${b.adGorunen} güvenli kipte — yeni işlem açmıyor`, href: '#/saglik' });
+      if (b.engel) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'tehlike', metin: `${GA(b)} tamamen kapalı — siz açana kadar çalışmaz`, href: '#/saglik' });
+      else if (b.guvenliKip) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'uyari', metin: `${GA(b)} güvenli kipte — yeni işlem açmıyor`, href: '#/saglik' });
     }
     const sorunlu = (oz.denetimler || []).filter(d => d.durum === 'hata' || d.durum === 'uyari').sort((a, b) => (a.durum === 'hata' ? 0 : 1) - (b.durum === 'hata' ? 0 : 1));
     for (const d of sorunlu.slice(0, 3)) l.push({ kimlik: `oz-${d.kimlik}`, ton: d.durum === 'hata' ? 'tehlike' : 'uyari', metin: `${d.ad}: ${String(d.ayrinti || '').slice(0, 90)}`, href: '#/saglik' });

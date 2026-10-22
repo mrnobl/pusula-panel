@@ -4,7 +4,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Stratejileri **canlı fiyatlarla, sanal (kâğıt) hesapta** çalıştırıp gözlemlemek. Borsaya emir gitmez. Hücum/Denge botlarından ayrıdır; onlar Botlar ekranındadır.
+Stratejileri **canlı fiyatlarla, sanal (kâğıt) hesapta** çalıştırıp gözlemlemek. Borsaya emir gitmez. Kairos/Tao botlarından ayrıdır; onlar Botlar ekranındadır.
 
 ## Ne zaman kullanılır {#ne-zaman}
 

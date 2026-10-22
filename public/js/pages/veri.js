@@ -17,16 +17,19 @@
   const bul = (id) => (doc ? doc.getElementById(id) : null);
   let yoklama = null;
 
+  /** 72.0: görünen bot adı kimlikten (AG.botAd yoksa yedek ad). */
+  const BA = (k, y) => (AG && AG.botAd && AG.botAd.ad(k)) || y;
+  const KAI = BA('hucum', 'Kairos'), TAO = BA('denge', 'Tao');
   /** Kaynak → grup ve kullananlar (kod incelemesinden: hangi bot / model / ekran bu veriyi okuyor). Bilinmeyen → Araştırma. */
   const KULLANAN = {
-    'binance-market-db': { grup: 'bot', kim: ['Hücum', 'Denge', 'Backtest'] },
-    'binance-pit-arsiv': { grup: 'bot', kim: ['Hücum', 'Denge'], not: 'coin sepetinin geçmiş üyeleri' },
-    'binance-tradfi-listesi': { grup: 'bot', kim: ['Hücum', 'Denge'], not: 'altın, hisse vb. coin sepetinden çıkarılır' },
-    'kol-onbellegi': { grup: 'bot', kim: ['Hücum', 'Denge', '%50 QQQ + %50 Hücum'], ad: 'Coin sepeti önbelleği', not: 'eski adı kol önbelleği' },
-    'usdtry': { grup: 'portfoy', kim: ['Portföyüm', 'BIST M10'] },
+    'binance-market-db': { grup: 'bot', kim: [KAI, TAO, 'Backtest'] },
+    'binance-pit-arsiv': { grup: 'bot', kim: [KAI, TAO], not: 'coin sepetinin geçmiş üyeleri' },
+    'binance-tradfi-listesi': { grup: 'bot', kim: [KAI, TAO], not: 'altın, hisse vb. coin sepetinden çıkarılır' },
+    'kol-onbellegi': { grup: 'bot', kim: [KAI, TAO, BA('m-837', 'Simurg')], ad: 'Coin sepeti önbelleği', not: 'eski adı kol önbelleği' },
+    'usdtry': { grup: 'portfoy', kim: ['Portföyüm', BA('m-bist-m10', 'Lydia')] },
     'tefas': { grup: 'portfoy', kim: ['Portföyüm'] },
-    'yahoo-nasdaq': { grup: 'portfoy', kim: ['Nasdaq M10'] },
-    'yahoo-bist': { grup: 'portfoy', kim: ['BIST M10'] },
+    'yahoo-nasdaq': { grup: 'portfoy', kim: [BA('m-qqq-m10', 'Nova')] },
+    'yahoo-bist': { grup: 'portfoy', kim: [BA('m-bist-m10', 'Lydia')] },
     'yahoo-gercek-varlik': { grup: 'portfoy', kim: ['Portföyüm kıyasları', 'Laboratuvar'], ad: 'Yahoo kıyas serileri', not: 'eski adı Yahoo H2 serileri' },
     'tufe': { grup: 'portfoy', kim: ['Portföyüm kıyasları'] },
     'evds-mevduat': { grup: 'portfoy', kim: ['Portföyüm kıyasları'] },

@@ -17,6 +17,8 @@
 (function (global) {
   'use strict';
   const AG = global.AG || (global.AG = {});
+  /** 72.0: kayıtlı strateji adı eski bot adıyla olabilir → yeni ad (AG.botAd). */
+  const cv = (t) => (AG.botAd ? AG.botAd.cevir(t) : t);
   const doc = global.document;
   const bul = (id) => (doc ? doc.getElementById(id) : null);
   const sayiMi = (x) => typeof x === 'number' && Number.isFinite(x);
@@ -99,7 +101,7 @@
     const kiyas = Array.isArray(s.buyHold) && s.buyHold.length === s.time.length
       ? [{ ad: `Al-tut (${res.symbol || 'sembol'})`, seri: s.buyHold.map((v, i) => ({ t: t[i], v: v + taban })) }] : [];
     return {
-      ad: `${res.strategyName || 'Strateji'} özsermayesi`,
+      ad: `${cv(res.strategyName) || 'Strateji'} özsermayesi`,
       etiket: 'Strateji', birim: '$', seri, kiyas,
       bant: true, bantEtiketi: 'Aynı getiriler başka sırayla: %5–%95',
       krizler: (res.krizDonemleri || []).map(k => ({ ad: k.ad, bas: k.bas, bit: k.bit })),

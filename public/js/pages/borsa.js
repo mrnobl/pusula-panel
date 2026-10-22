@@ -112,7 +112,7 @@
       ].filter(Boolean);
       doldur(kutu, [
         el('div', { class: 'row-between' }, [el('h3', { text: 'Elle emir bağlantısı' }), rozet(s.exchangeMode)]),
-        el('p', { class: 'hint hint-sm mb-3', text: 'Botlardan bağımsız, elle tek emir vermek için demo hesap bağlantısı (Arşiv: artık günlük kullanımda değil). Hücum ve Denge kendi bağlantılarını kullanır; buradan bağlanmak gerekmez.' }),
+        el('p', { class: 'hint hint-sm mb-3', text: 'Botlardan bağımsız, elle tek emir vermek için demo hesap bağlantısı (Arşiv: artık günlük kullanımda değil). Kairos ve Tao kendi bağlantılarını kullanır; buradan bağlanmak gerekmez.' }),
         satirlar(sat),
         el('div', { class: 'row gap-2 wrap' }, dugmeler),
       ]);
@@ -223,7 +223,7 @@
     }))] : [];
     doldur(kutu, [el('div', { class: 'sunken-panel mt-3' }, [
       el('h4', { text: 'Kalkan botu (B Kalkan, yalnız kâğıt — salt okunur)' }),
-      el('p', { class: 'text-muted', text: 'Ayrı bot olarak emekli: Hücum ve Denge, Kalkan kolunu zaten içeriyor. Kart yalnız durumu gösterir; başlatılamaz.' }),
+      el('p', { class: 'text-muted', text: 'Ayrı bot olarak emekli: Kairos ve Tao, Kalkan kolunu zaten içeriyor. Kart yalnız durumu gösterir; başlatılamaz.' }),
       satirlar([
         ['Durum', k.engel ? `durduruldu — ${k.engel}` : k.calisiyor ? 'çalışıyor' : 'durdu'],
         ['Özsermaye', oz],

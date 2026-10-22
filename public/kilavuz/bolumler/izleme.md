@@ -4,7 +4,7 @@
 
 **Araştırma › Strateji testi › Veri ve izleme listesi** (63.0'a kadar Ayarlar'daydı). Aynı alt menünün sonundaki **Gösterge havuzu ↗** ayrı sayfayı açar (63.3). İki ayar, ikisi de **botları etkilemez**:
 
-- **Piyasa verisi:** borsa ve piyasa tipi (spot / vadeli, kaldıraç) — yalnız Kâğıt test motoru ve Botlar ekranındaki canlı grafiğin mum kaynağı. **Hücum ve Denge her zaman Binance'te çalışır**; Backtest kendi borsa seçimini kullanır.
+- **Piyasa verisi:** borsa ve piyasa tipi (spot / vadeli, kaldıraç) — yalnız Kâğıt test motoru ve Botlar ekranındaki canlı grafiğin mum kaynağı. **Kairos ve Tao her zaman Binance'te çalışır**; Backtest kendi borsa seçimini kullanır.
 - **İzleme listesi:** backtest, grafik ve izleme listesi taramasında kullanılan semboller.
 
 ## Ne zaman kullanılır {#ne-zaman}

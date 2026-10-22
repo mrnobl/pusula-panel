@@ -37,7 +37,7 @@ Tür, mesajın başlığından kendiliğinden anlaşılır (ör. 🚨 ile başla
 
 ## Mesajların biçimi {#bicim}
 
-Her bildirim aynı biçimde gelir: **bot · ne oldu** başlığı, bir iki sade cümle, uyarı ve acil mesajlarda **Ne yapmalı:** satırı (nereye bakılacağı ya da bir şey yapmana gerek olmadığı) ve kısa saat ("Pusula · 19 Eki 03:02"). Sayılar Türkçe yazılır (4.999,29 USDT); iç terimler ve belge adları çıkarılır. Hesap türü yalnız canlı hesapta başlıkta görünür ("Hücum (canlı)"). Gece de beklemeden gönderilir.
+Her bildirim aynı biçimde gelir: **bot · ne oldu** başlığı, bir iki sade cümle, uyarı ve acil mesajlarda **Ne yapmalı:** satırı (nereye bakılacağı ya da bir şey yapmana gerek olmadığı) ve kısa saat ("Pusula · 19 Eki 03:02"). Sayılar Türkçe yazılır (4.999,29 USDT); iç terimler ve belge adları çıkarılır. Hesap türü yalnız canlı hesapta başlıkta görünür ("Kairos (canlı)"). Gece de beklemeden gönderilir.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 

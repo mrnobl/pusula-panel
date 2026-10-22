@@ -400,7 +400,7 @@
     const kripto = (B ? B.ADLAR : ['hucum', 'denge']).map(async (ad) => {
       const [r, d] = await Promise.all([AG.api.bindirmeGrafik(ad).catch(e => ({ success: false, error: e.message })), AG.api.bindirmeDurum(ad).catch(() => null)]);
       const b = d && d.bot;
-      return botSatiri(ad, (b && b.adGorunen) || (ad === 'hucum' ? 'Hücum' : 'Denge'), r, b && AG.botDil ? AG.botDil.durum(b).metin : null);
+      return botSatiri(ad, (AG.botAd && AG.botAd.ad(ad)) || (ad === 'hucum' ? 'Kairos' : 'Tao'), r, b && AG.botDil ? AG.botDil.durum(b).metin : null);
     });
     const portfoy = (P ? P.SIRA : []).map(async (id) => {
       const r = await AG.api.tasarimci.portfoyBot(id).catch(e => ({ success: false, error: e.message }));

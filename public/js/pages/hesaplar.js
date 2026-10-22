@@ -60,7 +60,7 @@
   }
 
   // ── Saf yardımcılar (test edilir) ───────────────────────────────────────
-  const BOT_AD = { hucum: 'Hücum', denge: 'Denge', kalkan: 'Kalkan', elle: 'Elle' };
+  const BOT_AD = { hucum: 'Kairos', denge: 'Tao', kalkan: 'Kalkan', elle: 'Elle' };
   /** Saf: hesap kimliği → sekme adı. */
   function hesapAdi(hesap) {
     if (hesap === 'testnet') return 'Binance demo';
@@ -156,7 +156,7 @@
   }
 
   // ── Ortak parçalar ──────────────────────────────────────────────────────
-  const kimin = (kod, ad) => el('span', { class: `hs-kaynak hs-kaynak-${String(kod || '').replace(/[^a-z]/gi, '')}`, text: ad || BOT_AD[kod] || kod || '—' });
+  const kimin = (kod, ad) => el('span', { class: `hs-kaynak hs-kaynak-${String(kod || '').replace(/[^a-z]/gi, '')}`, text: BOT_AD[kod] || (AG.botAd && ad ? AG.botAd.cevir(ad) : ad) || kod || '—' });
   /** Hücre: `data-etiket` telefondaki kart görünümünün başlığı; `hs-metin` yazı tipini Plex Sans'a döndürür. */
   function hucre(etiket, icerik, sinif) {
     const p = { 'data-etiket': etiket, class: sinif || '' };
@@ -230,7 +230,7 @@
     const kz = pozlar.reduce((t, p) => (sayiMi(p.kz) ? t + p.kz : t), 0);
     const korumaSay = emirler.filter(e => emirNe(e) === 'Koruma stopu').length;
     const kademeSay = emirler.filter(e => emirNe(e) === 'Kademe alımı').length;
-    const kullanan = (b.kaynakAdlari || []).filter(Boolean);
+    const kullanan = (b.kaynakAdlari || []).filter(Boolean).map(k => (AG.botAd ? AG.botAd.cevir(String(k)) : k));
     const sanal = b.ortam === 'kagit' || b.ortam === 'motor';
     const g = gorunum[hesap] || 'poz';
     const ek = o.arsiv ? '-arsiv' : '';
@@ -437,7 +437,7 @@
       el('p', { class: 'hint hint-sm mb-3', text: 'Bot hesaplarının bütün emir ve işlemleri (vergi ve kayıt için). Excel\'de açılır (; ayraçlı); tarih süzgeci sizin gününüze göre.' }),
       el('div', { class: 'grid-4' }, [
         secici('selDokumHesap', 'Hesap', [['', 'Tüm hesaplar'], ...hesaplar], 'hesap'),
-        secici('selDokumKaynak', 'Kimin', [['', 'Hepsi'], ['hucum', 'Hücum'], ['denge', 'Denge'], ['elle', 'Elle'], ['acil', 'Acil fren'], ['kagit', 'Kâğıt test']], 'kaynak'),
+        secici('selDokumKaynak', 'Kimin', [['', 'Hepsi'], ['hucum', 'Kairos'], ['denge', 'Tao'], ['elle', 'Elle'], ['acil', 'Acil fren'], ['kagit', 'Kâğıt test']], 'kaynak'),
         tarih('inpDokumBas', 'Başlangıç', 'bas'),
         tarih('inpDokumBit', 'Bitiş', 'bit')
       ]),
