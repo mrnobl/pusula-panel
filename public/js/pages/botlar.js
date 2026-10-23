@@ -311,13 +311,13 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
 
   /**
    * TELEFONDAN ACİL DURDURMA (60.5): acil PIN + "DURDUR" yazma diyaloğu → POST /api/bindirme/:ad/acil
-   * gövdesinde { pin, onay } (sunucu lib/acilPin.js denetler; 15 dk'da 5 yanlış → kilit + Telegram).
+   * gövdesinde { pin, onay } (sunucu lib/acilPin.js denetler; 1 dk'da 5 yanlış → 1 dk kilit + Telegram).
    */
   const telefonPin = () => (AG.pages && AG.pages.kabuk && AG.pages.kabuk.acilPin && AG.pages.kabuk.acilPin()) || {};
   /** Saf: telefonda acil durdurma kullanılamıyorsa nedeni (A-22); kullanılabiliyorsa ''. */
   function telefonAcilNotu(pin) {
     if (!pin || !pin.tanimli) return 'Acil PIN tanımlı değil — telefondan acil durdurma kapalı (sunucuda: npm run acil-pin).';
-    if (pin.kilitli) return 'Çok fazla yanlış PIN — telefondan acil durdurma 15 dakika kilitli.';
+    if (pin.kilitli) return 'Çok fazla yanlış PIN — telefondan acil durdurma 1 dakika kilitli.';
     return '';
   }
 
@@ -325,7 +325,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const b = d.bot;
     const pin = telefonPin();
     if (!pin.tanimli) { bildir('Telefondan acil durdurma kapalı: acil PIN tanımlı değil. Sunucuda "npm run acil-pin" ile belirleyin.', 'hata'); return; }
-    if (pin.kilitli) { bildir('Çok fazla yanlış PIN — acil durdurma 15 dakika kilitli.', 'hata'); return; }
+    if (pin.kilitli) { bildir('Çok fazla yanlış PIN — acil durdurma 1 dakika kilitli.', 'hata'); return; }
     const demo = (d.mod || b.mod) === 'demo';
     const v = await AG.onayla({
       baslik: `${GA(b)}: ACİL DURDUR`, onay: 'Acil durdur', iptal: 'Vazgeç', tehlikeli: true,

@@ -2,6 +2,16 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.0 — Ayarlar › Anahtarlar (2026-10-23) {#s73-0}
+
+- **Yeni sekme: [Ayarlar › Anahtarlar](#/kilavuz/ayarlar/anahtarlar).** Panelin kayıtlı bütün anahtar, jeton ve şifreleri tek tabloda, dört grupta: **Borsa hesapları**, **İşlem defterim** (yalnız okuma anahtarları), **Bildirim** (Telegram jetonu, sağlık sinyali adresleri) ve **Erişim** (acil PIN, telefon jetonu, sunucu bağlantısı …). Her satırda kim kullanıyor, hangi bilgisayarda duruyor ve durumu (**Tamam · Bakılmalı · Eksik · Boş**) yazar. Değerin **yalnız son 4 karakteri** görünür; tamamı hiçbir zaman gösterilmez.
+- **Borsa hesabı ekle:** Binance, OKX ya da Bybit; demo ya da canlı; isterseniz alt hesap adı. Bugünkü iki anahtar "Binance canlı (Kairos)" ve "Binance demo (Kairos)" satırları olarak görünür — botlar aynen bunları kullanmaya devam eder. Yeni eklenen hesaplar bir sonraki aşamada botlara bağlanacak.
+- **Her değişiklik acil PIN ister** (ekle, değiştir, sil) — bu bilgisayarın masaüstü panelinde de. Telefondan bu sekme yalnız görüntülenir.
+- **Sına:** anahtarla borsaya **yalnız okuma** bağlantısı denenir (bakiye ve izinler; emir gönderilmez). Anahtarda **para çekme izni** açıksa satır kırmızı uyarı verir.
+- **Acil PIN:** 5 yanlış denemede kilit artık **1 dakika** (önce 15 dakikaydı). PIN Anahtarlar sekmesinden değiştirilebilir (eski PIN + yeni PIN iki kez). PIN bütün bilgisayarlarda aynıdır; unutursanız bilgisayar başında `npm run acil-pin`.
+- **Geliştirme bilgisayarında** sunucudaki anahtarlar görünür ve değişiklik sunucuya gider. Sunucuya ulaşılamazsa değişiklik bu bilgisayarda bekler; ekranda "Sunucuya gönderilmeyi bekleyen N değişiklik" ve **Gönder** çıkar. Sunucudaki değer o arada değiştiyse ikisi yan yana gösterilir, hangisinin geçerli olacağını siz seçersiniz.
+- **Eski şifreli sır dosyası** (69.x'ten kalan, Pusula'nın açamadığı) bu sekmede açıkça görünür; **Eski şifreli dosyayı kenara al** dosyayı silmeden başka bir adla kenara koyar, sonra anahtarları yeniden girersiniz.
+
 ## 72.3 — Güncelleme sırasında paket kurulumu düzeltildi (2026-10-22) {#s72-3}
 
 - **Ne oldu:** 71.0 → 72.2 güncellemesinde paket listesi aslında değişmemişti (yalnız test satırları eklenmişti), ama güncelleyici paketleri yine baştan kurmaya çalıştı — hem de Pusula çalışırken. Windows, çalışan Pusula'nın kullandığı paket dosyalarını kilitli tuttuğu için kurulum "izin yok" hatasıyla yarıda kaldı; eski sürüme dönerken de aynı hata çıktı ve Pusula kapandı.

@@ -2966,6 +2966,24 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .bl-isik { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-soft); margin-right: var(--sp-3); }
 .bl-ust-bosluk { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--text-soft); }
 
+/* ═══ AYARLAR › ANAHTARLAR (73.0, js/pages/anahtarlar.js) — p- bileşenlerinin üstüne yalnız düzen ═══ */
+.an-kok { display: grid; gap: var(--sp-3); }
+.an-bas .p-kart-bas { margin-bottom: 0; }
+.an-tablo td { vertical-align: top; }
+.an-tablo td:first-child { min-width: 11rem; }
+.an-alt { display: block; margin-top: 2px; font-size: var(--fs-sm); color: var(--text-muted); max-width: 32rem; }
+.an-soluk { color: var(--text-soft); font-size: var(--fs-sm); min-width: 9rem; }
+.an-maske { white-space: nowrap; }
+.an-dugmeler { display: flex; flex-wrap: wrap; gap: var(--sp-1); align-items: center; }
+.an-nasil { display: inline-flex; flex-wrap: wrap; gap: var(--sp-1); align-items: center; font-size: var(--fs-sm); }
+.an-form { margin-bottom: var(--sp-3); display: grid; gap: var(--sp-2); }
+.an-form-baslik { margin: 0; font-size: var(--fs-md); color: var(--text-strong); }
+.an-form-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: var(--sp-2) var(--sp-3); }
+.an-kutu { display: flex; align-items: center; gap: var(--sp-1); font-size: var(--fs-sm); }
+.an-liste { flex-basis: 100%; margin: 0; padding-left: var(--sp-4); display: grid; gap: var(--sp-1); font-size: var(--fs-sm); }
+.an-liste li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-2); }
+.an-bekleyen, .an-cakisma { align-items: flex-start; }
+
 /* ═══ PORTFÖY — yeni panel F4 (js/pages/pano.js): Pano · Varlıklar · Hedefim · Takvim + Hesaplar/Rapor kartları ═══════════
    p- bileşenlerinin üstüne yalnız sayfa düzeni ve çizim renkleri (renk tokendan; satır içi stil yok). */
 #pfUstSekmeler, #pfOzetSerit { display: none; }

@@ -191,6 +191,18 @@
     durum: () => al('/api/status'),
     /** Canlılık + sunucu rolü (`arastirmaModu`). Bozuksa HTTP 503 ama gövde yine JSON döner. */
     sunucuSagligi: () => al('/api/health'),
+    /* 73.0 Ayarlar › Anahtarlar (lib/anahtarlar.js; panel js/pages/anahtarlar.js) — liste MASKELİ; her yazma PIN + onay; telefonda yazma yok */
+    anahtarlar: {
+      liste: () => al('/api/anahtarlar'),
+      hesapEkle: (hesap, pin) => gonder('/api/anahtarlar/hesap', { hesap, pin, onay: true }),
+      degistir: (kimlik, alanlar, pin) => gonder('/api/anahtarlar/degistir', { kimlik, alanlar, pin, onay: true }),
+      sil: (kimlik, pin) => gonder('/api/anahtarlar/sil', { kimlik, pin, onay: true }),
+      sina: (kimlik) => gonder('/api/anahtarlar/sina', { kimlik }),
+      kenaraAl: (dosya, pin) => gonder('/api/anahtarlar/eski-kenara-al', { dosya, pin, onay: true }),
+      pinDegistir: (eskiPin, yeniPin, yeniPin2) => gonder('/api/anahtarlar/pin-degistir', { eskiPin, yeniPin, yeniPin2, onay: true }),
+      bekleyenGonder: (pin, secimler) => gonder('/api/anahtarlar/bekleyen/gonder', { pin, onay: true, ...(secimler ? { secimler } : {}) }),
+      bekleyenVazgec: (id) => gonder('/api/anahtarlar/bekleyen/vazgec', { id, onay: true })
+    },
     /* 61.3 otomatik güncelleme (lib/guncelleme.js): durum · şimdi kontrol et · onay bekleyen güncellemeyi kur */
     guncelleme: {
       durum: () => al('/api/guncelleme/durum'),

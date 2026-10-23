@@ -235,7 +235,7 @@ Bot Binance **gerçek** hesabınızda çalışır (BTC spot, vadeli hesapta temi
 
 Bu bilgisayar araştırma modundaysa acil fren de kilitlidir — acil durumda sunucudaki paneli ya da telefonu kullanın.
 
-**Telefondan (60.5):** telefonda Durdur/Başlat yoktur; yalnız kırmızı **Acil durdur** vardır. Basınca **acil PIN** ve **DURDUR** yazmanız istenir; ikisi doğru olmadan düğme açılmaz. PIN sunucuda `npm run acil-pin` ile belirlenir (tanımlı değilse telefondan acil durdurma kapalıdır). 15 dakikada 5 yanlış PIN → kilit + Telegram uyarısı. Ayrıntı: [Telefondan açmak](#/kilavuz/telefon/acil-pin).
+**Telefondan (60.5):** telefonda Durdur/Başlat yoktur; yalnız kırmızı **Acil durdur** vardır. Basınca **acil PIN** ve **DURDUR** yazmanız istenir; ikisi doğru olmadan düğme açılmaz. PIN sunucuda `npm run acil-pin` ile belirlenir (tanımlı değilse telefondan acil durdurma kapalıdır). 1 dakikada 5 yanlış PIN → 1 dakika kilit + Telegram uyarısı. Ayrıntı: [Telefondan açmak](#/kilavuz/telefon/acil-pin).
 
 ## Durduruldu bandı {#durduruldu}
 

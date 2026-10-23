@@ -14,7 +14,7 @@ durdurma uçları ve onlar da **acil PIN + "DURDUR"** ister. Eski `--tam` (tam e
 3. Giriş karekodu: `npm run telefon-jeton -- --adres https://<makine>.<ağ>.ts.net` (jeton yoksa üretir:
    `data/telefon-jeton.json`). Telefonda Tailscale açıkken okutun; Chrome → **Ana ekrana ekle / Uygulamayı yükle** (PWA).
 4. Acil PIN: `npm run acil-pin` (6–12 hane; yalnız scrypt özeti `data/acil-pin.json`). Tanımlı değilse telefondan acil
-   durdurma KAPALI. 15 dk'da 5 yanlış PIN → kilit + Telegram uyarısı. Silmek: `npm run acil-pin -- --sil`.
+   durdurma KAPALI. 1 dk'da 5 yanlış PIN → 1 dk kilit + Telegram uyarısı. Silmek: `npm run acil-pin -- --sil`.
 5. Telefon kaybolursa: Tailscale yönetim panelinden cihazı çıkarın + `npm run telefon-jeton -- --yeni` (+ gerekirse yeni PIN).
 
 Teknik: `tailscale serve` isteği 127.0.0.1'e iletir ama `Host: *.ts.net` ve X-Forwarded-For / Tailscale-User-* ekler →

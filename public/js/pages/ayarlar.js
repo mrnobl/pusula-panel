@@ -30,7 +30,7 @@
       ? { etiket: 'Rol', deger: 'Araştırma kopyası — bot sunucuda çalışır. Burada bot/borsa/emir işlemleri ve ayar kayıtları (Telegram, piyasa verisi, izleme listesi, API anahtarları, sağlık sinyali) kapalı; Telegram bu bilgisayarda bilinçli kapalı, sunucudaki ayar değişmez.', ton: 'tone-warning', href: '#/kilavuz/ayarlar/uyarilar', nasil: 'Neden?' }
       : { etiket: 'Rol', deger: 'Sunucu (ana bilgisayar) — botlar burada çalışır, ayarlar buradan kaydedilir.', ton: '', href: '#/kilavuz/ayarlar/ne-ise-yarar', nasil: 'Ayrıntı' });
     l.push({ etiket: 'Bu oturum', deger: hh.kademe === 'telefon' ? 'Telefon: yalnız izleme + PIN\'li acil durdurma' : 'Bu bilgisayardaki masaüstü panel (tam yetki)', ton: '', href: '#/kilavuz/telefon', nasil: 'Telefon kılavuzu' });
-    l.push({ etiket: 'Acil PIN', deger: !pin.tanimli ? 'tanımlı değil — telefondan acil durdurma kapalı (sunucuda: npm run acil-pin)' : pin.kilitli ? 'tanımlı — şu an KİLİTLİ (çok fazla yanlış deneme, 15 dk)' : 'tanımlı ✓',
+    l.push({ etiket: 'Acil PIN', deger: !pin.tanimli ? 'tanımlı değil — telefondan acil durdurma kapalı (sunucuda: npm run acil-pin)' : pin.kilitli ? 'tanımlı — şu an KİLİTLİ (çok fazla yanlış deneme, 1 dk)' : 'tanımlı ✓',
       ton: !pin.tanimli || pin.kilitli ? 'tone-warning' : 'tone-success', href: '#/kilavuz/telefon', nasil: 'Nasıl tanımlanır?' });
     l.push({ etiket: 'Telefon jetonu', deger: hh.telefonJeton === undefined ? '—' : hh.telefonJeton ? 'tanımlı ✓ (değeri gösterilmez)' : 'tanımlı değil — telefondan erişim kapalı (sunucuda: npm run telefon-jeton)',
       ton: hh.telefonJeton === false ? 'tone-warning' : hh.telefonJeton ? 'tone-success' : '', href: '#/kilavuz/telefon', nasil: 'Nasıl kurulur?' });
@@ -221,7 +221,7 @@
 
   /**
    * Telefon kademesinde (61.3): güncelleme kontrol / kur acil PIN + "GÜNCELLE" ister (lib/acilPin.js; aynı yanlış PIN
-   * sayacı ve 15 dk kilit). Masaüstünde alan yok. Döndürür: gövde eki | {} (masaüstü) | null (vazgeçildi).
+   * sayacı ve 1 dk kilit). Masaüstünde alan yok. Döndürür: gövde eki | {} (masaüstü) | null (vazgeçildi).
    */
   const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon');
   const PIN_ALANLARI = [
@@ -300,8 +300,9 @@
     if (g && g.islem && !g.islem.bitti && !g.islem.yarida) izle(g);
   }
 
-  // ── 63.0: sekmeler (Botlar · Bildirimler · Borsa · Bu bilgisayar · Güncelleme; 68.1 + Yedek ve taşıma — js/pages/tasima.js) ──
-  const SEKMELER = ['botlar', 'bildirimler', 'borsa', 'bilgisayar', 'guncelleme', 'yedek'];
+  // ── 63.0: sekmeler (Botlar · Bildirimler · Borsa · Bu bilgisayar · Güncelleme; 68.1 + Yedek ve taşıma — js/pages/tasima.js;
+  //    73.0 + Anahtarlar — js/pages/anahtarlar.js kendi ag:rota dinleyicisiyle yükler) ──
+  const SEKMELER = ['botlar', 'bildirimler', 'borsa', 'anahtarlar', 'bilgisayar', 'guncelleme', 'yedek'];
   /** Saf: adresin alt parçası → sekme (bilinmeyen ya da boş → Botlar; açılış her zaman Botlar). */
   const sekmeCoz = (alt) => { const a = String(alt || '').split('/')[0]; return SEKMELER.includes(a) ? a : 'botlar'; };
   function sekmeSec(ad) {

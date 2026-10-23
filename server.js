@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '72.3';
+const APP_VERSION = '73.0';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -467,6 +467,10 @@ if (!ARASTIRMA_MODU) app.use(evYazmaLib.istekDefteri({ dosya: yollar.veri('ev-is
   kayitAra: (kimlik) => require('./lib/islemDefteri/depo').oku().kayitlar.some(k => k.istek === kimlik) || require('./lib/portfoyum/depo').oku().kayitlar.some(k => k.istek === kimlik) }).middleware);
 // Geliştirme bilgisayarı yazma jetonunu dener (ev-baglanti betiği): sunucuda kademe 'gelistirme' ise jeton doğru.
 app.get('/api/ev-yazma/dene', (req, res) => res.json({ success: true, surum: APP_VERSION, kademe: req.kademe, gelistirme: req.kademe === 'gelistirme', arastirma: ARASTIRMA_MODU }));
+// 73.0 Ayarlar › Anahtarlar (lib/anahtarlar.js): evYazma ara katmanından ÖNCE — anahtar yazmaları kuyruğa (ev-kuyruk.jsonl) GİRMEZ;
+// araştırma kopyasında kendisi iletir ya da GİZLİ bekleyen dosyasına alır. Yönlendirici aşağıda (İşlem defterim kurulduktan sonra) kurulur.
+let anahtarYonlendirici = null;
+app.use((req, res, next) => (anahtarYonlendirici ? anahtarYonlendirici(req, res, next) : next()));
 // 64.8 GELİŞTİRME BİLGİSAYARINDA: İşlem defterim + Portföyüm yazmaları sunucuya (ya da kuyruğa). Yazma jetonu yoksa ve sunucu okuma kuruluysa 403 + nasıl açılır.
 app.use(evYazma.middleware);
 if (EV_BAGLANTI_ETKIN) {
@@ -2358,27 +2362,33 @@ app.get('/api/config', (req, res) => {
  * SIRLAR YALNIZ YAZILIR. Okuma ucu yok — panel yalnızca "tanımlı mı"
  * bilgisini görür (`config.sirlar`). Boş değer anahtarı SİLER.
  */
-app.post('/api/secrets', (req, res) => {
-  const govde = req.body || {};
+/**
+ * 73.0: /api/secrets çekirdeği — Ayarlar › Anahtarlar (lib/anahtarlar.js) da AYNI yolu kullanır (iki yer tutarlı kalsın).
+ * Döndürür { durum, govde } (yanıtta sır yok). Sırlar kilitli/bozuksa yazmaz, 409 döner.
+ */
+function sirlariUygula(govde0) {
+  const govde = govde0 && typeof govde0 === 'object' ? govde0 : {};
+  if (SIRLAR_KILITLI) return { durum: 409, govde: { success: false, kilitli: true, error: `Sırlar yazılmadı: ${SIRLAR_KILITLI}` } };
   const gizli = loadSecrets();
+  const red = (durum, error) => ({ durum, govde: { success: false, error } });
   // Önce HEPSİ doğrulanır: biri geçersizse hiçbiri yazılmaz (yarım kayıt olmasın).
   for (const k of SECRET_KEYS) {
     if (!(k in govde)) continue;
     const v = typeof govde[k] === 'string' ? govde[k].trim() : '';
     if (!v) continue;
     if (SAGLIK_URL_KEYS.includes(k)) {
-      if (!saglikUrlGecerli(v)) return res.status(400).json({ success: false, error: `${k} geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)` });
+      if (!saglikUrlGecerli(v)) return red(400, `${k} geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
     } else if (!/^[A-Za-z0-9]{16,128}$/.test(v)) {
-      return res.status(400).json({ success: false, error: `${k} biçimi geçersiz (16–128 harf/rakam)` });
+      return red(400, `${k} biçimi geçersiz (16–128 harf/rakam)`);
     }
   }
   // 68.8: bot başına sağlık adresi { botSaglik: { denge: url | '' } } — Hücum'unki healthchecksUrl (geri uyum).
   const botGovde = govde.botSaglik && typeof govde.botSaglik === 'object' && !Array.isArray(govde.botSaglik) ? govde.botSaglik : null;
   if (botGovde) {
     for (const [ad, v] of Object.entries(botGovde)) {
-      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return res.status(400).json({ success: false, error: `botSaglik.${ad}: bilinmeyen bot (Kairos'un adresi healthchecksUrl alanında)` });
+      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return red(400, `botSaglik.${ad}: bilinmeyen bot (Kairos'un adresi healthchecksUrl alanında)`);
       const u = typeof v === 'string' ? v.trim() : '';
-      if (u && !saglikUrlGecerli(u)) return res.status(400).json({ success: false, error: `${bindirmeArastirma.STRATEJILER[ad].ad} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)` });
+      if (u && !saglikUrlGecerli(u)) return red(400, `${bindirmeArastirma.STRATEJILER[ad].ad} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
     }
   }
   {
@@ -2387,15 +2397,16 @@ app.post('/api/secrets', (req, res) => {
     const sonra = [[bindirmeArastirma.STRATEJILER.hucum.ad, yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
       ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [bindirmeArastirma.STRATEJILER[a].ad, botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
     for (let i = 0; i < sonra.length; i++) for (let j = i + 1; j < sonra.length; j++) {
-      if (sonra[i][1] === sonra[j][1]) return res.status(400).json({ success: false, error: `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.` });
+      if (sonra[i][1] === sonra[j][1]) return red(400, `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.`);
     }
   }
   const degisen = [];
+  const bellek = [];   // 73.0: bellekteki config diske yazıldıktan SONRA değişir (yazılamazsa bellek de eski kalır)
   for (const k of SECRET_KEYS) {
     if (!(k in govde)) continue;
     const v = typeof govde[k] === 'string' ? govde[k].trim() : '';
     if (v) gizli[k] = v; else delete gizli[k];
-    config[k] = v;
+    bellek.push(() => { config[k] = v; });
     degisen.push(k);
   }
   if (botGovde) {
@@ -2404,21 +2415,26 @@ app.post('/api/secrets', (req, res) => {
       const bs = { ...(gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {}) };
       if (u) bs[ad] = u; else delete bs[ad];
       if (Object.keys(bs).length) gizli.bindirmeSaglik = bs; else delete gizli.bindirmeSaglik;
-      const onceki = { ...(((config.bindirme || {})[ad]) || {}) };
-      if (u) onceki.healthchecksUrl = u; else delete onceki.healthchecksUrl;
-      config.bindirme = { ...(config.bindirme || {}), [ad]: onceki };
+      bellek.push(() => {
+        const onceki = { ...(((config.bindirme || {})[ad]) || {}) };
+        if (u) onceki.healthchecksUrl = u; else delete onceki.healthchecksUrl;
+        config.bindirme = { ...(config.bindirme || {}), [ad]: onceki };
+      });
       degisen.push(`botSaglik.${ad}`);
     }
   }
-  saveSecrets(gizli);
+  try { saveSecrets(gizli); } catch (e) { return red(409, e.message); }
+  for (const f of bellek) f();
   engine.updateConfig(config);
   // Değer DEĞİL yalnız hangi alanın değiştiği loglanır.
   const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k) || k.startsWith('botSaglik.'));
   const anahtarDegisti = degisen.some(k => !SAGLIK_URL_KEYS.includes(k) && !k.startsWith('botSaglik.'));
   if (anahtarDegisti) db.addLog('INFO', 'Borsa API anahtarları güncellendi.');
   if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: ${BINDIRME_ADLAR.map(a => `${bindirmeArastirma.STRATEJILER[a].ad} ${saglikBotlar[a].ayarli() ? 'ayarlı' : 'yok'}`).join(' · ')} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
-  res.json({ success: true, sirlar: disariConfig().sirlar });
-});
+  return { durum: 200, govde: { success: true, sirlar: disariConfig().sirlar, degisen } };
+}
+
+app.post('/api/secrets', (req, res) => { const r = sirlariUygula(req.body || {}); res.status(r.durum).json(r.govde); });
 
 app.post('/api/config', (req, res) => {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
@@ -3273,6 +3289,49 @@ const islemDefteri = require('./lib/islemDefteri/api').kur({
   } : null
 });
 app.use(islemDefteri.router);
+
+/**
+ * 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar.js, Faz 1 "makine × hesap × bot"): kayıtlı bütün sırlar maskeli tek tabloda; ekle / değiştir /
+ * sil ACİL PIN + onay; salt okuma sınama (lib/anahtarSinama.js, emir yok); araştırma kopyasında sunucudaki liste + iletme + GİZLİ bekleyen
+ * dosyası; eski şifreli sır dosyasını silmeden kenara alma; acil PIN değiştirme. Botların çalışma şekli değişmez: sabit Binance satırları
+ * eski alanlara yazar (sirlariUygula = /api/secrets), İşlem defterim anahtarları islemDefteri.anahtarIslemleri ile.
+ */
+const anahtarlar = require('./lib/anahtarlar').olustur({
+  arastirma: ARASTIRMA_MODU,
+  sir: { oku: loadSecrets, yaz: saveSecrets, kilit: () => SIRLAR_KILITLI },
+  acilPin, veri: (ad) => yollar.veri(ad), log: (lv, msg) => db.addLog(lv, msg),
+  bilgi: () => ({
+    botlar: BINDIRME_ADLAR.map(ad => ({ kimlik: ad, ad: require('./lib/botAdlari').ad(ad) || ad, mod: bindirmeler[ad] ? bindirmeler[ad].mod : null })),
+    telegramAcik: !!(config.telegram && config.telegram.enabled), panelJetonuEnv: (process.env.PANEL_TOKEN || '').length >= 24,
+    gelistirmeJetonu: fs.existsSync(guvenlikKur.gelistirmeJetonYolu(__dirname))
+  }),
+  sirlariUygula,
+  telegramUygula: (jeton) => {
+    if (SIRLAR_KILITLI) return { durum: 409, govde: { success: false, kilitli: true, error: `Sırlar yazılmadı: ${SIRLAR_KILITLI}` } };
+    const gizli = loadSecrets();
+    const tg = { ...(gizli.telegram || {}) };
+    if (jeton) tg.botToken = jeton; else delete tg.botToken;
+    if (Object.keys(tg).length) gizli.telegram = tg; else delete gizli.telegram;
+    try { saveSecrets(gizli); } catch (e) { return { durum: 409, govde: { success: false, error: e.message } }; }
+    config.telegram = { ...(config.telegram || {}), botToken: jeton || '' };
+    engine.updateConfig(config);
+    broadcast('CONFIG_UPDATED', disariConfig());
+    return { durum: 200, govde: { success: true } };
+  },
+  defter: islemDefteri.anahtarIslemleri,
+  sina: {
+    borsa: (h) => require('./lib/anahtarSinama').borsaSina(h),
+    defter: (borsa, a) => require('./lib/anahtarSinama').defterSina(borsa, a),
+    telegram: (t) => require('./lib/anahtarSinama').telegramSina(t),
+    saglik: async (alt) => { const s = alt === 'sunucu' ? saglikSunucu : saglikBotlar[alt]; if (!s) return { ok: false, hata: 'bilinmeyen bot' }; const r = await s.ping('basari'); return { ok: !!r.ok, hata: r.ok ? null : (r.hata || 'gönderilemedi') }; }
+  },
+  ev: EV_BAGLANTI_ETKIN ? {
+    kurulu: () => !!evOkuma.ayar(), yazmaKurulu: () => evYazma.yazmaAyari(), adres: () => (evOkuma.ayar() || {}).adres || null,
+    oku: (yol) => evOkuma.jsonGetir(yol), yaz: (yol, govde) => evYazma.yaz('POST', yol, govde, { kuyruk: false })
+  } : null,
+  kasaSonrasi: (ad) => { if (ad === 'secrets.json') { SIRLAR_KILITLI = null; db.addLog('INFO', 'secrets.json kenara alındı — sırlar artık panelden yeniden girilebilir.'); } }
+});
+anahtarYonlendirici = anahtarlar.router;
 if (!ARASTIRMA_MODU && process.env.ISLEM_DEFTERI_ESITLE !== '0') {
   const idEsitle = () => { islemDefteri.gunlukEsitle().catch(e => db.addLog('WARN', `İşlem defteri OKX/Binance eşitleme: ${e.message}`)); };
   setTimeout(idEsitle, 3 * 60 * 1000).unref();

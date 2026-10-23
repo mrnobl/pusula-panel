@@ -2,13 +2,14 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Panelin ayarları **altı alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
+Panelin ayarları **yedi alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
 
 | Alt sayfa | Adres | İçinde ne var |
 |---|---|---|
 | **Botlar (özet)** | `#/ayarlar/botlar` | iki botun **salt okunur** özeti; her satırda **Yönet →** botun Yönetim görünümünü açar |
 | **Bildirimler** | `#/ayarlar/bildirimler` | Telegram'ın bugünkü durumu, Telegram komutları, Telegram ayarları, Sağlık sinyali |
 | **Bağlantılar** | `#/ayarlar/borsa` | demo hesap API anahtarı, canlı hesap (kilitli) |
+| **Anahtarlar** | `#/ayarlar/anahtarlar` | kayıtlı **bütün** anahtar ve jetonlar tek tabloda (maskeli), borsa hesabı ekle, sına, acil PIN'i değiştir — [ayrıntı](#/kilavuz/ayarlar/anahtarlar) |
 | **Bu bilgisayar** | `#/ayarlar/bilgisayar` | bu kopyanın rolü, acil PIN, telefon jetonu |
 | **Güncelleme** | `#/ayarlar/guncelleme` | otomatik güncellemenin durumu, onay bekleyen kurulum |
 | **Yedek ve taşıma** | `#/ayarlar/yedek` | taşıma dosyası, araştırma eklentisi, USB yedeği şifresi, eski yedekten geri yükleme — [ayrıntı](#/kilavuz/yedek-tasima) |
@@ -34,6 +35,62 @@ Salt okunur tablo: **Bot · Durum · Hesap türü · Küçük hesap kipi · Hesa
 ## Bağlantılar {#borsa}
 
 Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API anahtarı** ve katlı **Canlı hesap** bölümü. Ayrıntı: [Bot hesabı › Ayarlar › Bağlantılar](#/kilavuz/hesaplar/anahtar). İşlem dökümü (CSV) buradan [Portföy › İşlem defteri](#/kilavuz/islem-defterim)'ne (kaynak **Bot**) taşındı.
+
+## Anahtarlar {#anahtarlar}
+
+![Ayarlar › Anahtarlar (örnek değerlerle)](ekran:ayarlar-anahtarlar-1400)
+
+**Anahtarlar** alt sayfası (73.0) panelin kayıtlı **bütün** gizli bilgilerini tek yerde gösterir. *API anahtarı*, bir programın sizin adınıza borsaya bağlanmasını sağlayan kullanıcı adı–şifre çiftidir (iki parça: **API anahtarı** ve **gizli anahtar / secret**; OKX'te üçüncü parça **parola / passphrase**). *Jeton* (token), bir servise girişte kullanılan uzun gizli metindir.
+
+Dört grup:
+
+| Grup | İçinde |
+|---|---|
+| **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit) |
+| **İşlem defterim** | işlem geçmişini okumak için **yalnız okuma** izinli anahtarlar |
+| **Bildirim** | Telegram bot jetonu, sağlık sinyali (healthchecks.io) adresleri, ikinci kanal |
+| **Erişim** | acil PIN, panel ve telefon jetonu, sunucu bağlantısı, geliştirme yazma jetonu, yedek şifresi, GitHub jetonu |
+
+Her satırda: **Ad** · **Kullanan** (hangi bot ya da özellik) · **Değer** (yalnız son 4 karakter, ör. `••••wxyz`; değerin tamamı **hiçbir zaman** gösterilmez, hiçbir yere yazılmaz) · **Makine** (sunucu mu, bu bilgisayar mı) · **Durum**:
+
+- **Tamam** — kayıtlı ve bilinen bir sorun yok.
+- **Bakılmalı** — kayıtlı ama bir şey eksik ya da son sınama başarısız; **kırmızı not**: anahtarda *para çekme izni* açık (borsada hemen kapatın).
+- **Eksik** — gerekiyor ama yok (ör. Kairos demo hesapta ama demo anahtarı yok).
+- **Boş** — girilmemiş ve şimdilik gerekmiyor.
+
+### Değiştirmek, eklemek, silmek {#anahtar-degistir}
+
+1. Satırda **Değiştir** → yeni değeri yazın → **Kaydet**. Borsa hesabı için grubun üstündeki **Hesap ekle**: ad, borsa (Binance / OKX / Bybit), tür (**demo** = sahte para, **canlı** = canlı hesap, borsadaki asıl paranız), isterseniz *alt hesap* adı (borsadaki ana hesabın altındaki ayrı hesap), API anahtarı, gizli anahtar, OKX'te parola.
+2. Açılan pencerede **acil PIN**'i girin ve onaylayın. **Her** ekleme, değiştirme ve silme PIN ister — bu bilgisayarın masaüstü panelinde de. Yanlış PIN telefonla aynı sayaçtan düşer: 5 yanlışta **1 dakika** kilit.
+3. Kaydedilen değer bir daha gösterilmez; satırda yalnız son 4 karakter kalır.
+
+Botlar Faz 1'de **aynen** bugünkü iki anahtarı kullanır: "Binance canlı (Kairos)" / "Binance demo (Kairos)" satırında yaptığınız değişiklik, Bağlantılar sekmesindeki demo anahtarı formuyla **aynı yere** yazılır. Yeni eklenen hesaplar şimdilik hiçbir bota bağlı değildir (bot → hesap bağlantısı sonraki aşamada). İşlem defterim anahtarı da İşlem defterim ekranındakiyle aynı yoldan, aynı "yalnız okuma" denetimiyle kaydedilir.
+
+Panelden **değişmeyenler** (yalnız durum + komut gösterilir): acil PIN'in kendisi (yalnız *değiştirme*, aşağıda), panel/telefon jetonu (`npm run telefon-jeton`), sunucu bağlantısı (`npm run sunucu-baglanti`), geliştirme yazma jetonu (`npm run gelistirme-jeton`), yedek şifresi (Yedek ve taşıma sekmesi), GitHub jetonu (`npm run github-jeton`). Bunları bilgisayar başında komutla değiştirmek, uzaktan ele geçirilmiş bir panelin kendi jetonunu koymasını engeller.
+
+### Sına {#anahtar-sina}
+
+**Sına** anahtarla borsaya **yalnız okuma** bağlantısı dener: bakiye okunur (kaç varlık, USDT toplamı) ve anahtarın izinleri sorulur (vadeli işlem, spot, **para çekme**, IP kısıtı). **Hiçbir emir gönderilmez, hiçbir şey değişmez.** Sonuç satıra "Son sınama …" olarak yazılır. Telegram için bot adı (getMe), sağlık sinyali için bir test sinyali gönderilir (Bildirimler'deki "Test sinyali gönder" ile aynı). Binance demo hesabında izin sorgusu yoktur (Binance desteklemiyor).
+
+### Acil PIN'i değiştirmek {#pin-degistir}
+
+**Erişim › Acil PIN › PIN'i değiştir**: şimdiki PIN + yeni PIN (iki kez, 6–12 rakam; 111111 / 123456 gibi tahmin edilebilir PIN kabul edilmez). Şimdiki PIN yanlışsa aynı deneme sayacından düşer.
+
+> **Ortak PIN:** PIN bütün bilgisayarlarda aynıdır. Değiştirdiğinizde öbür bilgisayarlarda da aynı PIN'i girin (Faz 3'te kendiliğinden eşitlenecek). Geliştirme bilgisayarında değiştirince önce sunucuda, sonra o bilgisayarda değişir; biri başarısız olursa ekranda açıkça yazar ("PIN yalnız SUNUCUDA değişti …") — sessizce farklı kalmaz.
+>
+> **PIN'i unuttuysanız:** bilgisayar başında `npm run acil-pin` (eski PIN'i sormaz) ile yeni PIN belirleyin.
+
+### Geliştirme bilgisayarında {#anahtar-gelistirme}
+
+Bu bilgisayar araştırma kopyasıysa ekran **sunucudaki** anahtarları gösterir (yine yalnız son 4 karakter) ve değişiklik **sunucuya gönderilir**; PIN sunucuda doğrulanır. Altta **Bu bilgisayar** grubu bu bilgisayarın kendi kayıtlarını (sunucu bağlantısı, kendi acil PIN'i, kendi İşlem defterim anahtarı) gösterir. İşlem defterim anahtarları her bilgisayarın kendi panelinden kaydedilir.
+
+**Sunucuya ulaşılamazsa** değişiklik bu bilgisayarda ayrı bir gizli dosyada bekler (PIN saklanmaz). Ekranda **"Sunucuya gönderilmeyi bekleyen N değişiklik"** bandı ve **Gönder** düğmesi çıkar — kendiliğinden gönderilmez; bağlantı gelince Gönder'e basın, PIN yeniden sorulur. Bekleyen bir değişiklikten **Vazgeç** ile vazgeçebilirsiniz. Sunucudaki değer siz yazdıktan **sonra** değiştiyse iki değer (yalnız son 4 karakterleri) yan yana gösterilir: **Benimki geçerli** ya da **Sunucudaki kalsın** seçip **Seçimlerle gönder**.
+
+### Eski şifreli dosya {#eski-sifreli}
+
+69.4–69.8 sürümleri sır dosyalarını Windows'un şifrelemesiyle saklıyordu; 70.0'dan beri bu şifreleme yok ve Pusula o eski dosyaları **açmaz** (açmaya çalışmak virüs koruması alarmı veriyordu). Böyle bir dosya kaldıysa sekmenin üstünde kırmızı bant çıkar: içindeki anahtarlar okunamıyor, değişiklik yapılamıyor. **Eski şifreli dosyayı kenara al** (PIN + onay) dosyayı **silmez**; aynı klasörde `secrets.json.eski-sifreli-<tarih>` adıyla kenara koyar. Sonra anahtarları bu ekrandan yeniden girin (telefon jetonu için `npm run telefon-jeton`).
+
+Telefondan bu sekme **yalnız görüntülenir**; değişiklik düğmeleri yoktur, sunucu da reddeder.
 
 ## Bu bilgisayar {#bu-bilgisayar}
 

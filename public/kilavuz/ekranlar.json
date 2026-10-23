@@ -4372,12 +4372,12 @@
         "dosya": "hesaplar-anahtar-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 40838,
+        "bayt": 40762,
         "olcek": 1,
         "ozet": "60a32d5afb89f6ab4974a3bf4fd1557e91f8d951ff0c055f2a3805940582486e",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/borsa\"]",
@@ -4413,6 +4413,85 @@
             "y": 476,
             "w": 758,
             "h": 52
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "ayarlar-anahtarlar-1400",
+      "rota": "ayarlar/anahtarlar",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#anahtarlarKok .an-grup",
+          "sure": 20000
+        },
+        {
+          "bekle": 600
+        },
+        {
+          "degerJs": "AG.pages.anahtarlar._veriAyarla({\"success\":true,\"arastirma\":false,\"kademe\":\"yerel\",\"yazilabilir\":true,\"kaynak\":\"yerel\",\"yerel\":{\"dosyalar\":[{\"ad\":\"secrets.json\",\"durum\":\"tamam\"}],\"pin\":{\"tanimli\":true,\"kilitli\":false}},\"satirlar\":[{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"tur\":\"canli\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-canli\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance canlı (Kairos)\",\"kullanan\":\"şu an hiçbir bot (canlı hesap kapalı)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Canlı hesap kapalı — şimdilik gerekmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":{\"zaman\":\"2026-10-23T09:12:00.000Z\",\"ok\":true,\"cekmeIzni\":null,\"ipKisitli\":null,\"saltOkuma\":null,\"izinler\":null,\"bakiye\":{\"varlikSayisi\":3,\"usdt\":4812.5},\"botAdi\":null,\"uyarilar\":[\"Demo hesapta izin sorgusu yok.\"],\"hata\":null},\"ek\":{\"borsa\":\"binance\",\"tur\":\"demo\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-demo\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance demo (Kairos)\",\"kullanan\":\"Kairos\",\"maske\":\"••••a1B2\",\"ozet\":\"5f7e8c3396b7177f\",\"durum\":\"tamam\",\"not\":\"Botların demo hesap anahtarı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"okx\",\"tur\":\"demo\",\"altHesap\":\"pusula-1\",\"eklendi\":null,\"degisti\":null},\"kimlik\":\"borsa:okx-ornek\",\"grup\":\"borsa\",\"tip\":\"borsa-hesap\",\"ad\":\"OKX alt hesap — deneme\",\"kullanan\":\"henüz hiçbir bot (bot → hesap bağlantısı Faz 2)\",\"maske\":\"••••7f3c\",\"ozet\":\"2d99ee1ad2d0c2d1\",\"durum\":\"tamam\",\"not\":\"Henüz sınanmadı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"hesap\":\"h-ornek\"},\"kimlik\":\"defter:binance:h-ornek\",\"grup\":\"defter\",\"tip\":\"defter-binance\",\"ad\":\"Binance — Binance ana hesap\",\"kullanan\":\"İşlem defterim (yalnız okuma: işlem geçmişi eşitleme)\",\"maske\":\"••••d4e8\",\"ozet\":\"93ac03ba2f6f753c\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telegram\",\"grup\":\"bildirim\",\"tip\":\"telegram\",\"ad\":\"Telegram bot jetonu\",\"kullanan\":\"Telegram bildirimleri ve komutları\",\"maske\":\"••••k9Qz\",\"ozet\":\"4cf07c27e4a4adbc\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:hucum\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Kairos\",\"kullanan\":\"Kairos günlük çalışma sinyali (healthchecks.io)\",\"maske\":\"••••c1a5\",\"ozet\":\"193d34a84949d651\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:denge\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Tao\",\"kullanan\":\"Tao günlük çalışma sinyali (healthchecks.io)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Girilmemiş.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:sunucu\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — sunucu kalp atışı\",\"kullanan\":\"sunucu açık mı (saatte bir)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Sağlık sayfasından ayarlanır\",\"href\":\"#/saglik\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"ikinci-kanal\",\"grup\":\"bildirim\",\"tip\":\"bilgi\",\"ad\":\"İkinci kanal (ntfy) ve ikinci ölü adam\",\"kullanan\":\"Telegram çalışmazsa yedek bildirim\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Unutursanız bilgisayar başında sıfırlanır\",\"komut\":\"npm run acil-pin\",\"href\":\"#/kilavuz/telefon/acil-pin\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"acil-pin\",\"grup\":\"erisim\",\"tip\":\"pin\",\"ad\":\"Acil PIN\",\"kullanan\":\"telefondan acil durdurma, korumalı işlemler, bu ekrandaki her değişiklik\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Tanımlı (değeri hiçbir yerde gösterilmez). Bütün bilgisayarlarda aynı PIN.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"panel-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Panel jetonu\",\"kullanan\":\"paneli ağa açık dinletmek (HOST ≠ 127.0.0.1)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yerel dinlemede gerekmez (telefon jetonu kullanılır).\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telefon-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Telefon jetonu\",\"kullanan\":\"telefondan / Tailscale'den panele giriş, geliştirme bilgisayarının sunucuyu okuması\",\"maske\":\"••••5d2e\",\"ozet\":null,\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run sunucu-baglanti\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"sunucu-baglantisi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Sunucu bağlantısı\",\"kullanan\":\"geliştirme bilgisayarı → sunucudaki panel (okuma + yazma)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yalnız geliştirme bilgisayarında olur.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run gelistirme-jeton\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"gelistirme-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Geliştirme yazma jetonu\",\"kullanan\":\"geliştirme bilgisayarından sunucuya kayıt yazmak\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Sunucuda yalnız özeti saklanır.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Yedek ve taşıma sekmesinde\",\"href\":\"#/ayarlar/yedek\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"yedek-sifresi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Yedek şifresi\",\"kullanan\":\"USB yedeğinin gizli kısmını şifreler\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yok — USB yedeğine gizli bilgiler girmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run github-jeton\",\"href\":null},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"github-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"GitHub jetonu\",\"kullanan\":\"yalnız araştırma (787 GitHub sinyali)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"}]})"
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#yanMenu [data-rota=\"ayarlar/anahtarlar\"]",
+          "etiket": "Ayarlar › Anahtarlar"
+        },
+        {
+          "secici": "#anHesapEkle",
+          "etiket": "Hesap ekle"
+        },
+        {
+          "secici": "[id=\"anSina-borsa:binance-demo\"]",
+          "etiket": "Sına (yalnız okuma)"
+        },
+        {
+          "secici": "[id=\"anDegistir-borsa:binance-demo\"]",
+          "etiket": "Değiştir (PIN ister)"
+        }
+      ],
+      "uretim": {
+        "dosya": "ayarlar-anahtarlar-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 64724,
+        "olcek": 1,
+        "ozet": "6e1adfbeef41a673d43af0752f310842d3b3377e5d3e48004337793d5e7fbcdb",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
+        "isaretler": [
+          {
+            "secici": "#yanMenu [data-rota=\"ayarlar/anahtarlar\"]",
+            "x": 8,
+            "y": 876,
+            "w": 231,
+            "h": 22
+          },
+          {
+            "secici": "#anHesapEkle",
+            "x": 279,
+            "y": 324,
+            "w": 92,
+            "h": 35
+          },
+          {
+            "secici": "[id=\"anSina-borsa:binance-demo\"]",
+            "x": 1295,
+            "y": 455,
+            "w": 54,
+            "h": 36
+          },
+          {
+            "secici": "[id=\"anDegistir-borsa:binance-demo\"]",
+            "x": 1226,
+            "y": 455,
+            "w": 73,
+            "h": 36
           }
         ]
       }
@@ -6338,12 +6417,12 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 67216,
+        "bayt": 66530,
         "olcek": 1,
-        "ozet": "7810784e7b423c4ba8c82770c1cfac559b5ee1412c41181bd55985a3ef2e3450",
-        "genel": "435d4446c9f3ed56c94756e1baa948b69d543dd7f2781deab16854190ec6c537",
-        "surum": "72.3",
-        "tarih": "2026-10-22",
+        "ozet": "2c867523b8b7d73f177254ae67defc546907860e3e7614dae6a0437fb85f18d8",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#inpSearch",
@@ -6785,12 +6864,12 @@
         "dosya": "ayarlar-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 44520,
+        "bayt": 44434,
         "olcek": 1,
-        "ozet": "61a2b92574237f2477bf810565369757fa04c1aa5ff7c89e3811299e63c73c32",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "ozet": "956c77b4905a68d4adb0b958f273b8b8a22c8828dcf5365e54b1b474e5c1aed8",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/botlar\"]",
@@ -6846,12 +6925,12 @@
         "dosya": "ayarlar-telegram-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 68040,
+        "bayt": 67968,
         "olcek": 1,
         "ozet": "18e385db9e2cfbf1cad8037df165edb24d377b3a89e054242bf36f29226d9f0e",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#txtPortfoyTelegram",
@@ -6914,12 +6993,12 @@
         "dosya": "ayarlar-saglik-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 69484,
+        "bayt": 69414,
         "olcek": 1,
         "ozet": "2353d2ee8a294e3a812d2d7f8d0983aa7ae2502940d8a1dd427a8d538e50f247",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#inpHcUrl",
@@ -6973,17 +7052,17 @@
         "dosya": "ayarlar-guncelleme-1400.webp",
         "en": 1400,
         "boy": 1000,
-        "bayt": 34052,
+        "bayt": 34094,
         "olcek": 1,
         "ozet": "716e613561ed4f889d433bafb3720c2469a01b82f50132ae8ab781ece6b898b8",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/guncelleme\"]",
             "x": 8,
-            "y": 911,
+            "y": 946,
             "w": 231,
             "h": 41
           },
@@ -7027,12 +7106,12 @@
         "dosya": "ayarlar-guncelleme-izleme-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 55410,
+        "bayt": 55472,
         "olcek": 1,
         "ozet": "3a7412e4b9f33c4382dab7ecf8e96f3815af4a0aa8e55eb9f6496a86c4a847c5",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#guncIzleme .gunc-adimlar",
@@ -7093,17 +7172,17 @@
         "dosya": "yedek-tasima-1400.webp",
         "en": 1400,
         "boy": 1250,
-        "bayt": 85586,
+        "bayt": 85994,
         "olcek": 1,
         "ozet": "0007a501da81663e69cf9cc0166c91de6f9e41c765af247b05bc1d498f8ce9f9",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/yedek\"]",
             "x": 8,
-            "y": 946,
+            "y": 981,
             "w": 231,
             "h": 41
           },
@@ -7666,12 +7745,12 @@
         "dosya": "bot-performans-1400.webp",
         "en": 1400,
         "boy": 1150,
-        "bayt": 73766,
+        "bayt": 73912,
         "olcek": 1,
-        "ozet": "e95d9872943dcba2188996a642bf592db95751e2316eb1e386dd432b682bf9b3",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "ozet": "5b54e91d3a952a945cd6cb813190dc4a84b80910046c8b4b10d815360952180a",
+        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
+        "surum": "73.0",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#botPerformansKart .bp-ozet",

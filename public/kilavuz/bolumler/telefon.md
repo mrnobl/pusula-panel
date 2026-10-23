@@ -52,7 +52,7 @@ npm run acil-pin
 
 2. Pencerede **DURDUR** yazmak (yanlışlıkla dokunmaya karşı).
 
-PIN tanımlı değilse telefondan acil durdurma **kapalıdır**. 15 dakikada 5 yanlış PIN → 15 dakika kilit + Telegram uyarısı. PIN'i değiştirmek için komutu yeniden çalıştırın; silmek için `npm run acil-pin -- --sil`. Telegram'dan acil durdurma yoktur (Telegram yalnız okur).
+PIN tanımlı değilse telefondan acil durdurma **kapalıdır**. 1 dakikada 5 yanlış PIN → 1 dakika kilit + Telegram uyarısı (73.0; kilit her zaman 1 dakika). PIN'i değiştirmek için komutu yeniden çalıştırın (eski PIN'i sormaz — unuttuysanız da böyle) ya da panelde [Ayarlar › Anahtarlar › PIN'i değiştir](#/kilavuz/ayarlar/pin-degistir) (eski PIN ister). **Ortak PIN:** PIN bütün bilgisayarlarda aynıdır; değiştirdiğinizde öbür bilgisayarlarda da aynı PIN'i girin (Faz 3'te kendiliğinden eşitlenecek). Silmek için `npm run acil-pin -- --sil`. Telegram'dan acil durdurma yoktur (Telegram yalnız okur).
 
 ## Wi-Fi köprüsüyle {#adimlar}
 

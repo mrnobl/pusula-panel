@@ -15,6 +15,7 @@
     "dikkat:envanter": "node scripts/dikkat-f0-envanter.js",
     "tarama:gunluk": "node scripts/tarama-gunluk.js",
     "evren:esik": "node scripts/evren-esik-sabitle.js",
+    "github-jeton": "node scripts/github-jeton.js",
     "yedek": "node scripts/yedek.js",
     "canli-kapilar": "node scripts/canli-kapilar.js",
     "guncelle": "node scripts/guncelle.js",

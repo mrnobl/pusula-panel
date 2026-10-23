@@ -59,12 +59,13 @@ async function pinKomutu(argv) {
   console.log('emirler iptal edilir, TÜM pozisyonlar piyasadan kapanır, BTC satılır — geri alınamaz.\n');
   const a = await gizliOku('Yeni PIN: ');
   if (!acilPinLib.pinGecerliMi(a)) throw new Error('PIN 6–12 haneli bir sayı olmalı.');
-  if (/^(\d)\1+$/.test(a) || '01234567890'.includes(a) || '09876543210'.includes(a)) throw new Error('Tahmin edilebilir PIN (tekrar/ardışık) — başka bir PIN seçin.');
+  if (acilPinLib.pinZayifMi(a)) throw new Error('Tahmin edilebilir PIN (tekrar/ardışık) — başka bir PIN seçin.');
   const b = await gizliOku('PIN (tekrar): ');
   if (a !== b) throw new Error('İki PIN aynı değil.');
   pin.ayarla(a);
   console.log(`✓ Acil PIN kaydedildi (yalnız özeti: ${path.relative(ROOT, pin.dosya)}). Çalışan sunucu hemen kullanır.`);
-  console.log('  Yanlış PIN: 15 dakikada 5 deneme → kilit + Telegram uyarısı.');
+  console.log('  Yanlış PIN: 1 dakikada 5 deneme → 1 dakika kilit + Telegram uyarısı.');
+  console.log('  Ortak PIN: aynı PIN\'i öbür bilgisayarlarda da girin (Faz 3\'te kendiliğinden eşitlenecek). Panelden değiştirmek: Ayarlar › Anahtarlar › Acil PIN.');
 }
 
 async function jetonKomutu(argv) {
