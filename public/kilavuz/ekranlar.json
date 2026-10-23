@@ -1288,12 +1288,12 @@
         "dosya": "portfoyum-rapor-1400.webp",
         "en": 1400,
         "boy": 2200,
-        "bayt": 146714,
+        "bayt": 135524,
         "olcek": 1,
         "ozet": "70a2f2819530ecddc15807efe822b774b5cf67c1d8441192c20b37d57e54d0ba",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#prUst .pr-secici",
@@ -1339,7 +1339,7 @@
           }
         ]
       },
-      "kalite": 62
+      "kalite": 52
     },
     {
       "kimlik": "portfoyum-rapor-390",
@@ -1523,12 +1523,12 @@
         "dosya": "islem-defterim-sembol-1400.webp",
         "en": 1400,
         "boy": 1600,
-        "bayt": 110686,
+        "bayt": 96920,
         "olcek": 1,
         "ozet": "058e354d3dde1e96fa7c40c78be4e8e300c39e29d3e3a5f79c2e79fc99a75d8d",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#tblIdfSembol",
@@ -1552,7 +1552,8 @@
             "h": 364
           }
         ]
-      }
+      },
+      "kalite": 55
     },
     {
       "kimlik": "islem-defterim-yukle-1400",
@@ -1606,12 +1607,12 @@
         "dosya": "islem-defterim-yukle-1400.webp",
         "en": 1400,
         "boy": 1500,
-        "bayt": 114530,
+        "bayt": 100716,
         "olcek": 1,
         "ozet": "2bffb3c532a9f0b2b632450930ec1799781b866d26f490b023f43ab5bb2287a6",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#idfHesaplar .idf-hesaplar",
@@ -1642,7 +1643,8 @@
             "h": 69
           }
         ]
-      }
+      },
+      "kalite": 55
     },
     {
       "kimlik": "islem-defterim-390",
@@ -2388,12 +2390,12 @@
         "dosya": "model-portfoy-1400.webp",
         "en": 1400,
         "boy": 1900,
-        "bayt": 151560,
+        "bayt": 141760,
         "olcek": 1,
         "ozet": "d97bd0aa434bdd3d979a003cb0802913e497f0549ed74b6c2a2eeb731f2e3569",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#pfModelSecici",
@@ -2439,7 +2441,7 @@
           }
         ]
       },
-      "kalite": 62
+      "kalite": 54
     },
     {
       "kimlik": "model-havuz-1400",
@@ -2603,12 +2605,12 @@
         "dosya": "model-bist-1400.webp",
         "en": 1400,
         "boy": 1500,
-        "bayt": 121616,
+        "bayt": 109020,
         "olcek": 1,
         "ozet": "3df538ea4bc0633d80cb7dc3d00ef229c7e30eaaff3174a5389cebdcb303449e",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#pfModelSecici",
@@ -2632,7 +2634,8 @@
             "h": 98
           }
         ]
-      }
+      },
+      "kalite": 58
     },
     {
       "kimlik": "pano-1400",
@@ -3097,12 +3100,12 @@
         "dosya": "para-ekle-1400.webp",
         "en": 1400,
         "boy": 2500,
-        "bayt": 139380,
+        "bayt": 130694,
         "olcek": 1,
         "ozet": "51ccecd3f9de21a560d749eb482111d8333b4b804deb18b464e327c8743fb518",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#pePara",
@@ -3155,7 +3158,7 @@
           }
         ]
       },
-      "kalite": 58
+      "kalite": 50
     },
     {
       "kimlik": "para-ekle-390",
@@ -3493,12 +3496,12 @@
         "dosya": "laboratuvar-ileri-1400.webp",
         "en": 1400,
         "boy": 1500,
-        "bayt": 110018,
+        "bayt": 104872,
         "olcek": 1,
         "ozet": "1f7a28ec0a403449eda0abfc9444ce3484947a1ace483207f424d712363bd9de",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#pfLabSekmeler",
@@ -3524,7 +3527,7 @@
         ]
       },
       "yukseklik": 1500,
-      "kalite": 62
+      "kalite": 55
     },
     {
       "kimlik": "botlar-1400",
@@ -5086,17 +5089,17 @@
         }
       ],
       "yukseklik": 2350,
-      "kalite": 58,
+      "kalite": 50,
       "uretim": {
         "dosya": "dikkat-listesi-1400.webp",
         "en": 1400,
         "boy": 2350,
-        "bayt": 192356,
+        "bayt": 180008,
         "olcek": 1,
         "ozet": "c0969208fa1d3eaa367f3cd0f9afe70f678066e436d965e5fd92d3e9c76a2d6d",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#selDikkatKip",
@@ -5754,33 +5757,33 @@
         "dosya": "ileri-test-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 56592,
+        "bayt": 64254,
         "olcek": 1,
-        "ozet": "df8923eb176567566a2fe7d9c6b3b0608647738c98a44c06eb45653b00ec5a6e",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "ozet": "adfa480670af2f8978b3ec69afe122ec4742972d53fef07762b432c8473ef068",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
         "isaretler": [
           {
             "secici": "#yanMenu [data-menu=\"ileri\"]",
             "x": 8,
             "y": 334,
             "w": 231,
-            "h": 226
+            "h": 296
           },
           {
             "secici": "#ileriDurum",
             "x": 260,
             "y": 194,
             "w": 1128,
-            "h": 282
+            "h": 352
           },
           {
             "secici": "#ileriTakvim",
             "x": 260,
-            "y": 476,
+            "y": 546,
             "w": 1128,
-            "h": 233
+            "h": 314
           }
         ]
       }
@@ -5966,6 +5969,110 @@
           }
         ]
       }
+    },
+    {
+      "kimlik": "ileri-temettu-1400",
+      "rota": "ileri/temettu",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriTemettu .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriTemettu .ana-sayilar",
+          "etiket": "Önceden bilinen olay, ortalama net, sıradaki olay"
+        },
+        {
+          "secici": "#ileriTemettu .ileri-hukum",
+          "etiket": "Karar günü, ara kontrol ve erteleme"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-temettu-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 44024,
+        "olcek": 1,
+        "ozet": "8471d7f3a35ee002c57d1effc0badceb5117c1d7dbc917936173c91ec73a2103",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
+        "isaretler": [
+          {
+            "secici": "#ileriTemettu .ana-sayilar",
+            "x": 281,
+            "y": 294,
+            "w": 1086,
+            "h": 99
+          },
+          {
+            "secici": "#ileriTemettu .ileri-hukum",
+            "x": 281,
+            "y": 393,
+            "w": 1086,
+            "h": 44
+          }
+        ]
+      },
+      "kalite": 50
+    },
+    {
+      "kimlik": "ileri-momentum-1400",
+      "rota": "ileri/momentum",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriMomentum .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriMomentum .ana-sayilar",
+          "etiket": "Bu haftanın sepeti, kol, birlikte − Kairos"
+        },
+        {
+          "secici": "#ileriMomentum .ileri-hukum",
+          "etiket": "Karar günü ve vazgeçme kuralı"
+        }
+      ],
+      "uretim": {
+        "dosya": "ileri-momentum-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 46130,
+        "olcek": 1,
+        "ozet": "36d8612d4c098fbc27c6e8bdea49f8df31bb1f3374c637505b5545551fe4f5e9",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
+        "tarih": "2026-10-23",
+        "isaretler": [
+          {
+            "secici": "#ileriMomentum .ana-sayilar",
+            "x": 281,
+            "y": 294,
+            "w": 1086,
+            "h": 99
+          },
+          {
+            "secici": "#ileriMomentum .ileri-hukum",
+            "x": 281,
+            "y": 393,
+            "w": 1086,
+            "h": 44
+          }
+        ]
+      },
+      "kalite": 50
     },
     {
       "kimlik": "ileri-demo-1400",
@@ -6417,11 +6524,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 66530,
+        "bayt": 65494,
         "olcek": 1,
-        "ozet": "2c867523b8b7d73f177254ae67defc546907860e3e7614dae6a0437fb85f18d8",
-        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
-        "surum": "73.0",
+        "ozet": "d14da2a7285141ec98c927c32b9202eb694e2b720a1f7bda4b9a53d8de9fa3f4",
+        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
+        "surum": "73.1",
         "tarih": "2026-10-23",
         "isaretler": [
           {

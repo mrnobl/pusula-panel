@@ -13,6 +13,10 @@
  * Ardından 876 TVL L/S gölgesi + Hücum %90 / 876 %10 birleşimi (PLAN-ILERI-876.md, lib/ileri/golge876.js; deneme 882) aynı şekilde
  * koşar (`golge876`; hatası diğerlerini bozmaz): Binance USDⓈ-M günlük mum + funding, kuruluş günlerinde DefiLlama TVL; eksik veri
  * `eksik` listesine "876:…" olarak eklenir (sunucu aynı gün 30 dk arayla yeniden dener).
+ * 73.1: sonra BIST temettü ex-gün gölgesi (PLAN-ILERI-TEMETTU.md, lib/ileri/temettuGolge.js; deneme 970) ve 2 haftalık momentum
+ * kolu gölgesi (PLAN-ILERI-MOMENTUM.md, lib/ileri/momentumGolge.js; deneme 971) aynı şekilde koşar (`temettu`, `momentum`; hataları
+ * diğerlerini bozmaz). Sunucunun alt süreç sınırı 15 dk → bu ikisi başlangıçtan 12 dk sonra yeni indirme başlatmaz (kalan sonraki
+ * çalışmada; eksik "…:sure" olarak yazılır, sunucu aynı gün 30 dk arayla yeniden dener).
  * Kullanım: node scripts/ileri-izle.js [--dizin <klasör>] [--json]   (--json: özet stdout'a JSON)
  */
 const path = require('path');
@@ -21,6 +25,10 @@ const ZD = require('../lib/ileri/zamanDilimiGolge');
 const RV = require('../lib/ileri/rangeVetoGolge');
 const CB = require('../lib/ileri/cbdrGolge');
 const G876 = require('../lib/ileri/golge876');
+const TM = require('../lib/ileri/temettuGolge');
+const MO = require('../lib/ileri/momentumGolge');
+const BASLANGIC = Date.now();
+const SON_AN = BASLANGIC + 12 * 60e3;   // 73.1 gölgeleri için yeni indirme sınırı (sunucu alt süreç sınırı 15 dk)
 
 const arg = (ad) => { const i = process.argv.indexOf(ad); return i > 0 ? process.argv[i + 1] : null; };
 const dizin = arg('--dizin') ? path.resolve(arg('--dizin')) : I.VARSAYILAN_DIZIN;
@@ -40,7 +48,17 @@ const json = process.argv.includes('--json');
     const x = await G876.calistir({ dizin, log: (s, m) => (json ? console.error : console.log)(`[${s}] ${m}`) });
     g8 = { durum: x.durum, sonKapanmis: x.sonKapanmis, yeniSatir: x.yeniSatir, eksik: x.eksik, degisen: x.degisen.length, ay: x.ay ? { F: x.ay.F, long: x.ay.long, short: x.ay.short } : null };
   } catch (e) { g8 = { hata: e.message }; }
+  const kisaEksik = (x) => (x.eksik || []).slice(0, 5);
+  let tm;
+  try { const x = await TM.calistir({ dizin, sonAn: SON_AN, log: (s, m) => (json ? console.error : console.log)(`[${s}] ${m}`) }); tm = { yeniSatir: x.yeniSatir, takvimYeni: x.takvimYeni, sonGun: x.sonGun, olay: x.rapor.olay, eksik: kisaEksik(x), degisen: x.degisen.length, dur: x.dur }; }
+  catch (e) { tm = { hata: e.message }; }
+  let mo;
+  try { const x = await MO.calistir({ dizin, sonAn: SON_AN, log: (s, m) => (json ? console.error : console.log)(`[${s}] ${m}`) }); mo = { yeniSatir: x.yeniSatir, kesinGun: x.kesinGun, gun: x.rapor.gun, eksik: kisaEksik(x), degisen: x.degisen.length, dur: x.dur }; }
+  catch (e) { mo = { hata: e.message }; }
   if (hata) throw hata;
+  for (const x of [tm, mo]) if (x.eksik && x.eksik.length) o.eksik.push(...x.eksik.slice(0, 3));
+  o.temettu = tm;
+  o.momentum = mo;
   if (g8.eksik && g8.eksik.length) o.eksik.push(...g8.eksik.slice(0, 5));
   o.golge876 = g8;
   o.zamanDilimi = zd;
@@ -56,5 +74,7 @@ const json = process.argv.includes('--json');
   console.log(rv.hata ? `  D3 gölge HATA: ${rv.hata}` : `  D3 gölge: +${rv.yeniSatir} satır${rv.gecikmeliSatir ? ` (gecikmeli ${rv.gecikmeliSatir})` : ''}, son kapanmış ${rv.sonKapanmis}`);
   console.log(cb.hata ? `  CBDR gölge HATA: ${cb.hata}` : `  CBDR gölge: +${cb.yeniSatir} gün${cb.gecikmeliSatir ? ` (gecikmeli ${cb.gecikmeliSatir})` : ''}, ${cb.satirSayisi} kayıtlı gün${cb.degisen.length ? ` · UYARI ${cb.degisen.length} gün yeniden hesapta farklı` : ''}`);
   console.log(g8.hata ? `  876 gölge HATA: ${g8.hata}` : `  876 gölge: ${g8.durum}, +${g8.yeniSatir} satır, son kapanmış ${g8.sonKapanmis}${g8.ay ? ` · ${g8.ay.F} sepeti ${g8.ay.long} long / ${g8.ay.short} short` : ''}${g8.eksik.length ? ` · eksik ${g8.eksik.length}` : ''}${g8.degisen ? ` · UYARI ${g8.degisen} satır yeniden hesapta farklı` : ''}`);
+  console.log(tm.hata ? `  Temettü gölge HATA: ${tm.hata}` : `  Temettü gölge: +${tm.yeniSatir} olay, +${tm.takvimYeni} takvim gözlemi, son gün ${tm.sonGun}${tm.eksik.length ? ` · eksik ${tm.eksik.length}` : ''}${tm.degisen ? ` · UYARI ${tm.degisen} olay yeniden hesapta farklı` : ''}`);
+  console.log(mo.hata ? `  Momentum gölge HATA: ${mo.hata}` : `  Momentum gölge: +${mo.yeniSatir} satır, kesin gün ${mo.kesinGun || '-'}${mo.eksik.length ? ` · eksik ${mo.eksik.length}` : ''}${mo.degisen ? ` · UYARI ${mo.degisen} satır yeniden hesapta farklı` : ''}`);
   console.log(zd.hata ? `  3d gölge HATA: ${zd.hata}` : `  3d gölge: +${zd.yeniSatir} satır${zd.gecikmeliSatir ? ` (gecikmeli ${zd.gecikmeliSatir})` : ''}, son kapanmış ${zd.sonKapanmis}`);
 })().catch(e => { console.error('HATA:', e.message); process.exit(1); });

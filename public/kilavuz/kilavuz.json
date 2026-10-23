@@ -1,5 +1,5 @@
 {
-  "surum": "73.0",
+  "surum": "73.1",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -57,6 +57,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"73.1","tarih":"2026-10-23","yeni":["İleri test › BIST temettü: geçmiş testte beş ölçütü de sağlayan temettü kuralı (hak kullanım gününden önceki gün kapanışta al, hak kullanım günü açılışta sat) kâğıtta izlenir; emir yok. Temettü takvimi İş Yatırım'daki duyurulmuş temettülerden; karar 26 Ekim 2027.","İleri test › 2 haftalık momentum: her pazar son 14 günün en çok yükselen 6 coini alınır, en çok düşen 6 coini açığa satılır; Kairos'a %8,2 payla eklenmiş hali yalnız Kairos'la yan yana izlenir; emir yok. Karar 25 Ekim 2027.","Genel bakış tablosu ve karar takviminde iki yeni test; Midas'ta seans emrinin doğrulanmadığı kartta yazılı."]},
     {"surum":"73.0","tarih":"2026-10-23","yeni":["Ayarlar › Anahtarlar: kayıtlı bütün anahtar ve jetonlar tek tabloda (borsa hesapları, İşlem defterim, Telegram, sağlık sinyali, erişim); değerin yalnız son 4 karakteri görünür.","Borsa hesabı ekle (Binance, OKX, Bybit; demo ya da canlı, alt hesap): her ekleme, değişiklik ve silme acil PIN ister. Sına düğmesi yalnız okur — bakiye ve izinler; para çekme izni açıksa kırmızı uyarı.","Acil PIN yanlış girilince kilit artık 1 dakika (5 yanlış denemede). PIN bu ekrandan değiştirilebilir; bütün bilgisayarlarda aynı PIN kullanılır.","Geliştirme bilgisayarında sunucudaki anahtarlar görünür; sunucuya ulaşılamazsa değişiklik bekler, Gönder ile gider. Eski şifreli sır dosyası silinmeden kenara alınabilir."]},
     {"surum":"72.3","tarih":"2026-10-22","yeni":["Güncelleme paketleri yalnız gerçekten gerektiğinde kurar: yalnız test satırları değiştiyse paket adımı atlanır.","Paket kurulumu gerekiyorsa Pusula önce durdurulur, eski paket klasörü yedeklenir; kurulum başarısız olursa yedek geri konur ve eski sürüm başlar.","Kılavuz: güncelleme başarısız olursa elle kurtarma adımları (Sunucuya kurulum › Adım 22)."]},
     {"surum":"72.2","tarih":"2026-10-22","yeni":["Pusula Kitabı test sonuçları içerdiği için herkese açık dağıtımdan çıkarıldı; yalnız kendi kurulumunuzda (araştırma paketiyle) bulunur.","Kendi kurulumunuzda Bilgi › Pusula Kitabı aynen görünür; araştırma paketi olmayan kurulumda menü öğesi gizlenir, kitap dosyası yoksa ekran boş kalmaz, açıklama gösterir."]},

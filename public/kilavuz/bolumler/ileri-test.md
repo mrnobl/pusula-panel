@@ -4,7 +4,7 @@
 
 "Canlı veride tutuyor mu?" Kuralları önceden kayda geçirilmiş stratejilerin, backtestte görmediği **yeni günlerde** nasıl davrandığını izler. Emir vermez. İki soruya cevap verir: **her şey yolunda mı** (alarm var mı) ve **sıradaki karar ne zaman**.
 
-Yan menüde İleri test'in altında beş sayfa var (66.0):
+Yan menüde İleri test'in altında yedi sayfa var (66.0; 73.1'de BIST temettü ve 2 haftalık momentum eklendi):
 
 | Sayfa | Ne var |
 |---|---|
@@ -13,6 +13,8 @@ Yan menüde İleri test'in altında beş sayfa var (66.0):
 | **Bollinger düşüş azaltıcı** | Bollinger kartı ve BTC en derin düşüş grafiği |
 | **876 gölge** | Kairos %90 + TVL L/S %10 gölge kartı ([aşağıda](#/kilavuz/ileri-test/g876)) |
 | **EUR/USD CBDR** | Londra girişi gölge kartı ve birikimli R grafiği ([aşağıda](#/kilavuz/ileri-test/cbdr)) |
+| **BIST temettü** | Temettü hak kullanım gecesi kâğıt kartı ([aşağıda](#/kilavuz/ileri-test/temettu)) |
+| **2 haftalık momentum** | Kairos + %8,2 momentum kolu kâğıt kartı ([aşağıda](#/kilavuz/ileri-test/momentum)) |
 
 Sayfanın üstündeki **ara rapor notu** her yerde geçerli: karar günlerine kadar yalnız izlenir, hüküm verilmez, kurala dokunulmaz. Her kart tek cümle, büyük durum, iki ana sayı ve karar günü gösterir; ayrıntı katlıdır.
 
@@ -160,6 +162,47 @@ Karar ölçütü önceden yazıldı ve değişmez: ortalama R sıfırın üstün
 **İki ay istatistiksel kanıt değildir.** Kartta ya da raporda "işe yarıyor / yaramıyor" denmez; sayılar kabul, ret ya da canlı hesap kararı değildir. 1 Ocak 2027'de uzatma ya da canlı hesap kararını siz verirsiniz.
 
 Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (sunucuda ayrıca kurulacak bir şey yok); bu bilgisayarda kart sunucudaki kaydı gösterir. Sunucu bu sürüme henüz güncellenmediyse kart "876 gölge özeti alınamadı" der — güncelleme kurulunca düzelir.
+
+## BIST temettü kartı {#temettu}
+
+**Ne:** BIST'te nakit temettü dağıtan bir hisse, **hak kullanım günü** (temettünün fiyattan düştüğü gün) açılışta genellikle temettü kadar düşmez. Kural: hak kullanım gününden önceki işlem günü **kapanışta al**, hak kullanım günü **açılışta sat** — bir gece tutulur, temettü (%15 stopajla, 2 iş günü sonra) alınır. Evren: her ay, bir önceki ay sonundaki 63 günlük medyan TL cirosuna göre ilk 50 hisse. Geçmiş testte (deneme 585, 2012–2026) beş ölçütün hepsini sağladı; BIST rafa kaldırıldığı için benimsenmemişti.
+
+**Gölge:** sizin kararınızla (23 Ekim 2026) kural **emirsiz, kâğıtta** izlenir. Para yok, emir yok. Temettü takvimi İş Yatırım şirket kartlarındaki **duyurulmuş** temettülerden okunur; bir olay ancak al gününden önce **18:00'den önce** takvimde görüldüyse sayılır (sonradan görülenler kayda yazılır ama sayılmaz). İlk hak kullanım günü **26 Ekim 2026**; ara kontrol **26 Nisan 2027**; **karar 26 Ekim 2027** (30 olay yoksa 2028).
+
+![BIST temettü kartı — masaüstü](ekran:ileri-temettu-1400)
+
+| Alan | Anlamı |
+|---|---|
+| Önceden bilinen olay | Sayılan olay sayısı (al gününden önce duyurulmuş, hacim sınırı içinde); altında gece sayısı ve sonradan görülenler |
+| Olay başına ortalama (net) | Maliyet sonrası ortalama getiri. Ana maliyet: Midas komisyonu 0, model tek yön %0,10 + %0,05 kayma (gidiş-dönüş %0,30). Altında geçmiş testin Midas senaryosuyla (gidiş-dönüş %0,02) aynı ortalama |
+| Sıradaki olay | Evrendeki en yakın duyurulmuş temettü: hangi gün kapanışta alınır, hangi gün açılışta satılır, brüt TL ve yaklaşık oranı |
+| Birikimli (gece zinciri) | Aynı gecenin olaylarına eşit pay verilerek zincirlenen getiri ve en derin düşüşü |
+| Vazgeçme kuralı | 15 olaydan sonra ortalama −%0,30 ve altı, ya da gece zinciri düşüşü −%10 → gölge durur |
+
+> **Uyarı:** Kâğıtta kapanış seansı ve açılış seansı fiyatı kullanılır. **Midas'ta açılış/kapanış seansına emir verilebildiği gerçekte doğrulanmadı** — elle uygulamayı düşünmeden önce bunu teyit edin.
+
+Karar ölçütü önceden yazıldı: en az 30 olayda ortalama net sıfırın üstünde **ve** t ≥ 1,5 → izlemeye devam / küçük sermayeyle elle uygulama adayı; ortalama sıfır ve altı → ret; arası → bir yıl daha. Ayrıntıdaki "kaynak sağlığı" satırı son çalışmada Yahoo ve İş Yatırım'dan kaç isteğin başarılı olduğunu söyler.
+
+## 2 haftalık momentum kartı {#momentum}
+
+**Ne:** her **pazar** kapanışında Binance vadeli coinlerinden son 30 günün işlem hacmine göre ilk 30 alınır; son **14 günde en çok yükselen 6 coin alınır**, **en çok düşen 6 coin açığa satılır** (iki taraf eşit tutarda), **iki hafta** tutulur (her pazar sepetin yarısı yenilenir). Bu "kol" Kairos'a **%8,2** payla eklenir. Geçmiş testte (deneme 566) zayıf da olsa geçti ama kârın çoğu 2026 ve birkaç coin pompasından geldiği için "doğrulamadan canlıya bağlanmaz" denmişti.
+
+**Gölge:** sizin kararınızla (23 Ekim 2026) kural **emirsiz, kâğıtta** izlenir; her gün **Kairos + %8,2 × kol** ile **yalnız Kairos** yan yana. Para yok, emir yok, borsa anahtarı yok (Binance herkese açık mum ve fonlama verisi). İlk ölçüm günü **26 Ekim 2026**; ara kontrol **26 Nisan 2027**; **karar 25 Ekim 2027** (300 gün yoksa 2028).
+
+![2 haftalık momentum kartı — masaüstü](ekran:ileri-momentum-1400)
+
+| Alan | Anlamı |
+|---|---|
+| Bu haftanın sepeti | Son pazar seçimi: alınan ve açığa satılan coinler |
+| Kol (tek başına) | Kolun başlangıçtan beri getirisi, en derin düşüşü ve yıllık Sharpe'ı (yalnız betimleyici) |
+| Birlikte − Kairos | Kairos + %8,2 kol ile yalnız Kairos arasındaki getiri farkı (puan) |
+| En derin düşüş — birlikte / Kairos | Aynı günlerde iki eğrinin en derin düşüşü |
+| Kairos ile ilişki | Günlük getirilerin korelasyonu (karar ölçütü 0,3'ün altı) |
+| Vazgeçme kuralı | Kolun en derin düşüşü −%50'ye ulaşırsa ya da birlikte düşüş Kairos'unkinden 3 puandan fazla kötüyse gölge durur |
+
+Karar ölçütü önceden yazıldı: kol Sharpe 0,5'in üstü, birlikte ≥ Kairos, birlikte düşüşü Kairos'unkinden en çok 2 puan kötü ve ilişki 0,3'ün altı → küçük bindirme adayı (karar sizin); kol Sharpe sıfır ve altı ya da birlikte Kairos'un 2 puan altında → ret; arası → bir yıl daha. Aday olmak canlıya bağlanmak değildir.
+
+İki kartın kaydı da sunucunun her gece çalışan ileri test işiyle yazılır (sunucuda ayrıca kurulacak bir şey yok); bu bilgisayarda kartlar sunucudaki kaydı gösterir. Sunucu bu sürüme henüz güncellenmediyse kart "özeti alınamadı" der — güncelleme kurulunca düzelir.
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 

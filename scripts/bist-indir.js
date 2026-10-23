@@ -108,4 +108,4 @@ async function main() {
 }
 
 if (require.main === module) main();
-module.exports = { GUNCEL, ESKI, DIR };
+module.exports = { GUNCEL, ESKI, DIR, donustur };   // 73.1: donustur ileri temettü gölgesi de kullanır (tek yer)

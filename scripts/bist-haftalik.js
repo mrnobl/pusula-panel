@@ -23,17 +23,20 @@ const SDIR = yollar.veri('bist-1s');
 const ADIR = yollar.veri('arastirma');
 const O = require(path.join(ROOT, 'lib', 'risk', 'olcum'));
 const { GUNCEL, ESKI } = require('./bist-indir');
+// 73.1: T1 kuralı (evren, olay getirisi, stopaj, likidite, maliyet) TEK YERDE — lib/research/bistTemettu.js; ileri gölge
+// (lib/ileri/temettuGolge.js, deneme 970) aynı işlevleri kullanır. Çıkarma işlem sırasını korur (çıktı bit bit aynı).
+const K = require('../lib/research/bistTemettu');
 
 const GUN = 864e5;
 const BAS = Date.UTC(2012, 0, 1), HOL = Date.UTC(2021, 0, 1);
 const SON_VERI = Date.UTC(2026, 9, 6);          // 2026-10-06 satırı kısmi (indirme 14:09 TSİ) → hariç
 const GELISTIRME = process.argv.includes('--gelistirme');
 const SON = GELISTIRME ? HOL : SON_VERI;         // analiz bitişi (hariç)
-const MALIYET = { A: 0.0001, B: 0.0008, C: 0.0025 };   // tek yön; §1.3 G-D %0,02 / %0,16 / %0,50
-const PPF_MARJ = 0.01, PPF_STOPAJ = 0.15;
-const SERMAYE_USD = 25000;                       // likidite tavanı için varsayım (ön kayıtta yok → sapma notu)
-const LIK_ORAN = 0.01;
-const stopaj = t => (t < Date.UTC(2024, 11, 22) ? 0.10 : 0.15);
+const MALIYET = K.MALIYET;                       // tek yön; §1.3 G-D %0,02 / %0,16 / %0,50
+const PPF_MARJ = K.PPF.marj, PPF_STOPAJ = K.PPF.stopaj;
+const SERMAYE_USD = K.T1.sermayeUsd;             // likidite tavanı için varsayım (ön kayıtta yok → sapma notu)
+const LIK_ORAN = K.T1.likOran;
+const stopaj = K.stopaj;
 const tarih = t => new Date(t).toISOString().slice(0, 10);
 const yz = (x, b = 2) => (x == null || !isFinite(x) ? '—' : `%${(x * 100).toFixed(b)}`.replace('.', ','));
 const sy = (x, b = 2) => (x == null || !isFinite(x) ? '—' : x.toFixed(b).replace('.', ','));
@@ -51,13 +54,7 @@ async function indir(ne) {
     const fiy = { kaynak: `İş Yatırım HisseTekil (Data.aspx), ${tarih(Date.now())} çekildi`, alanlar: 'g:[tarih, HG_KAPANIS nominal, HGDG_KAPANIS düzeltilmiş, HG_HACIM TL]', hisse: {} };
     for (const s of semboller) {
       const h = await (await fetch(`https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=${s}`, { headers: UA })).text();
-      const re = /<tr class="temettugercekvarrow \d+"><td>(\w+)<\/td><td class="text-right" data-order="(\d{8})">[^<]*<\/td><td class="text-right">([^<]*)<\/td><td class="text-right">([\d.,]+)<\/td>/g;
-      const m0 = new Map(); let m;
-      while ((m = re.exec(h))) {
-        if (m[1] !== s) continue; const d = m[2], t = `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}`;
-        m0.set(t, { tarih: t, brutTL: +m[4].replace(/\./g, '').replace(',', '.'), verim: +(m[3].replace(/\./g, '').replace(',', '.')) || null });
-      }
-      tem.hisse[s] = [...m0.values()].sort((a, b) => (a.tarih < b.tarih ? -1 : 1));
+      tem.hisse[s] = K.isyTemettuAyristir(h, s);   // 73.1: aynı düzenli ifade, tek yerde (ileri gölge de kullanır)
       const j = await (await fetch(`https://www.isyatirim.com.tr/_layouts/15/Isyatirim.Website/Common/Data.aspx/HisseTekil?hisse=${s}&startdate=01-01-2011&enddate=${tarih(Date.now()).split('-').reverse().join('-')}`, { headers: UA })).json();
       fiy.hisse[s] = (j.value || []).map(x => { const [d, mo, y] = x.HGDG_TARIH.split('-'); return [`${y}-${mo}-${d}`, x.HG_KAPANIS, x.HGDG_KAPANIS, Math.round(x.HG_HACIM || 0)]; });
       console.log(`  ${s}: temettü ${tem.hisse[s].length}, fiyat ${fiy.hisse[s].length}`);
@@ -97,18 +94,8 @@ function hisseYukle(s) {
   const dosya = path.join(DIR, s + '.IS.json');
   if (!fs.existsSync(dosya)) return null;
   const v = JSON.parse(fs.readFileSync(dosya, 'utf8'));
-  const g = v.gunler.filter(x => x.v > 0 && x.c > 0 && x.ac > 0 && x.o > 0 && x.t < SON_VERI);
-  const satir = g.map(x => ({ t: x.t, o: x.o, c: x.c, ac: x.ac, v: x.v, ciro: x.c * x.v, dp: 0, dpNet: 0 }));
-  // Artefakt (bist-strateji ile aynı ölçüt, düzeltilmiş kapanışta): o günün getirisi 0 → geçmiş ham fiyatlar ölçeklenir.
-  for (let i = satir.length - 1; i >= 1; i--) {
-    const r = satir[i].ac / satir[i - 1].ac - 1;
-    if (Math.abs(r) > 0.25 && satir[i].t - satir[i - 1].t <= 7 * GUN) {
-      const k = satir[i].c / satir[i - 1].c, ka = satir[i].ac / satir[i - 1].ac;
-      for (let j = 0; j < i; j++) { satir[j].o *= k; satir[j].c *= k; satir[j].ac *= ka; }
-      satir[i].artefakt = true;
-      if (satir[i].t >= Date.UTC(2010, 0, 1)) duzeltmeler.push(`${s} ${tarih(satir[i].t)} ${yz(r, 1)}`);
-    }
-  }
+  // Artefakt (bist-strateji ile aynı ölçüt, düzeltilmiş kapanışta): o günün getirisi 0 → geçmiş ham fiyatlar ölçeklenir (K.satirHazirla).
+  const satir = K.satirHazirla(v.gunler, SON_VERI, { duzeltme: (x, r) => { if (x.t >= Date.UTC(2010, 0, 1)) duzeltmeler.push(`${s} ${tarih(x.t)} ${yz(r, 1)}`); } });
   return { satir, ham: v };
 }
 
@@ -147,25 +134,18 @@ for (const [s, satir] of hisse) {
     if (y && i && dpI != null) { temKayit.ikisi++; if (Math.abs(dpY / dpI - 1) > 0.05) temKayit.tutarFark.push(`${s} ${d} D/P Yahoo ${yz(dpY)} İşY ${yz(dpI)}`); }
     if (y && !i) temKayit.yalnizYahoo.push(`${s} ${d} ${yz(dpY)}`);
     if (!y && i) temKayit.yalnizIsy.push(`${s} ${d} ${yz(dpI)}`);
-    if (!(dp > 0) || dp > 0.30) { temKayit.atilan.push(`${s} ${d} D/P ${yz(dp)}`); continue; }
+    if (!K.dpGecerli(dp)) { temKayit.atilan.push(`${s} ${d} D/P ${yz(dp)}`); continue; }
     satir[k].dp += dp; satir[k].dpNet += dp * (1 - stopaj(satir[k].t));
     temKayit.olay++;
   }
 }
 
 // ── Takvim, hizalama ─────────────────────────────────────────────────────────
-const sayac = new Map();
-for (const x of hisse.values()) for (const b of x) sayac.set(b.t, (sayac.get(b.t) || 0) + 1);
-const takvim = [...sayac.entries()].filter(([, n]) => n >= 3).map(([t]) => t).sort((a, b) => a - b);
+const takvim = K.takvimKur(hisse.values());
 const D = takvim.length;
 const H = new Map();
 for (const [s, satir] of hisse) {
-  const bar = new Array(D).fill(null), sonIdx = new Int32Array(D).fill(-1);
-  let k = -1, j = 0;
-  for (let d = 0; d < D; d++) {
-    while (j < satir.length && satir[j].t <= takvim[d]) { if (satir[j].t === takvim[d]) bar[d] = satir[j]; k = j; j++; }
-    sonIdx[d] = k;
-  }
+  const { bar, sonIdx } = K.hizala(satir, takvim);
   // Net toplam getiri endeksi (kendi satırlarında): TRI_k = TRI_{k-1} · (c_k/c_{k-1} + dpNet_k)
   const tri = new Float64Array(satir.length); tri[0] = 1;
   for (let i = 1; i < satir.length; i++) tri[i] = tri[i - 1] * (satir[i].c / satir[i - 1].c + satir[i].dpNet);
@@ -191,34 +171,26 @@ const XU030 = XU.out, XU030_O = XUo.out;
 const USD = seriHizala('USDTRY_X').out;
 const faizSeri = JSON.parse(fs.readFileSync(path.join(DIR, 'tcmb-politika-faizi.json'), 'utf8')).seri;
 const faiz = t => { let r = 0; for (const x of faizSeri) if (x.t <= t) r = x.oran; return r; };
-const ppfOran = t => Math.max(0, faiz(t) - PPF_MARJ) * (1 - PPF_STOPAJ);
+const ppfOran = t => K.ppfOran(faiz(t));
 const ppfBuyume = (d0, d1) => 1 + ppfOran(takvim[d0]) * (takvim[d1] - takvim[d0]) / GUN / 365;
 
 const d0 = takvim.findIndex(t => t >= BAS) - 1;      // 2011 son işlem günü
 const dSon = takvim.findIndex(t => t >= SON) === -1 ? D - 1 : takvim.findIndex(t => t >= SON) - 1;
 
 // ── Evren (PIT likidite vekili; bist-strateji.evrenLikidite, n parametreli) ──
-function medyan(a) { const b = [...a].sort((x, y) => x - y); const m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; }
-const ayGecis = d => d === D - 1 || new Date(takvim[d + 1]).getUTCMonth() !== new Date(takvim[d]).getUTCMonth();
+const medyan = K.medyan;
+const ayGecis = d => K.ayGecis(takvim, d);
 const evrenOnbellek = new Map();
 function evrenSirali(d) {
   if (evrenOnbellek.has(d)) return evrenOnbellek.get(d);
-  const aday = [];
-  for (const h of H.values()) {
-    const k = h.sonIdx[d];
-    if (k < 251) continue;
-    if (takvim[d] - h.satir[k].t > 10 * GUN) continue;
-    const c = []; for (let i = Math.max(0, d - 62); i <= d; i++) c.push(h.bar[i] ? h.bar[i].ciro : 0);
-    aday.push([h.s, medyan(c)]);
-  }
-  const r = aday.sort((a, b) => b[1] - a[1]).map(x => x[0]);
+  const r = K.evrenSirali(H.values(), takvim, d);
   evrenOnbellek.set(d, r); return r;
 }
-const ayBasi = []; { let son = -1; for (let d = 0; d < D; d++) { ayBasi[d] = son; if (ayGecis(d)) son = d; } }
+const ayBasi = K.ayBasiDizisi(takvim);
 /** d gününde geçerli evren: bir önceki ay sonu kapanışında seçilen (ay sonu günü dahil değil). */
 const evren = (d, n) => (ayBasi[d] >= 0 ? evrenSirali(ayBasi[d]).slice(0, n) : []);
 const haftaSonu = d => d === D - 1 || ((new Date(takvim[d + 1]).getUTCDay() + 6) % 7) <= ((new Date(takvim[d]).getUTCDay() + 6) % 7) || takvim[d + 1] - takvim[d] >= 7 * GUN;
-const likiditeTamam = (b, w, d) => b && w * SERMAYE_USD * USD[d] <= LIK_ORAN * b.ciro;
+const likiditeTamam = (b, w, d) => K.likiditeTamam(b, w, USD[d]);
 
 // ═════════════════════════════════════════════════════════════════════════════
 // BİNDİRME SİMÜLATÖRÜ (strateji + PPF) — pozisyon listesiyle
@@ -313,7 +285,7 @@ function t1() {
       if (!h.bar[d - 1]) { kumYok++; continue; }        // ex-günden önceki işlem günü hissede işlem yok
       const cum = h.bar[d - 1];
       if (!(takvim[d] >= BAS)) continue;
-      const net = (b.o + b.dpNet * cum.c / (1 + 0) * (1 / ppfBuyume(d, Math.min(d + 2, D - 1)))) / cum.c - 1; // temettü 2 iş günü gecikmeli → PPF iskontosu
+      const net = K.t1Brut({ cumKapanis: cum.c, exAcilis: b.o, dpNet: b.dpNet, iskonto: 1 / ppfBuyume(d, Math.min(d + 2, D - 1)) }); // temettü 2 iş günü gecikmeli → PPF iskontosu
       const ol = { s, t: takvim[d - 1], ex: tarih(takvim[d]), brut: net, dp: b.dp, ilk30: ev30.has(s), gun: b.c / b.o - 1, xu: XU030_O[d] / XU030[d - 1] - 1, xuVar: XU.var_[d] && XUo.var_[d] };
       olay.push(ol);
       if (!gunMap.has(d)) gunMap.set(d, []); gunMap.get(d).push(ol);

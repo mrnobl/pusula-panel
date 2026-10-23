@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.1 — İleri test: BIST temettü ve 2 haftalık momentum (2026-10-23) {#s73-1}
+
+- **Yeni sayfa: [İleri test › BIST temettü](#/kilavuz/ileri-test/temettu).** Geçmiş testte beş ölçütün hepsini sağlayan BIST temettü kuralı artık **kâğıtta** izleniyor: nakit temettünün hak kullanım gününden önceki işlem günü kapanışta al, hak kullanım günü açılışta sat. Emir yok, para yok. Takvim İş Yatırım şirket kartlarındaki duyurulmuş temettülerden okunur; yalnız önceden görülen olaylar sayılır. İlk hak kullanım günü 26 Ekim 2026, karar **26 Ekim 2027**.
+- Maliyet: Midas komisyonu 0; model tek yön %0,10 + %0,05 kayma. **Midas'ta açılış/kapanış seansı emri verilebildiği doğrulanmadı** — kartta yazılı.
+- **Yeni sayfa: [İleri test › 2 haftalık momentum](#/kilavuz/ileri-test/momentum).** Her pazar son 14 günün en çok yükselen 6 coini alınır, en çok düşen 6 coini açığa satılır, iki hafta tutulur; Kairos'a %8,2 payla eklenmiş hali yalnız Kairos'la yan yana izlenir. Emir yok. Karar **25 Ekim 2027**.
+- Genel bakıştaki **Testler** tablosu ve **Karar takvimi** iki yeni testi gösterir. Kayıtlar sunucunun gece ileri test işiyle yazılır; sunucuda ayrıca kurulacak bir şey yok.
+- **Bot emir güvenliği (çökme tatbikatında bulunan iki hata düzeltildi):** borsa cevabı kaybolduğunda ve emir birkaç saniye görünmediğinde bot artık emri "gönderilmedi" saymıyor — emir belirsiz kalır, bot yeni pozisyon açmaz ve birkaç dakika içinde borsaya yeniden sorup doğru sonucu deftere yazar. Çoklu varlık (spot BTC) akışında aynı durumda emir yeniden gönderilmez; olası çift alım engellendi.
+- Elektrik kesintisinde emir defterinin son satırı yarım kalırsa sonraki kayıtlar artık kaybolmuyor; emir numarası hiçbir koşulda geriye gitmiyor, aynı emir kimliği iki kez kullanılamıyor.
+
 ## 73.0 — Ayarlar › Anahtarlar (2026-10-23) {#s73-0}
 
 - **Yeni sekme: [Ayarlar › Anahtarlar](#/kilavuz/ayarlar/anahtarlar).** Panelin kayıtlı bütün anahtar, jeton ve şifreleri tek tabloda, dört grupta: **Borsa hesapları**, **İşlem defterim** (yalnız okuma anahtarları), **Bildirim** (Telegram jetonu, sağlık sinyali adresleri) ve **Erişim** (acil PIN, telefon jetonu, sunucu bağlantısı …). Her satırda kim kullanıyor, hangi bilgisayarda duruyor ve durumu (**Tamam · Bakılmalı · Eksik · Boş**) yazar. Değerin **yalnız son 4 karakteri** görünür; tamamı hiçbir zaman gösterilmez.

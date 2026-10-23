@@ -19,6 +19,11 @@
  *          sıradaki gün (koşul / limit seviyesi — canlı), birikimli R grafiği, takvimde ara kontrol + karar günü
  *       5. 876 gölge — Hücum %90 + TVL L/S %10 (64.9; `/api/ileri/876`, PLAN-ILERI-876, deneme 882): bu ayın sepeti (long/short
  *          sayısı), bu ay, başlangıçtan beri, birlikte ↔ Hücum, vazgeçme kuralı, rapor günü 2027-01-01; "istatistiksel kanıt değildir"
+ *       6. BIST temettü ex-gün (73.1; `/api/ileri/temettu`, PLAN-ILERI-TEMETTU, deneme 970; geçmiş 585): önceden bilinen olay sayısı,
+ *          olay başına ortalama net (ana model %0,30 gidiş-dönüş; geçmiş testin senaryoları ayrıntıda), sıradaki olay (al günü
+ *          kapanış / hak kullanım günü açılış), takvim kaynağının sağlığı; "Midas seans emri doğrulanmadı" notu
+ *       7. 2 haftalık momentum kolu (73.1; `/api/ileri/momentum`, PLAN-ILERI-MOMENTUM, deneme 971; geçmiş 566): bu haftanın sepeti,
+ *          kol tek başına, Kairos + %8,2 kol ↔ yalnız Kairos, vazgeçme kuralı
  *
  * PROJE KURALI: ARA RAPORDA HÜKÜM YAZILMAZ. Yalnız betimlenir; "geçti/kaldı/kabul" yazılmaz, kural önerilmez. Önceden kayda
  * geçirilmiş uyarı / alarm eşikleri (eski adı p95 / p99) hüküm değil, izleme kuralıdır ve gösterilir.
@@ -420,11 +425,118 @@
     };
   }
 
+  const yuzde2 = (x) => yuzde(x, 2);
+  const kaynakSatiri = (k) => {
+    if (!k) return 'kaynak bilgisi yok';
+    const p = (ad, x) => (x && x.istenen ? `${ad} ${x.alinan}/${x.istenen}${x.hata && x.hata.length ? ` (${x.hata.length} hata)` : ''}` : null);
+    return [p('Yahoo fiyat', k.yahoo), p('İş Yatırım temettü tablosu', k.isyKart), p('İş Yatırım nominal kapanış', k.isyFiyat)].filter(Boolean).join(' · ') || 'bu çalışmada yeni indirme gerekmedi (önbellek taze)';
+  };
+  /**
+   * BIST temettü ex-gün gölgesi (PLAN-ILERI-TEMETTU, deneme 970; geçmiş deneme 585). `t` = /api/ileri/temettu ({ ozet: son.json }).
+   * Yalnız betimler. Midas'ta açılış/kapanış seansı emri doğrulanmadı — not kartta.
+   */
+  function temettuModel(t, bugun) {
+    if (!t || !t.success) return { hata: `Temettü gölgesi özeti alınamadı: ${(t && t.error) || 'sunucu bu sürümü henüz çalıştırmıyor olabilir'}` };
+    const tk = t.takvim || {}, o = t.ozet;
+    const karar = (o && o.rapor && o.rapor.kararTarihi) || tk.karar || '2027-10-26';
+    const gun = bugun || bugunStr();
+    const kalan = Math.round((Date.parse(`${karar}T00:00:00Z`) - Date.parse(`${gun}T00:00:00Z`)) / 864e5);
+    const uyg = 'Kâğıtta hak kullanım gününden önceki işlem günü kapanış seansı fiyatıyla alınır, hak kullanım günü açılış seansı fiyatıyla satılır; Midas’ta açılış/kapanış seansı emri verilebildiği gerçekte doğrulanmadı.';
+    const ozetMetin = `Geçmiş testte beş ölçütün hepsini sağlayan BIST temettü kuralı (585) kâğıtta izlenir: temettü hak kullanım gününden önceki işlem günü kapanışta al, hak kullanım günü açılışta sat. Emir yok, para yok. Karar ${tarihAdi(karar)}.`;
+    const ortak = { baslik: 'BIST temettü — hak kullanım gecesi', ozet: ozetMetin, hukumTarihi: karar,
+      hukumAlt: [kalan > 0 ? kalanMetin(kalan) : '', `ara kontrol ${tk.araKontrol || '2027-04-26'}`, `${tk.enAzOlay || 30} olay yoksa ${tk.erteleme || '2028-10-26'}`].filter(Boolean).join(' · ') };
+    if (!o) {
+      return { ...ortak, durum: { metin: 'İzleyici henüz çalışmadı', ton: 'uyari' }, ana: [0, 1, 2], sayilar: [
+        { etiket: 'Önceden bilinen olay', deger: '—', alt: `ilk hak kullanım günü ${tarihAdi(tk.bas || '2026-10-26')}` },
+        { etiket: 'Olay başına ortalama (net)', deger: '—', alt: 'ilk olayla dolar' },
+        { etiket: 'Sıradaki olay', deger: '—', alt: 'temettü takvimi ilk çalışmada okunur' }
+      ], not: `${uyg} Kayıt sunucunun ileri test işiyle her gün 00:15 UTC sonrası yazılır.` };
+    }
+    const r = o.rapor || {}, a = r.ana || {}, deg = o.degisen || [], eks = o.eksik || [];
+    const s0 = (o.siradaki || [])[0];
+    const durum = o.dur ? { metin: 'Durduruldu (vazgeçme kuralı)', ton: 'uyari' } : deg.length ? { metin: 'Yeniden hesap farklı', ton: 'uyari' } : { metin: 'Ölçüm sürüyor', ton: '' };
+    return {
+      ...ortak, durum, ana: [0, 1, 2],
+      sayilar: [
+        { etiket: 'Önceden bilinen olay', deger: String(r.olay || 0), alt: `${r.gece || 0} gece · sonradan görülen ${r.sonradanGorulen || 0} (sayılmaz)${r.likiditeDisi ? ` · hacim sınırı dışı ${r.likiditeDisi}` : ''}` },
+        { etiket: 'Olay başına ortalama (net)', deger: yuzde2(a.ort), ton: sayiMi(a.ort) ? (a.ort > 0 ? 'tone-success' : a.ort < 0 ? 'tone-danger' : '') : '',
+          alt: r.olay ? `isabet %${Math.round((a.isabet || 0) * 100)} · maliyet gidiş-dönüş %0,30 · geçmiş testin Midas senaryosuyla ${yuzde2(r.A && r.A.ort)}` : 'ilk olayla dolar' },
+        { etiket: 'Sıradaki olay', deger: s0 ? s0.s : '—', alt: s0 ? `${tarihAdi(s0.alGunu)} kapanışta al · ${tarihAdi(s0.exGun)} açılışta sat · brüt ${Number(s0.brutTL).toLocaleString('tr-TR')} TL${sayiMi(s0.dpTahmin) ? ` (≈ ${yuzde2(s0.dpTahmin)})` : ''}` : 'evrendeki hisselerde duyurulmuş temettü yok' },
+        { etiket: 'Birikimli (gece zinciri)', deger: yuzde2(r.toplam), alt: `en derin düşüş ${yuzde2(r.maxDD)} · aynı gecenin olaylarına eşit pay` },
+        { etiket: 'Hak kullanım günü gün içi', deger: yuzde2(r.gunIciOrt), alt: 'açılıştan kapanışa ortalama (bilgi: kuralda açılışta satılır)' },
+        { etiket: 'Vazgeçme kuralı', deger: o.dur ? `tetiklendi (${o.dur.kural === 'V1' ? 'ortalama' : 'düşüş'})` : 'tetiklenmedi', ton: o.dur ? 'tone-warning' : '',
+          alt: '15 olaydan sonra ortalama ≤ −%0,30 ya da gece zinciri düşüşü ≤ −%10 → gölge durur' }
+      ],
+      not: [
+        'Kural (değişmez, geçmiş test 585 ile aynı kod): her ay bir önceki ay sonundaki 63 günlük medyan TL cirosuna göre ilk 50 hisse; nakit temettünün hak kullanım gününden önceki işlem günü kapanışta al, hak kullanım günü açılışta sat; temettü %15 stopajla, 2 iş günü sonra. Aynı gecenin olaylarına sermaye eşit bölünür; pozisyon hissenin günlük TL hacminin %1’ini aşmaz.',
+        'Maliyet: Midas komisyonu 0; model tek yön %0,10 + %0,05 kayma (gidiş-dönüş %0,30). Ayrıntıda geçmiş testin senaryoları: Midas (gidiş-dönüş %0,02) ve binde 1,6.',
+        `Takvim: İş Yatırım şirket kartındaki duyurulmuş temettüler; bir olay ancak al günü 18:00’den önce takvimde görüldüyse sayılır. Kaynak sağlığı: ${kaynakSatiri(o.kaynak)}.`,
+        uyg,
+        'Karar ölçütü (önceden yazıldı): en az 30 olayda ortalama net > 0 ve t ≥ 1,5 → izlemeye devam / küçük sermayeyle elle uygulama adayı; ortalama ≤ 0 → ret; arası → bir yıl daha. Ara kontrolde hüküm yok.',
+        o.zaman ? `Son çalışma ${AG.fmt ? AG.fmt.tarihSaat(o.zaman) : o.zaman}.` : '',
+        eks.length ? `Eksik: ${eks.length} kalem (${eks.slice(0, 3).map(x => x.seri).join(', ')}) — sonraki çalışmada tamamlanır.` : '',
+        deg.length ? `UYARI: ${deg.length} kayıtlı olayın yeniden hesabı farklı — kayıt değişmedi, incelenmeli.` : ''
+      ].filter(Boolean).join(' ')
+    };
+  }
+
+  /**
+   * 2 haftalık momentum kolu gölgesi (PLAN-ILERI-MOMENTUM, deneme 971; geçmiş deneme 566). `m` = /api/ileri/momentum ({ ozet: son.json }).
+   * Yalnız betimler: Kairos + %8,2 kol ↔ yalnız Kairos.
+   */
+  function momentumModel(m, bugun) {
+    if (!m || !m.success) return { hata: `Momentum gölgesi özeti alınamadı: ${(m && m.error) || 'sunucu bu sürümü henüz çalıştırmıyor olabilir'}` };
+    const tk = m.takvim || {}, o = m.ozet;
+    const karar = (o && o.rapor && o.rapor.kararTarihi) || tk.karar || '2027-10-25';
+    const gun = bugun || bugunStr();
+    const kalan = Math.round((Date.parse(`${karar}T00:00:00Z`) - Date.parse(`${gun}T00:00:00Z`)) / 864e5);
+    const pay = `%${((m.M || 0.082) * 100).toLocaleString('tr-TR', { maximumFractionDigits: 1 })}`;
+    const ozetMetin = `Geçmiş testte zayıf geçen 2 haftalık momentum kolu (566) kâğıtta izlenir: her pazar son 14 günde en çok yükselen 6 coin alınır, en çok düşen 6 coin açığa satılır, iki hafta tutulur. Kairos’a ${pay} pay ile eklenir. Emir yok, para yok. Karar ${tarihAdi(karar)}.`;
+    const ortak = { baslik: `2 haftalık momentum — Kairos + ${pay} kol`, ozet: ozetMetin, hukumTarihi: karar,
+      hukumAlt: [kalan > 0 ? kalanMetin(kalan) : '', `ara kontrol ${tk.araKontrol || '2027-04-26'}`, `${tk.enAzGun || 300} gün yoksa ${tk.erteleme || '2028-10-23'}`].filter(Boolean).join(' · ') };
+    if (!o) {
+      return { ...ortak, durum: { metin: 'İzleyici henüz çalışmadı', ton: 'uyari' }, ana: [0, 1, 2], sayilar: [
+        { etiket: 'Bu haftanın sepeti', deger: '—', alt: 'ilk seçim pazar kapanışında' },
+        { etiket: 'Kol (tek başına)', deger: '—', alt: `ilk ölçüm günü ${tarihAdi(tk.bas || '2026-10-26')}` },
+        { etiket: 'Birlikte − Kairos', deger: '—', alt: 'ilk ölçüm gününden sonra dolar' }
+      ], not: 'Kayıt sunucunun ileri test işiyle her gün 00:15 UTC sonrası yazılır.' };
+    }
+    const r = o.rapor || {}, deg = o.degisen || [], eks = o.eksik || [];
+    const sep = (o.sepet || []).slice(-1)[0];
+    const adlar = (l) => (l || []).map(x => x[0]).join(', ');
+    const durum = o.dur ? { metin: 'Durduruldu (vazgeçme kuralı)', ton: 'uyari' } : deg.length ? { metin: 'Yeniden hesap farklı', ton: 'uyari' }
+      : !r.gun ? { metin: 'İlk ölçüm günü bekleniyor', ton: '' } : { metin: 'Ölçüm sürüyor', ton: '' };
+    const k = r.kol || {}, b = r.birlikte, h = r.kairos, f = r.fark;
+    const ondalik = (x) => x.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+    return {
+      ...ortak, durum, ana: [0, 1, 2],
+      sayilar: [
+        { etiket: 'Bu haftanın sepeti', deger: sep ? `${sep.long.length} alış · ${sep.short.length} açığa satış` : '—', alt: sep ? `${tarihAdi(sep.t)} pazar seçimi · alış: ${adlar(sep.long) || '—'} · açığa satış: ${adlar(sep.short) || '—'}` : 'ilk seçim pazar kapanışında' },
+        { etiket: 'Kol (tek başına)', deger: r.gun ? yuzde(k.toplam) : '—', ton: r.gun && sayiMi(k.toplam) ? (k.toplam > 0 ? 'tone-success' : k.toplam < 0 ? 'tone-danger' : '') : '',
+          alt: r.gun ? `${r.gun} gün · en derin düşüş ${yuzde(k.mdd)}${sayiMi(k.sharpe) ? ` · Sharpe ${ondalik(k.sharpe)} (yıllık, betimleyici)` : ''}` : `ilk ölçüm günü ${tarihAdi(r.baslangic || tk.bas || '2026-10-26')}` },
+        { etiket: 'Birlikte − Kairos', deger: f ? puan(f.getiri) : '—', alt: b && h ? `birlikte ${yuzde(b.toplam)} · yalnız Kairos ${yuzde(h.toplam)} · ${r.eslesen} gün` : (r.eksikKairos ? `Kairos simülasyon satırı bekleniyor (${r.eksikKairos})` : 'ilk ölçüm gününden sonra dolar') },
+        { etiket: 'En derin düşüş — birlikte / Kairos', deger: b && h ? `${yuzde(b.mdd)} / ${yuzde(h.mdd)}` : '—', alt: 'günlük kapanışla, aynı günler' },
+        { etiket: 'Kairos ile ilişki', deger: sayiMi(r.kor) ? ondalik(r.kor) : '—', alt: 'günlük getiri korelasyonu (karar ölçütü < 0,3)' },
+        { etiket: 'Vazgeçme kuralı', deger: o.dur ? `tetiklendi (${o.dur.kural === 'V1' ? 'kol düşüşü' : 'birlikte düşüşü'})` : 'tetiklenmedi', ton: o.dur ? 'tone-warning' : '',
+          alt: 'kolun en derin düşüşü −%50’ye ulaşırsa ya da birlikte düşüş Kairos’tan 3 puandan fazla kötüyse gölge durur' }
+      ],
+      not: [
+        'Kural (değişmez, geçmiş test 566 ile aynı kod): her pazar kapanışında Binance vadeli coinlerinden son 30 günün dolar hacmine göre ilk 30 (en az 90 günlük); 14 günlük getirisi en yüksek 6 alış, en düşük 6 açığa satış, her biri %8,3 (net 0); iki dilim, her pazar eskisi yenilenir; pazartesi açılışta uygulanır. Maliyet %0,05 + %0,02 kayma her yön, gerçek fonlama ödemeleri.',
+        `Birleşim: her gün Kairos simülasyonu + ${pay} × kol (geçmiş testteki oran, sabit). Kairos tarafı sunucunun Kairos simülasyonu (model).`,
+        'Karar ölçütü (önceden yazıldı): kol Sharpe > 0,5, birlikte ≥ Kairos, birlikte düşüşü Kairos’tan en çok 2 puan kötü, ilişki < 0,3 → küçük bindirme adayı (kullanıcı kararı); kol Sharpe ≤ 0 ya da birlikte Kairos’un 2 puan altında → ret; arası → bir yıl daha.',
+        o.zaman ? `Son çalışma ${AG.fmt ? AG.fmt.tarihSaat(o.zaman) : o.zaman}${o.kesinGun ? ` (kesin gün ${o.kesinGun})` : ''}.` : '',
+        (o.notlar || []).length ? o.notlar.join(' ') : '',
+        eks.length ? `Eksik: ${eks.length} kalem (${eks.slice(0, 3).map(x => x.seri).join(', ')}) — sonraki çalışmada tamamlanır.` : '',
+        deg.length ? `UYARI: ${deg.length} kayıtlı satırın yeniden hesabı farklı — kayıt değişmedi, incelenmeli.` : ''
+      ].filter(Boolean).join(' ')
+    };
+  }
+
   /**
    * Saf: karar takvimi — bugün + bütün karar / kontrol günleri, tarihe göre. Aynı güne düşenler tek noktada.
    * → [{ tarih | null, etiket, bugun? }] (tarih null = "Gün 0 + 63" gibi henüz bilinmeyen; sona konur; geçmiş günler atlanır).
    */
-  function takvimModel(v, k, bugun, c, g8) {
+  function takvimModel(v, k, bugun, c, g8, tm, mo) {
     const gun = bugun || bugunStr();
     const l = [];
     const ekle = (tarih, etiket) => { if (!tarih) { l.push({ tarih: null, etiket }); return; } const x = l.find(y => y.tarih === tarih); if (x) x.etiket += ` · ${etiket}`; else l.push({ tarih, etiket }); };
@@ -439,6 +551,8 @@
     const cr = c && c.success && c.rapor;
     if (cr) { ekle(cr.araKontrol, 'EUR/USD CBDR ara kontrol'); ekle(cr.kararTarihi, 'EUR/USD CBDR kararı'); }
     if (g8 && g8.success) { const t8 = (g8.ozet && g8.ozet.takvim) || g8.takvim || {}; for (const f of t8.kuruluslar || []) ekle(f, '876 gölge kuruluşu'); ekle(t8.rapor, '876 gölge raporu'); }
+    if (tm && tm.success) { const t = tm.takvim || {}; ekle(t.araKontrol, 'BIST temettü ara kontrol'); ekle((tm.ozet && tm.ozet.rapor && tm.ozet.rapor.kararTarihi) || t.karar, 'BIST temettü kararı'); }
+    if (mo && mo.success) { const t = mo.takvim || {}; ekle(t.araKontrol, 'momentum kolu ara kontrol'); ekle((mo.ozet && mo.ozet.rapor && mo.ozet.rapor.kararTarihi) || t.karar, 'momentum kolu kararı'); }
     const tarihli = l.filter(x => x.tarih && x.tarih >= gun).sort((a, b) => (a.tarih < b.tarih ? -1 : 1));
     return [{ tarih: gun, etiket: `bugün${r && sayiMi(r.gecenGun) ? ` · ${r.gecenGun}. gün` : ''}`, bugun: true }, ...tarihli, ...l.filter(x => !x.tarih)];
   }
@@ -486,11 +600,11 @@
   const ISIK = { iyi: 'borsa-isik-iyi', uyari: 'borsa-isik-uyari', tehlike: 'borsa-isik-tehlike', notr: 'borsa-isik-notr', '': 'borsa-isik-notr' };
   const ROZET = { iyi: 'bot-durum-iyi', uyari: 'bot-durum-uyari', tehlike: 'bot-durum-tehlike', '': '' };
 
-  function takvimCiz(v, k, c, g8) {
+  function takvimCiz(v, k, c, g8, tm, mo) {
     const kap = bul('ileriTakvim');
     if (!kap || !AG.dom) return;
     const { el, doldur } = AG.dom;
-    const l = takvimModel(v, k, undefined, c, g8);
+    const l = takvimModel(v, k, undefined, c, g8, tm, mo);
     doldur(kap, [el('div', { class: 'glass-panel panel-pad' }, [
       el('h3', { class: 'card-title mb-3', text: 'Karar takvimi' }),
       el('ol', { class: 'ileri-takvim' }, l.map(x => el('li', { class: x.bugun ? 'ileri-takvim-bugun' : null }, [
@@ -550,7 +664,8 @@
 
   /** F5 Genel bakış: beş testin durum tablosu (test · durum · karar günü → alt sayfa). Demo kabul Botlar › Hücum › Yönetim'e götürür. */
   const SAYFA = [['bollinger', 'Bollinger düşüş azaltıcı', 'ileri/bollinger'], ['hucumDenge', 'Kairos / Tao simülasyonu', 'ileri/hucum-denge'],
-    ['demo', 'Demo kabul süreci', 'botlar/hucum/yonetim'], ['cbdr', 'EUR/USD CBDR', 'ileri/cbdr'], ['l876', '876 gölge', 'ileri/876']];
+    ['demo', 'Demo kabul süreci', 'botlar/hucum/yonetim'], ['cbdr', 'EUR/USD CBDR', 'ileri/cbdr'], ['l876', '876 gölge', 'ileri/876'],
+    ['temettu', 'BIST temettü', 'ileri/temettu'], ['momentum', '2 haftalık momentum', 'ileri/momentum']];
   function durumCiz(modeller) {
     const kap = bul('ileriDurum');
     if (!kap || !AG.dom) return;
@@ -634,16 +749,18 @@
     ])]);
   }
 
-  function ciz(v, k, c, rr, g8) {
-    takvimCiz(v, k, c, g8);
+  function ciz(v, k, c, rr, g8, tm, mo) {
+    takvimCiz(v, k, c, g8, tm, mo);
     grafiklerCiz(v, k, c);
     const m = { bollinger: bollingerModel(v), hucumDenge: v && v.success ? hucumDengeModel(v, k) : { hata: 'Simülasyon raporu alınamadı.' },
-      demo: demoModel(k, rr), cbdr: cbdrModel(c), l876: l876Model(g8) };
+      demo: demoModel(k, rr), cbdr: cbdrModel(c), l876: l876Model(g8), temettu: temettuModel(tm), momentum: momentumModel(mo) };
     kartCiz('btIleriBollinger', m.bollinger);
     kartCiz('ileriHucumDenge', m.hucumDenge);
     kartCiz('ileriDemoKabul', m.demo);
     kartCiz('ileriCbdr', m.cbdr);
     kartCiz('ileri876', m.l876);
+    kartCiz('ileriTemettu', m.temettu);
+    kartCiz('ileriMomentum', m.momentum);
     durumCiz(m);
   }
 
@@ -652,17 +769,19 @@
     if (!zorla && Date.now() - zaman < 60000) return;
     zaman = Date.now();
     const hataYaniti = (e) => ({ success: false, error: e.message });
-    const [v, k, c, rr, g8] = await Promise.all([
+    const [v, k, c, rr, g8, tm, mo] = await Promise.all([
       AG.api.ileriBollinger().catch(hataYaniti),
       AG.api.ileriKabul ? AG.api.ileriKabul().catch(hataYaniti) : Promise.resolve(null),
       AG.api.ileriCbdr ? AG.api.ileriCbdr().catch(hataYaniti) : Promise.resolve(null),
       AG.api.ileriKabulRapor ? AG.api.ileriKabulRapor().catch(hataYaniti) : Promise.resolve(null),
-      AG.api.ileri876 ? AG.api.ileri876().catch(hataYaniti) : Promise.resolve(null)
+      AG.api.ileri876 ? AG.api.ileri876().catch(hataYaniti) : Promise.resolve(null),
+      AG.api.ileriTemettu ? AG.api.ileriTemettu().catch(hataYaniti) : Promise.resolve(null),
+      AG.api.ileriMomentum ? AG.api.ileriMomentum().catch(hataYaniti) : Promise.resolve(null)
     ]);
-    ciz(v, k, c, rr, g8);
+    ciz(v, k, c, rr, g8, tm, mo);
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.ileri = { yukle, ciz, durumCiz, GRAFIK_YERI, bollingerModel, hucumDengeModel, demoModel, demoRaporModel, OLCUT_ADI, ucGunSatiri, d3Satiri, hucumSSatiri, takvimModel, grafikModeli, tarihAdi, cbdrModel, cbdrSiradaki, l876Model };
+  AG.pages.ileri = { yukle, ciz, durumCiz, GRAFIK_YERI, bollingerModel, hucumDengeModel, demoModel, demoRaporModel, OLCUT_ADI, ucGunSatiri, d3Satiri, hucumSSatiri, takvimModel, grafikModeli, tarihAdi, cbdrModel, cbdrSiradaki, l876Model, temettuModel, momentumModel };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.ileri;
 })(typeof window !== 'undefined' ? window : globalThis);

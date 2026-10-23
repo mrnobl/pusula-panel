@@ -300,6 +300,9 @@
     ileriCbdr: () => al('/api/ileri/cbdr'),
     /* 64.9 876 gölge + Hücum %90 / 876 %10 (lib/ileri/golge876.js; tasarımcı yönlendiricisinde) — son.json özeti, salt okur */
     ileri876: () => al('/api/ileri/876'),
+    /* 73.1 BIST temettü ex-gün gölgesi (deneme 970) ve 2 haftalık momentum kolu gölgesi (deneme 971) — son.json özeti, salt okur */
+    ileriTemettu: () => al('/api/ileri/temettu'),
+    ileriMomentum: () => al('/api/ileri/momentum'),
     /* 63.3 Sinyaller: BTC trendi + coin sepeti bugün ne diyor (lib/research/sinyaller.js; tasarımcı yönlendiricisinde) — yalnız okur */
     sinyaller: () => al('/api/sinyaller'),
 
