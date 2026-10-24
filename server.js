@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.4';
+const APP_VERSION = '73.5';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -581,8 +581,11 @@ try {
 const engine = new TradingEngine(config);
 // Bildirim merkezi (lib/bildirimMerkezi.js, PLAN-PANEL-2): Telegram'a giden her mesaj türüne ayrılır, kapalı tür gönderilmez,
 // her deneme kayda geçer. İlk açılışta eski config bayrakları (notifyTrades/Errors/Lifecycle) varsayılan.
+// 73.5: tür başına kanal (ntfy = 69.4 ikinci kanal, sır kasasındaki konu), şablon, sessiz saat; geliştirme bilgisayarında ntfy da gitmez.
 const BILDIRIM = require('./lib/bildirimMerkezi').olustur({ kok: __dirname,
-  varsayilan: () => ({ islem: engine.telegram.notifyTrades, hata: engine.telegram.notifyErrors, yasam: engine.telegram.notifyLifecycle }) });
+  varsayilan: () => ({ islem: engine.telegram.notifyTrades, hata: engine.telegram.notifyErrors, yasam: engine.telegram.notifyLifecycle }),
+  ntfyFn: () => { const k = ikinciKanal(); return k.konu ? { konu: k.konu } : null; },
+  engelFn: () => TELEGRAM_GELISTIRME_ENGELI || (ARASTIRMA_MODU ? 'araştırma modu' : null) });
 engine.telegram.merkezBagla(BILDIRIM);
 // 67.5: geliştirme bilgisayarında (araştırma modu / data/makine.json / sunucu bağlantısı kurulu) Telegram yoklaması ve gönderimi
 // kapalı — sunucudaki yoklamayla 409 çakışması olmasın. TELEGRAM_GELISTIRME=1 açıkça açar. Sunucuda davranış değişmez.
@@ -696,7 +699,9 @@ const gorunurModlar = (b) => BINDIRME_MODLAR.filter(m => m !== 'canli' || b.mod 
 const GOLGE_DOSYA = yollar.veri('ileri', 'bindirme-golge.jsonl');
 /** 69.4 ikinci kanal (ntfy) ve ikinci ölü adam: secrets.json `ikinciKanal` { ntfyKonu, sinyalUrl } (sır — panelde maskeli). */
 const ikinciKanal = () => { const k = (loadSecrets().ikinciKanal) || {}; return { konu: k.ntfyKonu || null, sinyalUrl: k.sinyalUrl || null }; };
-const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ikinciKanalFn: ikinciKanal, ozetDosya: yollar.veri('telegram-son-ozet.json'),
+// 73.5: Bildirici'nin kendi ntfy yayını (alarm her zaman) bildirim merkezinin az önce ntfy'a yolladığı aynı başlığı ikinci kez yollamasın
+// (tür kanalı "ikisi" seçiliyse) — yalnız fetch sarılır; Bildirici kodu (lib/live/isletim.js) değişmedi.
+const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ikinciKanalFn: ikinciKanal, fetchFn: BILDIRIM.ntfyFetchSarmala(), ozetDosya: yollar.veri('telegram-son-ozet.json'),
   kuyrukDosya: ARASTIRMA_MODU ? null : yollar.veri('telegram-kuyruk.jsonl'),   // Y3: giden kutusu (5 dk'da bir boşaltılır)
   gunlukDosya: ARASTIRMA_MODU ? null : yollar.veri('live', 'alarmlar.jsonl') });   // PLAN-DEMO-KABUL I3: kalıcı bildirim günlüğü
 
@@ -3246,7 +3251,19 @@ app.use(require('./lib/defter').router({ log: (lv, msg) => db.addLog(lv, msg) })
  */
 app.use(require('./lib/gunluk').router(GUNLUK));
 // Bildirim merkezi uçları: GET /api/bildirim (katalog + son gönderilenler + Telegram durumu), POST /api/bildirim/ayar { tur, acik }.
-app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), log: (lv, msg) => db.addLog(lv, msg) }));
+// 73.5: + POST /api/bildirim/{tur,sessiz,uretici,onizle}; GET'e üretici durumu (makine nabızları, son KAP/fiyat/anahtar denetimi).
+let bildirimUreticileri = null;
+app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? bildirimUreticileri.durum() : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
+/**
+ * 73.5 MAKİNE NABZI: araştırma kopyası (sunucu bağlantısı kurulu) 10 dk'da bir GET /api/makine/nabiz — başlık x-pusula-makine (bilgisayar
+ * adı), x-pusula-surum. Yalnız sunucuda ve jetonla gelen istekte (telefon / geliştirme kademesi) kaydedilir; yerel istek ve başlıksız
+ * istek kayıt yazmaz. Yanıtta sır yok.
+ */
+app.get('/api/makine/nabiz', (req, res) => {
+  const ad = String(req.headers['x-pusula-makine'] || '');
+  const kaydedildi = !!(bildirimUreticileri && ad && req.kademe && req.kademe !== 'yerel' && bildirimUreticileri.nabizKaydet(ad, { surum: req.headers['x-pusula-surum'], tur: 'arastirma' }));
+  res.json({ success: true, kaydedildi, surum: APP_VERSION });
+});
 
 /*
  * RAPOR MOTORU (lib/rapor.js, PLAN-PANEL-2): her gün 09:00'dan sonra dünün günlük raporu; son biten haftanın, ayın ve (ocakta) yılın raporu (67.5)
@@ -3338,6 +3355,36 @@ const anahtarlar = require('./lib/anahtarlar').olustur({
   kasaSonrasi: (ad) => { if (ad === 'secrets.json') { SIRLAR_KILITLI = null; db.addLog('INFO', 'secrets.json kenara alındı — sırlar artık panelden yeniden girilebilir.'); } }
 });
 anahtarYonlendirici = anahtarlar.router;
+
+/*
+ * 73.5 BİLDİRİM ÜRETİCİLERİ (lib/bildirimUreticileri.js): bilanço (KAP), makine sessiz, gölge testler haftalık özeti, anahtar sınaması
+ * (salt okuma, günde bir), sert fiyat hareketi. YALNIZ SUNUCU — araştırma kopyasında kurulmaz (Telegram yalnız sunucudan). Karar/emir yok.
+ */
+function bistKodlari() {
+  const s = new Set();
+  try {   // Lydia (BIST M10) kâğıt hesabının açık pozisyonları
+    const j = JSON.parse(fs.readFileSync(yollar.veri('tasarimci', 'kagit.json'), 'utf8'));
+    for (const p of (((j.modeller || {})['m-bist-m10'] || {}).pozisyonlar || [])) if (p && p.s && Number(p.adet) > 0) s.add(String(p.s));
+  } catch { /* kâğıt hesap yok */ }
+  try {   // Portföyüm: TRY hisse varlıkları (adet > 0)
+    const { D, muh } = require('./lib/portfoyum/depo').yukle();
+    for (const c of muh.ciftler.values()) {
+      if (c.nakit || !(c.ana && c.ana.adet > 1e-9)) continue;
+      const v = D.varliklar.get(c.varlik);
+      if (v && v.sinif === 'hisse' && v.para === 'TRY') s.add(String(v.kod || v.sembol).replace(/\.IS$/i, ''));
+    }
+  } catch { /* Portföyüm yok */ }
+  return [...s];
+}
+// Geliştirme bilgisayarında (TELEGRAM_GELISTIRME_ENGELI: data/makine.json, sunucu bağlantısı) da kurulmaz — öz testlerin açtığı sunucular dahil.
+if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI) {
+  bildirimUreticileri = require('./lib/bildirimUreticileri').olustur({
+    durumDosya: yollar.veri('bildirim-uretici.json'), merkez: BILDIRIM,
+    gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
+    log: (lv, msg) => db.addLog(lv, msg),
+    kaynaklar: { bistKodlari, golgeSatirlari: () => require('./lib/golgeOzet').satirlar(), anahtarSina: () => anahtarlar.otoSina() },
+  });
+}
 if (!ARASTIRMA_MODU && process.env.ISLEM_DEFTERI_ESITLE !== '0') {
   const idEsitle = () => { islemDefteri.gunlukEsitle().catch(e => db.addLog('WARN', `İşlem defteri OKX/Binance eşitleme: ${e.message}`)); };
   setTimeout(idEsitle, 3 * 60 * 1000).unref();
@@ -3798,6 +3845,23 @@ server.listen(PORT, HOST, () => {
   db.addLog('INFO', `Sunucu port ${PORT} üzerinde başlatıldı.`);
   if (ARASTIRMA_MODU) console.log('🔬 ARAŞTIRMA MODU: Telegram kapalı, botlar başlamaz, bot/borsa/emir POST uçları kapalı.');
   else telegramYoklayici.baslat();
+  // 73.5: bildirim üreticileri + sessiz saat özeti (dakikada bir; sessiz saat bitince bekleyenler TEK mesaj) — yalnız sunucu.
+  if (bildirimUreticileri) {
+    bildirimUreticileri.baslat();
+    const sessizT = setInterval(() => { BILDIRIM.sessizBosalt({ telegram: (m) => (engine.telegram.enabled && engine.telegram.botToken && engine.telegram.chatId ? engine.telegram._gonderHam(m) : Promise.resolve({ ok: true })) }).catch(() => null); }, 60 * 1000);
+    if (sessizT.unref) sessizT.unref();
+  }
+  // 73.5: araştırma kopyası sunucuya 10 dk'da bir "buradayım" der (Bildirimler › Makine sessiz). Yalnız sunucu bağlantısı kuruluysa.
+  if (ARASTIRMA_MODU) {
+    const nabiz = async () => {
+      const a = evOkuma.ayar();
+      if (!a) return;
+      try { await fetch(`${a.adres}/api/makine/nabiz`, { headers: { 'x-panel-token': a.jeton, 'x-pusula-makine': require('os').hostname().slice(0, 40), 'x-pusula-surum': APP_VERSION }, signal: AbortSignal.timeout(10000), redirect: 'error' }); } catch { /* sunucu kapalı: sonraki tur */ }
+    };
+    const nabizT = setInterval(nabiz, 10 * 60 * 1000);
+    if (nabizT.unref) nabizT.unref();
+    setTimeout(() => nabiz(), 30 * 1000).unref();
+  }
   
   // Preload historical candles for configured watchlist on boot.
   // 68.3 (PLAN-TASIMA K6/F5): YENİ veri düzeninde (kurulum programıyla kurulmuş boş kurulum) açılışta mum indirilmez — ilk açılışta

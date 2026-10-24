@@ -502,7 +502,12 @@
     /* ── Bildirim merkezi (lib/bildirimMerkezi.js, PLAN-PANEL-2; panel: js/pages/bildirimMerkezi.js) ── */
     bildirim: {
       liste: () => al('/api/bildirim'),
-      ayarla: (tur, acik) => gonder('/api/bildirim/ayar', { tur, acik })
+      ayarla: (tur, acik) => gonder('/api/bildirim/ayar', { tur, acik }),
+      // 73.5: tür ayarı { tur, acik?, metin?, kanal?, sessiz? }, sessiz saat, yeni türlerin ayarı, yan etkisiz önizleme
+      tur: (g) => gonder('/api/bildirim/tur', g),
+      sessiz: (g) => gonder('/api/bildirim/sessiz', g),
+      uretici: (g) => gonder('/api/bildirim/uretici', g),
+      onizle: (tur, metin) => gonder('/api/bildirim/onizle', { tur, metin })
     },
     /* ── Raporlar (lib/rapor.js, PLAN-PANEL-2; panel: js/pages/raporlar.js) ── */
     rapor: {

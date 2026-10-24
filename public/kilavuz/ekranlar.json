@@ -6579,11 +6579,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 56282,
+        "bayt": 54390,
         "olcek": 1,
-        "ozet": "2ea93082f2c4de3ab3cb85ae76fe494c59a583a2ada34ab59c4e5183c3730cbd",
-        "genel": "22ed26909301c5adc43625d3587a1a535ae5595b24a6fe38a2b90d7fd04416bc",
-        "surum": "73.4",
+        "ozet": "c3af8fcc3340ce0f2943f9b12a6ee7f8dcacc583e52f581f9b49fa5c909a61e7",
+        "genel": "1683a60072be2e74c1add22d54f4f0b687901d0efff5359ceeb66c6c5f109693",
+        "surum": "73.5",
         "tarih": "2026-10-24",
         "isaretler": [
           {
@@ -6977,11 +6977,18 @@
       "kimlik": "bildirim-1400",
       "rota": "bildirimler",
       "genislik": 1400,
-      "yukseklik": 1300,
+      "yukseklik": 1750,
       "once": [
         {
           "bekleSecici": "#bildirimTurler .bm-satir",
           "sure": 30000
+        },
+        {
+          "tikla": "#bmAc-islem"
+        },
+        {
+          "bekleSecici": "#bmAyrinti-islem",
+          "sure": 5000
         },
         {
           "bekle": 500
@@ -6990,62 +6997,96 @@
       "isaretler": [
         {
           "secici": "#bildirimTelegram",
-          "etiket": "Telegram bağlı mı (bağlantı ayarları Ayarlar › Bildirimler)"
+          "etiket": "Telegram (ve ntfy) bağlı mı"
         },
         {
-          "secici": "#bildirimTurler",
-          "etiket": "Türler: ne zaman gelir · önem · son gönderim · açık/kapalı"
+          "secici": "#bmSessizKart",
+          "etiket": "Sessiz saatler"
+        },
+        {
+          "secici": "#chkBildirim-acil",
+          "etiket": "Kritik türler kapatılamaz"
+        },
+        {
+          "secici": "#bmMetin-islem",
+          "etiket": "Metin (değişkenlerle)"
+        },
+        {
+          "secici": "#bmOnizleme-islem",
+          "etiket": "Önizleme"
+        },
+        {
+          "secici": "#bmKanal-islem",
+          "etiket": "Kanal"
         },
         {
           "secici": "#bildirimGecmis",
           "etiket": "Son gönderilenler ve sonucu"
-        },
-        {
-          "secici": "#btnBildirimDeneme",
-          "etiket": "Deneme mesajı"
         }
       ],
       "uretim": {
         "dosya": "bildirim-1400.webp",
         "en": 1400,
-        "boy": 1300,
-        "bayt": 100668,
+        "boy": 1750,
+        "bayt": 116122,
         "olcek": 1,
-        "ozet": "c39e69e702cb5a156c4c31387702834538a0c420b2f7d7cd062f25df37b2b99d",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "ozet": "b1895104aeabb193cc1883d09e4f921a5846b2efe7ff31f349c896e45f8f396e",
+        "genel": "1683a60072be2e74c1add22d54f4f0b687901d0efff5359ceeb66c6c5f109693",
+        "surum": "73.5",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#bildirimTelegram",
             "x": 260,
-            "y": 184,
+            "y": 200,
             "w": 130,
             "h": 30
           },
           {
-            "secici": "#bildirimTurler",
+            "secici": "#bmSessizKart",
             "x": 260,
-            "y": 220,
+            "y": 236,
             "w": 812,
-            "h": 1078
+            "h": 178
+          },
+          {
+            "secici": "#chkBildirim-acil",
+            "x": 989,
+            "y": 567,
+            "w": 30,
+            "h": 30
+          },
+          {
+            "secici": "#bmMetin-islem",
+            "x": 291,
+            "y": 1422,
+            "w": 371,
+            "h": 127
+          },
+          {
+            "secici": "#bmOnizleme-islem",
+            "x": 670,
+            "y": 1402,
+            "w": 371,
+            "h": 87
+          },
+          {
+            "secici": "#bmKanal-islem",
+            "x": 291,
+            "y": 1330,
+            "w": 148,
+            "h": 39
           },
           {
             "secici": "#bildirimGecmis",
             "x": 1080,
-            "y": 220,
+            "y": 236,
             "w": 308,
-            "h": 1078
-          },
-          {
-            "secici": "#btnBildirimDeneme",
-            "x": 1202,
-            "y": 178,
-            "w": 186,
-            "h": 42
+            "h": 1512
           }
         ]
-      }
+      },
+      "kalite": 50
     },
     {
       "kimlik": "ayarlar-1400",

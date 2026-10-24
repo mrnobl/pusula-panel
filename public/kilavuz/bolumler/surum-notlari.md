@@ -2,6 +2,17 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.5 — Bildirimleri düzenleme ve beş yeni bildirim (2026-10-24) {#s73-5}
+
+- **[Sistem › Bildirimler](#/kilavuz/bildirimler)'de her türün Düzenle düğmesi:** **metni** kendiniz yazın (süslü parantezli değişkenlerle: `{baslik}`, `{govde}`, `{bot}`, `{fiyat}` …), yanında **önizleme**; **kanal** seçin (Telegram, ntfy ya da ikisi). Metni boş bırakırsanız mesaj bugünkü gibi gelir — siz değiştirmedikçe hiçbir bildirimin metni değişmedi, hepsi açık kaldı.
+- **Sessiz saatler** (varsayılan kapalı): ör. 23:00–08:00 arası gelen bildirim türüne göre bekletilip sessiz saat bitince **tek özet** olarak gelir ya da hiç gönderilmez. [Ayrıntı](#/kilavuz/bildirimler/sessiz).
+- **Kritik bildirimler kapatılamaz ve sessiz saati deler:** Acil durum, **Koruma stopu** (felaket stopu konamadı / kayboldu …), **Bot ENGEL / güvenli kip / emir freni**, **Güvenlik** (PIN kilidi, canlı hesaba geçiş, IP değişimi …). Önceden tek "Acil durum" satırındaydılar; şimdi dört ayrı satır. Yalnız metinleri değişebilir. [Ayrıntı](#/kilavuz/bildirimler/kritik).
+- **Beş yeni bildirim** (yalnız sunucu üretir, hiçbiri emir vermez): **Bilanço açıklandı** (Lydia ve Portföyüm BIST hisseleriniz; KAP'tan net kâr ve geçen yılın aynı dönemi), **Makine sessiz** (sunucu uzun kapalı kaldıysa açılışta; araştırma kopyası 24 saat görünmezse), **Gölge testler haftalık özeti** (pazartesi sabahı tek mesaj, hüküm yok), **Anahtar sınaması başarısız** (günde bir salt okuma sınaması; para çekme izni açıksa da), **Sert fiyat hareketi** (BTC 1 saatte ±%5; sembol, eşik ve tekrar süresi ayarlanabilir). [Ayrıntı](#/kilavuz/bildirimler/yeni).
+- İnternet kesintisinden sonra **gecikmeli** giden bir bildirim artık kendi türünde sayılır ve sade biçimde gelir (önceden "Diğer" sayılıyordu).
+- Geliştirme bilgisayarından yapılan bildirim ayarı sunucuya iletilir (bildirimleri sunucu gönderir); telefonda sayfa yalnız görüntülenir.
+- **Öz denetim düzeltmesi:** öz denetim artık küçük kol farklarının (borsanın asgari emir tutarının altında kalan, borsaya hiç gönderilmeyen) atlanmasını "emir reddi" saymıyor; Tao 24 Ekim'de bu yüzden yanlışlıkla durdurulmuştu.
+- Bu sürüm Telegram gönderim kapısını (`lib/telegram.js`) değiştirdiği için sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur"); botların karar ve emir kodu değişmedi.
+
 ## 73.4 — İleriye kayıt yedeği, Nasdaq kesirli hisse (2026-10-24) {#s73-4}
 
 - **İleriye kayıt verisi artık yedekleniyor.** Her pazartesi sabah günlük yedek görevi, ham kayıtların yalnız **yeni ve değişen** günlük dosyalarını yedek klasöründeki tek bir klasöre (`ileriye-kayit-artimli`) ekler; her hafta tam kopya alınmaz, disk dolmaz (yedekte ayda ~200 MB). Pazartesi kaçarsa ilk günlük yedekte alınır; 73.4'e geçince ilk günlük yedekte bir kez hemen alınır. Her dosya SHA-256 özetiyle doğrulanır. Ayrıntı: [Yedek ve taşıma › İleriye kayıt yedeği](#/kilavuz/yedek-tasima/ileriye-kayit-yedegi).

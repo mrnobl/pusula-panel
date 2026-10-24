@@ -70,7 +70,7 @@ Panelden **değişmeyenler** (yalnız durum + komut gösterilir): acil PIN'in ke
 
 ### Sına {#anahtar-sina}
 
-**Sına** anahtarla borsaya **yalnız okuma** bağlantısı dener: bakiye okunur (kaç varlık, USDT toplamı) ve anahtarın izinleri sorulur (vadeli işlem, spot, **para çekme**, IP kısıtı). **Hiçbir emir gönderilmez, hiçbir şey değişmez.** Sonuç satıra "Son sınama …" olarak yazılır. Telegram için bot adı (getMe), sağlık sinyali için bir test sinyali gönderilir (Bildirimler'deki "Test sinyali gönder" ile aynı). Binance demo hesabında izin sorgusu yoktur (Binance desteklemiyor).
+**Sına** anahtarla borsaya **yalnız okuma** bağlantısı dener: bakiye okunur (kaç varlık, USDT toplamı) ve anahtarın izinleri sorulur (vadeli işlem, spot, **para çekme**, IP kısıtı). **Hiçbir emir gönderilmez, hiçbir şey değişmez.** Sonuç satıra "Son sınama …" olarak yazılır. Telegram için bot adı (getMe), sağlık sinyali için bir test sinyali gönderilir (Bildirimler'deki "Test sinyali gönder" ile aynı). Binance demo hesabında izin sorgusu yoktur (Binance desteklemiyor). 73.5'ten beri sunucu, kayıtlı borsa ve İşlem defterim anahtarlarını **her gün bir kez** aynı salt okuma sınamasından kendiliğinden geçirir; bağlanamayan ya da para çekme izni açık anahtar olursa [Anahtar sınaması başarısız](#/kilavuz/bildirimler/yeni) bildirimi gelir.
 
 ### Acil PIN'i değiştirmek {#pin-degistir}
 
@@ -148,7 +148,7 @@ Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bug�
 
 ## Bildirimler {#bildirimler}
 
-**Telegram** ve **Sağlık sinyali** aynı sayfada, alt alta. En üstte iki durum satırı: Telegram bağlı mı (günlük özet, işlem ve alarm bildirimleri gidiyor mu; araştırma kopyasında "bilinçli olarak kapalı") ve **Telegram komutları** yoklaması çalışıyor mu.
+**Telegram** ve **Sağlık sinyali** aynı sayfada, alt alta. En üstte iki durum satırı: Telegram bağlı mı (günlük özet, işlem ve alarm bildirimleri gidiyor mu; araştırma kopyasında "bilinçli olarak kapalı") ve **Telegram komutları** yoklaması çalışıyor mu. Hangi bildirimin, hangi metinle ve kanalla (Telegram / ntfy) gideceği ve **sessiz saatler** [Sistem › Bildirimler](#/kilavuz/bildirimler)'de.
 
 ## Adım adım: Telegram bildirimlerini kurmak {#telegram}
 

@@ -3249,6 +3249,29 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .bm-oge-ust { font-size: var(--fs-sm); }
 .bm-oge-hata { background: var(--neg-soft); }
 .bm-oge-kapali { opacity: .7; }
+/* 73.5 D8: tür ayrıntısı (kanal, sessiz saat, metin + değişken çipleri + Telegram benzeri önizleme), sessiz saat ve yeni türlerin ayarı. */
+.bm-rozetler { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-top: var(--sp-1); }
+.bm-ac-dugme { background: none; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--accent); padding: 2px var(--sp-3); min-height: 32px; cursor: pointer; font: inherit; font-size: var(--fs-sm); }
+.bm-ac-dugme:hover { background: var(--surface-2); }
+.bm-ayrinti { grid-column: 1 / -1; display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-3); background: var(--surface-2); border-radius: var(--radius-md); }
+.bm-ayrinti-ust { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3); }
+.bm-alan { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bm-alan-yatay { flex-direction: row; align-items: center; gap: var(--sp-2); min-height: 44px; }
+.bm-duzen { display: flex; flex-wrap: wrap; gap: var(--sp-4); }
+.bm-duzen-sol, .bm-duzen-sag { flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: var(--sp-2); }
+.bm-metin { width: 100%; min-height: 120px; font-family: var(--font-mono); font-size: var(--fs-sm); resize: vertical; }
+.bm-cipler { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.bm-cip { background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 2px var(--sp-2); min-height: 30px; font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text); cursor: pointer; }
+.bm-cip:disabled { cursor: default; opacity: .7; }
+.bm-dugmeler { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.bm-onizleme { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--sp-3); font-size: var(--fs-sm); overflow-wrap: anywhere; min-height: 80px; }
+.bm-onizleme-satir { min-height: 1.3em; }
+.bm-onizleme strong { font-weight: var(--fw-semibold); color: var(--text-strong); }
+.bm-sessiz, .bm-uretici { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3); }
+.bm-uretici .bm-alan { flex: 1 1 140px; }
+.bm-uretici .bm-alan:first-child { flex: 2 1 260px; }
+.bm-saat { min-width: 110px; }
+.bm-bilgi { margin: 0; padding-left: var(--sp-4); display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-sm); }
 
 /* Günlük › Raporlar (PLAN-PANEL-2): üst satır sarılır; tablolar sola yaslı; model kartları ızgara. */
 .rp-ust { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }

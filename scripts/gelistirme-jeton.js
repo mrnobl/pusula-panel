@@ -41,7 +41,7 @@ function main(argv = process.argv.slice(2), cikti = console.log, kok = KOK) {
   const jeton = crypto.randomBytes(32).toString('base64url');   // 256 bit
   fs.mkdirSync(path.dirname(dosya), { recursive: true });
   fs.writeFileSync(dosya, JSON.stringify({ ozet: GV.gelistirmeOzeti(jeton), olusturma: new Date().toISOString(), not: 'Yalnız SHA-256 özeti. Jeton geliştirme bilgisayarında data/ev-baglanti.json yazmaJetonu.' }, null, 2), { encoding: 'utf8', mode: 0o600 });
-  cikti(`Geliştirme yazma jetonu ${var_ ? 'YENİLENDİ (eskisi geçersiz)' : 'üretildi'}. BİR KEZ gösteriliyor — geliştirme bilgisayarında şunu çalıştırın:\n\n  npm run sunucu-baglanti -- --yazma-jeton ${jeton}\n\nBu jeton yalnız İşlem defterim, Portföyüm, borsa anahtarı ve model sermayesi / kesirli hisse kayıtlarını yazar (bot, genel ayar, güncelleme değil). Kimseyle paylaşmayın.`);
+  cikti(`Geliştirme yazma jetonu ${var_ ? 'YENİLENDİ (eskisi geçersiz)' : 'üretildi'}. BİR KEZ gösteriliyor — geliştirme bilgisayarında şunu çalıştırın:\n\n  npm run sunucu-baglanti -- --yazma-jeton ${jeton}\n\nBu jeton yalnız İşlem defterim, Portföyüm, borsa anahtarı, model sermayesi / kesirli hisse ve bildirim ayarı kayıtlarını yazar (bot, genel ayar, güncelleme değil). Kimseyle paylaşmayın.`);
   return 0;
 }
 
