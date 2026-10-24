@@ -18,7 +18,7 @@
  *   (f) "İşlem geçmişi"  tarih, işlem, hisse, adet, fiyat, tutar, komisyon, gerçekleşen K/Z, neden · CSV indir
  * Veri: GET /api/tasarimci/portfoy-bot/:id (lib/tasarimci/portfoyBot.js). Resmî kayıt sunucuda: geliştirme bilgisayarında uç
  * lib/evOkuma.js ile sunucudan okunur; sunucu eski sürümse (uç yok → "(404,") sakin "Sunucu güncellenince görünür" bandı.
- * Telefonda "tutarları gizle" açıksa tutarlar "—", grafik yüzde (100 taban). YALNIZ OKUR. Kurallar: AG.dom, AG.tablo, AG.grafik;
+ * Telefonda "tutarları gizle" açıksa tutarlar "—", grafik yüzde (100 taban). YALNIZ OKUR (73.4 tek istisna: "tam adet için yetmiyor" uyarısındaki onaylı "Kesirli hisseyi aç" düğmesi — hisseYapilari.tamAdetBlok; telefonda yok). Kurallar: AG.dom, AG.tablo, AG.grafik;
  * inline stil yok.
  */
 (function (global) {
@@ -406,8 +406,12 @@
     const o = kg.ozet || {};
     if (o.bekleyenEmir && o.bekleyenEmir.length) uy.push(`Açılış fiyatı gelmediği için bekleyen emir: ${o.bekleyenEmir.join(', ')}`);
     const ay = kg.ayar || {};
+    // 73.4: Hisse yapılarıyla aynı "tam adet için yetmiyor" uyarısı + (ABD, kesirli kapalı) "Kesirli hisseyi aç" düğmesi — hisseYapilari.js
+    const HY = AG.pages && AG.pages.hisseYapilari;
+    const tam = HY && HY.tamAdetUyarisi ? HY.tamAdetUyarisi({ ...kg, model: id, para: kg.para || x.para }) : null;
     doldur(a, [
       baslikCiz(id, x),
+      tam ? el('div', { class: 'mt-2' }, [HY.tamAdetBlok(tam, () => yukle(id, true), `btnPbotKesirliAc-${k(id)}`)]) : null,
       ...uy.map(u => el('p', { class: 'pf-uyari pf-uyari-uyari mb-0 mt-2', text: `⚠ ${u}` })),
       sayilarCiz(id, x),
       el('section', { id: `pbotDegerBlok-${k(id)}`, class: 'bot-blok pbot-blok', 'aria-label': 'Portföy değeri ve karar günleri' }, [

@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.3';
+const APP_VERSION = '73.4';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -385,6 +385,10 @@ function evYazmaSonucu(kayit, tur, govde) {
   // 65.0: aynısı Binance için (dosya geri alındı ya da bu bilgisayarın Binance satırları sunucuda reddedildi → sonraki eşitleme baştan)
   if (/^\/api\/islem-defteri\/yukleme\/[^/]+\/geri-al$/.test(yol) && tur === 'tamam' && govde && govde.binanceTamTarama && govde.hesap) islemDefteri.binanceTamTaramaIsaretle(govde.hesap);
   if (yol === '/api/islem-defteri/binance/kayitlar' && (tur === 'red' || tur === 'cikar') && kayit.hesap) islemDefteri.binanceTamTaramaIsaretle(kayit.hesap);
+  // 73.4: model sermayesi / kesirli hisse ayarı sunucuda kabul edildi → bu bilgisayarın sermaye.json'u da sunucunun hâline (yerel "Bu ay" + kâğıt hesap)
+  if (yol === '/api/tasarimci/sermaye' && tur === 'tamam' && govde && govde.success && govde.sermaye) {
+    try { require('./lib/tasarimci/api').yerelSermayeYansit(govde.sermaye); } catch (e) { db.addLog('WARN', `🧭 Sunucudaki sermaye ayarı bu bilgisayara yansıtılamadı: ${e.message}`); }
+  }
 }
 /** Sunucudan okunan /ozet yanıtlarına bu bilgisayarın yazma/kuyruk durumu (ve İşlem defterim'de bu bilgisayarın OKX anahtar durumu). */
 function evYanitiTamamla(yol, g) {

@@ -90,6 +90,28 @@ Yerel yedek ve USB, sunucu çalınır, yanar ya da diski bozulursa kopyayla birl
 - Başarısızlık yerel yedeği bozmaz; Telegram'a "Pusula uzak yedeği başarısız" gider.
 - Geri dönüş: `restic -r rclone:gdrive:PusulaYedek restore latest --target C:\Pusula-geri` (parola sorulur), sonra gereken dosyaları elle kopyalayın.
 
+## Günlük yedek ve ileriye kayıt yedeği {#ileriye-kayit-yedegi}
+
+Sunucudaki **PusulaYedek** görevi her gün 05:30'da yeniden üretilemeyen veriyi (bot kayıtları, ileri test, portföy, ayarlar) yedek klasöründe tarihli bir klasöre kopyalar ([Kurulum › Adım 20](#/kilavuz/kurulum/adim-20)). Bu sayfadaki **Günlük yedek** kartı hedef klasörü, son günlük kopyayı ve ileriye kayıt yedeğini gösterir (yalnız okur; kart bu bilgisayarın kendi yedeğini gösterir — geliştirme bilgisayarında genellikle "henüz alınmadı" yazar).
+
+**İleriye kayıt verisi** ([Veri › İleriye kayıt](#/kilavuz/veri/ileriye-kayit)) geriye dönük indirilemez ve **süresiz** saklanır: saklama süresi ayarı (`ileriyeKayit.saklaGun`) boşsa hiçbir dosya silinmez. Ayda yaklaşık 200 MB büyüdüğü için her gün tam kopyalanmaz:
+
+- **Haftada bir** — pazartesi sabahki günlük yedekle aynı çalışmada (pazartesi kaçtıysa son ileriye kayıt yedeği 7 günden eskiyse ilk günlük yedekte; 73.4'e geçince ilk günlük yedekte de bir kez) — yedek klasöründeki **tek** bir klasöre, `ileriye-kayit-artimli`, eklenir.
+- **Artımlı:** yalnız yeni ve değişen günlük dosyalar kopyalanır. Kayıtlar yalnız eklenir ve gün gün ayrı dosyadadır; geçmiş günler bir kez kopyalanır, o günün büyüyen dosyası her hafta yenilenir, gün bitip sıkıştırılınca yedekteki yarım kopya sıkıştırılmış tam günle değişir.
+- **Hiçbir şey silinmez:** kaynakta bir dosya silinse (saklama süresi verdiyseniz) bile yedekte kalır. Günlük kopyaların "14 gün + 8 pazartesi" kuralı bu klasöre dokunmaz.
+- **Doğrulama:** her dosya kopyalanırken SHA-256 özetiyle denetlenir; özetler klasördeki `artimli-manifest.json`'da durur. Tam denetim: `npm run yedek -- --ileri-dogrula`.
+- **Boyut:** yedek diskinde ileriye kayıt verisinin kendisi kadar yer tutar (ayda ~200 MB, yılda ~2,4 GB); her hafta yalnız o haftanın dosyaları (~50 MB) yazılır.
+- Sır içermez; bulut klasörü hedefinde de kopyalanır.
+
+| Komut (sunucuda) | Ne yapar |
+|---|---|
+| `npm run yedek -- --durum` | Günlük kopyalar, son yedek ve ileriye kayıt yedeği satırı |
+| `npm run yedek -- --ileri` | Günlük yedek + ileriye kayıt yedeğini (pazartesi beklemeden) hemen al |
+| `npm run yedek -- --ileri-dogrula` | İleriye kayıt yedeğinin her dosyasını özetle doğrula |
+| `npm run yedek -- --geri-yukle ileriye-kayit --dizin C:Pusula-inceleme` | Doğrulayıp **ayrı** bir klasöre aç (canlı veriye dokunmaz) |
+
+**Sağlık:** Sağlık › **Yedek alınıyor** satırı ileriye kayıt yedeği **8 günden eskiyse** ya da **başarısızsa** sarı olur (yalnız haber; günlük yedek ayrı yazılır). Başarısızlıkta Telegram'a "İleriye kayıt haftalık yedeği alınamadı" gider; günlük yedek bundan etkilenmez. Yeni bir zamanlanmış görev kurmanız **gerekmez** — mevcut günlük görev bunu da yapar.
+
 ## Eski yedekten geri yükleme {#eski-yedek}
 
 68.1'den önceki günlük ve USB yedekleri tarihli **klasörlerdir** (içinde `yedek-manifest.json` ve `data\…`). Okunabilir kalırlar:

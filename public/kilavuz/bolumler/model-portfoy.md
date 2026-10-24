@@ -50,8 +50,9 @@ Kesin karar ay sonu kapanışında kendiliğinden verilir ve dondurulur. Önizle
 
 Lydia TL hesaptır; kıyas **BIST 30 (XU030)**. Aday havuzu BIST için **tahmindir** (evren karar günü yeniden hesaplanır). Kâğıt hesabın kuralları kartın altında yazar: Midas BIST komisyonsuz, kayma %0,05, tam adet, temettü stopajı %15, nakde faiz yok; mevcut hissede küçük düzeltme yapılmaz.
 
-- **Kâğıt hesabın sermayesi** "Modeller sayfasının altındaki Ayarlar"daki model sermayesidir (sunucuda). Kesirli hisse ayarı açıksa ABD hisseleri kesirli alınır; BIST her zaman tam adet.
-- **"Sermaye tam adet için yetmiyor"** uyarısı: listedeki hisselerin bir kısmı alınamadı ve paranın %5'ten fazlası nakitte; sermaye ya da kesirli hisse kararı gerekir.
+- **Kâğıt hesabın sermayesi** "Modeller sayfasının altındaki Ayarlar"daki model sermayesidir (sunucuda). **Kesirli hisse** ayarı açıksa ABD hisseleri (Nova ve Simurg'un QQQ ayağı) bölünerek, en çok 6 haneli adetle alınır; BIST (Lydia) her zaman tam adet. **73.4'ten beri** ayar hiç kaydedilmediyse **açık** sayılır (kullanıcı kararı 2026-10-23: "tam almaya para yetmiyor"); siz kapattıysanız kapalı kalır.
+- **"Sermaye tam adet için yetmiyor"** uyarısı: listedeki hisselerin bir kısmı alınamadı ve paranın %5'ten fazlası nakitte. Nova'da (ABD) kesirli kapalıysa uyarının yanında **Kesirli hisseyi aç** düğmesi çıkar: onay sorar, yalnız kesirli ayarını açar (sermaye, eşik, hesaplar değişmez), kâğıt hesabı yeniden hesaplatır. Telefonda düğme yoktur; geliştirme bilgisayarından basılırsa ayar sunucuya iletilir. Lydia'da (BIST) düğme yoktur — çözüm sermayeyi artırmaktır.
+- Ayar değişince kâğıt hesap **baştan hesaplanır** (her 30 dakikalık hesapta geçmiş günler yeniden kurulur): geçmiş işlemler yeni ayarla yeniden yazılır ve bir kez **"geçmiş işlemler yeniden hesapta değişti (fiyat verisi revizyonu ya da ayar değişikliği)"** uyarısı çıkabilir — beklenen durumdur, bir sonraki hesapta kaybolur.
 - Telefonda "tutarları gizle" açıksa tutarlar "—", grafik yüzde olarak görünür.
 
 ## Ayrıntılı izleme {#ayrintili}

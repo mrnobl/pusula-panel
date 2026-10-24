@@ -1899,6 +1899,9 @@
 .mp-iki { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--sp-3); align-items: start; }
 .mp-blok { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--sp-3); min-width: 0; }
 .mp-buay:empty { display: none; }
+/* 73.4: "Sermaye tam adet için yetmiyor" uyarısı + "Kesirli hisseyi aç" düğmesi (Hisse yapıları / Portföy botları) */
+.mp-tam-adet { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); }
+.mp-tam-adet > span { flex: 1 1 260px; min-width: 0; }
 .ts-emir-gomulu { border-left: 3px solid var(--warn-metin); }
 .pm-model-cip { display: inline-block; font-size: var(--fs-sm); font-weight: var(--fw-semibold); border-radius: 4px; padding: 0 6px; background: var(--surface-2); border: 1px solid var(--border); }
 .pm-model-n10 { color: var(--seri-2); } .pm-model-b10 { color: var(--seri-5); } .pm-model-837 { color: var(--seri-4); }

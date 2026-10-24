@@ -8,6 +8,8 @@
  *   3. Araştırma eklentisi — oluştur (şifre isteğe bağlı) · "Eklenti yükle" (içe aktarma akışı, tür eklenti).
  *   4. USB yedeği — yedek şifresini bir kez kaydet (GİZLİ); haftalık USB yedeği aynı .pusula biçiminde.
  *   5. Eski yedekten geri yükleme — kılavuza bağlantı.
+ *   6. (73.4) Günlük yedek — #tsGunlukKart: hedef, son günlük kopya, ileriye kayıt haftalık ARTIMLI kopyası (yedek-ayar.json; YALNIZ OKUR,
+ *      komutlar npm run yedek …). GET /api/tasima/durum `yedek` (yalnız yerel kademe); başka uçların yanıtı `yedek` taşımaz → son değer korunur.
  * `iceAktarAkisi(kap, { tur })` kurulum sihirbazının ilk adımı ("Başka bilgisayardan taşı") ile ortak: dosya / yerel yol → şifre →
  * önizleme (ne gelecek, ne kadar, hangi sürümden) → onay → yerine koy. Telefon kademesinde her şey kapalı (sunucu da 403).
  */
@@ -41,6 +43,7 @@
   const dugme = (id, metin, sinif, onclick, o = {}) => el('button', { type: 'button', id, class: `p-dugme ${sinif || ''}`.trim(), disabled: o.kapali ? '' : null, onclick }, [el('span', { text: metin })]);
 
   let durum = null, tahmin = null, izleyici = null;
+  let yedekBilgi = null;   // 73.4: yalnız /api/tasima/durum taşır (diğer uçların yanıtı durum'u değiştirse de bu korunur)
 
   /* ── 1. Taşıma dosyası / eklenti oluştur ─────────────────────────────── */
 
@@ -196,6 +199,39 @@
     ]);
   }
 
+  /* ── 6. Günlük yedek + ileriye kayıt haftalık artımlı (73.4) ─────────── */
+
+  /** Saf: yedek-ayar özeti → kart satırları [{ ad, deger, ton }]. */
+  function gunlukSatirlari(y, simdi = Date.now()) {
+    const once = (z) => { const t = Date.parse(z); if (!Number.isFinite(t)) return '—'; const s = (simdi - t) / 3600e3; return s < 1 ? 'bir saatten az önce' : s < 48 ? `${Math.round(s)} saat önce` : `${Math.round(s / 24)} gün önce`; };
+    const out = [];
+    if (!y || !y.hedef) out.push({ ad: 'Hedef klasör', deger: 'kaydedilmemiş — sunucuda bir kez: npm run yedek -- --hedef E:\\PusulaYedek', ton: 'warn' });
+    else out.push({ ad: 'Hedef klasör', deger: y.hedef });
+    const s = y && y.son;
+    if (!s) out.push({ ad: 'Günlük kopya (her gün 05:30)', deger: 'henüz alınmadı', ton: 'warn' });
+    else if (s.hata) out.push({ ad: 'Günlük kopya (her gün 05:30)', deger: `BAŞARISIZ (${once(s.zaman)}): ${String(s.hata).slice(0, 160)}`, ton: 'neg' });
+    else out.push({ ad: 'Günlük kopya (her gün 05:30)', deger: `${once(s.zaman)} · ${s.dosya || '?'} dosya · ${boyutYaz(s.bayt)} · son 14 gün + 8 pazartesi saklanır` });
+    const ik = y && y.ileriyeKayit;
+    if (!ik) out.push({ ad: 'İleriye kayıt (haftada bir, artımlı)', deger: 'henüz alınmadı — ilk günlük yedekte, sonra her pazartesi', ton: 'warn' });
+    else if (ik.hata) out.push({ ad: 'İleriye kayıt (haftada bir, artımlı)', deger: `BAŞARISIZ (${once(ik.zaman)}): ${String(ik.hata).slice(0, 160)}`, ton: 'neg' });
+    else out.push({ ad: 'İleriye kayıt (haftada bir, artımlı)', deger: `${once(ik.zaman)} · toplam ${ik.dosya != null ? ik.dosya : '?'} dosya, ${boyutYaz(ik.toplamBayt)} · son çalışmada ${ik.eklenen || 0} yeni + ${ik.guncellenen || 0} değişen dosya (${boyutYaz(ik.bayt)})` });
+    const u = y && y.uzak;
+    if (u && u.depo) out.push({ ad: 'Şifreli uzak yedek', deger: u.son ? `${u.depo} · ${u.son.ok ? 'tamam' : `BAŞARISIZ: ${String(u.son.hata || '').slice(0, 120)}`} (${once(u.son.zaman)})` : `${u.depo} · henüz gönderilmedi`, ton: u.son && !u.son.ok ? 'neg' : '' });
+    return out;
+  }
+  function gunlukKarti() {
+    const satirlar = gunlukSatirlari(yedekBilgi);
+    const kotu = satirlar.some(x => x.ton === 'neg'), eksik = satirlar.some(x => x.ton === 'warn');
+    return el('section', { class: 'p-kart ts-kart', id: 'tsGunlukKart' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Günlük yedek' }),
+        el('span', { class: `p-rozet ${kotu ? 'p-rozet-neg' : eksik ? 'p-rozet-warn' : 'p-rozet-pos'}`, text: kotu ? 'Sorun var' : eksik ? 'Eksik' : 'Çalışıyor' })]),
+      p('Bu bilgisayarın PusulaYedek görevi her gün 05:30\'da yeniden üretilemeyen veriyi (bot kayıtları, ileri test, portföy, ayarlar) tarihli klasöre kopyalar. İleriye kayıt verisi büyük olduğu için günlük kopyaya girmez: haftada bir (pazartesi) aynı görev yalnız yeni ve değişen günlük dosyaları tek klasöre (ileriye-kayit-artimli) ekler; ham veri hiç silinmez.'),
+      el('dl', { class: 'kv-list kv-sik mb-0', id: 'tsGunlukListe' }, satirlar.flatMap(x => [el('dt', { text: x.ad }), el('dd', { class: x.ton === 'neg' ? 'tone-danger' : x.ton === 'warn' ? 'tone-warning' : '', text: x.deger })])),
+      p('Komutlar (sunucuda): npm run yedek -- --durum · hemen al: npm run yedek -- --ileri · ileriye kayıt kopyasını doğrula: npm run yedek -- --ileri-dogrula.', 'ts-metin ts-soluk'),
+      el('a', { class: 'kr-bag', href: '#/kilavuz/yedek-tasima/ileriye-kayit-yedegi', text: 'Kılavuz: ileriye kayıt yedeği →' }),
+    ]);
+  }
+
   function eskiKarti() {
     return el('section', { class: 'p-kart ts-kart', id: 'tsEskiKart' }, [
       el('h3', { class: 'p-kart-baslik', text: 'Eski biçimdeki yedekten geri yükleme' }),
@@ -212,7 +248,7 @@
     const bekleyen = durum.bekleyen;
     doldur(kap, [
       bekleyen ? bant(`Bu kurulum ${bekleyen.kaynakMakine || 'başka bir bilgisayar'} adlı bilgisayardan taşındı: botlar kendiliğinden başlamaz. Her bot için Botlar › Yönetim'de önce "Mutabakat", temiz çıkınca "Başlat" (bekleyen: ${(bekleyen.botlar || []).filter(b => !(bekleyen.temiz || []).includes(b)).join(', ')}).`, 'uyari') : null,
-      el('div', { class: 'ts-izgara' }, [olusturKarti(), dosyalarKarti(), eklentiKarti(), usbKarti(), eskiKarti()]),
+      el('div', { class: 'ts-izgara' }, [olusturKarti(), dosyalarKarti(), eklentiKarti(), usbKarti(), gunlukKarti(), eskiKarti()]),
     ]);
     if (eklentiAkisKap && !eklentiAkisKap.dataset.kuruldu) { eklentiAkisKap.dataset.kuruldu = '1'; iceAktarAkisi(eklentiAkisKap, { tur: 'arastirma-eklentisi', bitince: () => yukle() }); }
   }
@@ -222,6 +258,7 @@
     if (!kap) return;
     if (telefonMu()) { ciz(); return; }
     try { durum = await AG.api.tasima.durum(); } catch (e) { durum = null; }
+    if (durum && durum.yedek !== undefined) yedekBilgi = durum.yedek;
     if (!durum || !durum.success) { doldur(kap, [AG.bildirim.hataKutusu((durum && durum.error) || 'sunucu yanıt vermedi', { baslik: 'Yedek ve taşıma durumu okunamadı', yeniden: yukle })]); return; }
     ciz();
     if (durum.is && durum.is.calisiyor && !izleyici) izle();
@@ -352,6 +389,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.tasima = { yukle, ciz, iceAktarAkisi, boyutYaz };
+  AG.pages.tasima = { yukle, ciz, iceAktarAkisi, boyutYaz, gunlukSatirlari };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.tasima;
 })(typeof window !== 'undefined' ? window : globalThis);

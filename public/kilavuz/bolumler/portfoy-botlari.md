@@ -10,7 +10,7 @@ Model portföylerin **kâğıt hesapları** Kairos ve Tao gibi izlenen botlardı
 | **Lydia** | [#/botlar/m-bist-m10](#/botlar/m-bist-m10) | BIST Momentum 10: aynı kural, aday havuzu son 3 ayda en çok işlem gören 30 hisse (TL) | BIST 30 (XU030) al-tut, TL |
 | **Simurg · %50 QQQ + %50 Kairos** | [#/botlar/m-837](#/botlar/m-837) | Paranın yarısı QQQ, yarısı Kairos (simülasyon); Kairos payı %40–60 dışına çıkınca yarı yarıya dengelenir | QQQ al-tut |
 
-Kâğıt hesap = botun **sanal hesabı** (canlı hesap değil): modelin ay sonu kararlarını gerçek açılış fiyatından **tam adet** uygular, Midas komisyonu öder (ABD emir başına 1,5 $, BIST yok), temettü alır, bölünmede adet değişir; nakde faiz yoktur. Yeni karar üretmez — kararlar modelinkiler. Telefondan da tam okunur ("tutarları gizle" açıksa tutarlar "—", grafik yüzde). Kendi gerçek hesabına uygulamak için emirler Portföy › [Modeller](#/kilavuz/model-portfoy) › Bu ay'da.
+Kâğıt hesap = botun **sanal hesabı** (canlı hesap değil): modelin ay sonu kararlarını gerçek açılış fiyatından uygular (**tam adet**; ABD'de kesirli hisse ayarı açıksa — 73.4'ten beri varsayılan — bölünmüş adet), Midas komisyonu öder (ABD emir başına 1,5 $, BIST yok), temettü alır, bölünmede adet değişir; nakde faiz yoktur. Yeni karar üretmez — kararlar modelinkiler. Telefondan da tam okunur ("tutarları gizle" açıksa tutarlar "—", grafik yüzde). Kendi gerçek hesabına uygulamak için emirler Portföy › [Modeller](#/kilavuz/model-portfoy) › Bu ay'da.
 
 ## Ne zaman kullanılır {#ne-zaman}
 
@@ -47,5 +47,6 @@ Bu sayfaların resmî kâğıt hesabı **sunucudaki** Pusula'dadır. Geliştirme
 
 - **Canlı hesap değil:** emir gitmez; Midas'taki gerçek hesabın Portföy › Hesaplar'dadır.
 - **Kısa dönem:** canlı takip 2026-10-12'de başladı; bu üç model geçmişteki çok sayıda deneme arasından seçildi (H1) — 12–24 ay görmeden "işe yarıyor" demek erken.
-- **Tam adet:** küçük sermayede pahalı hisseler alınamaz ("tam adet yetmedi"); sermaye ya da kesirli hisse ayarı Portföy › Modeller › Bu ay › [Ayarlar](#/kilavuz/tasarimci/sermaye)'da.
+- **Tam adet:** küçük sermayede pahalı hisseler alınamaz ("tam adet yetmedi"); sermaye ya da kesirli hisse ayarı Portföy › Modeller › Bu ay › [Ayarlar](#/kilavuz/tasarimci/sermaye)'da. Sayfanın başında **"Sermaye tam adet için yetmiyor"** uyarısı çıkarsa (ABD botu, kesirli kapalı) yanındaki **Kesirli hisseyi aç** düğmesi ayarı onayla açar (telefonda yok; BIST'te kesirli hisse olmadığı için düğme de yok).
+- **Ayar değişince:** Ayar değişince kâğıt hesap **baştan hesaplanır** (her 30 dakikalık hesapta geçmiş günler yeniden kurulur): geçmiş işlemler yeni ayarla yeniden yazılır ve bir kez **"geçmiş işlemler yeniden hesapta değişti (fiyat verisi revizyonu ya da ayar değişikliği)"** uyarısı çıkabilir — beklenen durumdur, bir sonraki hesapta kaybolur.
 - Fiyat verisi revize edilirse geçmiş işlemler yeniden hesapta değişebilir; sayfanın üstünde uyarı çıkar.

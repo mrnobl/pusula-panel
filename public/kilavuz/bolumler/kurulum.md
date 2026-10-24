@@ -504,6 +504,8 @@ npm run yedek -- --geri-yukle 2026-10-13 --dizin C:\Pusula-inceleme
 
 Gerçekten geri yüklemek için **Pusula'yı durdur** → `C:\Pusula-inceleme\data` içinden gereken klasörleri `C:\Pusula\data`'ya kopyalayın → **Pusula**. Botlar açılışta borsayla mutabakat yapar; fark varsa ENGEL'de durur ve Telegram'dan söyler.
 
+**İleriye kayıt (73.4):** aynı görev pazartesileri ham ileriye kayıt verisini de `E:PusulaYedekileriye-kayit-artimli` klasörüne **artımlı** ekler (yalnız yeni/değişen günlük dosyalar; hiçbir şey silinmez; ayda ~200 MB). Yeni görev kurmak gerekmez; hemen almak için `npm run yedek -- --ileri`. Ayrıntı: [Yedek ve taşıma › İleriye kayıt yedeği](#/kilavuz/yedek-tasima/ileriye-kayit-yedegi).
+
 **Sorun olursa:** yedek başarısızsa Telegram "Pusula yedeği alınamadı" der (hedef disk takılı değil / dolu). Görevin çıktısı `data\yedek-gorev.log`. Disk 10 GB'ın altına inince sunucu ayrıca günde bir uyarır.
 
 ## 21. Yeniden başlatma denemesi ve eski klasör (karar sizin) {#adim-21}

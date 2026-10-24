@@ -17,7 +17,10 @@
  *   6. İŞLEM GEÇMİŞİ (katlı) ve kurallar (küçük yazı).
  * En altta katlı "Ayrıntılı izleme" (#pfModelKok → js/pages/modelPortfoy.js: üç model yan yana, aylık tablo, model ↔ gerçek farkı,
  * dışa aktarım) ve H1 notu. Kâğıt hesap: lib/tasarimci/kagit.js → GET /api/tasarimci/kagit (sermaye Bu ay yapılacaklar › Ayarlar).
- * YALNIZ OKUR (yazma düğmesi yok) — telefonda tam kullanılır; "tutarları gizle" açıksa tutarlar "—", grafik yüzde.
+ * YALNIZ OKUR — tek yazma düğmesi (73.4): "Sermaye tam adet için yetmiyor" uyarısında ABD modeli + kesirli kapalıysa
+ * "Kesirli hisseyi aç" (onaylı; POST /api/tasarimci/sermaye { kesirli: true } — yalnız bu alan; telefonda gizli; araştırma kopyasında
+ * lib/evYazma ile sunucuya iletilir). Portföy botları sayfası (portfoyBotlari.js) aynı uyarı + düğmeyi buradan alır (tamAdetUyarisi,
+ * tamAdetBlok). Telefonda tam kullanılır; "tutarları gizle" açıksa tutarlar "—", grafik yüzde.
  * Kurallar: DOM AG.dom, tablo AG.tablo, grafik AG.grafik, inline stil yok.
  */
 (function (global) {
@@ -68,21 +71,69 @@
   const grafikKip = {};                   // id → 'canli' | 'gecmis' (kullanıcı seçimi)
 
 
-  /** Saf: kart üstündeki durum cümlesi ve uyarılar. */
+  /**
+   * Saf (73.4): kâğıt hesap modeli → tam adet uyarısı { metin, kesirliAcilabilir } | null. Listedeki hisselerin bir kısmı alınamadı ve
+   * paranın %5'ten fazlası nakitte (bekleyen emir yoksa — o zaman neden sermaye değil). kesirliAcilabilir: ABD (USD) modeli ve kâğıt
+   * hesabın ayarında kesirli kapalı → "Kesirli hisseyi aç" düğmesi. BIST'te kesirli hisse yok (Midas) → düğme yok, metin sermaye der.
+   */
+  function tamAdetUyarisi(x) {
+    const o = (x && x.ozet) || {};
+    const sonK = o.sonKarar;
+    if (!x || x.model === 'm-837' || o.bos || !sonK || !sonK.liste) return null;
+    const hedef = sonK.liste.length, alinan = (x.pozisyonlar || []).length;
+    const nakitPay = o.ozsermaye > 0 ? o.nakit / o.ozsermaye : null;
+    if (!(alinan < hedef && sayiMi(nakitPay) && nakitPay > 0.05 && !(o.bekleyenEmir && o.bekleyenEmir.length))) return null;
+    const usd = (x.para || (x.model === 'm-bist-m10' ? 'TRY' : 'USD')) === 'USD';
+    const kesirliAcik = !!(x.ayar && x.ayar.kesirli);
+    const bas = `Sermaye tam adet için yetmiyor: listedeki ${hedef} hisseden ${alinan} tanesi alınabildi, paranın ${yz(nakitPay, 0)} nakitte. Bir adedi hedef payından pahalı hisseler alınamıyor`;
+    if (!usd) return { metin: `${bas} — sermayeyi artırmak gerekir (BIST'te kesirli hisse alınmaz).`, kesirliAcilabilir: false };
+    if (kesirliAcik) return { metin: `${bas} — kesirli hisse açık; sermaye en küçük işlem tutarına yetmiyor olabilir.`, kesirliAcilabilir: false };
+    return { metin: `${bas} — sermaye ya da kesirli hisse kararı gerekir.`, kesirliAcilabilir: true };
+  }
+
+  const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon');
+  /**
+   * 73.4 "Kesirli hisseyi aç" düğmesi (telefonda null). Onay penceresi → POST /api/tasarimci/sermaye { kesirli: true } (yalnız bu alan:
+   * tutarlar, eşik, hesaplar değişmez) → tik yenile isteği → `sonra()`. Kâğıt hesap her tikte baştan hesaplandığı için "geçmiş işlemler
+   * yeniden hesapta değişti" uyarısı bir kez çıkabilir (kılavuzda).
+   */
+  function kesirliDugmesi(sonra, id) {
+    if (telefonMu() || !(AG.api && AG.api.tasarimci && AG.api.tasarimci.sermaye)) return null;
+    const d = el('button', { type: 'button', class: 'btn btn-sm btn-primary mp-kesirli-dugme pm-yazma', id: id || null, 'data-eylem': 'kesirli-ac', text: 'Kesirli hisseyi aç',
+      onclick: async () => {
+        const evet = AG.onayla ? await AG.onayla({ baslik: 'Kesirli hisse açılsın mı?', metin: KESIRLI_ONAY, onay: 'Evet, aç' }) : false;
+        if (!evet) return;
+        AG.dom.mesgul(d, 'Kaydediliyor…');
+        try {
+          const r = await AG.api.tasarimci.sermaye({ kesirli: true });
+          if (r && r.kuyrukta) AG.bildir(r.mesaj || 'Sunucuya ulaşılamadı — ayar kuyruğa alındı.', 'uyari');
+          else if (!r || !r.success) { AG.bildir(`Kaydedilmedi: ${(r && r.error) || 'hata'}`, 'hata'); return; }
+          else AG.bildir('Kesirli hisse açıldı. Kâğıt hesap yeniden hesaplanıyor — birkaç dakika içinde güncellenir.', 'ok');
+          try { if (AG.api.tasarimci.yenile) await AG.api.tasarimci.yenile(); } catch { /* yenileme isteği olmasa da 30 dk'lık tik hesaplar */ }
+        } catch (e) { AG.bildir(`Kaydedilmedi: ${e.message}`, 'hata'); return; } finally { AG.dom.hazir(d); }
+        if (typeof sonra === 'function') sonra();
+      } });
+    return d;
+  }
+  const KESIRLI_ONAY = 'ABD hisselerinde (Nasdaq M10 ve 837\'nin QQQ ayağı) adetler artık bölünerek (en çok 6 hane) alınır: paranın tamamı hisselere girer, tek hissenin fiyatı payından pahalı olsa da alınır. BIST her zaman tam adet kalır. Kâğıt hesap baştan hesaplanır, geçmiş işlemleri bu ayarla yeniden yazılır (bir kez "geçmiş işlemler değişti" uyarısı görebilirsiniz). Ayar Portföy › Modeller › Bu ay › Ayarlar\'dan geri kapatılabilir.';
+  /** Uyarı kutusu + (açılabilirse) düğme. */
+  function tamAdetBlok(u, sonra, id) {
+    if (!u) return null;
+    return el('div', { class: 'pf-uyari pf-uyari-uyari mb-0 mp-tam-adet', id: id ? `${id}-uyari` : null }, [
+      el('span', { text: `⚠ ${u.metin}` }),
+      u.kesirliAcilabilir ? kesirliDugmesi(sonra, id) : null
+    ]);
+  }
+
+  /** Saf: kart üstündeki durum cümlesi ve uyarılar (tam adet uyarısı ayrı alanda: tamAdet → tamAdetBlok). */
   function durumMetni(x, sk) {
     const o = x.ozet || {};
-    if (o.bos) return { metin: o.neden || 'Henüz başlamadı.', ton: 'tone-muted', uyarilar: [] };
+    if (o.bos) return { metin: o.neden || 'Henüz başlamadı.', ton: 'tone-muted', uyarilar: [], tamAdet: null };
     const uyarilar = [];
     const tur = x.model === 'm-837' ? '837' : 'hisse';
     const karar = tur === 'hisse' && sk ? sk[x.model === 'm-bist-m10' ? 'BIST' : 'NYSE'] : null;
     const sonK = o.sonKarar;
-    if (tur === 'hisse' && sonK && sonK.liste) {
-      const hedef = sonK.liste.length, alinan = (x.pozisyonlar || []).length;
-      const nakitPay = o.ozsermaye > 0 ? o.nakit / o.ozsermaye : null;
-      if (alinan < hedef && sayiMi(nakitPay) && nakitPay > 0.05 && !(o.bekleyenEmir && o.bekleyenEmir.length)) {   // bekleyen emir varsa neden sermaye değil
-        uyarilar.push(`Sermaye tam adet için yetmiyor: listedeki ${hedef} hisseden ${alinan} tanesi alınabildi, paranın ${yz(nakitPay, 0)} nakitte. Bir adedi hedef payından pahalı hisseler alınamıyor — sermaye ya da kesirli hisse kararı gerekir.`);
-      }
-    }
+    const tamAdet = tamAdetUyarisi(x);
     if (o.bekleyenEmir && o.bekleyenEmir.length) uyarilar.push(`Açılış fiyatı gelmediği için bekleyen emir: ${o.bekleyenEmir.join(', ')}`);
     for (const u of x.uyarilar || []) uyarilar.push(cv(u));
     const parca = [];
@@ -90,7 +141,7 @@
     if (tur === '837') parca.push('Dengeleme her QQQ işlem günü kapanışında denetlenir (Kairos payı %40–60 dışına çıkınca)');
     if (sonK) parca.push(`son karar ${gunMetni(sonK.kararGunu)} → ${gunMetni(sonK.uygulamaGunu)} açılışında uygulandı`);
     parca.push(`son veri ${gunMetni(o.son)}`);
-    return { metin: parca.join(' · '), ton: '', uyarilar };
+    return { metin: parca.join(' · '), ton: '', uyarilar, tamAdet };
   }
 
   /** Saf: son iki karar → { sira: [{ s, p, yeni }], giren, cikan }. */
@@ -198,6 +249,7 @@
     doldur(kap, [
       baslik,
       el('p', { class: `hint hint-sm mb-0 ${d.ton}`, text: d.metin }),
+      tamAdetBlok(d.tamAdet, () => yukle(true), `btnKesirliAc-${k(id)}`),
       ...d.uyarilar.map(u => el('p', { class: 'pf-uyari pf-uyari-uyari mb-0', text: `⚠ ${u}` })),
       sayilar,
       buAy,
@@ -359,6 +411,6 @@
   if (doc && doc.addEventListener) doc.addEventListener('ag:tema', () => { if (veri && veri.modeller) for (const id of SIRA) if (veri.modeller[id]) grafikCiz(id, veri.modeller[id]); });
 
   AG.pages = AG.pages || {};
-  AG.pages.hisseYapilari = { yukle, durumMetni, kararFarki, havuzOzeti, kiyasSerisi, kartCiz, NE_YAPAR };
+  AG.pages.hisseYapilari = { yukle, durumMetni, tamAdetUyarisi, kesirliDugmesi, tamAdetBlok, kararFarki, havuzOzeti, kiyasSerisi, kartCiz, NE_YAPAR };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.hisseYapilari;
 })(typeof window !== 'undefined' ? window : globalThis);

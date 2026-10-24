@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.4 — İleriye kayıt yedeği, Nasdaq kesirli hisse (2026-10-24) {#s73-4}
+
+- **İleriye kayıt verisi artık yedekleniyor.** Her pazartesi sabah günlük yedek görevi, ham kayıtların yalnız **yeni ve değişen** günlük dosyalarını yedek klasöründeki tek bir klasöre (`ileriye-kayit-artimli`) ekler; her hafta tam kopya alınmaz, disk dolmaz (yedekte ayda ~200 MB). Pazartesi kaçarsa ilk günlük yedekte alınır; 73.4'e geçince ilk günlük yedekte bir kez hemen alınır. Her dosya SHA-256 özetiyle doğrulanır. Ayrıntı: [Yedek ve taşıma › İleriye kayıt yedeği](#/kilavuz/yedek-tasima/ileriye-kayit-yedegi).
+- Ham kayıtlar **süresiz** saklanır (saklama süresi ayarı boşsa hiçbir şey silinmez); kaynakta bir dosya silinse bile yedekte kalır. Yeni zamanlanmış görev kurmanız gerekmez.
+- **Ayarlar › Yedek ve taşıma**'da yeni **Günlük yedek** kartı (hedef klasör, son günlük kopya, ileriye kayıt yedeği). Sağlık › **Yedek alınıyor** satırı ileriye kayıt yedeği 8 günden eskiyse ya da başarısızsa sarı olur. Komut satırı: `npm run yedek -- --durum` artık ileriye kayıt satırını da yazar.
+- **Nasdaq kesirli hisse.** "Kesirli hisse alınabiliyor" ayarı ([Portföy › Modeller › Bu ay › Ayarlar](#/kilavuz/tasarimci/sermaye)) hiç kaydedilmediyse artık **açık** sayılır: ABD hisseleri (Nova ve Simurg'un QQQ ayağı) bölünerek alınır, BIST hep tam adet. Siz kapattıysanız kapalı kalır.
+- **Hisse yapıları** ve **Portföy botları** sayfalarında "Sermaye tam adet için yetmiyor" uyarısının yanında **Kesirli hisseyi aç** düğmesi (onay ister, yalnız bu ayarı açar; telefonda yok; BIST'te yok). Ayar geliştirme bilgisayarından da sunucuya iletilir.
+- Ayar değişince botun kâğıt hesabı baştan hesaplanır; bir kez **"geçmiş işlemler yeniden hesapta değişti"** uyarısı görebilirsiniz — beklenen durumdur.
+
 ## 73.3 — Veri › İleriye kayıt (2026-10-24) {#s73-3}
 
 - **Yeni sayfa: [Veri › İleriye kayıt](#/kilavuz/veri/ileriye-kayit).** Sunucu bugünden itibaren, **geriye dönük indirilemeyen** ham piyasa verisini biriktiriyor: Binance vadeli **pozisyon istatistikleri** (açık pozisyon, büyük hesapların long/short oranı, taker al/sat — ilk çalışmada son 30 gün), BTC ve ETH **opsiyonlarının strike bazında açık pozisyonu** (OKX, Bybit, Binance), **Hyperliquid**'de hesap değeri en büyük 100 adresin pozisyonları, **emir defteri derinliği ve makas**, **gerçekleşen tasfiyeler** (canlı akış).
