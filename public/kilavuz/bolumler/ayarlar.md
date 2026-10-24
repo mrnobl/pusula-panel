@@ -42,12 +42,13 @@ Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API a
 
 **Anahtarlar** alt sayfası (73.0) panelin kayıtlı **bütün** gizli bilgilerini tek yerde gösterir. *API anahtarı*, bir programın sizin adınıza borsaya bağlanmasını sağlayan kullanıcı adı–şifre çiftidir (iki parça: **API anahtarı** ve **gizli anahtar / secret**; OKX'te üçüncü parça **parola / passphrase**). *Jeton* (token), bir servise girişte kullanılan uzun gizli metindir.
 
-Dört grup:
+Beş grup:
 
 | Grup | İçinde |
 |---|---|
 | **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit) |
 | **İşlem defterim** | işlem geçmişini okumak için **yalnız okuma** izinli anahtarlar |
+| **Yapay zekâ** (74.1) | **Gemini API anahtarı** — [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari) için Google AI Studio'nun **ücretsiz** anahtarı ([nasıl alınır](#/kilavuz/yapay-zeka-notlari/anahtar)); boşsa özellik "anahtar bekliyor". **Sına** Google'a yalnız model listesini sorar (kota harcamaz); günlük arka plan sınamasına girmez |
 | **Bildirim** | Telegram bot jetonu, sağlık sinyali (healthchecks.io) adresleri, ikinci kanal |
 | **Erişim** | acil PIN, panel ve telefon jetonu, sunucu bağlantısı, geliştirme yazma jetonu, yedek şifresi, GitHub jetonu |
 
@@ -165,9 +166,11 @@ Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bug�
 
 Kayıtlı chat id panelde **maskeli** görünür (ör. `12••••89`); alanı boş bırakırsanız kayıtlı değer değişmez. Komutlar bildirimler etkinken çalışır; etkinleştirince kendiliğinden başlar — sunucuyu yeniden başlatmak gerekmez.
 
-Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "incele" bandı, kaçırılan günler, 26 saat çalışmama, ileri test "DUR" — türlerin listesi, aç/kapat ve son gönderilenler [Sistem › Bildirimler](#/kilavuz/bildirimler)'de. Telegram komutları **yalnız okur**: `/durum` `/pozisyonlar` `/ozet` `/saglik` `/teshis` (73.7: etkin sorunlar ve her biri için ilk iki adım — Sistem › Sorunlar ile aynı) `/yapilacaklar` (bot tarafındaki yapılacaklar; kişisel portföy tutarı gitmez) `/ileri` (ileri test durumu ve hüküm tarihleri) `/yardim` — emir veren ya da botu başlatan komut bilinçli olarak yoktur. 74.0: **/menu** düğmeli tek mesajlık menü açar (Botlar, Sorunlar, Portföy, İleri test, Piyasa, Bilanço, Güncelleme, Makineler, Bildirim ayarları) — bkz. [Telegram menüsü](#/kilavuz/telegram-menu). Telegram cevaplarında tutar (USD / TL) yoktur, yalnız yüzde.
+Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "incele" bandı, kaçırılan günler, 26 saat çalışmama, ileri test "DUR" — türlerin listesi, aç/kapat ve son gönderilenler [Sistem › Bildirimler](#/kilavuz/bildirimler)'de. Telegram komutları **yalnız okur**: `/durum` `/pozisyonlar` `/ozet` `/saglik` `/teshis` (73.7: etkin sorunlar ve her biri için ilk iki adım — Sistem › Sorunlar ile aynı) `/yapilacaklar` (bot tarafındaki yapılacaklar; kişisel portföy tutarı gitmez) `/ileri` (ileri test durumu ve hüküm tarihleri) `/yardim` — emir veren ya da botu başlatan komut bilinçli olarak yoktur. 74.0: **/menu** düğmeli tek mesajlık menü açar (Botlar, Sorunlar, Portföy, İleri test, Piyasa, Bilanço, Güncelleme, Makineler, Bildirim ayarları) — bkz. [Telegram menüsü](#/kilavuz/telegram-menu). Telegram cevaplarında tutar (USD / TL) yoktur, yalnız yüzde. Komutların tam listesi formun altındaki notta ve Telegram'da "/" yazınca.
 
 **Panel adresi (73.7, isteğe bağlı):** sunucunun Tailscale adresini (ör. `https://sunucu.agadi.ts.net`) girerseniz uyarı mesajlarının "Ne yapmalı" satırının sonundaki **Sorunlar** bağlantısı tıklanabilir olur (telefondan doğrudan [Sistem › Sorunlar](#/kilavuz/sorunlar) açılır). 74.0: aynı adres [Telegram menüsündeki](#/kilavuz/telegram-menu/yazma-yok) ↗ düğmelerinin (Panelde çöz, Panelde kur, Panelde aç) adresidir; boşsa bu düğmeler çıkmaz. Boşsa mesajda yalnız "Panel › Sorunlar" yazar. Sır değildir.
+
+**Telegram'da tutarları gizle (74.1, varsayılan açık):** bildirim mesajlarındaki para tutarları ve işlem miktarları **•••** olarak gider; yüzde, kur, fiyat, saat, sembol görünür, kritik alarmların anlamı değişmez. Kutu değişince hemen kaydedilir ("Ayarları kaydet" gerekmez; geliştirme bilgisayarında sunucuya iletilir). Bilanço, piyasa olayları ve yapay zekâ notları kamuya açık bilgi olduğu için gizlenmez. Ayrıntı: [Bildirimler › Tutarlar](#/kilavuz/bildirimler/tutarlar).
 
 > **Uyarı:** Telegram'ı yalnız sunucuda açın. Aynı token'ı iki bilgisayar dinlerse komutlar çakışır (araştırma modunda Telegram zaten kapalıdır).
 

@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="css/utilities.css">
   <!-- Tema stillerden HEMEN SONRA ve senkron: `data-theme` ilk boyamadan
        önce yazılmazsa sayfa bir an yanlış temada açılır. -->
-  <script src="js/core/tema.js?v=74.0"></script>
+  <script src="js/core/tema.js?v=74.1"></script>
 </head>
 <body>
 
@@ -99,6 +99,7 @@
       <p class="menu-grup-ad">İzleme</p>
       <a class="menu-ogesi" href="#/sinyaller" data-rota="sinyaller"><i data-lucide="radar"></i><span>Sinyaller</span></a>
       <a class="menu-ogesi" href="#/piyasa" data-rota="piyasa"><i data-lucide="globe"></i><span>Piyasa bağlamı</span></a>
+      <a class="menu-ogesi" href="#/notlar" data-rota="notlar"><i data-lucide="newspaper"></i><span>Yapay zekâ notları</span></a>
       <div class="menu-dal" data-menu="ileri">
         <a class="menu-ogesi menu-ust" href="#/ileri" aria-expanded="false"><i data-lucide="route"></i><span>İleri test</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
         <div class="menu-altlar">
@@ -2507,6 +2508,26 @@
       </details>
     </section>
 
+    <!-- YAPAY ZEKÂ NOTLARI (74.1 C3, kullanıcı kararı 2026-10-23/24; PLAN-DIKKAT-LISTESI §F3): günde bir kez (~07:00) Google Gemini ücretsiz
+         katmanının kamuya açık haber / KAP / SEC metinlerinden çıkardığı, kaynaktan BİREBİR alıntıyla doğrulanmış notlar. "Yalnız not":
+         liste, kural ve botlar değişmez. Reddedilen iddialar ayrı katta. GET /api/yapay-zeka/notlar (araştırma kopyasında sunucudan).
+         js/pages/yapayZekaNotlari.js -->
+    <section id="tab-notlar" class="tab-content" role="tabpanel" aria-label="Yapay zekâ notları">
+      <div class="toolbar">
+        <h2 class="page-title">
+          <i class="tone-primary" data-lucide="newspaper"></i> Yapay zekâ notları
+        </h2>
+        <span class="badge pb-bilgi-rozet" id="yzBilgiRozet" role="note">Yalnız not · karar yok</span>
+      </div>
+      <p class="hint mb-2 max-w-prose">
+        Pusula her sabah (~07:00) coin dikkat listesinin kısa listesi, elinizdeki ve BIST 100'deki şirketlerin KAP bildirimleri ve Nova / Simurg
+        hisselerinin SEC bildirimleri için kamuya açık metinleri Google Gemini'ye (ücretsiz katman) okutur. Yalnız kaynakta <strong>kelimesi kelimesine</strong>
+        geçen alıntıyla doğrulanan iddialar not olur; liste, kurallar ve botlar değişmez.
+      </p>
+      <p class="hint hint-sm mb-4" id="yzDurum" aria-live="polite">Yükleniyor…</p>
+      <div id="yzKok" aria-live="polite"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
     <!-- VERİ (63.2, kullanıcıyla taslak 1–2): üç büyük durum (#veriOzet) → kullanana göre katlı gruplar (#veriKok: Botlar ·
          Portföy ve modeller · Araştırma; "kim kullanıyor" etiketleri) → Coin tarama kaynakları ve Günlük arşiv katları. Sorunsuz grup
          kapalı, sorunlu grup açık. js/pages/veri.js (+ portfoy.js dikkatKaynakCiz → #veriDikkat, gunlukArsiv.js → #veriArsiv; 73.3 #veriKayit İleriye kayıt). -->
@@ -2606,6 +2627,17 @@
             <p class="hint mb-0">Hangi bildirimin gönderileceği (işlem, günlük özet, uyarı, rapor, güncelleme …) ve son gönderilenler <a href="#/bildirimler">Sistem › Bildirimler</a> sayfasında. Acil durum bildirimleri kapatılamaz.</p>
           </div>
 
+          <!-- 74.1: "Telegram'da tutarları gizle" (lib/bildirimMerkezi.js genel.tutarGizle, varsayılan AÇIK; POST /api/bildirim/genel). Kutu değişince
+               hemen kaydedilir (formun "Ayarları kaydet"i değil) — bildirimleri sunucu gönderir; geliştirme bilgisayarında sunucuya iletilir. js/pages/ayarlar.js -->
+          <div class="form-group" id="tgTutarGrup">
+            <label class="row" for="chkTgTutarGizle">
+              <input class="icon-18" type="checkbox" id="chkTgTutarGizle" checked>
+              Telegram'da tutarları gizle
+            </label>
+            <small class="hint">Açıkken bildirimlerdeki para tutarları ve işlem miktarları (özsermaye, bakiye, "0,012 BTC", "25 adet") <strong>•••</strong> olarak gider; yüzde, kur, fiyat, saat ve sembol görünür. Kritik alarmların anlamı değişmez (ör. teminat oranı yüzde olarak kalır). Şirket bilançosu, piyasa olayları ve yapay zekâ notları kamuya açık bilgi olduğu için gizlenmez. Telegram menüsü ve komut cevaplarında tutar zaten hiç yoktur. <a href="#/kilavuz/bildirimler/tutarlar">Ayrıntı</a></small>
+            <small class="hint hint-sm" id="tgTutarDurum" aria-live="polite"></small>
+          </div>
+
           <div class="row-plain gap-7 mt-9">
             <button type="submit" class="btn btn-primary">
               <i data-lucide="save"></i> Ayarları kaydet
@@ -2616,9 +2648,9 @@
           </div>
 
           <div class="hint hint-sm mt-5">
-            <strong>Telegram komutları (yalnız okuma):</strong> botunuza
-            <code>/durum</code> · <code>/pozisyonlar</code> · <code>/ozet</code> · <code>/saglik</code> · <code>/teshis</code> · <code>/yapilacaklar</code> · <code>/ileri</code> · <code>/yardim</code>
-            yazın. Yalnız yukarıdaki Chat ID'den gelen mesajlar cevaplanır, aynı komut 10 sn'de bir.
+            <strong>Telegram komutları (yalnız okuma):</strong> botunuza <code>/menu</code> yazın — tek mesajda düğmeli menü açılır (Botlar, Sorunlar, Portföy, İleri test, Piyasa, Bilanço, Güncelleme, Makineler, Bildirim ayarları). Sohbette "/" yazınca bütün komutlar listelenir:
+            <code>/menu</code> · <code>/durum</code> · <code>/botlar</code> · <code>/sorunlar</code> · <code>/portfoy</code> · <code>/ileri</code> · <code>/piyasa</code> · <code>/bilanco</code> · <code>/guncelleme</code> · <code>/makineler</code> · <code>/pozisyonlar</code> · <code>/ozet</code> · <code>/saglik</code> · <code>/yapilacaklar</code> · <code>/teshis</code> · <code>/yardim</code>.
+            Cevaplarda tutar yok, yalnız yüzde. Tek yazma istisnası menüdeki "🔕 1 saat sessize al" (kritik bildirimler susmaz; Sistem › Bildirimler'de "Erken bitir"). Yalnız yukarıdaki Chat ID'den gelen mesajlar cevaplanır, aynı komut 10 sn'de bir.
             Emir veren, botu başlatan ya da durduran komut <strong>bilinçli olarak yok</strong> — telefon kaybolur ya da token sızarsa hesap tehlikeye girmesin.
             Komutlar bildirimler etkinken çalışır; etkinleştirince kendiliğinden başlar (sunucuyu yeniden başlatmak gerekmez).
           </div>
@@ -2868,89 +2900,90 @@
   <!-- Çekirdek ÖNCE: `indicatorUI.js` ve `app.js` `AG.api` / `AG.dom`
        üzerinden çalışıyor, bunlar tanımlı değilken yüklenirlerse ilk
        istekte patlarlar (bkz. `PLAN-MOTOR.md` §8, P2). -->
-  <script src="js/core/dom.js?v=74.0"></script>
-  <script src="js/core/format.js?v=74.0"></script>
+  <script src="js/core/dom.js?v=74.1"></script>
+  <script src="js/core/format.js?v=74.1"></script>
   <!-- Yeni panel F4: portföy ölçütleri (saf; Sharpe, düşüş, sağlık puanı) — js/pages/pano.js kullanır. -->
-  <script src="js/core/olcut.js?v=74.0"></script>
-  <script src="js/core/paraPlan.js?v=74.0"></script>
-  <script src="js/core/api.js?v=74.0"></script>
-  <script src="js/core/bildirim.js?v=74.0"></script>
-  <script src="js/core/ilerleme.js?v=74.0"></script>
-  <script src="js/core/tablo.js?v=74.0"></script>
-  <script src="js/core/rota.js?v=74.0"></script>
-  <script src="js/core/sozluk.js?v=74.0"></script>
-  <script src="js/core/md.js?v=74.0"></script>
-  <script src="js/core/grafik.js?v=74.0"></script>
-  <script src="js/core/pwa.js?v=74.0"></script>
+  <script src="js/core/olcut.js?v=74.1"></script>
+  <script src="js/core/paraPlan.js?v=74.1"></script>
+  <script src="js/core/api.js?v=74.1"></script>
+  <script src="js/core/bildirim.js?v=74.1"></script>
+  <script src="js/core/ilerleme.js?v=74.1"></script>
+  <script src="js/core/tablo.js?v=74.1"></script>
+  <script src="js/core/rota.js?v=74.1"></script>
+  <script src="js/core/sozluk.js?v=74.1"></script>
+  <script src="js/core/md.js?v=74.1"></script>
+  <script src="js/core/grafik.js?v=74.1"></script>
+  <script src="js/core/pwa.js?v=74.1"></script>
   <!-- Sayfa modülleri: çekirdekten SONRA, app.js'ten ÖNCE. -->
-  <script src="js/pages/dock.js?v=74.0"></script>
-  <script src="js/pages/bots.js?v=74.0"></script>
-  <script src="js/pages/backtest.js?v=74.0"></script>
-  <script src="js/pages/backtestIs.js?v=74.0"></script>
-  <script src="js/pages/backtestEkran.js?v=74.0"></script>
-  <script src="js/pages/seciciler.js?v=74.0"></script>
-  <script src="js/pages/analiz.js?v=74.0"></script>
+  <script src="js/pages/dock.js?v=74.1"></script>
+  <script src="js/pages/bots.js?v=74.1"></script>
+  <script src="js/pages/backtest.js?v=74.1"></script>
+  <script src="js/pages/backtestIs.js?v=74.1"></script>
+  <script src="js/pages/backtestEkran.js?v=74.1"></script>
+  <script src="js/pages/seciciler.js?v=74.1"></script>
+  <script src="js/pages/analiz.js?v=74.1"></script>
   <!-- Borsa hesapları (62.7): sekme = hesap (hesaplar.js) + Ayarlar › Borsa (anahtar, döküm, canlı hesap) + Arşiv (elle emir, kâğıt test) ve
        emir/işlem tabloları (Pusula P3). İkisi de kendi kendine başlar, #tab-exchange kaplarını doldurur. -->
-  <script src="js/pages/borsa.js?v=74.0"></script>
-  <script src="js/pages/hesaplar.js?v=74.0"></script>
-  <script src="js/pages/arastirma.js?v=74.0"></script>
-  <script src="js/pages/stratejiler.js?v=74.0"></script>
-  <script src="js/pages/bindirme.js?v=74.0"></script>
-  <script src="js/pages/bindirmeIslem.js?v=74.0"></script>
-  <script src="js/pages/ileri.js?v=74.0"></script>
-  <script src="js/pages/tarama.js?v=74.0"></script>
-  <script src="js/pages/listeler.js?v=74.0"></script>
-  <script src="js/pages/dikkat.js?v=74.0"></script>
-  <script src="js/pages/izle.js?v=74.0"></script>
-  <script src="js/pages/defter.js?v=74.0"></script>
-  <script src="js/pages/arastirmaOzet.js?v=74.0"></script>
-  <script src="js/pages/gunluk.js?v=74.0"></script>
-  <script src="js/pages/saglik.js?v=74.0"></script>
-  <script src="js/pages/sorunlar.js?v=74.0"></script>
-  <script src="js/pages/bildirimMerkezi.js?v=74.0"></script>
-  <script src="js/pages/raporlar.js?v=74.0"></script>
-  <script src="js/pages/tasima.js?v=74.0"></script>
-  <script src="js/pages/kurulum.js?v=74.0"></script>
-  <script src="js/pages/kurulumDenetimi.js?v=74.0"></script>
-  <script src="js/pages/botPerformans.js?v=74.0"></script>
-  <script src="js/pages/gunlukArsiv.js?v=74.0"></script>
+  <script src="js/pages/borsa.js?v=74.1"></script>
+  <script src="js/pages/hesaplar.js?v=74.1"></script>
+  <script src="js/pages/arastirma.js?v=74.1"></script>
+  <script src="js/pages/stratejiler.js?v=74.1"></script>
+  <script src="js/pages/bindirme.js?v=74.1"></script>
+  <script src="js/pages/bindirmeIslem.js?v=74.1"></script>
+  <script src="js/pages/ileri.js?v=74.1"></script>
+  <script src="js/pages/tarama.js?v=74.1"></script>
+  <script src="js/pages/listeler.js?v=74.1"></script>
+  <script src="js/pages/dikkat.js?v=74.1"></script>
+  <script src="js/pages/izle.js?v=74.1"></script>
+  <script src="js/pages/defter.js?v=74.1"></script>
+  <script src="js/pages/arastirmaOzet.js?v=74.1"></script>
+  <script src="js/pages/gunluk.js?v=74.1"></script>
+  <script src="js/pages/saglik.js?v=74.1"></script>
+  <script src="js/pages/sorunlar.js?v=74.1"></script>
+  <script src="js/pages/bildirimMerkezi.js?v=74.1"></script>
+  <script src="js/pages/raporlar.js?v=74.1"></script>
+  <script src="js/pages/tasima.js?v=74.1"></script>
+  <script src="js/pages/kurulum.js?v=74.1"></script>
+  <script src="js/pages/kurulumDenetimi.js?v=74.1"></script>
+  <script src="js/pages/botPerformans.js?v=74.1"></script>
+  <script src="js/pages/gunlukArsiv.js?v=74.1"></script>
   <!-- 63.2: Veri ekranı — özet + kullanana göre gruplar (js/pages/veri.js). -->
-  <script src="js/pages/veri.js?v=74.0"></script>
+  <script src="js/pages/veri.js?v=74.1"></script>
   <!-- 63.3: Sinyaller ekranı — bugün sistem ne diyor (js/pages/sinyaller.js). -->
-  <script src="js/pages/sinyaller.js?v=74.0"></script>
+  <script src="js/pages/sinyaller.js?v=74.1"></script>
   <!-- 73.9: Piyasa bağlamı (#/piyasa) + Ana sayfa "Bu hafta" kartı. -->
-  <script src="js/pages/piyasaBaglami.js?v=74.0"></script>
-  <script src="js/pages/pine.js?v=74.0"></script>
-  <script src="js/pages/kurCevirici.js?v=74.0"></script>
+  <script src="js/pages/piyasaBaglami.js?v=74.1"></script>
+  <script src="js/pages/yapayZekaNotlari.js?v=74.1"></script>
+  <script src="js/pages/pine.js?v=74.1"></script>
+  <script src="js/pages/kurCevirici.js?v=74.1"></script>
   <!-- 64.8: sunucuya yazma + kuyruk ortak parçası (Portföyüm ve İşlem defterim kullanır) — portfoyum.js'ten ÖNCE. -->
-  <script src="js/pages/evKuyruk.js?v=74.0"></script>
-  <script src="js/pages/portfoyum.js?v=74.0"></script>
-  <script src="js/pages/portfoyumRapor.js?v=74.0"></script>
-  <script src="js/pages/islemDefteri.js?v=74.0"></script>
-  <script src="js/pages/tasarimci.js?v=74.0"></script>
-  <script src="js/pages/modelPortfoy.js?v=74.0"></script>
+  <script src="js/pages/evKuyruk.js?v=74.1"></script>
+  <script src="js/pages/portfoyum.js?v=74.1"></script>
+  <script src="js/pages/portfoyumRapor.js?v=74.1"></script>
+  <script src="js/pages/islemDefteri.js?v=74.1"></script>
+  <script src="js/pages/tasarimci.js?v=74.1"></script>
+  <script src="js/pages/modelPortfoy.js?v=74.1"></script>
   <!-- Yeni panel F4: Pano · Varlıklar · Hedefim · Takvim + üst çubuk Ben/Fırat/Tümü · $/₺/Gizli (portfoy.js çağırır). -->
-  <script src="js/pages/paraEkle.js?v=74.0"></script>
-  <script src="js/pages/pano.js?v=74.0"></script>
-  <script src="js/pages/portfoy.js?v=74.0"></script>
-  <script src="js/pages/kabuk.js?v=74.0"></script>
-  <script src="js/pages/botDil.js?v=74.0"></script>
-  <script src="js/pages/hisseYapilari.js?v=74.0"></script>
-  <script src="js/pages/portfoyBotlari.js?v=74.0"></script>
-  <script src="js/pages/botGetiri.js?v=74.0"></script>
-  <script src="js/pages/botlar.js?v=74.0"></script>
-  <script src="js/pages/anasayfa.js?v=74.0"></script>
-  <script src="js/pages/anahtarlar.js?v=74.0"></script>
-  <script src="js/pages/ayarlar.js?v=74.0"></script>
-  <script src="js/pages/kitapcik.js?v=74.0"></script>
-  <script src="js/pages/kilavuz.js?v=74.0"></script>
-  <script src="chartIndicators.js?v=74.0"></script>
-  <script src="indicatorUI.js?v=74.0"></script>
-  <script src="app.js?v=74.0"></script>
+  <script src="js/pages/paraEkle.js?v=74.1"></script>
+  <script src="js/pages/pano.js?v=74.1"></script>
+  <script src="js/pages/portfoy.js?v=74.1"></script>
+  <script src="js/pages/kabuk.js?v=74.1"></script>
+  <script src="js/pages/botDil.js?v=74.1"></script>
+  <script src="js/pages/hisseYapilari.js?v=74.1"></script>
+  <script src="js/pages/portfoyBotlari.js?v=74.1"></script>
+  <script src="js/pages/botGetiri.js?v=74.1"></script>
+  <script src="js/pages/botlar.js?v=74.1"></script>
+  <script src="js/pages/anasayfa.js?v=74.1"></script>
+  <script src="js/pages/anahtarlar.js?v=74.1"></script>
+  <script src="js/pages/ayarlar.js?v=74.1"></script>
+  <script src="js/pages/kitapcik.js?v=74.1"></script>
+  <script src="js/pages/kilavuz.js?v=74.1"></script>
+  <script src="chartIndicators.js?v=74.1"></script>
+  <script src="indicatorUI.js?v=74.1"></script>
+  <script src="app.js?v=74.1"></script>
   <!-- app.js parçaları (Pusula P6): aynı küresel kapsam, app.js'ten HEMEN SONRA. -->
-  <script src="js/app/riskEkrani.js?v=74.0"></script>
-  <script src="js/app/olaylar.js?v=74.0"></script>
-  <script src="js/app/backtestAnaliz.js?v=74.0"></script>
+  <script src="js/app/riskEkrani.js?v=74.1"></script>
+  <script src="js/app/olaylar.js?v=74.1"></script>
+  <script src="js/app/backtestAnaliz.js?v=74.1"></script>
 </body>
 </html>

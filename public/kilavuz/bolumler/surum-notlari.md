@@ -2,6 +2,17 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.1 — Yapay zekâ notları ve Telegram'da tutarlar gizli (2026-10-25) {#s74-1}
+
+- **Yeni sayfa: [İzleme › Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari).** Başlığında **Yalnız not · karar yok**. Sunucu her sabah ~07:00'dan sonra bir kez, kamuya açık metinleri Google Gemini'ye (**ücretsiz katman**) okutur: coin dikkat listesinin kısa listesi (İZLE ilk 15 + KAÇIN'a bu hafta yeni düşen 5; Google Haberler ve Binance delist duyuruları), elinizdeki ve BIST 100'deki şirketlerin KAP bildirimleri, Nova / Simurg hisselerinin SEC bildirimleri (8-K okunur, 10-Q / 10-K başlık).
+- **Her not doğrulanmış:** iddia + kaynaktan **kelimesi kelimesine alıntı** + kaynak bağlantısı ve tarihi. Alıntısı kaynakta birebir geçmeyen, bağlantısı uydurulan iddia **reddedilir** ve ayrı katta nedeniyle gösterilir. Sayfa metni modele gitmeden temizlenir (gizli yazılar, yorumlar, betikler atılır). Her sabah önce **kanarya** sınaması: içine sahte talimat gömülmüş bir sayfa; model uyarsa o günün notları "güvenilmez" işaretlenir.
+- Notlar dikkat listesini, kuralları ve botları **değiştirmez**; model hiçbir şeye yazamaz. Önemli görünen notlar **incele** bayrağı alır; Telegram'a yalnız bunlar için **günde en çok 1** özet gelir (yeni bildirim türü **Yapay zekâ notları (incele)**, kapatılabilir).
+- **Gemini anahtarı:** Ayarlar › Anahtarlar'da yeni **Yapay zekâ** grubu › **Gemini API anahtarı** ([ücretsiz, adım adım](#/kilavuz/yapay-zeka-notlari/anahtar): aistudio.google.com › Get API key; **faturalandırma açmayın**). **Sına** yalnız model listesini sorar. Anahtar yokken hiçbir şey okunmaz, Sorunlar'da mavi bilgi kartı durur. Günde en çok 40 istek; ücretsiz kota dolarsa ertesi gün devam.
+- **Telegram'da tutarlar gizli (bildirimler de):** günlük özet, işlem ve alarm mesajlarındaki para tutarları ve işlem miktarları **•••** — yüzde, kur, fiyat, saat, sembol görünür; kritik alarmların anlamı değişmez. Ayarlar › Bildirimler › **Telegram'da tutarları gizle** (varsayılan açık). Bilanço, piyasa olayları ve yapay zekâ notları kamuya açık bilgi olduğu için gizlenmez. [Ayrıntı](#/kilavuz/bildirimler/tutarlar).
+- **Geçici sessiz panelde:** Telegram'dan "1 saat sessize al" denmişse Sistem › Bildirimler › Sessiz saatler kartında görünür; **Erken bitir** ile hemen kalkar (bekleyenler tek özet gelir).
+- Ayarlar › Bildirimler'deki komut notu güncellendi: **/menu** ve 74.0'ın yeni komutları.
+- Botların karar ve emir kodu değişmedi. Sunucu dosyaları değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.0 — Telegram menüsü (2026-10-24) {#s74-0}
 
 - **[Telegram menüsü](#/kilavuz/telegram-menu):** Telegram'a **/menu** yazın — tek mesaj açılır, düğmelere bastıkça **aynı mesaj** güncellenir (sohbet dolmaz). Ekranlar: **Botlar** (bot başına kart, ayrıntı, pozisyonlar) · **Sorunlar** (Sorunlar sayfasının kartları: adımlar, "Neyi saydı?") · **Portföy** · **İleri test** (başında "🧪 GÖLGE TESTİ — emir yok; ara sonuç, hüküm değil", gölge getirileri, hüküm takvimi) · **Piyasa** (bu hafta + makro) · **Bilanço** (son özet) · **Güncelleme** · **Makineler** · **Bildirim ayarları** · **Komutlar**. Her ekranda **◀ Menü**.

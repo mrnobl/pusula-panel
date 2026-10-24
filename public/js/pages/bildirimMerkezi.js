@@ -225,6 +225,19 @@
           onclick: async () => { await cagir(() => AG.api.bildirim.sessiz({ acik: ac.checked, bas: bas.value, bit: bit.value }), 'Sessiz saat kaydedildi.'); await yukle(); } }, [el('span', { text: 'Kaydet' })]),
       ]),
       s.bekleyen ? el('p', { class: 'hint mt-2 mb-0', text: `${s.bekleyen} bildirim özet için bekliyor.` }) : null,
+      geciciSatir(s.gecici, salt),
+    ]);
+  }
+
+  /** 74.1: Telegram menüsündeki "🔕 1 saat sessize al" etkinse durum + "Erken bitir" (telefonda yalnız görüntülenir). */
+  function geciciSatir(g, salt) {
+    if (!g || !g.bitis) return null;
+    const saat = (ms) => { const d = new Date(ms); return Number.isFinite(d.getTime()) ? d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—'; };
+    return el('div', { class: 'bm-gecici mt-3', id: 'bmGecici', role: 'status' }, [
+      el('span', { class: 'p-rozet p-rozet-warn', text: 'geçici sessiz' }),
+      el('span', { text: `Telegram'dan "1 saat sessize al" denmiş${g.zaman ? ` (${saat(g.zaman)})` : ''}: kritik olmayan bildirimler ${saat(g.bitis)}'e kadar bekliyor, sonra tek özet gelir. Kritik bildirimler (acil durum, koruma stopu, ENGEL, güvenlik) susmaz.` }),
+      salt ? null : el('button', { type: 'button', class: 'btn btn-secondary', id: 'bmGeciciBitir',
+        onclick: async () => { await cagir(() => AG.api.bildirim.geciciBitir(), 'Geçici sessiz bitti — bekleyenler bir dakika içinde tek özet olarak gelir.'); await yukle(); } }, [el('span', { text: 'Erken bitir' })]),
     ]);
   }
 
@@ -242,6 +255,7 @@
       d.arastirma ? 'Bu bilgisayar araştırma kopyası: yeni türleri sunucu üretir (sunucuya bağlıysa bu ekranda sunucunun ayarı görünür).' : null,
       d.bilanco ? `Bilanço: ${d.bilanco.izlenen == null ? 'tüm BIST' : `${d.bilanco.izlenen} şirket`} izleniyor${d.bilanco.evren100 ? ` (BIST 100 vekili ${d.bilanco.evren100.sayi} şirket${d.bilanco.evren100.veriGunu ? `, veri ${d.bilanco.evren100.veriGunu}` : ''}${d.bilanco.evren100.kaynak === 'bist-yedek' ? ', yedek liste' : ''})` : ''} · son KAP denetimi ${zm(d.bilanco.kontrol)}${d.bilanco.bekleyen ? ` · ${d.bilanco.bekleyen} sonuç özet saatini bekliyor` : ''}${d.bilanco.kuyruk ? ` · ${d.bilanco.kuyruk} bildirim okunacak` : ''}${d.bilanco.sonOzet ? ` · son özet ${zm(d.bilanco.sonOzet.zaman)}` : ''}${d.bilanco.hata ? ` · hata: ${d.bilanco.hata}` : ''}` : null,
       d.takvim ? `Piyasa takvimi: son denetim ${zm(d.takvim.kontrol)}${d.takvim.hafta ? ` · haftalık mesaj ${d.takvim.hafta}` : ''} · ${d.takvim.hatirlatilan || 0} hatırlatma, ${d.takvim.sonuc || 0} sonuç${d.takvim.hata ? ` · hata: ${d.takvim.hata}` : ''}` : null,
+      d.yapayZeka ? `Yapay zekâ notları: ${d.yapayZeka.durum === 'anahtar-bekliyor' ? 'Gemini anahtarı bekleniyor (Ayarlar › Anahtarlar)' : d.yapayZeka.sonCalisma ? `son okuma ${zm(d.yapayZeka.sonCalisma.bit)} · ${(d.yapayZeka.sonCalisma.sayim || {}).incele || 0} incele` : 'henüz okuma yok'}` : null,
       d.anahtar ? `Anahtar sınaması: son ${d.anahtar.gun || '—'} · ${d.anahtar.sayi || 0} anahtar · ${d.anahtar.sorun || 0} sorun` : null,
       d.golge && d.golge.hafta ? `Gölge testler özeti: son ${d.golge.hafta}` : null,
       d.fiyat ? `Fiyat denetimi: son ${zm(d.fiyat.kontrol)}${d.fiyat.hata ? ` · hata: ${d.fiyat.hata}` : ''}` : null,

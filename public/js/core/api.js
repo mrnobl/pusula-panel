@@ -447,6 +447,8 @@
     ileriKayit: { durum: () => al('/api/ileri-kayit/durum') },
     /* 73.9 Piyasa bağlamı (lib/piyasaBaglami): yalnız bilgi kartları + Ana sayfa 'Bu hafta' — salt okur (araştırma kopyasında sunucudan) */
     piyasaBaglami: { ozet: () => al('/api/piyasa-baglami'), hafta: () => al('/api/piyasa-baglami/hafta') },
+    /* 74.1 Yapay zekâ notları (lib/yapayZeka): salt okur (araştırma kopyasında sunucudan, lib/evOkuma) */
+    yapayZeka: { notlar: (gun) => al(`/api/yapay-zeka/notlar${gun ? `?gun=${encodeURIComponent(gun)}` : ''}`), durum: () => al('/api/yapay-zeka/durum') },
 
     /* ── Coin tarama + liste kaydı (lib/tarama, 60.3; panel: js/pages/tarama.js, listeler.js) ── */
     tarama: {
@@ -509,7 +511,10 @@
       tur: (g) => gonder('/api/bildirim/tur', g),
       sessiz: (g) => gonder('/api/bildirim/sessiz', g),
       uretici: (g) => gonder('/api/bildirim/uretici', g),
-      onizle: (tur, metin) => gonder('/api/bildirim/onizle', { tur, metin })
+      onizle: (tur, metin) => gonder('/api/bildirim/onizle', { tur, metin }),
+      // 74.1: genel ayar (Telegram'da tutarları gizle) ve geçici sessizi erken bitirme
+      genel: (g) => gonder('/api/bildirim/genel', g),
+      geciciBitir: () => gonder('/api/bildirim/gecici-bitir', {})
     },
     /* ── Raporlar (lib/rapor.js, PLAN-PANEL-2; panel: js/pages/raporlar.js) ── */
     rapor: {

@@ -27,7 +27,7 @@ Telegram yalnız **okur**. Güncellemeyi kurmak, botu yeniden açmak, kaydı eş
 
 ↗ düğmelerinin çıkması için [Ayarlar › Bildirimler](#/kilavuz/ayarlar/telegram) › **Panel adresi**'ne sunucunun Tailscale adresini girin. Boşsa düğme çıkmaz, mesajda yalnız yolu yazar (ör. "Panel › Sorunlar").
 
-**Tek istisna: 🔕 1 saat sessize al.** Kritik **olmayan** bildirimler (uyarı, güncelleme, yedek, ileri test, rapor …) bir saat bekletilir; süre bitince bekleyenler **tek özet** mesajı olarak gelir. **Acil durum, koruma stopu, ENGEL / güvenli kip / emir freni ve güvenlik** uyarıları asla susmaz. Yeniden basmak süreyi "şimdiden bir saat sonra"ya taşır. Erken bitirmek için bir düğme yoktur: bir saat dolunca kendiliğinden biter.
+**Tek istisna: 🔕 1 saat sessize al.** Kritik **olmayan** bildirimler (uyarı, güncelleme, yedek, ileri test, rapor …) bir saat bekletilir; süre bitince bekleyenler **tek özet** mesajı olarak gelir. **Acil durum, koruma stopu, ENGEL / güvenli kip / emir freni ve güvenlik** uyarıları asla susmaz. Yeniden basmak süreyi "şimdiden bir saat sonra"ya taşır. Bir saat dolunca kendiliğinden biter; erken bitirmek için panelde **Sistem › Bildirimler › Sessiz saatler › Erken bitir** (74.1 — Telegram'da bu düğme bilinçli olarak yok).
 
 ## Bildirimlerdeki düğmeler {#bildirim-dugmeleri}
 
@@ -42,6 +42,7 @@ Günlük özet, işlem ve rapor gibi bilgi mesajları düğmesizdir.
 ## Gizlilik {#gizlilik}
 
 - **Tutarlar gösterilmez:** Telegram'daki menü ve komut cevaplarında USD / TL tutarı ya da coin miktarı yoktur, yalnız yüzde. `/durum`'daki sermaye satırı, `/pozisyonlar`'daki nominal ve kâr / zarar tutarı yüzdeye döndü; `/ozet`'te tutar "•••" görünür. Tutarları panelde görürsünüz.
+- 74.1: **bildirim mesajlarında** da tutarlar varsayılan olarak gizli (günlük özet, işlem, alarm) — Ayarlar › Bildirimler › **Telegram'da tutarları gizle**; ayrıntı [Bildirimler › Tutarlar](#/kilavuz/bildirimler/tutarlar).
 - Jeton, chat id, sağlık adresi gibi sırlar hiçbir ekrana girmez (Sorunlar'daki teşhis paketiyle aynı sır taraması).
 - Düğmelere yalnız Ayarlar'daki **chat id**'den basılabilir; başka sohbetten gelen basış sessizce yok sayılır.
 

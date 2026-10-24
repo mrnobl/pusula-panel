@@ -21,6 +21,7 @@
     ['borsa', 'Borsa hesapları', 'Botların ve hesapların borsa API anahtarları. Bugün Kairos ve Tao "Binance demo (Kairos)" / "Binance canlı (Kairos)" anahtarlarını kullanır; yeni eklenen hesaplar Faz 2\'de botlara bağlanacak.'],
     ['defter', 'İşlem defterim (salt okuma)', 'İşlem geçmişini okumak için yalnız okuma izinli anahtarlar.'],
     ['bildirim', 'Bildirim', 'Telegram ve healthchecks.io ("ölü adam anahtarı") adresleri.'],
+    ['yapayzeka', 'Yapay zekâ', 'Yapay zekâ notları için Google Gemini anahtarı (ücretsiz katman; Google AI Studio). Yalnız kamuya açık haber ve bildirim metni gönderilir.'],
     ['erisim', 'Erişim', 'Panele ve korumalı işlemlere giriş. Bunlar bilgisayar başında komutla değişir; burada yalnız durumları.'],
     ['bu', 'Bu bilgisayar', 'Bu geliştirme bilgisayarının kendi kayıtları (sunucudan ayrı).']
   ];
@@ -76,6 +77,7 @@
       case 'defter-binance': return [k('apiKey', 'API anahtarı'), k('apiSecret', 'Gizli anahtar (secret)')];
       case 'telegram': return [k('deger', 'Yeni bot jetonu', '@BotFather\'ın verdiği "123456789:AA…" metni')];
       case 'saglik': return [k('deger', 'Yeni ping adresi', 'https://hc-ping.com/…')];
+      case 'gemini': return [k('deger', 'Gemini API anahtarı', 'Google AI Studio › Get API key — genelde "AIza…" ile başlar')];
       case 'pin': return [{ ad: 'eskiPin', etiket: 'Şimdiki PIN', tip: 'password', inputmode: 'numeric' }, { ad: 'yeniPin', etiket: 'Yeni PIN (6–12 rakam)', tip: 'password', inputmode: 'numeric' },
         { ad: 'yeniPin2', etiket: 'Yeni PIN (tekrar)', tip: 'password', inputmode: 'numeric' }];
       default: return [];

@@ -379,6 +379,18 @@ Yalnız ham araştırma verisi; botları etkilemez. Kayıtçı 20 dk sonra kendi
 
 Mavi bilgi kartı (73.9). [Piyasa bağlamı](#/kilavuz/piyasa-baglami) sayfasının kaynaklarından biri (FRED, CFTC, Coinbase, Binance vadeli, alternative.me, DefiLlama, Coin Metrics, Fed / FRED takvimi) 6 saatten ve iki denemeden uzun süredir yanıt vermiyor. **Botları etkilemez** — sayfa yalnız bilgidir, ilgili kart "bayat" ya da "veri yok" der. Toplayıcı kendisi yeniden dener; hangi kaynağın düştüğü sayfanın altındaki **Kaynaklar ve güncelleme sıklığı** tablosunda. Bir haftadan uzun sürerse kaynağın adresi ya da biçimi değişmiş olabilir — sohbete yazın.
 
+### Yapay zekâ notları: Gemini anahtarı bekleniyor {#yapay-zeka-anahtar}
+
+Mavi bilgi kartı (74.1). [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari) için Gemini API anahtarı girilmemiş; sayfa boş kalır. **Botları, dikkat listesini ve kuralları etkilemez.** İstiyorsanız ücretsiz anahtarı alın: [adım adım](#/kilavuz/yapay-zeka-notlari/anahtar) (aistudio.google.com › Get API key › Create API key → Ayarlar › Anahtarlar › Gemini API anahtarı › Değiştir › Sına). **Faturalandırmayı açmayın.** İstemiyorsanız kart yalnız bilgidir.
+
+### Yapay zekâ notları bugün okunamadı {#yapay-zeka-hata}
+
+Kartın nedeni üç türlüdür. **Anahtar reddedildi** (sarı): Ayarlar › Anahtarlar › Gemini API anahtarı › **Sına**; yine olmazsa AI Studio'da yeni anahtar oluşturup **Değiştir** (eski anahtar silinmiş ya da "Generative Language API" kapatılmış olabilir; "bölge desteklenmiyor" derse ücretsiz katman bulunduğunuz yerde kapalıdır). **Günlük kota doldu** (mavi): bir şey yapmayın, kalan konular yarın okunur. **Başka hata** (ağ, Google geçici hata): ertesi sabah yeniden denenir; 3 gün üst üste sürerse sohbete yazın. Botlar etkilenmez.
+
+### Yapay zekâ notları: kanarya sınaması geçmedi {#yapay-zeka-kanarya}
+
+Sarı kart. Her sabahki deneme sayfasına gömülü sahte talimata model uydu; o günün notları sayfada **"kanarya geçmedi"** bandıyla işaretlendi ve Telegram'a gitmedi. Model hiçbir şeyi değiştiremez (yazma aracı yok), yani zarar yoktur — yalnız o günün notlarına güvenmeyin. Ertesi gün yeniden sınanır; iki gün üst üste sürerse sohbete yazın (model sürümü değişmiş olabilir).
+
 ### İleri test izleyicisi çalışmadı {#ileri-izleyici}
 
 Gölge test kayıtları bu denemede yazılmadı (bilgisayar meşgul ya da ağ); 15 dakika sonra yeniden denenir. Gün boyu sürerse sohbete yazın.

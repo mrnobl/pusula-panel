@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.0';
+const APP_VERSION = '74.1';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1279,6 +1279,7 @@ function sorunGirdisi(simdi = Date.now()) {
     gunluk: ARASTIRMA_MODU ? null : sorunOnbellek.gunluk,
     saatDilimi: sorunGuvenli(() => Intl.DateTimeFormat().resolvedOptions().timeZone, null),
     piyasaBaglami: ARASTIRMA_MODU ? null : sorunGuvenli(() => piyasaBaglami.saglik(), null),   // 73.9: uzun süre alınamayan bilgi kaynağı
+    yapayZeka: ARASTIRMA_MODU ? null : sorunGuvenli(() => yapayZeka.durum(), null),   // 74.1: Gemini anahtarı bekliyor / reddedildi / kota / kanarya
   };
 }
 /** Sunucunun sorunları (önbellekli). Araştırma kopyasında öz denetim yok → yalnız bu bilgisayarın güncelleme / veri durumu değil (o /yerel'de). */
@@ -3444,6 +3445,19 @@ require('./lib/ileriKayit').kur({ app, log: (lv, msg) => db.addLog(lv, msg), ozD
 // PİYASA BAĞLAMI (73.9, lib/piyasaBaglami): olay takvimi, protokol kartı, makro pano, WinC panosu (opsiyon, pozisyonlanma, akış, duygu) —
 // YALNIZ BİLGİ, hiçbir gösterge bot kararına girmez; toplayıcı yalnız sunucuda, karar penceresinde ağ yok. GET /api/piyasa-baglami(/hafta).
 const piyasaBaglami = require('./lib/piyasaBaglami').kur({ app, log: (lv, msg) => db.addLog(lv, msg), binanceBekleme: veriOrk.binanceBeklemeErisimi('piyasa bağlamı'), mumDeposu: db.candleStore, surum: APP_VERSION });
+// YAPAY ZEKÂ NOTLARI (74.1, lib/yapayZeka — C3 / PLAN-DIKKAT-LISTESI §F3): günde bir kez (~07:00) Google Gemini ÜCRETSİZ katmanıyla kamuya açık
+// haber / KAP / SEC metinlerini okur; şema kısıtlı JSON + birebir alıntı doğrulayıcı + kanarya. Model hiçbir şeye yazamaz; liste / kural / bot
+// DEĞİŞMEZ — yalnız not + "incele" bayrağı (Telegram türü "yapayzeka", günde en çok 1). Anahtar: secrets.json gemini.apiKey (Ayarlar › Anahtarlar);
+// yoksa ağ isteği yok. Zamanlayıcı yalnız sunucuda (araştırma kopyası ve geliştirme bilgisayarı sayfayı sunucudan okur — lib/evOkuma). YAPAY_ZEKA=0 kapatır.
+const yapayZeka = require('./lib/yapayZeka').olustur({
+  // YAPAY_ZEKA_ORNEK=1 yalnız kılavuz görüntüsü (scripts/kilavuz-ekran.js, araştırma kipinde): örnek klasör gösterilir, okuma YOK (zamanlayıcı kurulmaz).
+  dizin: process.env.YAPAY_ZEKA_DIZIN || yollar.veri('yapay-zeka'), arastirma: (ARASTIRMA_MODU || !!TELEGRAM_GELISTIRME_ENGELI) && !(ARASTIRMA_MODU && process.env.YAPAY_ZEKA_ORNEK === '1'), surum: APP_VERSION, log: (lv, msg) => db.addLog(lv, msg),
+  anahtarFn: () => { if (ARASTIRMA_MODU && process.env.YAPAY_ZEKA_ORNEK === '1') return 'ornek-anahtar'; if (SIRLAR_KILITLI) return null; try { return ((loadSecrets() || {}).gemini || {}).apiKey || null; } catch (e) { return null; } },
+  merkez: BILDIRIM,
+  gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
+});
+app.use(yapayZeka.router());
+if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI && process.env.YAPAY_ZEKA !== '0') yapayZeka.baslat();
 
 /**
  * ARAŞTIRMA DEFTERİ (lib/defter.js, sürüm 60.6, PLAN-DIKKAT-LISTESI §5 Ş1): deneme sayacının kanonik kaydı
@@ -3462,7 +3476,7 @@ app.use(require('./lib/gunluk').router(GUNLUK));
 // 73.5: + POST /api/bildirim/{tur,sessiz,uretici,onizle}; GET'e üretici durumu (makine nabızları, son KAP/fiyat/anahtar denetimi).
 let bildirimUreticileri = null;
 let piyasaBildirim = null;   // 73.9: piyasa takvimi + olay sonucu (lib/piyasaBaglami/bildirim.js) — yalnız sunucu
-app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? { ...bildirimUreticileri.durum(), takvim: piyasaBildirim ? piyasaBildirim.durum() : null } : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
+app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? { ...bildirimUreticileri.durum(), takvim: piyasaBildirim ? piyasaBildirim.durum() : null, yapayZeka: yapayZeka.durum() } : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
 /**
  * 73.5 MAKİNE NABZI: araştırma kopyası (sunucu bağlantısı kurulu) 10 dk'da bir GET /api/makine/nabiz — başlık x-pusula-makine (bilgisayar
  * adı), x-pusula-surum. Yalnız sunucuda ve jetonla gelen istekte (telefon / geliştirme kademesi) kaydedilir; yerel istek ve başlıksız
@@ -3555,6 +3569,7 @@ const anahtarlar = require('./lib/anahtarlar').olustur({
     borsa: (h) => require('./lib/anahtarSinama').borsaSina(h),
     defter: (borsa, a) => require('./lib/anahtarSinama').defterSina(borsa, a),
     telegram: (t) => require('./lib/anahtarSinama').telegramSina(t),
+    gemini: (t) => require('./lib/yapayZeka/gemini').olustur({ aralikMs: 0 }).sina(t),   // 74.1: models.list — salt okuma, kota harcamaz
     saglik: async (alt) => { const s = alt === 'sunucu' ? saglikSunucu : saglikBotlar[alt]; if (!s) return { ok: false, hata: 'bilinmeyen bot' }; const r = await s.ping('basari'); return { ok: !!r.ok, hata: r.ok ? null : (r.hata || 'gönderilemedi') }; }
   },
   ev: EV_BAGLANTI_ETKIN ? {

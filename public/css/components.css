@@ -3268,6 +3268,7 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .bm-onizleme-satir { min-height: 1.3em; }
 .bm-onizleme strong { font-weight: var(--fw-semibold); color: var(--text-strong); }
 .bm-sessiz, .bm-uretici { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3); }
+.bm-gecici { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); font-size: var(--fs-sm); overflow-wrap: anywhere; }
 .bm-uretici .bm-alan { flex: 1 1 140px; }
 .bm-uretici .bm-alan:first-child { flex: 2 1 260px; }
 .bm-saat { min-width: 110px; }
@@ -3548,3 +3549,17 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .pb-sinandi { color: var(--warn-metin); overflow-wrap: anywhere; }
 .pb-sinandi-acik { color: var(--info-metin); }
 .ana-bu-hafta .pb-ana-liste { max-width: 48rem; }
+/* 74.1 Yapay zekâ notları (#/notlar, js/pages/yapayZekaNotlari.js) — yalnız not; alıntı kaynaktan birebir */
+.yz-ust { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.yz-gun { max-width: 22rem; }
+.yz-notlar { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.yz-not { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; overflow-wrap: anywhere; }
+.yz-not-incele { border-left: 3px solid var(--warn); padding-left: var(--sp-2); }
+.yz-not-bas { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.yz-iddia { margin: 0; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.yz-alinti { margin: 0; padding: var(--sp-1) var(--sp-2); border-left: 2px solid var(--border); color: var(--text-muted); font-size: var(--fs-xs); font-style: italic; }
+.yz-incele-satir { display: flex; flex-direction: column; gap: var(--sp-1); }
+.yz-adimlar { margin: 0 0 var(--sp-2); padding-left: var(--sp-5); font-size: var(--fs-sm); display: grid; gap: var(--sp-1); }
+.yz-bant { padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-md); font-size: var(--fs-sm); margin: 0 0 var(--sp-3); }
+.yz-bant-uyari { background: var(--warn-soft); border: 1px solid var(--warn); color: var(--warn-metin); }
+.yz-konu, .yz-grup, .yz-anahtar { min-width: 0; }

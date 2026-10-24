@@ -329,6 +329,28 @@
     });
   }
 
+  // ── 74.1: Bildirimler › "Telegram'da tutarları gizle" (bildirim merkezinin genel ayarı; kutu değişince hemen kaydedilir) ──
+  async function tutarKutusu() {
+    const k = doc && doc.getElementById ? doc.getElementById('chkTgTutarGizle') : null;
+    if (!k || !AG.api || !AG.api.bildirim || !AG.api.bildirim.genel) return;
+    const durum = doc.getElementById('tgTutarDurum');
+    const yaz = (m) => { if (durum) durum.textContent = m || ''; };
+    let r = null;
+    try { r = await AG.api.bildirim.liste(); } catch (e) { r = null; }
+    const g = r && r.success ? r.genel : null;
+    if (g) { k.checked = g.tutarGizle !== false; k.disabled = !!(AG.api.kademe && AG.api.kademe() === 'telefon'); yaz(''); }
+    else { k.disabled = true; yaz(r && r.success ? 'Sunucudaki Pusula 74.1 öncesi: tutarlar bu sürümde menü ve komutlarda gizli, bildirimlerde görünür.' : 'Bildirim ayarı okunamadı.'); }
+    if (k.dataset && k.dataset.bagli) return;
+    if (k.dataset) k.dataset.bagli = '1';
+    k.addEventListener('change', async () => {
+      const istenen = !!k.checked;
+      let y = null;
+      try { y = await AG.api.bildirim.genel({ tutarGizle: istenen }); } catch (e) { y = { success: false, error: e.message }; }
+      if (y && y.success) { k.checked = y.genel.tutarGizle; if (AG.bildir) AG.bildir(y.genel.tutarGizle ? 'Telegram bildirimlerinde tutarlar gizli.' : 'Telegram bildirimlerinde tutarlar görünür.', 'ok'); }
+      else { k.checked = !istenen; if (AG.bildir) AG.bildir(`Kaydedilemedi: ${(y && y.error) || 'bilinmeyen hata'}`, 'hata', { sure: 10000 }); }
+    });
+  }
+
   if (doc && doc.addEventListener) {
     doc.addEventListener('ag:rota', (e) => {
       if (!e.detail || e.detail.bolum !== 'tab-settings') return;
@@ -340,6 +362,7 @@
         if (AG.rota && AG.rota.altDegisti) AG.rota.altDegisti(sec);
       }
       ciz();   // 68.1 "yedek" sekmesini js/pages/tasima.js kendi ag:rota dinleyicisiyle yükler
+      if (sec === 'bildirimler') tutarKutusu();
     });
   }
 

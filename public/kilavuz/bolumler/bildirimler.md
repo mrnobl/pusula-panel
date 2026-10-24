@@ -40,6 +40,7 @@ Telegram bağlantısının kendisi (bot token, chat id, etkinleştirme) [Ayarlar
 | **Anahtar sınaması başarısız** (yeni) | Günlük salt okuma sınamasında bir anahtar bağlanamadıysa ya da para çekme izni açıksa |
 | **Makine sessiz** (yeni) | Sunucu uzun süre kapalı kaldıysa (açılışta) ya da araştırma kopyası uzun süre görünmediyse |
 | **Sert fiyat hareketi** (yeni) | BTC (ya da seçtiğiniz semboller) kısa sürede eşikten fazla oynadığında |
+| **Yapay zekâ notları (incele)** (74.1) | Günde en çok 1 özet: sabahki okumada "incele" bayrağı alan notlar (hack, borsadan çıkarma, dava, işlem durdurma) — bkz. [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari/telegram) |
 | Güncelleme | Yeni sürüm onay bekliyor, elle bakılmalı ya da GitHub'a ulaşılamıyor |
 | Yedek | Otomatik yedek alınamadığında |
 | Diğer | Yukarıdakilere girmeyen mesajlar |
@@ -88,7 +89,7 @@ Sayfanın üstündeki **Sessiz saatler** kartında başlangıç ve bitiş (İsta
 
 Kritik türler her zaman hemen gelir.
 
-**Geçici sessiz (74.0):** Telegram'daki **🔕 1 saat sessize al** düğmesi ([Telegram menüsü](#/kilavuz/telegram-menu/yazma-yok)) kritik olmayan **her** bildirimi — türün sessiz saat seçimine bakmadan — bir saat bekletir; süre bitince bekleyenler aynı özet mesajıyla gelir. Kritik türler susmaz. Telegram'dan yapılabilen tek değişiklik budur ve bir saat dolunca kendiliğinden biter.
+**Geçici sessiz (74.0):** Telegram'daki **🔕 1 saat sessize al** düğmesi ([Telegram menüsü](#/kilavuz/telegram-menu/yazma-yok)) kritik olmayan **her** bildirimi — türün sessiz saat seçimine bakmadan — bir saat bekletir; süre bitince bekleyenler aynı özet mesajıyla gelir. Kritik türler susmaz. Telegram'dan yapılabilen tek değişiklik budur ve bir saat dolunca kendiliğinden biter. 74.1: geçici sessiz etkinken bu sayfanın **Sessiz saatler** kartında sarı **geçici sessiz** satırı görünür (ne zaman başladığı, ne zaman biteceği); **Erken bitir** düğmesi sessizi hemen kaldırır, bekleyenler bir dakika içinde tek özet olarak gelir. Telefonda yalnız görünür.
 
 **Düğmeler (74.0):** alarm ve uyarı mesajlarının altında **Ayrıntı** (o sorunun adımları), **Panelde çöz ↗** (panel adresi girilmişse) ve kritik olmayanlarda **1 saat sessize al** çıkar — bkz. [Telegram menüsü › Bildirimlerdeki düğmeler](#/kilavuz/telegram-menu/bildirim-dugmeleri). Telegram bir düğmeyi kabul etmezse aynı mesaj düğmesiz gider.
 
@@ -107,7 +108,18 @@ Hepsi **yalnız sunucuda** üretilir (araştırma kopyasında çalışmaz), hiç
 - **Anahtar sınaması başarısız** — her gün **06:15**'ten sonra bir kez, kayıtlı borsa ve İşlem defterim anahtarları [Ayarlar › Anahtarlar](#/kilavuz/ayarlar/anahtarlar)'daki **Sına** ile aynı **salt okuma** denemesinden geçer (emir yok). Bağlanamayan anahtar ya da **para çekme izni açık** anahtar varsa bildirim gelir; sonuç Anahtarlar'da "Son sınama" olarak da görünür. Telegram jetonu ve sağlık adresleri bu günlük sınamaya girmez.
 - **Piyasa takvimi** (73.9) — her **pazartesi 09:00**'dan sonra haftanın olayları **tek mesaj** (FOMC faiz kararı, Türkiye ve ABD TÜFE, BIST bilanço son günleri, elle eklenen coin kilit açılımları; o hafta olay yoksa mesaj gelmez) ve her olaydan **bir gün önce 18:00**'den sonra "⏰ Yarın: …" hatırlatması (olay başına bir kez). İki saat de bu kartta ayarlanır (06:00–23:00). Takvimin kaynakları ve "tahmini" olanlar: [Piyasa bağlamı › Olay takvimi](#/kilavuz/piyasa-baglami/takvim).
 - **Olay sonucu** (73.9) — olay açıklanınca **sonuç**, olay başına bir kez: FOMC kararı (federalreserve.gov açıklamasından, birkaç dakika içinde: "Fed politika faizini %3,75–4,00 aralığında sabit bıraktı."), ABD TÜFE (FRED, açıklamadan sonraki 15 dakika içinde) ve Türkiye TÜFE (EVDS, veri orkestratörü güncelleyince): aylık ve yıllık değişim. Yalnız rakam; yorum ve öneri yok. **Bilanço sonuçları bu türde gelmez** — Bilanço özeti zaten gönderiyor (aynı şey iki kez gelmez). Sunucu 3 günden uzun kapalı kaldıysa eski olayların sonucu sonradan gönderilmez.
+- **Yapay zekâ notları (incele)** (74.1) — sabah ~07:00 okumasından sonra **günde en çok 1** mesaj, yalnız "incele" bayraklı notlar; kanarya sınaması geçmediyse gönderilmez. Ayrıntı: [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari).
 - **Sert fiyat hareketi** — varsayılan **BTCUSDT**, **60 dakikada ±%5**: son fiyat, son 60 dakikanın en düşük (yükselişte) ya da en yüksek (düşüşte) kapanışından eşik kadar uzaklaşınca. Aynı sembol ve yön için **6 saatte bir**. Semboller (en çok 10, Binance spot adıyla, ör. ETHUSDT), eşik, süre ve tekrar süresi ayarlanabilir. Yalnız bilgidir; botlar kendi kurallarıyla çalışır.
+
+## Tutarlar Telegram'da gizli {#tutarlar}
+
+74.1'den beri bildirim mesajlarındaki **para tutarları ve işlem miktarları** Telegram'a (ve ntfy'a) **•••** olarak gider — telefon başkasının elindeyken ya da kilit ekranında hesabınızın büyüklüğü görünmesin. Ayar: [Ayarlar › Bildirimler](#/kilavuz/ayarlar/telegram) › **Telegram'da tutarları gizle** (varsayılan **açık**; kutu değişince hemen kaydedilir).
+
+- Gizlenen: "Özsermaye 4.999,29 USDT" → "Özsermaye •••", "buy 0,012" → "buy •••", "25 adet" → "••• adet", "özsermaye 4400 / taban 5000 USDT" → "özsermaye ••• / taban •••".
+- Görünen: **yüzdeler** (kayıp %12,5, eşik %20, teminat oranı %8,4), fiyat ("@ 67.250"), kur (USD/TRY 41,5), saat, tarih, sembol. Kritik alarmlar anlamını korur — neyin, ne kadar yüzde olduğunu yine söyler.
+- Gizlenmeyen türler: **Bilanço özeti, Piyasa takvimi, Olay sonucu, Sert fiyat hareketi, Yapay zekâ notları** — şirketlerin ve piyasanın kamuya açık rakamlarıdır, sizin paranız değil.
+- Önizleme ve "Son gönderilenler" de gizli hâli gösterir. Tutarları panelde görürsünüz.
+- Telegram **menüsü ve komut cevapları** bu ayardan bağımsız olarak her zaman tutarsızdır (yalnız yüzde) — [Telegram menüsü › Gizlilik](#/kilavuz/telegram-menu/gizlilik).
 
 ## Uyarılar ve ne yapmalı {#uyarilar}
 
