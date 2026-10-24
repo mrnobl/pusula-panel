@@ -2,6 +2,17 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.0 — Telegram menüsü (2026-10-24) {#s74-0}
+
+- **[Telegram menüsü](#/kilavuz/telegram-menu):** Telegram'a **/menu** yazın — tek mesaj açılır, düğmelere bastıkça **aynı mesaj** güncellenir (sohbet dolmaz). Ekranlar: **Botlar** (bot başına kart, ayrıntı, pozisyonlar) · **Sorunlar** (Sorunlar sayfasının kartları: adımlar, "Neyi saydı?") · **Portföy** · **İleri test** (başında "🧪 GÖLGE TESTİ — emir yok; ara sonuç, hüküm değil", gölge getirileri, hüküm takvimi) · **Piyasa** (bu hafta + makro) · **Bilanço** (son özet) · **Güncelleme** · **Makineler** · **Bildirim ayarları** · **Komutlar**. Her ekranda **◀ Menü**.
+- **Telegram'ın komut listesi:** sohbette "/" yazınca ya da sol alttaki **Menü** düğmesinde bütün komutlar açıklamalarıyla çıkar. Yeni kısa yollar: `/botlar` `/sorunlar` `/portfoy` `/piyasa` `/bilanco` `/guncelleme` `/makineler`; `/start` menüyü açar. Eski komutlar aynen çalışır.
+- **Telegram'dan yine yazma yok:** güncellemeyi kurmak, botu yeniden açmak gibi işlerde düğme **paneli açar** (↗; doğru sayfa: Sorunlar, Botlar › o bot, Ayarlar › Güncelleme, Bildirimler), işlem orada acil PIN ile. Düğmeler için Ayarlar › Bildirimler › **Panel adresi** gerekir; boşsa mesajda yalnız yol yazar.
+- **Tek istisna — 🔕 1 saat sessize al:** kritik olmayan bildirimler bir saat bekler, süre bitince tek özet gelir. Acil durum, koruma stopu, ENGEL / güvenli kip / emir freni ve güvenlik uyarıları susmaz.
+- **Bildirimlere düğme:** alarm ve uyarı mesajlarının altında **Ayrıntı** (o sorunun adımları), **Panelde çöz ↗**, kritik olmayanlarda **1 saat sessize al**.
+- **Tutarlar gizli:** Telegram'daki menüde ve komut cevaplarında USD / TL tutarı ve coin miktarı yok, yalnız yüzde (`/durum` sermaye satırı, `/pozisyonlar` nominal ve kâr / zarar tutarı yüzdeye döndü, `/ozet`'te tutar "•••").
+- Güvenlik: düğmelere yalnız kayıtlı chat id basabilir; düğme verisi imzalıdır (taklit ya da bilinmeyen veri hiçbir şey yaptırmaz); yalnız en son menü mesajının düğmeleri çalışır, eskisi "süresi doldu, /menu" der; art arda hızlı basışa hız sınırı.
+- Botların karar ve emir kodu değişmedi. Telegram gönderim ve yoklama dosyası (lib/telegram.js) değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 73.9 — Piyasa bağlamı ve WinC panosu (2026-10-24) {#s73-9}
 
 - **Yeni sayfa: [İzleme › Piyasa bağlamı](#/kilavuz/piyasa-baglami).** Başlığında **Karar kuralı yok · bilgi**: buradaki hiçbir gösterge botların kararına girmez, sayfa emir vermez. Yedi grup: **olay takvimi** (FOMC faiz kararı, Türkiye ve ABD TÜFE, BIST bilanço son günleri, elle eklenen coin kilit açılımları; geçen iki haftanın açıklanan sonuçları) · **makro pano** (net likidite, ^IRX ve Fed politika faizi, sentetik dolar endeksi, USD/TRY, enflasyon, stablecoin arzı, MVRV, kredi spreadi, COT — CME Bitcoin ve Nasdaq-100) · **opsiyon** (BTC ve ETH: gamma maruziyeti, max pain, ~30 günlük örtük oynaklık, 25Δ çarpıklık, put/call — sunucunun 73.3 ileriye kaydından; OKX + Bybit + Binance) · **pozisyonlanma** (funding, açık pozisyon ve z-skoru, büyük hesap long/short, Hyperliquid'in en büyük 100 hesabı) · **akış** (taker al/sat ve CVD, Coinbase primi, çeyreklik vadeli baz) · **duygu ve genişlik** (korku-açgözlülük, alt sezonu, RSI haritası) · **protokol kartı** (DefiLlama ücret, gelir, TVL, P/F, P/S).

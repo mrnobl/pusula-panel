@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.9';
+const APP_VERSION = '74.0';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -4002,19 +4002,72 @@ setTimeout(() => { sunucuKalpAtisi(); }, 60 * 1000).unref();
 setInterval(() => { sunucuKalpAtisi(); }, 10 * 60 * 1000).unref();
 
 /**
- * TELEGRAM KOMUTLARI (lib/telegramKomut.js) — YALNIZ OKUMA: /durum /pozisyonlar /ozet /saglik /yardim.
+ * TELEGRAM KOMUTLARI (lib/telegramKomut.js) — YALNIZ OKUMA: /durum /pozisyonlar /ozet /saglik /yardim … + 74.0 /menu (düğmeli).
  * Emir veren / botu başlatan-durduran komut BİLİNÇLİ OLARAK YOK. Yalnız Ayarlar'daki chat id'den gelen
  * mesaja cevap verilir. Telegram kapalıyken yoklama ağ isteği yapmaz (30 sn'de bir ayara bakar).
  */
 const { TelegramYoklayici } = require('./lib/telegram');
 const { komutIsleyici } = require('./lib/telegramKomut');
 const SUNUCU_BASLANGIC = Date.now();
+/** /ileri ve menü "İleri test" (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz. */
+function ileriBilgisi() {
+  const HD = require('./lib/ileri/hucumDengeEsikleri');
+  const ilk = '2026-10-07';
+  return { demo: demoKabulOzet.ozet(), bollingerHukum: '2027-10-07 (düşüş olayı yoksa 2028-10-07)',
+    kontrol: HD.UFUKLAR.map(g => ({ gun: g, tarih: new Date(Date.parse(ilk + 'T00:00:00Z') + g * 864e5).toISOString().slice(0, 10) })) };
+}
+/**
+ * 74.0 TELEGRAM MENÜSÜ (lib/telegramMenu.js): /menu tek mesaj + düğmeler (callback_query → aynı mesaj düzenlenir). YALNIZ OKUR;
+ * yazma işi için düğme paneli açar (Ayarlar › Bildirimler › Panel adresi + rota), işlem orada acil PIN ile. TEK İSTİSNA: "1 saat
+ * sessize al" → BILDIRIM.geciciSessiz (kritik olmayanlar 60 dk bekler). Tutarlar gizli (yalnız yüzde). Sağlayıcılar salt okur.
+ */
+let telegramKomutIsle = null;
+const TG_MENU = require('./lib/telegramMenu').olustur({
+  anahtarFn: () => engine.telegram.botToken,
+  panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null,
+  surum: APP_VERSION, baslangic: SUNUCU_BASLANGIC,
+  botlar: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean),
+  golgeHarita: () => isletim.golgeOku(GOLGE_DOSYA),
+  komutMetni: (k) => (telegramKomutIsle ? telegramKomutIsle(k) : Promise.resolve('Komut işleyici hazır değil.')),
+  sorunlar: () => sorunlarHesapla(),
+  bilinenler: () => bilinenSirlar(),
+  portfoy: () => {
+    let pm = null;
+    try { const o = portfoyum.ozetKur(); if (o.seri && o.seri.length) pm = o.getiri.USD; } catch { /* Portföyüm yok */ }
+    const modeller = [];
+    try {
+      const DF = require('./lib/tasarimci/defter'), MD = require('./lib/tasarimci/model'), BA = require('./lib/botAdlari');
+      const gs = DF.oku('gunluk').satirlar;
+      for (const m of MD.sabitleme().modeller) {
+        const st = gs.filter(s => s.model === m.id);
+        const met = MD.metrik(st);
+        if (!met.gun) continue;
+        const tl = m.id === 'm-bist-m10' ? MD.metrik(st, 'endeksTl') : null;
+        modeller.push({ ad: BA.ad(m.id) || m.ad, toplam: met.toplam, para: 'USD', bas: met.bas, toplamTl: tl && tl.gun ? tl.toplam : null });
+      }
+    } catch { /* model defteri yok */ }
+    return { portfoyum: pm, modeller };
+  },
+  golge: () => require('./lib/golgeOzet').satirlar(),
+  ileri: () => ileriBilgisi(),
+  piyasa: () => ({ hafta: piyasaBaglami.hafta(), kartlar: piyasaBaglami.ozet().kartlar }),
+  bilanco: () => { const d = bildirimUreticileri ? bildirimUreticileri.durum() : null; return d && d.bilanco ? d.bilanco.sonOzet : null; },
+  guncelleme: () => guncelleme.durumOku(__dirname),
+  makineler: () => (bildirimUreticileri ? bildirimUreticileri.durum().makine : null),
+  bildirim: () => { const v = BILDIRIM.gorunum(0); return { sessiz: v.sessiz, gecici: v.sessiz.gecici, turler: v.katalog.map(t => ({ ad: t.ad, acik: t.acik })) }; },
+  // TEK YAZMA İSTİSNASI (kullanıcı kararı 2026-10-24): kritik olmayan bildirimler 60 dk bekler; kritikler asla susmaz.
+  sessizAl: (dk) => { const r = BILDIRIM.geciciSessiz(dk); db.addLog('INFO', `🔕 Telegram'dan ${dk} dk sessize alındı — kritik olmayan bildirimler ${new Date(r.bitis).toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' })}'e kadar bekler`); return r; },
+});
+// Alarm / uyarı mesajlarının düğmeleri (Ayrıntı · Panelde çöz ↗ · 1 saat sessize al) — imza anahtarı bot jetonundan türetilir.
+engine.telegram.klavyeFn = (bag) => TG_MENU.bildirimKlavyesi(bag);
 const telegramYoklayici = new TelegramYoklayici({
   notifierFn: () => engine.telegram,
   offsetDosya: yollar.veri('telegram-offset.json'),
   kaydet: (sv, m) => db.addLog(sv, `[TELEGRAM] ${m}`),
   engel: () => TELEGRAM_GELISTIRME_ENGELI,
-  isleyici: komutIsleyici({
+  menu: TG_MENU,
+  isleyici: telegramKomutIsle = komutIsleyici({
+    menu: TG_MENU,
     surum: APP_VERSION, baslangic: SUNUCU_BASLANGIC,
     portfoyBotlari: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]),
     bildirici: portfoyBildirici,
@@ -4023,12 +4076,7 @@ const telegramYoklayici = new TelegramYoklayici({
     // 73.7 /teshis: Sorun merkezi kartları (lib/sorunlar.js) — etkin sorunlar + ilk 2 adım, sır temizlenmiş.
     teshis: () => SORUN.telegramTeshis(sorunlarHesapla(), { panelAdresi: (config.telegram && config.telegram.panelAdresi) || null, bilinenler: bilinenSirlar() }),
     // /ileri (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz.
-    ileri: () => {
-      const HD = require('./lib/ileri/hucumDengeEsikleri');
-      const ilk = '2026-10-07';
-      return { demo: demoKabulOzet.ozet(), bollingerHukum: '2027-10-07 (düşüş olayı yoksa 2028-10-07)',
-        kontrol: HD.UFUKLAR.map(g => ({ gun: g, tarih: new Date(Date.parse(ilk + 'T00:00:00Z') + g * 864e5).toISOString().slice(0, 10) })) };
-    },
+    ileri: () => ileriBilgisi(),
   }),
 });
 

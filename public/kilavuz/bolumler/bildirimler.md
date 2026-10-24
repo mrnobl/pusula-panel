@@ -88,6 +88,10 @@ Sayfanın üstündeki **Sessiz saatler** kartında başlangıç ve bitiş (İsta
 
 Kritik türler her zaman hemen gelir.
 
+**Geçici sessiz (74.0):** Telegram'daki **🔕 1 saat sessize al** düğmesi ([Telegram menüsü](#/kilavuz/telegram-menu/yazma-yok)) kritik olmayan **her** bildirimi — türün sessiz saat seçimine bakmadan — bir saat bekletir; süre bitince bekleyenler aynı özet mesajıyla gelir. Kritik türler susmaz. Telegram'dan yapılabilen tek değişiklik budur ve bir saat dolunca kendiliğinden biter.
+
+**Düğmeler (74.0):** alarm ve uyarı mesajlarının altında **Ayrıntı** (o sorunun adımları), **Panelde çöz ↗** (panel adresi girilmişse) ve kritik olmayanlarda **1 saat sessize al** çıkar — bkz. [Telegram menüsü › Bildirimlerdeki düğmeler](#/kilavuz/telegram-menu/bildirim-dugmeleri). Telegram bir düğmeyi kabul etmezse aynı mesaj düğmesiz gider.
+
 ## Yeni bildirimler {#yeni}
 
 Hepsi **yalnız sunucuda** üretilir (araştırma kopyasında çalışmaz), hiçbiri emir vermez ya da bir ayarı değiştirmez; ücretli kaynak yoktur. Sayfanın altındaki **Yeni bildirimlerin ayarı** kartında ayarlanır ve son durumları yazar (bilanço için: hangi şirketler — yalnız elimdekiler / elimdekiler + BIST 100 / tüm BIST —, en çok 2 mesaj saati, satır sayısı 3–15; piyasa takvimi için pazartesi mesaj saati ve bir gün önce hatırlatma saati).
