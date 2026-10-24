@@ -25,6 +25,17 @@
     'tam-kapanma': ['TAMAMEN KAPANDI', 'neg'], uyari: ['UYARI', 'warn'], hata: ['HATA', 'neg'], duzeldi: ['DÜZELDİ', 'pos'], 'kara-kutu': ['OLAY RAPORU', ''],
   };
   const SIRA = { tamam: 0, kapali: 0, bilinmiyor: 1, uyari: 2, hata: 3 };
+  /** 73.7 (S13): denetim → Kılavuz › Sorun giderme başlığı (her satırın "ne yapmalı" bağlantısı). */
+  const KILAVUZ = { surec: 'acilis-sayaci', donma: 'donma', bellek: 'bellek', disk: 'disk', paket: 'paket-guvenligi', node: 'node', saat: 'saat-farki', sir: 'sir-dosyasi', kilit: 'kilit',
+    dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', bakim: 'guvenli-kip',
+    delist: 'delist', kayitci: 'ileriye-kayit', internet: 'internet', mutabakat: 'pozisyon-uyusmazligi', stop: 'stop-kurulamadi', marj: 'marj', zorla: 'adl-likidasyon', funding: 'funding',
+    sapma: 'golge-kaymasi', maliyet: 'islem-maliyeti', tekrar: 'guvenli-kip-tekrar', kacan: 'kacan-calisma', telegram: 'telegram-gonderim', sinyal: 'saglik-sinyali' };
+  /** Saf (73.7, S13): denetim satırının "ne yapmalı" modeli → { metin, kilavuz, sorunlar } (sorunlu satırda Sorunlar bağlantısı). */
+  function nasilModeli(d) {
+    if (!d) return null;
+    const sorunlu = d.durum === 'uyari' || d.durum === 'hata';
+    return { metin: d.nasil || (sorunlu ? 'Adımlar Sistem › Sorunlar sayfasında.' : ''), kilavuz: KILAVUZ[d.kimlik] ? `#/kilavuz/sorun-giderme/${KILAVUZ[d.kimlik]}` : '#/kilavuz/sorun-giderme', sorunlar: sorunlu };
+  }
   let veri = null;
   const okundu = {};   // bot → "Sebebi okudum" işaretli mi (yalnız bu sayfa açıkken)
 
@@ -154,6 +165,8 @@
           el('span', { class: 'gunc-sr', text: `durum: ${DURUM_AD[d.durum] || d.durum}` })]),
         el('div', { class: 'oz-ayrinti', text: d.ayrinti || '—' }),
         o ? el('div', { class: `oz-onarim${o.basari ? '' : ' oz-onarim-olmadi'}`, text: `${o.basari ? 'Onarıldı' : 'Onarılamadı'} ${saat(o.zaman, simdi)}: ${o.metin}` }) : null,
+        (() => { const n = nasilModeli(d); return n ? el('div', { class: 'oz-nasil' }, [el('strong', { text: n.sorunlar ? 'Ne yapmalı: ' : 'Sorun olursa: ' }), el('span', { text: `${n.metin} ` }),
+          n.sorunlar ? el('a', { href: '#/sorunlar', text: "Sorunlar’da adımlar →" }) : null, n.sorunlar ? el('span', { text: ' · ' }) : null, el('a', { href: n.kilavuz, text: 'Kılavuz' })]) : null; })(),
       ]),
       el('span', { class: 'oz-sag sayi', text: saat(d.zaman, simdi) }),
     ]);
@@ -284,6 +297,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, nasilModeli, KILAVUZ, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.saglik;
 })(typeof window !== 'undefined' ? window : globalThis);

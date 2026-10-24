@@ -582,6 +582,12 @@
       ikinciKanalKaydet: (govde) => gonder('/api/saglik/ikinci-kanal', govde),
       ikinciKanalDene: () => tetikle('/api/saglik/ikinci-kanal/dene')
     },
+    /* 73.7 Sorun merkezi (lib/sorunlar.js; panel: js/pages/sorunlar.js) — yalnız okuma; eylemler mevcut uçlarla (bindirmeEylem, saglikOz) */
+    sorunlar: {
+      liste: (o) => al(`/api/sorunlar${o && o.ornek ? '?ornek=1' : o && o.taze ? '?taze=1' : ''}`),
+      yerel: () => al('/api/sorunlar/yerel'),
+      teshis: (kart) => al(`/api/sorunlar/teshis${kart ? `?kart=${q(kart)}` : ''}`)
+    },
 
     /* ── Kılavuz (60.4; panel: js/pages/kilavuz.js) — durağan dosyalar public/kilavuz/ altında ── */
     kilavuz: {

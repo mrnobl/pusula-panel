@@ -278,7 +278,11 @@
   .liq-note, .lev-badge, .badge, .mode-badge, .dock-badge, .pf-rozet, .pf-kucuk, .pf-alan > span,
   .eylem-aciklama, .hs-alt, .hs-kaynak, .pn-oge-alt, .pn-p-alt, .strat-grup-baslik, .strat-satir-alt, .kur-kaynak, .pm-gun-sira, .pn-isi-hucre,
   .p-rozet, .p-tablo th, .p-alan-ipucu, .menu-grup-ad, .menu-alt-ayrac, .df-adim-baslik, .kr-no, .oz-kademe, .oz-sag,
-  .bot-defter-kutu-ad, .bot-takvim-hafta, .bot-takvim-no, .bot-takvim-bas .bot-takvim-deger { font-size: var(--fs-sm); }
+  .bot-defter-kutu-ad, .bot-takvim-hafta, .bot-takvim-no, .bot-takvim-bas .bot-takvim-deger,
+  .sorun-ne b, .sorun-satirlar, .sorun-paket-metin, .sorun-ust-sayi, .oz-nasil, .oz-nasil a { font-size: var(--fs-sm); }
+  /* 73.7 Sorun merkezi: telefonda "Ne oldu / Ciddi mi / Geçer mi" alt alta. */
+  .sorun-ne { grid-template-columns: minmax(0, 1fr); }
+  .sorun-kart { padding: var(--sp-3); }
   /* F4: iki sütunlu gösterge şeridinde büyük tutar bölünmesin ($4.114,2 | 0). */
   .p-gosterge-deger { font-size: var(--fs-lg); overflow-wrap: normal; }
   .p-dugme-simge, .p-dugme-simge.p-dugme-kucuk { width: var(--dokunma); }

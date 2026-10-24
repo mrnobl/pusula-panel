@@ -703,6 +703,8 @@ function bindFormEvents() {
         botToken: document.getElementById('inpTgToken')?.value || '',
         // Boş bırakılırsa kayıtlı chat id korunur (Ö18 / A-04: panel maskeli gösterir; sunucu boş/maskeli değeri yazmaz).
         chatId: (document.getElementById('inpTgChatId')?.value || '').trim(),
+        // 73.7: Sorunlar bağlantısının adresi (boş = 'Panel › Sorunlar'; sunucu doğrular).
+        panelAdresi: (document.getElementById('inpTgPanelAdresi')?.value || '').trim(),
         notifyCritical: document.getElementById('chkTgCritical')?.checked !== false,
         notifyErrors: document.getElementById('chkTgErrors')?.checked !== false,
         notifyLifecycle: document.getElementById('chkTgLifecycle')?.checked !== false,

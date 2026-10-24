@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.6';
+const APP_VERSION = '73.7';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -585,7 +585,9 @@ const engine = new TradingEngine(config);
 const BILDIRIM = require('./lib/bildirimMerkezi').olustur({ kok: __dirname,
   varsayilan: () => ({ islem: engine.telegram.notifyTrades, hata: engine.telegram.notifyErrors, yasam: engine.telegram.notifyLifecycle }),
   ntfyFn: () => { const k = ikinciKanal(); return k.konu ? { konu: k.konu } : null; },
-  engelFn: () => TELEGRAM_GELISTIRME_ENGELI || (ARASTIRMA_MODU ? 'araştırma modu' : null) });
+  engelFn: () => TELEGRAM_GELISTIRME_ENGELI || (ARASTIRMA_MODU ? 'araştırma modu' : null),
+  // 73.7: alarm / uyarı mesajlarına Sorun merkezi adımları + bağlantı (adres: Ayarlar › Bildirimler › Panel adresi; yoksa 'Panel › Sorunlar').
+  sorunBagi: { panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null } });
 engine.telegram.merkezBagla(BILDIRIM);
 // 67.5: geliştirme bilgisayarında (araştırma modu / data/makine.json / sunucu bağlantısı kurulu) Telegram yoklaması ve gönderimi
 // kapalı — sunucudaki yoklamayla 409 çakışması olmasın. TELEGRAM_GELISTIRME=1 açıkça açar. Sunucuda davranış değişmez.
@@ -1222,6 +1224,134 @@ app.post('/api/saglik/oz/:ad/guvenli-kip-kaldir', (req, res) => {
   const g = b.bot.guvenliKipKaldir();
   if (g) { try { ozDenetim.onayVerildi(b.ad); } catch { /* */ } }   // 73.6 (Y-02): sayaçlar bu andan sonrasını sayar
   res.json({ success: true, kaldirilan: g, bot: b.bot.ozet() });
+});
+
+/**
+ * 73.7 SORUN MERKEZİ (lib/sorunlar.js — saf): bütün kaynaklardan o an ETKİN sorunlar tek biçimde. Girdi burada toplanır (salt okuma;
+ * botların karar/emir koduna dokunulmaz). 30 sn önbellek (rozet her sayfada 5 dk'da bir sorar). Uçlar (hepsi GET, telefonda açık):
+ *   /api/sorunlar            { sorunlar, sayac, sonDenetim, rol } — araştırma kopyasında lib/evOkuma.js sunucudan okur (EV_YOLU)
+ *   /api/sorunlar/teshis     { metin } "Sohbete gönder" paketi (sır taraması + uzunluk sınırı); ?kart=<kimlik> o kartı başa alır
+ *   /api/sorunlar/yerel      bu bilgisayarın kendi sorunları (araştırma kopyası: sunucu bağlantısı, kuyruk, yerel veri) — iletilmez
+ * Telegram /teshis aynı kartlardan (lib/telegramKomut.js ctx.teshis). SORUN_ORNEK=1 iken ?ornek=1 kılavuz görüntüsü için ÖRNEK kartlar.
+ */
+const SORUN = require('./lib/sorunlar');
+const sorunOnbellek = { zaman: 0, sonuc: null, gunluk: null, gunlukZaman: 0 };
+const sorunGuvenli = (fn, vars = null) => { try { const x = fn(); return x === undefined ? vars : x; } catch { return vars; } };
+function sorunBotlari(simdi) {
+  return BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => {
+    const o = sorunGuvenli(() => b.bot.ozet(simdi), {}) || {};
+    const y = b.y && b.y.borsa ? (sorunGuvenli(() => b.y.ozet(), {}) || {}) : null;
+    const uy = o.uygulama || null;
+    return { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, calisiyor: !!o.calisiyor, bindirmeEngel: o.bindirmeEngel || null, kolEngel: o.kolEngel || null,
+      guvenliKip: o.guvenliKip || null, akisBekleyen: o.akisBekleyen || null, model: o.model ? { durum: o.model.durum, metin: o.model.metin } : null,
+      uygulama: uy ? { bant: uy.bant } : null, sapmaMetin: uy && Number.isFinite(uy.birikim) ? `Son 30 günde gerçek − simülasyon farkı ${(uy.birikim * 100).toFixed(2).replace('.', ',')} puan (bant: ${uy.bant}).` : null,
+      kalp: o.kalp || null, kalpDurumu: o.kalpDurumu || null, sonKarar: o.sonKarar ? { gun: o.sonKarar.gun, risk: o.sonKarar.risk || null } : null,
+      yurutucu: y ? { durum: y.durum, durmaTuru: y.durmaTuru, durmaSebebi: y.durmaSebebi, geriCekilme: y.geriCekilme ? { bitis: y.geriCekilme.bitis, aktif: y.geriCekilme.aktif } : null, kilitAcik: y.kilitAcik } : { durum: 'BAGLI_DEGIL' } };
+  });
+}
+function sorunGirdisi(simdi = Date.now()) {
+  // Günlük özeti 24 saatin dosyalarını okur — 5 dk önbellek.
+  if (!sorunOnbellek.gunluk || simdi - sorunOnbellek.gunlukZaman > 5 * 60000) {
+    const oz = sorunGuvenli(() => GUNLUK.ozet(), null);
+    sorunOnbellek.gunluk = oz ? { hata: (oz.sayilar && oz.sayilar.hata) || 0, sonHata: oz.sonHata ? String(oz.sonHata.m || '').slice(0, 200) : null } : null;
+    sorunOnbellek.gunlukZaman = simdi;
+  }
+  const gu = sorunGuvenli(() => { const d = guncelleme.durumOku(__dirname); if (d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)) d.islem = { ...d.islem, yarida: true }; return { ...d, gelistirme: ARASTIRMA_MODU }; }, null);
+  const vd = sorunGuvenli(() => veriOrk.durum(), null);
+  return {
+    simdi, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu',
+    oz: { calisiyor: !ARASTIRMA_MODU, goruntu: sorunGuvenli(() => ozDenetim.goruntu(), null), veri: sorunGuvenli(() => ozDenetim.sorunVerisi(simdi), {}) },
+    botlar: ARASTIRMA_MODU ? [] : sorunBotlari(simdi),
+    guncelleme: gu,
+    veri: vd ? { kaynaklar: (vd.kaynaklar || []).map(s => ({ ad: s.ad, kisaAd: s.kisaAd, durum: s.durum, hata: s.hata, sonBasari: s.sonBasari })), binanceBekleme: vd.binanceBekleme || null, kismiEvren: vd.kismiEvren || null } : null,
+    ileri: ARASTIRMA_MODU ? null : { sonHata: ileriIs.sonHata, sonDeneme: ileriIs.sonDeneme, calisiyor: ileriIs.calisiyor },
+    acilPin: sorunGuvenli(() => acilPin.durum(), null),
+    tasimaBekliyor: !!sorunGuvenli(() => tasimaLib.bekleyenOku(), false),
+    donma: sorunGuvenli(() => JSON.parse(fs.readFileSync(yollar.veri('donma.json'), 'utf8')), null),
+    gunluk: ARASTIRMA_MODU ? null : sorunOnbellek.gunluk,
+    saatDilimi: sorunGuvenli(() => Intl.DateTimeFormat().resolvedOptions().timeZone, null),
+  };
+}
+/** Sunucunun sorunları (önbellekli). Araştırma kopyasında öz denetim yok → yalnız bu bilgisayarın güncelleme / veri durumu değil (o /yerel'de). */
+function sorunlarHesapla({ taze = false } = {}) {
+  const simdi = Date.now();
+  if (!taze && sorunOnbellek.sonuc && simdi - sorunOnbellek.zaman < 30000) return sorunOnbellek.sonuc;
+  let r;
+  if (ARASTIRMA_MODU) r = { sorunlar: [], sayac: SORUN.sayac([]), sonDenetim: null, calisiyor: false };
+  else { try { r = SORUN.uret(sorunGirdisi(simdi)); } catch (e) { r = { sorunlar: [SORUN.kart('taninmayan', { ne: `Sorun merkezi girdisi okunamadı: ${e.message}`, deg: { ad: 'sorun merkezi' } }, simdi)], sayac: { mudahale: 0, dikkat: 1, gecici: 0, bilgi: 0, toplam: 1 }, sonDenetim: null, calisiyor: true }; } }
+  r = { ...r, zaman: simdi, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu', surum: APP_VERSION, commit: COMMIT };
+  sorunOnbellek.sonuc = r; sorunOnbellek.zaman = simdi;
+  return r;
+}
+/** Araştırma kopyasının KENDİ sorunları (sunucu bağlantısı, yazma kuyruğu, bu bilgisayarın verisi) — kaynak 'yerel'. */
+function yerelSorunlar() {
+  const simdi = Date.now();
+  if (!ARASTIRMA_MODU) return { sorunlar: [], sayac: SORUN.sayac([]) };
+  const kq = sorunGuvenli(() => evYazma.bilgi(), null);
+  const bas = kq ? (kq.ogeler || []).filter(x => x.durum === 'bekliyor').pop() : null;
+  const vd = sorunGuvenli(() => veriOrk.durum(), null);
+  const r = SORUN.uret({ simdi, rol: 'arastirma', veri: vd ? { kaynaklar: (vd.kaynaklar || []).map(s => ({ ad: s.ad, kisaAd: s.kisaAd, durum: s.durum, hata: s.hata, sonBasari: s.sonBasari })), binanceBekleme: vd.binanceBekleme || null, kismiEvren: vd.kismiEvren || null } : null,
+    yerel: { evBaglanti: sorunGuvenli(() => evOkuma.bilgi(), null), evKuyruk: kq ? { bekleyen: kq.bekleyen || 0, sonHata: (kq.kafaReddi && kq.kafaReddi.ayrinti) || (bas && bas.sonHata) || null } : null } });
+  const sorunlar = r.sorunlar.map(k => ({ ...k, kaynak: 'yerel', kimlik: `yerel:${k.kimlik}` }));
+  return { sorunlar, sayac: SORUN.sayac(sorunlar) };
+}
+/** Sır taraması için bu makinenin gerçek sır değerleri (paket ve /teshis metninden birebir silinir). Değerler hiçbir yanıta girmez. */
+function bilinenSirlar() {
+  const l = [];
+  const topla = (x, d = 0) => { if (d > 5 || x == null) return; if (typeof x === 'string') { if (x.trim().length >= 6) l.push(x.trim()); return; } if (typeof x === 'object') for (const v of Object.values(x)) topla(v, d + 1); };
+  sorunGuvenli(() => topla(loadSecrets()));
+  sorunGuvenli(() => { const t = config.telegram || {}; topla([t.botToken, t.chatId ? String(t.chatId) : null, config.healthchecksUrl, config.healthchecksSunucuUrl, config.apiKey, config.apiSecret]); });
+  sorunGuvenli(() => { for (const ad of BINDIRME_ADLAR) topla(((config.bindirme || {})[ad] || {}).healthchecksUrl); });
+  sorunGuvenli(() => { const a = evOkuma.ayar(); if (a) topla([a.jeton, a.yazmaJetonu]); });
+  sorunGuvenli(() => topla(process.env.PANEL_TOKEN));
+  return l;
+}
+function teshisPaketi({ one = null } = {}) {
+  const simdi = Date.now();
+  const r = sorunlarHesapla({ taze: true });
+  const yerel = ARASTIRMA_MODU ? yerelSorunlar().sorunlar : [];
+  const go = sorunGuvenli(() => ozDenetim.goruntu(), null);
+  const ov = sorunGuvenli(() => ozDenetim.sorunVerisi(simdi), {}) || {};
+  let sonRapor = null;
+  const kk = ARASTIRMA_MODU ? null : sorunGuvenli(() => ozDenetim.karaKutular(1)[0], null);
+  if (kk) {
+    sonRapor = { dosya: kk.dosya, bot: kk.bot, kaynak: kk.kaynak, zaman: kk.zaman };
+    sorunGuvenli(() => { const j = JSON.parse(fs.readFileSync(ozDenetim.karaKutuYolu(kk.dosya), 'utf8')); sonRapor = { ...sonRapor, bot: (j.bot && (j.bot.adGorunen || j.bot.ad)) || kk.bot, metin: j.metin, denetimler: j.denetimler || [] }; });
+  }
+  const botSatir = ARASTIRMA_MODU ? [] : sorunBotlari(simdi).map(b => {
+    const kd = b.kalpDurumu || {};
+    return `${b.adGorunen} (${b.mod}): ${b.calisiyor ? 'çalışıyor' : 'durdu'} · ${kd.metin || 'son çalışma —'} · ENGEL: ${b.bindirmeEngel || b.kolEngel ? String(b.bindirmeEngel || b.kolEngel).slice(0, 160) : 'yok'} · güvenli kip: ${b.guvenliKip ? String(b.guvenliKip.metin).slice(0, 120) : 'yok'} · yürütücü: ${b.yurutucu.durum}${b.yurutucu.durmaTuru ? ` [${b.yurutucu.durmaTuru}]` : ''}${b.sonKarar && b.sonKarar.risk && b.sonKarar.risk.kill ? ` · risk kill ${b.sonKarar.risk.kill}` : ''}`;
+  });
+  const say = [];
+  if (!ARASTIRMA_MODU) {
+    for (const [ad, v] of Object.entries(ov.botlar || {})) say.push(`${ad}: emir reddi (30 dk) ${(v.emirRetler || []).length} · tekrarlayan ${(v.tekrarlar || []).length} · stop ardışık ${(v.stopHata && v.stopHata.ardisik) || 0}${v.onay ? ` · son onay ${SORUN.trSaat(v.onay, simdi)}` : ''}${v.dokunulmaz ? ' · demo kabul (öz denetim dokunmaz)' : ''}`);
+    const sc = go && (go.denetimler || []).find(d => d.kimlik === 'surec');
+    if (sc) say.push(`Pusula süreci: ${sc.ayrinti}`);
+  }
+  sorunGuvenli(() => { const d = guncelleme.durumOku(__dirname); say.push(`Güncelleme: ${d.durum || '—'}${d.hedefSurum ? ` → ${d.hedefSurum}` : ''}${d.agHatasi ? ` · GitHub denemesi ${d.agHatasi}` : ''}${d.neden ? ` · ${String(d.neden).slice(0, 160)}` : ''}`); });
+  sorunGuvenli(() => { if (!ARASTIRMA_MODU) say.push(`Telegram: giden kutusu ${portfoyBildirici._kuyrukOku().length} ileti${(() => { const k = telegramYoklayici.durum(); return k && k.sonHata ? ` · komut yoklaması hatası: ${String(k.sonHata.metin || '').slice(0, 100)}` : ''; })()}`); });
+  sorunGuvenli(() => { if (ARASTIRMA_MODU) { const e = evOkuma.bilgi(); say.push(`Sunucu bağlantısı: ${e.kurulu ? 'kurulu' : 'kurulu değil'}${e.sonBasari ? ` · son başarılı okuma ${SORUN.trSaat(e.sonBasari, simdi)}` : ''}${e.sonHata ? ` · son hata: ${String(e.sonHata).slice(0, 140)}` : ''}`); } });
+  const gunluk = ARASTIRMA_MODU ? [] : (sorunGuvenli(() => GUNLUK.oku({ saat: 1, seviye: 'uyari+', limit: 400 }).kayitlar, []) || []).filter(k => Date.parse(k.t) >= simdi - 30 * 60000).reverse().slice(-80);
+  return SORUN.teshisMetni({ simdi, surum: APP_VERSION, commit: COMMIT, ayarIzi: sorunGuvenli(() => ayarIzi(), null), rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu',
+    makine: sorunGuvenli(() => require('os').hostname(), null), sorunlar: r.sorunlar, yerel, oz: ARASTIRMA_MODU ? null : go, sonRapor, botlar: botSatir, sayaclar: say, gunluk, one }, bilinenSirlar());
+}
+app.get('/api/sorunlar', (req, res) => {
+  if (process.env.SORUN_ORNEK === '1' && req.query && req.query.ornek === '1') {
+    const r = SORUN.uret(SORUN.ornekGirdi(Date.now()));
+    return res.json({ success: true, ornek: true, ...r, zaman: Date.now(), rol: 'sunucu', surum: APP_VERSION });
+  }
+  try { res.json({ success: true, ...sorunlarHesapla({ taze: req.query && req.query.taze === '1' }) }); }
+  catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+app.get('/api/sorunlar/teshis', (req, res) => {
+  try { res.json({ success: true, metin: teshisPaketi({ one: req.query && req.query.kart ? String(req.query.kart).slice(0, 120) : null }) }); }
+  catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+app.get('/api/sorunlar/yerel', (req, res) => {
+  try {
+    const r = yerelSorunlar();
+    res.json({ success: true, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu', ...r, metin: ARASTIRMA_MODU ? SORUN.sirTemizle(r.sorunlar.map(SORUN.kartMetni).join('\n'), bilinenSirlar()) : '' });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
 app.get('/api/health', (req, res) => {
@@ -2469,9 +2599,18 @@ function sirlariUygula(govde0) {
 
 app.post('/api/secrets', (req, res) => { const r = sirlariUygula(req.body || {}); res.status(r.durum).json(r.govde); });
 
+/** 73.7: Telegram mesajlarındaki Sorunlar bağlantısının adresi (ör. https://sunucu.ağ.ts.net) — yalnız http(s), boşluksuz; boş = "Panel › Sorunlar". Hata metni | null. */
+function panelAdresiYama(govde) {
+  if (!(govde && govde.telegram && 'panelAdresi' in govde.telegram)) return null;
+  const a = String(govde.telegram.panelAdresi == null ? '' : govde.telegram.panelAdresi).trim().replace(/\/+$/, '');
+  if (a && !/^https?:\/\/[^\s<>"'`]{3,200}$/.test(a)) return 'Panel adresi http:// ya da https:// ile başlamalı, boşluk içermemeli (ör. https://sunucu.agadi.ts.net).';
+  govde.telegram = { ...govde.telegram, panelAdresi: a };
+  return null;
+}
 app.post('/api/config', (req, res) => {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
   const govde = req.body && req.body.telegram ? { ...req.body, telegram: guvenlikKur.chatIdYamaTemizle(req.body.telegram) } : req.body;
+  const paHata = panelAdresiYama(govde); if (paHata) return res.status(400).json({ success: false, error: paHata });
   config = mergeConfig(config, guvenlikKur.yamaTemizle(govde, SECRET_KEYS));
   botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
   saveConfig(config);
@@ -3409,6 +3548,17 @@ if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI) {
     kaynaklar: { bistKodlari, golgeSatirlari: () => require('./lib/golgeOzet').satirlar(), anahtarSina: () => anahtarlar.otoSina() },
   });
 }
+/*
+ * 73.7 BIST HAFİF FİYAT (lib/bistHafif.js): bilanço bildiriminin BIST 100 evreni sunucuda da kurulsun diye günde bir, aday kümesi
+ * (~160 kod) × son ~100 gün, İş Yatırım HisseTekil, istekler arası 4 sn; karar penceresinde (UTC 23:50–01:30) çalışmaz, 429/5xx'te
+ * 6 saat bekler. Yalnız sunucu (araştırma kopyasında ve geliştirme bilgisayarında kurulmaz); BIST_HAFIF=0 kapatır. Karar / emir yok.
+ */
+if (bildirimUreticileri && process.env.BIST_HAFIF !== '0') {
+  const bistHafif = require('./lib/bistHafif').olustur({ dizin: yollar.veri('bist-hafif'), log: (lv, msg) => db.addLog(lv, msg) });
+  const bistTik = () => { bistHafif.tik().catch(e => db.addLog('WARN', `[BIST] hafif fiyat güncellemesi: ${e.message}`)); };
+  setTimeout(bistTik, 15 * 60 * 1000).unref();
+  setInterval(bistTik, 30 * 60 * 1000).unref();
+}
 if (!ARASTIRMA_MODU && process.env.ISLEM_DEFTERI_ESITLE !== '0') {
   const idEsitle = () => { islemDefteri.gunlukEsitle().catch(e => db.addLog('WARN', `İşlem defteri OKX/Binance eşitleme: ${e.message}`)); };
   setTimeout(idEsitle, 3 * 60 * 1000).unref();
@@ -3820,6 +3970,8 @@ const telegramYoklayici = new TelegramYoklayici({
     bildirici: portfoyBildirici,
     get yoklayici() { return telegramYoklayici; },
     saglik: { bot: saglikBot, botlar: saglikBotlar, sunucu: saglikSunucu },   // 68.8: bot başına check
+    // 73.7 /teshis: Sorun merkezi kartları (lib/sorunlar.js) — etkin sorunlar + ilk 2 adım, sır temizlenmiş.
+    teshis: () => SORUN.telegramTeshis(sorunlarHesapla(), { panelAdresi: (config.telegram && config.telegram.panelAdresi) || null, bilinenler: bilinenSirlar() }),
     // /ileri (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz.
     ileri: () => {
       const HD = require('./lib/ileri/hucumDengeEsikleri');

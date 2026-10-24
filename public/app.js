@@ -1,7 +1,7 @@
 // Must match APP_VERSION in server.js. If the browser is serving a cached
 // app.js against a newer server, the mismatch is surfaced instead of silently
 // running outdated UI logic.
-const APP_VERSION = '73.6';
+const APP_VERSION = '73.7';
 
 // Global State
 let ws = null;
@@ -1880,6 +1880,7 @@ function populateConfigForms(cfg) {
     yaz('inpTgChatId', '');
     const tgChat = document.getElementById('inpTgChatId');
     if (tgChat) tgChat.placeholder = tg.chatId ? `kayıtlı: ${tg.chatId} — değiştirmek için yeni chat id yazın` : 'ör. 987654321';
+    yaz('inpTgPanelAdresi', tg.panelAdresi || '');   // 73.7 Sorunlar bağlantısı
     // Bildirim türleri — varsayılanlar sunucudakiyle aynı
     const tgFlag = (id, key, def) => {
       const el = document.getElementById(id);

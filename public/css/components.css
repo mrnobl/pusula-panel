@@ -3466,3 +3466,45 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .bot-ozet-kivrim-eksi { stroke: var(--neg); }
 .bot-ozet-kivrim-taban { stroke: var(--chart-grid); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
 .bot-ozet-kivrim-bos { min-height: 44px; display: flex; align-items: center; }
+
+/* ── 73.7 Sistem › Sorunlar — Sorun merkezi (js/pages/sorunlar.js, lib/sorunlar.js) ─────────────────────── */
+.sorun-liste { display: grid; gap: var(--sp-3); }
+.sorun-kart { background: var(--surface-1); border: 1px solid var(--border); border-left: 4px solid var(--border-strong); border-radius: var(--radius-lg); padding: var(--sp-4); display: grid; gap: var(--sp-3); min-width: 0; }
+.sorun-kart.s-bad { border-left-color: var(--neg); }
+.sorun-kart.s-warn { border-left-color: var(--warn); }
+.sorun-kart.s-info { border-left-color: var(--info); }
+.sorun-bas { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2); }
+.sorun-baslik { margin: 0; font-size: var(--fs-md, 1rem); color: var(--text-strong); overflow-wrap: anywhere; }
+.sorun-rozetler { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.sorun-ne { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--sp-2); }
+.sorun-ne > div { background: var(--surface-inset, var(--surface-2)); border-radius: var(--radius-md); padding: var(--sp-2) var(--sp-3); font-size: var(--fs-sm); overflow-wrap: anywhere; min-width: 0; }
+.sorun-ne b { display: block; font-size: var(--fs-xs); letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+.sorun-kalkis { color: var(--info-metin); font-weight: var(--fw-semibold); }
+.sorun-adim { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; font-size: var(--fs-sm); }
+.sorun-dokunma { margin: 0; font-size: var(--fs-sm); padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-md); background: var(--warn-soft); color: var(--text); overflow-wrap: anywhere; }
+.sorun-neyi summary { cursor: pointer; color: var(--accent-metin); font-size: var(--fs-sm); }
+.sorun-neyi[open] summary { margin-bottom: var(--sp-2); }
+.sorun-satirlar { font-family: var(--font-num); font-size: var(--fs-xs); background: var(--surface-inset, var(--surface-2)); border-radius: var(--radius-md); padding: var(--sp-2) var(--sp-3); display: grid; gap: 2px; overflow-x: auto; overflow-wrap: anywhere; }
+.sorun-dugmeler { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.sorun-sohbet { color: var(--text-muted); }
+.sorun-ozet-sol { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1); }
+.sorun-yolunda { display: inline-flex; align-items: center; gap: 4px; font-weight: var(--fw-semibold); }
+.sorun-paket-metin { width: 100%; font-family: var(--font-num); font-size: var(--fs-xs); }
+/* Her sayfanın üstündeki rozet (header) ve menü sayısı */
+.sorun-ust-rozet { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-1); }
+.sorun-ust-sayi { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; font-size: var(--fs-xs); font-weight: var(--fw-bold); font-family: var(--font-num); }
+.sorun-ust-neg { background: var(--neg); color: var(--ton-contrast); }
+.sorun-ust-warn { background: var(--warn); color: var(--ton-contrast); }
+.sorun-ust-info { background: var(--info-soft); color: var(--info-metin); }
+.sorun-menu-rozet { border-radius: 10px; padding: 0 6px; font-weight: var(--fw-bold); }
+.sorun-menu-neg { background: var(--neg); color: var(--ton-contrast); }
+.sorun-menu-warn { background: var(--warn); color: var(--ton-contrast); }
+.sorun-menu-info { background: var(--info-soft); color: var(--info-metin); }
+/* Ana sayfa bandı (yalnız müdahale / dikkat) */
+.sorun-ana-bant { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-lg); margin-bottom: var(--sp-4); border: 1px solid var(--border); }
+.sorun-ana-neg { background: var(--neg-soft); border-color: var(--neg); }
+.sorun-ana-warn { background: var(--warn-soft); border-color: var(--warn); }
+.sorun-ana-metin { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; }
+/* Sağlık: her denetimin "ne yapmalı" satırı (S13) */
+.oz-nasil { font-size: var(--fs-xs); color: var(--text-muted); overflow-wrap: anywhere; }
+.oz-nasil a { font-size: var(--fs-xs); }

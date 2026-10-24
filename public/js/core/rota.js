@@ -70,6 +70,8 @@
     'tarama/ayarlar': { bolum: 'tab-tarama-ayar', menu: 'tarama', baslik: 'Tarama ayarları' },
     'veri': { bolum: 'tab-veri', menu: 'veri', baslik: 'Veri', altYol: true },
     // 69.1: Sistem › Sağlık — öz denetim (js/pages/saglik.js, lib/ozDenetim.js).
+    // 73.7: Sistem › Sorunlar — Sorun merkezi (js/pages/sorunlar.js, lib/sorunlar.js): etkin sorunlar tek biçimde, ne yapmalı.
+    'sorunlar': { bolum: 'tab-sorunlar', menu: 'sorunlar', baslik: 'Sorunlar' },
     'saglik': { bolum: 'tab-saglik', menu: 'saglik', baslik: 'Sağlık' },
     'gunluk': { bolum: 'tab-gunluk', menu: 'gunluk', baslik: 'Günlükler' },
     'bildirimler': { bolum: 'tab-bildirim', menu: 'bildirimler', baslik: 'Bildirimler' },

@@ -35,7 +35,7 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 | Botlar | Hangi bot çalışıyor, hangisi güvenli kipte ya da tamamen kapalı |
 | Son yoklama | Son yoklamanın saati ve sonrakinin. **Şimdi yokla** hemen yoklar |
 | Bot kartı | Yalnız güvenli kipteki ya da kapalı bot için çıkar: sebep, **Sebebi okudum ve düzelttim** kutusu ve **Botu yeniden aç** / **Güvenli kipi kaldır** düğmesi. Kutu işaretlenmeden düğme çalışmaz |
-| Denetim satırı | Nokta (yeşil tamam · sarı uyarı · kırmızı hata · gri ölçülemedi), denetimin adı, kademesi, son sonuç ve varsa son onarım. Sorunlu satırlar grubun üstünde durur |
+| Denetim satırı | Nokta (yeşil tamam · sarı uyarı · kırmızı hata · gri ölçülemedi), denetimin adı, kademesi, son sonuç ve varsa son onarım. Sorunlu satırlar grubun üstünde durur. 73.7: her satırın altında **Sorun olursa / Ne yapmalı** satırı (Pusula ne yapar, siz ne yaparsınız) ve [Sorun giderme](#/kilavuz/sorun-giderme) bağlantısı; sorunlu satırda [Sorunlar](#/kilavuz/sorunlar) sayfasındaki adımlara bağlantı |
 | Olay raporları | Bot güvenli kipe girince ya da kapanınca yazılan "kara kutu" dosyaları; adına tıklayınca iner. **Şimdi rapor al** o anın raporunu elle yazar |
 | Onarım ve olay kaydı | Son 30 gün: **ONARILDI**, **ONARILAMADI**, **GÜVENLİ KİP**, **TAMAMEN KAPANDI**, **UYARI**, **HATA**, **DÜZELDİ** |
 | Bot ne zaman tamamen kapanır | Tam kapanma ve güvenli kip sebeplerinin listesi (aşağıda) |

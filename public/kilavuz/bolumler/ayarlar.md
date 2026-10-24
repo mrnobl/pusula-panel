@@ -165,7 +165,9 @@ Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bug�
 
 Kayıtlı chat id panelde **maskeli** görünür (ör. `12••••89`); alanı boş bırakırsanız kayıtlı değer değişmez. Komutlar bildirimler etkinken çalışır; etkinleştirince kendiliğinden başlar — sunucuyu yeniden başlatmak gerekmez.
 
-Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "incele" bandı, kaçırılan günler, 26 saat çalışmama, ileri test "DUR" — türlerin listesi, aç/kapat ve son gönderilenler [Sistem › Bildirimler](#/kilavuz/bildirimler)'de. Telegram komutları **yalnız okur**: `/durum` `/pozisyonlar` `/ozet` `/saglik` `/yapilacaklar` (bot tarafındaki yapılacaklar; kişisel portföy tutarı gitmez) `/ileri` (ileri test durumu ve hüküm tarihleri) `/yardim` — emir veren ya da botu başlatan komut bilinçli olarak yoktur.
+Gelen mesajlar: günlük özet, işlemler, hata / uyuşmazlık / durdurma, "incele" bandı, kaçırılan günler, 26 saat çalışmama, ileri test "DUR" — türlerin listesi, aç/kapat ve son gönderilenler [Sistem › Bildirimler](#/kilavuz/bildirimler)'de. Telegram komutları **yalnız okur**: `/durum` `/pozisyonlar` `/ozet` `/saglik` `/teshis` (73.7: etkin sorunlar ve her biri için ilk iki adım — Sistem › Sorunlar ile aynı) `/yapilacaklar` (bot tarafındaki yapılacaklar; kişisel portföy tutarı gitmez) `/ileri` (ileri test durumu ve hüküm tarihleri) `/yardim` — emir veren ya da botu başlatan komut bilinçli olarak yoktur.
+
+**Panel adresi (73.7, isteğe bağlı):** sunucunun Tailscale adresini (ör. `https://sunucu.agadi.ts.net`) girerseniz uyarı mesajlarının "Ne yapmalı" satırının sonundaki **Sorunlar** bağlantısı tıklanabilir olur (telefondan doğrudan [Sistem › Sorunlar](#/kilavuz/sorunlar) açılır). Boşsa mesajda yalnız "Panel › Sorunlar" yazar. Sır değildir.
 
 > **Uyarı:** Telegram'ı yalnız sunucuda açın. Aynı token'ı iki bilgisayar dinlerse komutlar çakışır (araştırma modunda Telegram zaten kapalıdır).
 
