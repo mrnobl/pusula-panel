@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Bugün bir şey yapmam gerekiyor mu, her şey yolunda mı?" sorusunun cevabı. Yukarıdan aşağıya: en üstte **Yapman gerekenler**; altında geniş **Portföyüm** kartı (Portföy › Pano'nun kısası) ve yanında **Sistem** ışıkları; en altta **Botlar** (Kairos ve Tao yan yana). Grafik yoktur — grafikler [Portföy](#/kilavuz/portfoy) ve [Botlar](#/kilavuz/botlar) sayfalarındadır. Yeni bir sürüm geldiğinde en üstte bir kez ince **"bu sürümde yeni"** şeridi çıkar. **Yeni kurulumda** (kurulum programıyla, henüz kendi verin yokken) üstte kısa bir **"Botlarımızın gerçekleşmiş sonuçları"** kartı da durur — grafikli hâli ve açıklaması [Botlar](#/kilavuz/botlar/bot-performansi) sayfasında.
+"Bugün bir şey yapmam gerekiyor mu, her şey yolunda mı?" sorusunun cevabı. Yukarıdan aşağıya: en üstte **Yapman gerekenler**; altında geniş **Portföyüm** kartı (Portföy › Pano'nun kısası) ve yanında **Sistem** ışıkları; en altta **Botlar** (Kairos ve Tao yan yana) ve küçük **Bu hafta** kartı (73.9 — haftanın piyasa olayları, yalnız bilgi). Grafik yoktur — grafikler [Portföy](#/kilavuz/portfoy) ve [Botlar](#/kilavuz/botlar) sayfalarındadır. Yeni bir sürüm geldiğinde en üstte bir kez ince **"bu sürümde yeni"** şeridi çıkar. **Yeni kurulumda** (kurulum programıyla, henüz kendi verin yokken) üstte kısa bir **"Botlarımızın gerçekleşmiş sonuçları"** kartı da durur — grafikli hâli ve açıklaması [Botlar](#/kilavuz/botlar/bot-performansi) sayfasında.
 
 ## Ne zaman kullanılır {#ne-zaman}
 
@@ -14,7 +14,7 @@ Her gün bir kez, paneli açınca. "Yapman gereken bir şey yok" yazıyor, Siste
 
 ![Ana sayfa — telefon](ekran:ana-390)
 
-Telefonda kartlar alt alta durur, aynı sırayla: **Yapman gerekenler → Portföyüm → Sistem → Botlar**.
+Telefonda kartlar alt alta durur, aynı sırayla: **Yapman gerekenler → Portföyüm → Sistem → Botlar → Bu hafta**.
 
 Her sayfada olan **üst çubuk**: solda kırıntı ve sayfa adı (ör. "Günlük › Ana sayfa"), mod rozetleri (Araştırma modu / Telefon: izleme); sağda **Kur** (kur çevirici), **? Kılavuz** (açık ekranın kılavuz bölümü), bot çalışırken kırmızı **Acil durdur** ve tema düğmesi (koyu varsayılan). Portföy sayfalarında üst çubukta ayrıca portföy seçici (Ben / … / Tümü) ve **$ / ₺ / Gizli** seçicisi çıkar.
 
@@ -32,6 +32,7 @@ Her sayfada olan **üst çubuk**: solda kırıntı ve sayfa adı (ör. "Günlük
 | Son karar | Botun son günlük kararı (üstüne gelince son çalışma zamanı) |
 | Koruma stopu | Borsada bekleyen koruma emirleri ("N pozisyon korunuyor"; kâğıtta gerekmez) |
 | Ne yapmalı | Yalnız bot durduysa ya da onay bekliyorsa: ör. "Botlar › Tao › Başlat" |
+| **Bu hafta** | Bu haftanın (pazartesi–pazar) piyasa olayları: FOMC faiz kararı, TÜFE (Türkiye, ABD), BIST bilanço son günleri, elle eklenen kilit açılımları; açıklananların altında sonucu ("Fed politika faizini … sabit bıraktı", "TÜFE … aylık +%…"). Bu haftanın kalan olayı yoksa (ör. hafta sonu) altında **Gelecek hafta** da yazar. Yalnız bilgi — botların kararına girmez. Altta **Piyasa bağlamı →** ([ayrıntı](#/kilavuz/piyasa-baglami)) |
 
 Model portföylerin kartı Ana sayfada yoktur: modellerin yapılacak işi (bu ayki emirler, ay sonu listesi) **Yapman gerekenler**'de yazar, ayrıntısı [Portföy](#/kilavuz/portfoy)'de. Modeller satırının altındaki **Portföy botları** bağlantıları (Nova · Lydia · Simurg) her modelin kâğıt hesabını bot sayfası olarak açar ([Portföy botları](#/kilavuz/portfoy-botlari)).
 

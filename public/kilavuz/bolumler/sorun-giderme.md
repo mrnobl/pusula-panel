@@ -375,6 +375,10 @@ Tasarım gereği: aylık arşiv ay bitince, sonraki ayın 2'sinde gelir; o güne
 
 Yalnız ham araştırma verisi; botları etkilemez. Kayıtçı 20 dk sonra kendisi yeniden dener; hangi kaynağın düştüğü Veri › İleriye kayıt'ta. Kaçan saatler geriye doldurulamaz.
 
+### Piyasa bağlamı: bir bilgi kaynağı alınamıyor {#piyasa-baglami-kaynak}
+
+Mavi bilgi kartı (73.9). [Piyasa bağlamı](#/kilavuz/piyasa-baglami) sayfasının kaynaklarından biri (FRED, CFTC, Coinbase, Binance vadeli, alternative.me, DefiLlama, Coin Metrics, Fed / FRED takvimi) 6 saatten ve iki denemeden uzun süredir yanıt vermiyor. **Botları etkilemez** — sayfa yalnız bilgidir, ilgili kart "bayat" ya da "veri yok" der. Toplayıcı kendisi yeniden dener; hangi kaynağın düştüğü sayfanın altındaki **Kaynaklar ve güncelleme sıklığı** tablosunda. Bir haftadan uzun sürerse kaynağın adresi ya da biçimi değişmiş olabilir — sohbete yazın.
+
 ### İleri test izleyicisi çalışmadı {#ileri-izleyici}
 
 Gölge test kayıtları bu denemede yazılmadı (bilgisayar meşgul ya da ağ); 15 dakika sonra yeniden denenir. Gün boyu sürerse sohbete yazın.

@@ -445,6 +445,8 @@
     },
     /* 73.3 İleriye kayıt (lib/ileriKayit): sunucunun ham veri kayıtçıları — salt okur (araştırma kopyasında sunucudan, lib/evOkuma) */
     ileriKayit: { durum: () => al('/api/ileri-kayit/durum') },
+    /* 73.9 Piyasa bağlamı (lib/piyasaBaglami): yalnız bilgi kartları + Ana sayfa 'Bu hafta' — salt okur (araştırma kopyasında sunucudan) */
+    piyasaBaglami: { ozet: () => al('/api/piyasa-baglami'), hafta: () => al('/api/piyasa-baglami/hafta') },
 
     /* ── Coin tarama + liste kaydı (lib/tarama, 60.3; panel: js/pages/tarama.js, listeler.js) ── */
     tarama: {

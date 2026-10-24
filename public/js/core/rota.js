@@ -15,7 +15,7 @@
  *   portfoy[/alt]        → tab-portfoy         Portföy — ALT YOLU KORUNUR (B-20): `#/portfoy/hesaplar`
  *   botlar[/<bot>[/<görünüm>]] → tab-botlar    Botlar — alt yol seçili bot + görünüm (genel · hesap · islemler · yonetim;
  *                          js/pages/botlar.js). F5: eski "Borsa hesapları" (#/borsa, tab-exchange) → botlar/hucum/hesap.
- *   sinyaller
+ *   sinyaller · piyasa (73.9 Piyasa bağlamı — yalnız bilgi)
  *   ileri[/alt] · veri[/alt] · arsiv[/alt] → alt sayfalar bölümün data-alt-sayfalar listesinden (js/pages/kabuk.js altSayfaUygula):
  *                          İleri test genel · hucum-denge · hucum-s · bollinger · 876 · cbdr · temettu · momentum; Veri kaynaklar · tarama · arsiv; Arşiv genel · emekli
  *   arastirma/…          → Araştırma: ozet (F5) · stratejiler · backtest · izleme (Backtest sembolleri) · laboratuvar[/sekme]
@@ -53,6 +53,8 @@
     'botlar': { bolum: 'tab-botlar', menu: 'botlar', baslik: 'Botlar', altYol: true },
     'raporlar': { bolum: 'tab-raporlar', menu: 'raporlar', baslik: 'Raporlar' },
     'sinyaller': { bolum: 'tab-sinyaller', menu: 'sinyaller', baslik: 'Sinyaller' },
+    // 73.9: İzleme › Piyasa bağlamı — yalnız bilgi (js/pages/piyasaBaglami.js, lib/piyasaBaglami).
+    'piyasa': { bolum: 'tab-piyasa', menu: 'piyasa', baslik: 'Piyasa bağlamı' },
     'ileri': { bolum: 'tab-ileri', menu: 'ileri', baslik: 'İleri test', altYol: true },
     'arastirma/ozet': { bolum: 'tab-arastirma-ozet', menu: 'arastirma', baslik: 'Araştırma özeti' },
     'arastirma/stratejiler': { bolum: 'tab-strategy', menu: 'arastirma', baslik: 'Stratejiler' },

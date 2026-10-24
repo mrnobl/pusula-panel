@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.8';
+const APP_VERSION = '73.9';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1278,6 +1278,7 @@ function sorunGirdisi(simdi = Date.now()) {
     donma: sorunGuvenli(() => JSON.parse(fs.readFileSync(yollar.veri('donma.json'), 'utf8')), null),
     gunluk: ARASTIRMA_MODU ? null : sorunOnbellek.gunluk,
     saatDilimi: sorunGuvenli(() => Intl.DateTimeFormat().resolvedOptions().timeZone, null),
+    piyasaBaglami: ARASTIRMA_MODU ? null : sorunGuvenli(() => piyasaBaglami.saglik(), null),   // 73.9: uzun süre alınamayan bilgi kaynağı
   };
 }
 /** Sunucunun sorunları (önbellekli). Araştırma kopyasında öz denetim yok → yalnız bu bilgisayarın güncelleme / veri durumu değil (o /yerel'de). */
@@ -2632,6 +2633,15 @@ function sirlariUygula(govde0) {
 app.post('/api/secrets', (req, res) => { const r = sirlariUygula(req.body || {}); res.status(r.durum).json(r.govde); });
 
 /** 73.7: Telegram mesajlarındaki Sorunlar bağlantısının adresi (ör. https://sunucu.ağ.ts.net) — yalnız http(s), boşluksuz; boş = "Panel › Sorunlar". Hata metni | null. */
+/**
+ * 2026-10-24: tarayıcının parola doldurması jeton kutusuna başka bir parola yazınca bu değer jeton diye kaydediliyor, Telegram duruyordu.
+ * Biçimi tutmayan jeton REDDEDİLİR; kayıtlı jeton değişmez. Boş jeton = "değişmedi".
+ */
+function telegramJetonHatasi(govde) {
+  if (!(govde && govde.telegram) || guvenlikKur.telegramJetonGecerli(govde.telegram.botToken)) return null;
+  return 'Telegram bot jetonu biçimi hatalı (BotFather’ın verdiği "123456789:AA…" metni olmalı). Kayıtlı jeton DEĞİŞMEDİ. Jeton kutusunu boş bırakırsanız kayıtlı jeton korunur.';
+}
+
 function panelAdresiYama(govde) {
   if (!(govde && govde.telegram && 'panelAdresi' in govde.telegram)) return null;
   const a = String(govde.telegram.panelAdresi == null ? '' : govde.telegram.panelAdresi).trim().replace(/\/+$/, '');
@@ -2642,7 +2652,7 @@ function panelAdresiYama(govde) {
 app.post('/api/config', (req, res) => {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
   const govde = req.body && req.body.telegram ? { ...req.body, telegram: guvenlikKur.chatIdYamaTemizle(req.body.telegram) } : req.body;
-  const paHata = panelAdresiYama(govde); if (paHata) return res.status(400).json({ success: false, error: paHata });
+  const yHata = panelAdresiYama(govde) || telegramJetonHatasi(govde); if (yHata) return res.status(400).json({ success: false, error: yHata });
   config = mergeConfig(config, guvenlikKur.yamaTemizle(govde, SECRET_KEYS));
   botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
   saveConfig(config);
@@ -3431,6 +3441,9 @@ try { taramaSistemi.zincirTazele(); } catch (e) { db.addLog('WARN', `📋 Liste 
 taramaSistemi.zamanlayiciBaslat();
 // İLERİYE KAYIT (73.3, lib/ileriKayit): ham piyasa verisi kayıtçıları — karar/emir yok; araştırma kopyasında çalışmaz. GET /api/ileri-kayit/durum.
 require('./lib/ileriKayit').kur({ app, log: (lv, msg) => db.addLog(lv, msg), ozDenetim, binanceBekleme: veriOrk.binanceBeklemeErisimi('ileriye kayıt') });
+// PİYASA BAĞLAMI (73.9, lib/piyasaBaglami): olay takvimi, protokol kartı, makro pano, WinC panosu (opsiyon, pozisyonlanma, akış, duygu) —
+// YALNIZ BİLGİ, hiçbir gösterge bot kararına girmez; toplayıcı yalnız sunucuda, karar penceresinde ağ yok. GET /api/piyasa-baglami(/hafta).
+const piyasaBaglami = require('./lib/piyasaBaglami').kur({ app, log: (lv, msg) => db.addLog(lv, msg), binanceBekleme: veriOrk.binanceBeklemeErisimi('piyasa bağlamı'), mumDeposu: db.candleStore, surum: APP_VERSION });
 
 /**
  * ARAŞTIRMA DEFTERİ (lib/defter.js, sürüm 60.6, PLAN-DIKKAT-LISTESI §5 Ş1): deneme sayacının kanonik kaydı
@@ -3448,7 +3461,8 @@ app.use(require('./lib/gunluk').router(GUNLUK));
 // Bildirim merkezi uçları: GET /api/bildirim (katalog + son gönderilenler + Telegram durumu), POST /api/bildirim/ayar { tur, acik }.
 // 73.5: + POST /api/bildirim/{tur,sessiz,uretici,onizle}; GET'e üretici durumu (makine nabızları, son KAP/fiyat/anahtar denetimi).
 let bildirimUreticileri = null;
-app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? bildirimUreticileri.durum() : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
+let piyasaBildirim = null;   // 73.9: piyasa takvimi + olay sonucu (lib/piyasaBaglami/bildirim.js) — yalnız sunucu
+app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? { ...bildirimUreticileri.durum(), takvim: piyasaBildirim ? piyasaBildirim.durum() : null } : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
 /**
  * 73.5 MAKİNE NABZI: araştırma kopyası (sunucu bağlantısı kurulu) 10 dk'da bir GET /api/makine/nabiz — başlık x-pusula-makine (bilgisayar
  * adı), x-pusula-surum. Yalnız sunucuda ve jetonla gelen istekte (telefon / geliştirme kademesi) kaydedilir; yerel istek ve başlıksız
@@ -3578,6 +3592,10 @@ if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI) {
     gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
     log: (lv, msg) => db.addLog(lv, msg),
     kaynaklar: { bistKodlari, golgeSatirlari: () => require('./lib/golgeOzet').satirlar(), anahtarSina: () => anahtarlar.otoSina() },
+  });
+  piyasaBildirim = require('./lib/piyasaBaglami/bildirim').olustur({
+    pb: piyasaBaglami, durumDosya: yollar.veri('piyasa-bildirim.json'), merkez: BILDIRIM, log: (lv, msg) => db.addLog(lv, msg),
+    gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
   });
 }
 /*
@@ -4059,6 +4077,7 @@ server.listen(PORT, HOST, () => {
   // 73.5: bildirim üreticileri + sessiz saat özeti (dakikada bir; sessiz saat bitince bekleyenler TEK mesaj) — yalnız sunucu.
   if (bildirimUreticileri) {
     bildirimUreticileri.baslat();
+    if (piyasaBildirim) piyasaBildirim.baslat();
     const sessizT = setInterval(() => { BILDIRIM.sessizBosalt({ telegram: (m) => (engine.telegram.enabled && engine.telegram.botToken && engine.telegram.chatId ? engine.telegram._gonderHam(m) : Promise.resolve({ ok: true })) }).catch(() => null); }, 60 * 1000);
     if (sessizT.unref) sessizT.unref();
   }

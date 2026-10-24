@@ -42,5 +42,5 @@ Kripto kuralları botların **kendi kural koduyla** (BTC: 50/100/200 günlük or
 - Kripto değerleri son **kapanmış** günün verisiyledir; veri bayatsa [Veri](#/kilavuz/veri) ekranından güncelleyin. Hesap ilk açılışta birkaç saniye sürer, sonra 30 dakika bellekte tutulur.
 - Bu bilgisayardaki satırlar araştırma kopyasıdır; botun kendi durumu [Botlar](#/kilavuz/botlar) ekranındadır. Coin sepeti listesi botun ay başında borsadan kurduğu listeyle aynı kuralla hesaplanır.
 - Gölge kurallarda ara raporda hüküm verilmez.
-- Funding, stablecoin arzı ve MVRV gibi göstergeler bilerek yoktur: testlerinde elendiler ve karar vermiyorlar.
+- Funding, stablecoin arzı ve MVRV gibi göstergeler bilerek yoktur: testlerinde elendiler ve karar vermiyorlar. Bilgi olarak (karar kuralı olmadan) [Piyasa bağlamı](#/kilavuz/piyasa-baglami) sayfasındadırlar.
 - **Gösterge havuzu** 63.3'te buradan **Araştırma › Strateji testi › Gösterge havuzu ↗**'ya taşındı ([Gösterge havuzu](#/kilavuz/gosterge-havuzu)).

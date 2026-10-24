@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.9 — Piyasa bağlamı ve WinC panosu (2026-10-24) {#s73-9}
+
+- **Yeni sayfa: [İzleme › Piyasa bağlamı](#/kilavuz/piyasa-baglami).** Başlığında **Karar kuralı yok · bilgi**: buradaki hiçbir gösterge botların kararına girmez, sayfa emir vermez. Yedi grup: **olay takvimi** (FOMC faiz kararı, Türkiye ve ABD TÜFE, BIST bilanço son günleri, elle eklenen coin kilit açılımları; geçen iki haftanın açıklanan sonuçları) · **makro pano** (net likidite, ^IRX ve Fed politika faizi, sentetik dolar endeksi, USD/TRY, enflasyon, stablecoin arzı, MVRV, kredi spreadi, COT — CME Bitcoin ve Nasdaq-100) · **opsiyon** (BTC ve ETH: gamma maruziyeti, max pain, ~30 günlük örtük oynaklık, 25Δ çarpıklık, put/call — sunucunun 73.3 ileriye kaydından; OKX + Bybit + Binance) · **pozisyonlanma** (funding, açık pozisyon ve z-skoru, büyük hesap long/short, Hyperliquid'in en büyük 100 hesabı) · **akış** (taker al/sat ve CVD, Coinbase primi, çeyreklik vadeli baz) · **duygu ve genişlik** (korku-açgözlülük, alt sezonu, RSI haritası) · **protokol kartı** (DefiLlama ücret, gelir, TVL, P/F, P/S).
+- **Her kart dürüst:** kaynak, güncelleme sıklığı ve veri zamanı yazar; verisi eskidiyse **bayat** (değerler soluk, "son veri … — neden"), hiç yoksa **veri yok — neden**. IV ve çarpıklık sırası bir yıllık veri ister: dolana kadar "veri birikiyor: N gün". Pusula'da strateji olarak sınanıp geçmeyen göstergelerde "bu gösterge strateji olarak sınandı, geçmedi: deneme N" notu.
+- **Ana sayfa › Bu hafta:** haftanın olayları ve açıklananların sonucu, altta Piyasa bağlamı bağlantısı.
+- **Telegram:** iki yeni tür ([Bildirimler](#/kilavuz/bildirimler/yeni)) — **Piyasa takvimi** (pazartesi 09:00 sonrası haftanın olayları tek mesaj + olaydan bir gün önce 18:00 sonrası hatırlatma; saatler ayarlanabilir) ve **Olay sonucu** (FOMC kararı, açıklanan TÜFE; yalnız rakam). Bilanço sonuçları zaten Bilanço özetinde — iki kez gelmez.
+- Kaynakların hepsi ücretsiz ve anahtarsız (FRED, CFTC, Coinbase, Binance, alternative.me, DefiLlama, Coin Metrics, federalreserve.gov); toplayıcı yalnız sunucuda çalışır, botların karar penceresinde ağ isteği atmaz. Geliştirme bilgisayarı sunucunun verisini gösterir. Bir kaynak uzun süre alınamazsa Sorunlar'da bilgi kartı.
+- Botların karar ve emir kodu değişmedi. Bildirim merkezi ve sunucuya yeni bir toplayıcı eklendiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 73.8 — Sorun araçları: hiçbir düğmenin çözemediği durumlar (2026-10-24) {#s73-8}
 
 - **[Sorun araçları](#/kilavuz/sorun-giderme/sorun-araclari):** Sorunlar kartında önce **önizleme** (şimdi / sonra, uyarılar), sonra **acil PIN + onay kelimesi**. Önizlemeden sonra durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Telefondan da kullanılır; geliştirme bilgisayarından sunucuya iletilir. Araçlar **borsaya emir göndermez**; her uygulama günlüğe, botun olay kaydına ve Telegram'a (bilgi) yazılır.
