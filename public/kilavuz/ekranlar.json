@@ -5757,36 +5757,37 @@
         "dosya": "ileri-test-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 64254,
+        "bayt": 51728,
         "olcek": 1,
-        "ozet": "adfa480670af2f8978b3ec69afe122ec4742972d53fef07762b432c8473ef068",
-        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
-        "surum": "73.1",
-        "tarih": "2026-10-23",
+        "ozet": "67310cab647b29db9d45880febdd0fa8b2da37349633da79b01e8aece95b8b6d",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#yanMenu [data-menu=\"ileri\"]",
             "x": 8,
             "y": 334,
             "w": 231,
-            "h": 296
+            "h": 331
           },
           {
             "secici": "#ileriDurum",
             "x": 260,
             "y": 194,
             "w": 1128,
-            "h": 352
+            "h": 386
           },
           {
             "secici": "#ileriTakvim",
             "x": 260,
-            "y": 546,
+            "y": 580,
             "w": 1128,
-            "h": 314
+            "h": 318
           }
         ]
-      }
+      },
+      "kalite": 42
     },
     {
       "kimlik": "ileri-cbdr-1400",
@@ -5997,12 +5998,12 @@
         "dosya": "ileri-temettu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 44024,
+        "bayt": 40610,
         "olcek": 1,
         "ozet": "8471d7f3a35ee002c57d1effc0badceb5117c1d7dbc917936173c91ec73a2103",
-        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
-        "surum": "73.1",
-        "tarih": "2026-10-23",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#ileriTemettu .ana-sayilar",
@@ -6020,7 +6021,7 @@
           }
         ]
       },
-      "kalite": 50
+      "kalite": 42
     },
     {
       "kimlik": "ileri-momentum-1400",
@@ -6049,12 +6050,12 @@
         "dosya": "ileri-momentum-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 46130,
+        "bayt": 42726,
         "olcek": 1,
         "ozet": "36d8612d4c098fbc27c6e8bdea49f8df31bb1f3374c637505b5545551fe4f5e9",
-        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
-        "surum": "73.1",
-        "tarih": "2026-10-23",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#ileriMomentum .ana-sayilar",
@@ -6072,7 +6073,59 @@
           }
         ]
       },
-      "kalite": 50
+      "kalite": 42
+    },
+    {
+      "kimlik": "ileri-hucum-s-1400",
+      "rota": "ileri/hucum-s",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": "#ileriHucumS .ana-sayilar",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#ileriHucumS .ana-sayilar",
+          "etiket": "En derin düşüş ↔ eşik, getiri yan yana, bu ayın sepeti"
+        },
+        {
+          "secici": "#ileriHucumS .ileri-hukum",
+          "etiket": "Sonraki kontrol (5 Ocak 2027 = canlı hesap kapısı)"
+        }
+      ],
+      "kalite": 42,
+      "uretim": {
+        "dosya": "ileri-hucum-s-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 56646,
+        "olcek": 1,
+        "ozet": "093fc479cd3e29c935f5da9a24da8e9eb42f4a7727107af4b92ea4a5a8aa73ba",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
+        "isaretler": [
+          {
+            "secici": "#ileriHucumS .ana-sayilar",
+            "x": 281,
+            "y": 294,
+            "w": 1086,
+            "h": 99
+          },
+          {
+            "secici": "#ileriHucumS .ileri-hukum",
+            "x": 281,
+            "y": 393,
+            "w": 1086,
+            "h": 44
+          }
+        ]
+      }
     },
     {
       "kimlik": "ileri-demo-1400",
@@ -6338,12 +6391,12 @@
         "dosya": "ileri-hucum-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 70132,
+        "bayt": 53886,
         "olcek": 1,
         "ozet": "db98b974cf7d59bbb43e7613fd44d8fad27c3f0d9afbc432895e7d9067c6515e",
-        "genel": "4191ccd46cfc89dea8205f73cce8e14fa69fff33a403ec94ffaa426cfd1ed60e",
-        "surum": "72.0",
-        "tarih": "2026-10-22",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#ileriHucumDenge .bot-durum-buyuk",
@@ -6360,7 +6413,8 @@
             "h": 265
           }
         ]
-      }
+      },
+      "kalite": 42
     },
     {
       "kimlik": "sinyaller-1400",
@@ -6524,12 +6578,12 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 65494,
+        "bayt": 56738,
         "olcek": 1,
-        "ozet": "d14da2a7285141ec98c927c32b9202eb694e2b720a1f7bda4b9a53d8de9fa3f4",
-        "genel": "1db274059822ffb475d0dd8d0461219996d3223a614b7c93ad72fc41ab6e4d69",
-        "surum": "73.1",
-        "tarih": "2026-10-23",
+        "ozet": "b3f3d482803d98d3a5a07c3eceb84bb9fe22dc44a09ea10c378082996d4a7b26",
+        "genel": "43b567130450df99af2fc0e4abc05c567d6486464a27db1130f943333067b61f",
+        "surum": "73.2",
+        "tarih": "2026-10-24",
         "isaretler": [
           {
             "secici": "#inpSearch",
@@ -6567,7 +6621,8 @@
             "h": 37
           }
         ]
-      }
+      },
+      "kalite": 42
     },
     {
       "kimlik": "veri-1400",

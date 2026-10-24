@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.2 — İleri test: Kairos-S gölgesi (2026-10-24) {#s73-2}
+
+- **Yeni sayfa: [İleri test › Kairos-S gölgesi](#/kilavuz/ileri-test/hucum-s).** Canlı hesaba geçecek bot Kairos-S (Kairos'un 1000 $'lık küçük hesap hali) artık **kendi emirsiz gölgesiyle** her gün izleniyor. Canlı botun kullanacağı aynı kural çağrılır: BTC ayağı Kairos'la aynı, coin sepeti her ay başında 1000 $'a göre süzülür (en küçük emri verilemeyen coinler o ay dışarıda), DCA kademe sayısı küçültülür. Emir yok, para yok.
+- Kartta **Kairos-S**, **Kairos simülasyonu** ve **BTC al-tut** yan yana; en derin düşüş, 1000 $ için önceden kayıtlı **uyarı / alarm eşiğiyle** karşılaştırılır. Bu ayın sepeti (alınabilen coinler, dışarıda kalanlar) ayrıntıda.
+- Başlangıç 7 Ekim 2026 (Kairos simülasyonuyla aynı gün). Kontroller **5 Ocak 2027** (canlı hesap kapısıyla aynı gün), **7 Nisan 2027** ve **7 Ekim 2027** — Karar takviminde ve Genel bakış tablosunda. Kontroller arasında hüküm yok; alarm eşiği aşılırsa canlı hesap Kairos-S'le açılmaz.
+- Kayıt sunucunun gece ileri test işiyle yazılır; sunucuda ayrıca kurulacak bir şey yok.
+- **BIST temettü kartı — düzeltme:** 73.1 notunda "Midas'ta açılış/kapanış seansı emri verilebildiği doğrulanmadı" yazıyordu. Siz 24 Ekim 2026'da **doğruladınız**; kart ve kılavuz buna göre güncellendi. Maliyet modeli (tek yön %0,10 + %0,05 kayma) sizin onayınızla aynen kaldı; kural ve karar ölçütü değişmedi.
+
 ## 73.1 — İleri test: BIST temettü ve 2 haftalık momentum (2026-10-23) {#s73-1}
 
 - **Yeni sayfa: [İleri test › BIST temettü](#/kilavuz/ileri-test/temettu).** Geçmiş testte beş ölçütün hepsini sağlayan BIST temettü kuralı artık **kâğıtta** izleniyor: nakit temettünün hak kullanım gününden önceki işlem günü kapanışta al, hak kullanım günü açılışta sat. Emir yok, para yok. Takvim İş Yatırım şirket kartlarındaki duyurulmuş temettülerden okunur; yalnız önceden görülen olaylar sayılır. İlk hak kullanım günü 26 Ekim 2026, karar **26 Ekim 2027**.

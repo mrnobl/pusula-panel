@@ -4,12 +4,13 @@
 
 "Canlı veride tutuyor mu?" Kuralları önceden kayda geçirilmiş stratejilerin, backtestte görmediği **yeni günlerde** nasıl davrandığını izler. Emir vermez. İki soruya cevap verir: **her şey yolunda mı** (alarm var mı) ve **sıradaki karar ne zaman**.
 
-Yan menüde İleri test'in altında yedi sayfa var (66.0; 73.1'de BIST temettü ve 2 haftalık momentum eklendi):
+Yan menüde İleri test'in altında sekiz sayfa var (66.0; 73.1'de BIST temettü ve 2 haftalık momentum, 73.2'de Kairos-S gölgesi eklendi):
 
 | Sayfa | Ne var |
 |---|---|
 | **Genel bakış** | **Testler** tablosu (her test, durumu ve karar günü; ada tıklayınca kendi sayfası açılır) + **Karar takvimi** (bütün karar ve kontrol günleri, bugünden başlayarak) |
 | **Kairos / Tao simülasyonu** | Simülasyon kartı ve en derin düşüş grafikleri, yan denemeler (3 günlük karar, yatay piyasa filtresi) |
+| **Kairos-S gölgesi** | Canlı hesaba geçecek 1000 $'lık Kairos-S'in emirsiz günlük gölgesi: kart + iki grafik ([aşağıda](#/kilavuz/ileri-test/hucum-s)) |
 | **Bollinger düşüş azaltıcı** | Bollinger kartı ve BTC en derin düşüş grafiği |
 | **876 gölge** | Kairos %90 + TVL L/S %10 gölge kartı ([aşağıda](#/kilavuz/ileri-test/g876)) |
 | **EUR/USD CBDR** | Londra girişi gölge kartı ve birikimli R grafiği ([aşağıda](#/kilavuz/ileri-test/cbdr)) |
@@ -40,6 +41,8 @@ Sayfanın üstündeki **ara rapor notu** her yerde geçerli: karar günlerine ka
 | Yan denemeler — günlüğe göre fark | **3 günlük karar** ve **yatay piyasa filtresi** denemelerinin günlük kurala göre birikimli farkı (puan); sıfırın üstü = günlükten iyi |
 | Demo kabul — uygulama sapması | 30 günlük gerçek ↔ simülasyon farkı; kesikli çizgiler %3 (incele) ve %5 (sınır — bot durur). Bot başlayınca dolar |
 | EUR/USD CBDR — birikimli R | Her işlemin sonucu (R) üst üste eklenir; sıfırın üstü = başlangıçtan beri maliyet sonrası artıda. İlk işlemle dolar |
+| Kairos-S gölgesi — en derin düşüş | Kairos-S ve Kairos simülasyonunun o güne kadarki en derin düşüşü (renkler grafiğin altında); kesikli çizgiler 1000 $ için önceden kayıtlı **uyarı** ve **alarm eşiği** |
+| Birikimli getiri — Kairos-S / Kairos / BTC al-tut | Üç eğrinin başlangıçtan beri birikimli getirisi, aynı günlerde (BTC gri; sıfırın üstü = artıda) |
 
 Seriler izleyici kayıtlarından gün gün çizilir ve 7 Ekim 2026'dan başlar; ilk haftalarda kısa görünmeleri normaldir. Grafikler yalnız betimler, karara girmez.
 
@@ -51,7 +54,7 @@ Seriler izleyici kayıtlarından gün gün çizilir ve 7 Ekim 2026'dan başlar; 
 | Karar günü (eski adı hüküm tarihi) | Kararın verileceği gün: Kairos/Tao 90 / 182 / 365. gün (5 Ocak · 7 Nisan · 7 Ekim 2027), Bollinger 7 Ekim 2027 (olay yoksa 2028), demo kabul Gün 0 + 63 |
 | Mevcut / Bollinger'li | Soldaki sayı mevcut kural, sağdaki Bollinger eklenmiş kural |
 | Simülasyonun en derin düşüşü | Model eğrisinin ileri dönemdeki en derin düşüşü (eski adı gölge MaxDD); **uyarı eşiği** (eski p95) aşılırsa neden incelenir, **alarm eşiği** (eski p99) aşılırsa model geçersiz sayılır |
-| Ayrıntı (katlı) | Simülasyon günü, sonraki kontrol, **3 günlük karar** (eski adı 3 günlük aday), **yatay piyasa filtresi** (eski adı D3 range vetosu: VR < 1 ve son 10 gün verimliliği < 0,30 iken yeni giriş yok; karar için en az 2 filtre günü + 10 farklı gün; karar 9 Ekim 2027, olay yetmezse 2028), **1000 $'lık Kairos alarm eşiği** (eski adı Kairos-S: 90 / 182 / 365 gün %34,0 / %41,7 / %50,3 — ayrı simülasyonu yok, Kairos simülasyonuna uygulanır) |
+| Ayrıntı (katlı) | Simülasyon günü, sonraki kontrol, **3 günlük karar** (eski adı 3 günlük aday), **yatay piyasa filtresi** (eski adı D3 range vetosu: VR < 1 ve son 10 gün verimliliği < 0,30 iken yeni giriş yok; karar için en az 2 filtre günü + 10 farklı gün; karar 9 Ekim 2027, olay yetmezse 2028), **1000 $'lık Kairos alarm eşiği** (eski adı Kairos-S: 90 / 182 / 365 gün %34,0 / %41,7 / %50,3 — tutucu olarak Kairos simülasyonuna da uygulanır; 73.2'den beri Kairos-S'in kendi gölgesi ayrı sayfada, [aşağıda](#/kilavuz/ileri-test/hucum-s)) |
 | Uygulama sapması | 30 günlük gerçek − simülasyon farkı; %3 altı normal, %3–5 incele, %5 üstü bot durur |
 
 ## Demo kabul raporu {#demo-rapor}
@@ -163,6 +166,29 @@ Karar ölçütü önceden yazıldı ve değişmez: ortalama R sıfırın üstün
 
 Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (sunucuda ayrıca kurulacak bir şey yok); bu bilgisayarda kart sunucudaki kaydı gösterir. Sunucu bu sürüme henüz güncellenmediyse kart "876 gölge özeti alınamadı" der — güncelleme kurulunca düzelir.
 
+## Kairos-S gölgesi kartı {#hucum-s}
+
+**Ne:** canlı hesaba (5 Ocak 2027 kapısı) geçecek bot **Kairos-S**: Kairos'un **1000 $'lık küçük hesap** hali. BTC ayağı Kairos'la aynı; coin sepeti her ay başında 1000 $'a göre süzülür — borsanın en küçük emri (asgari tutar, miktar adımı) bu hesapla verilemeyen coinler o ay **dışarıda** kalır (örneğin BTC ve ETH vadelisi), kalanlara eşit pay verilir, DCA kademe sayısı küçültülür. Bu sayfa, canlı botun kullanacağı aynı kodu çağırarak kuralın **her gün emirsiz** nasıl davrandığını gösterir; önceden yalnız Kairos simülasyonu izleniyordu.
+
+**Gölge:** başlangıç **7 Ekim 2026** (Kairos simülasyonuyla aynı gün; 7–23 Ekim arası kural donmuşken geriye dolduruldu), emir yok, para yok, borsa anahtarı yok. Her gün **Kairos-S**, **Kairos simülasyonu** ve **BTC al-tut** yan yana. Eşikler önceden kayıtlı (deneme 861, 1000 $ serisi). Kontroller **5 Ocak 2027** (90. gün — canlı hesap kapısıyla aynı gün), **7 Nisan 2027** (182. gün), **7 Ekim 2027** (365. gün, BTC al-tut kıyası).
+
+![Kairos-S gölgesi kartı — masaüstü](ekran:ileri-hucum-s-1400)
+
+| Alan | Anlamı |
+|---|---|
+| Kairos-S gölgesi en derin düşüş | Gölgenin başlangıçtan beri en derin düşüşü; altında o ana en yakın ufkun (90 / 182 / 365 gün) **uyarı** ve **alarm eşiği** |
+| Getiri — Kairos-S / Kairos / BTC | Üçünün aynı günlerdeki birikimli getirisi |
+| Bu ayın sepeti (1000 $ kuralı) | Bu ay alınabilen coin sayısı / evren; özsermaye, en küçük emir sınırı, dışarıda kalanlar, DCA kademe sayısı |
+| Kairos simülasyonu en derin düşüş (aynı eşik) | Aynı 1000 $ eşiği tutucu olarak Kairos simülasyonuna da uygulanır |
+| BTC al-tut en derin düşüş | Kıyas için |
+| Kontrol noktaları | Üç kontrolün durumu: bekliyor · tutarlı · uyarı · veri yetersiz |
+
+Kontrol kuralı önceden yazıldı: 90 / 182 / 365. günde getiri alt sınırın üstünde **ve** en derin düşüş uyarı eşiğinin altında → **tutarlı**; değilse **uyarı** (neden aranır, kural değişmez). **Her an:** en derin düşüş alarm eşiğini aşarsa model geçersiz sayılır — canlı hesap Kairos-S'le açılmaz (çalışıyorsa durdurulur). Kairos-S ya da Kairos simülasyonundan biri alarmdaysa alarm sayılır. Kontroller arasında hüküm yok.
+
+> **Not:** Bu gölge model düzeyindedir: emir yuvarlama ayrıca simüle edilmez; çekilebilir USDT sınırı ve "açık DCA varken kademe değişmez" kuralı hesabın durumunu ister, gölgede yoktur (geçmiş ölçümde etkisi yılda yaklaşık −0,3 puan). Bir günün Kairos simülasyonu ya da coin mumları eksikse o gün **yetersiz** sayılır ve sonraki çalışmada tamamlanır.
+
+Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (Kairos simülasyonundan hemen sonra; sunucuda ayrıca kurulacak bir şey yok). Sunucu bu sürüme henüz güncellenmediyse kart "Kairos-S gölgesi özeti alınamadı" der — güncelleme kurulunca düzelir.
+
 ## BIST temettü kartı {#temettu}
 
 **Ne:** BIST'te nakit temettü dağıtan bir hisse, **hak kullanım günü** (temettünün fiyattan düştüğü gün) açılışta genellikle temettü kadar düşmez. Kural: hak kullanım gününden önceki işlem günü **kapanışta al**, hak kullanım günü **açılışta sat** — bir gece tutulur, temettü (%15 stopajla, 2 iş günü sonra) alınır. Evren: her ay, bir önceki ay sonundaki 63 günlük medyan TL cirosuna göre ilk 50 hisse. Geçmiş testte (deneme 585, 2012–2026) beş ölçütün hepsini sağladı; BIST rafa kaldırıldığı için benimsenmemişti.
@@ -179,7 +205,7 @@ Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (sunucuda ayr�
 | Birikimli (gece zinciri) | Aynı gecenin olaylarına eşit pay verilerek zincirlenen getiri ve en derin düşüşü |
 | Vazgeçme kuralı | 15 olaydan sonra ortalama −%0,30 ve altı, ya da gece zinciri düşüşü −%10 → gölge durur |
 
-> **Uyarı:** Kâğıtta kapanış seansı ve açılış seansı fiyatı kullanılır. **Midas'ta açılış/kapanış seansına emir verilebildiği gerçekte doğrulanmadı** — elle uygulamayı düşünmeden önce bunu teyit edin.
+> **Not:** Kâğıtta kapanış seansı ve açılış seansı fiyatı kullanılır. Midas'ta açılış/kapanış seansına emir verilebildiğini **siz doğruladınız (24 Ekim 2026)**; maliyet modeli (tek yön %0,10 + %0,05 kayma) de sizin onayınızla aynen kaldı. Kural ve karar ölçütü değişmedi.
 
 Karar ölçütü önceden yazıldı: en az 30 olayda ortalama net sıfırın üstünde **ve** t ≥ 1,5 → izlemeye devam / küçük sermayeyle elle uygulama adayı; ortalama sıfır ve altı → ret; arası → bir yıl daha. Ayrıntıdaki "kaynak sağlığı" satırı son çalışmada Yahoo ve İş Yatırım'dan kaç isteğin başarılı olduğunu söyler.
 

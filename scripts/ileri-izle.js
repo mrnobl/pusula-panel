@@ -17,6 +17,8 @@
  * kolu gölgesi (PLAN-ILERI-MOMENTUM.md, lib/ileri/momentumGolge.js; deneme 971) aynı şekilde koşar (`temettu`, `momentum`; hataları
  * diğerlerini bozmaz). Sunucunun alt süreç sınırı 15 dk → bu ikisi başlangıçtan 12 dk sonra yeni indirme başlatmaz (kalan sonraki
  * çalışmada; eksik "…:sure" olarak yazılır, sunucu aynı gün 30 dk arayla yeniden dener).
+ * 73.2: en son Kairos-S (Hücum-S, 1000 $) ayrı emirsiz gölgesi (PLAN-ILERI-HUCUM-S.md "İleri gölge", lib/ileri/hucumSGolge.js; deneme 972)
+ * aynı şekilde koşar (`hucumS`; hatası diğerlerini bozmaz; Bollinger'ın yazdığı Kairos C0 satırlarını ve evren kaydını okur, aynı 12 dk sınırı).
  * Kullanım: node scripts/ileri-izle.js [--dizin <klasör>] [--json]   (--json: özet stdout'a JSON)
  */
 const path = require('path');
@@ -27,6 +29,7 @@ const CB = require('../lib/ileri/cbdrGolge');
 const G876 = require('../lib/ileri/golge876');
 const TM = require('../lib/ileri/temettuGolge');
 const MO = require('../lib/ileri/momentumGolge');
+const HS = require('../lib/ileri/hucumSGolge');
 const BASLANGIC = Date.now();
 const SON_AN = BASLANGIC + 12 * 60e3;   // 73.1 gölgeleri için yeni indirme sınırı (sunucu alt süreç sınırı 15 dk)
 
@@ -55,10 +58,14 @@ const json = process.argv.includes('--json');
   let mo;
   try { const x = await MO.calistir({ dizin, sonAn: SON_AN, log: (s, m) => (json ? console.error : console.log)(`[${s}] ${m}`) }); mo = { yeniSatir: x.yeniSatir, kesinGun: x.kesinGun, gun: x.rapor.gun, eksik: kisaEksik(x), degisen: x.degisen.length, dur: x.dur }; }
   catch (e) { mo = { hata: e.message }; }
+  let hs;
+  try { const x = await HS.calistir({ dizin, sonAn: SON_AN, log: (s, m) => (json ? console.error : console.log)(`[${s}] ${m}`) }); hs = { yeniSatir: x.yeniSatir, sonGun: x.rapor.son, gun: x.rapor.gun, durum: x.rapor.anlik.durum, eksik: kisaEksik(x), degisen: x.degisen.length }; }
+  catch (e) { hs = { hata: e.message }; }
   if (hata) throw hata;
-  for (const x of [tm, mo]) if (x.eksik && x.eksik.length) o.eksik.push(...x.eksik.slice(0, 3));
+  for (const x of [tm, mo, hs]) if (x.eksik && x.eksik.length) o.eksik.push(...x.eksik.slice(0, 3));
   o.temettu = tm;
   o.momentum = mo;
+  o.hucumS = hs;
   if (g8.eksik && g8.eksik.length) o.eksik.push(...g8.eksik.slice(0, 5));
   o.golge876 = g8;
   o.zamanDilimi = zd;
@@ -76,5 +83,6 @@ const json = process.argv.includes('--json');
   console.log(g8.hata ? `  876 gölge HATA: ${g8.hata}` : `  876 gölge: ${g8.durum}, +${g8.yeniSatir} satır, son kapanmış ${g8.sonKapanmis}${g8.ay ? ` · ${g8.ay.F} sepeti ${g8.ay.long} long / ${g8.ay.short} short` : ''}${g8.eksik.length ? ` · eksik ${g8.eksik.length}` : ''}${g8.degisen ? ` · UYARI ${g8.degisen} satır yeniden hesapta farklı` : ''}`);
   console.log(tm.hata ? `  Temettü gölge HATA: ${tm.hata}` : `  Temettü gölge: +${tm.yeniSatir} olay, +${tm.takvimYeni} takvim gözlemi, son gün ${tm.sonGun}${tm.eksik.length ? ` · eksik ${tm.eksik.length}` : ''}${tm.degisen ? ` · UYARI ${tm.degisen} olay yeniden hesapta farklı` : ''}`);
   console.log(mo.hata ? `  Momentum gölge HATA: ${mo.hata}` : `  Momentum gölge: +${mo.yeniSatir} satır, kesin gün ${mo.kesinGun || '-'}${mo.eksik.length ? ` · eksik ${mo.eksik.length}` : ''}${mo.degisen ? ` · UYARI ${mo.degisen} satır yeniden hesapta farklı` : ''}`);
+  console.log(hs.hata ? `  Kairos-S gölge HATA: ${hs.hata}` : `  Kairos-S gölge: +${hs.yeniSatir} satır, ${hs.gun} gün (son ${hs.sonGun || '-'}), durum ${hs.durum}${hs.eksik.length ? ` · eksik ${hs.eksik.length}` : ''}${hs.degisen ? ` · UYARI ${hs.degisen} gün yeniden hesapta farklı` : ''}`);
   console.log(zd.hata ? `  3d gölge HATA: ${zd.hata}` : `  3d gölge: +${zd.yeniSatir} satır${zd.gecikmeliSatir ? ` (gecikmeli ${zd.gecikmeliSatir})` : ''}, son kapanmış ${zd.sonKapanmis}`);
 })().catch(e => { console.error('HATA:', e.message); process.exit(1); });
