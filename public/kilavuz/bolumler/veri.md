@@ -4,7 +4,7 @@
 
 "Verilerim güncel mi, bir kaynak bozulursa ne etkilenir?" (63.2'den beri):
 
-Yan menüde Veri'nin altında üç sayfa var (66.0): **Kaynaklar** (aşağıdaki özet ve gruplar) · **Coin tarama kaynakları** ([aşağıda](#/kilavuz/veri/dikkat-kaynaklari)) · **Günlük arşiv** ([aşağıda](#/kilavuz/veri/gunluk-arsiv)).
+Yan menüde Veri'nin altında dört sayfa var: **Kaynaklar** (aşağıdaki özet ve gruplar) · **Coin tarama kaynakları** ([aşağıda](#/kilavuz/veri/dikkat-kaynaklari)) · **Günlük arşiv** ([aşağıda](#/kilavuz/veri/gunluk-arsiv)) · **İleriye kayıt** (73.3, [aşağıda](#/kilavuz/veri/ileriye-kayit)).
 
 - **Kaynaklar sayfasının üstünde üç büyük durum:** Bot ve portföy verisi (ör. "15 / 15 güncel") · Coin tarama kaynakları ("18 / 19 çalışıyor") · Günlük arşiv ("zincir sağlam"). Sorun varsa sarı / kırmızı.
 - **Kullanana göre katlı gruplar:** **Botlar** (Binance günlük, PIT arşivi, TradFi listesi, coin sepeti önbelleği) · **Portföy ve modeller** (USD/TRY, TEFAS, Yahoo Nasdaq, Yahoo BIST, Yahoo kıyas serileri, TÜFE, TL mevduat) · **Araştırma** (Yahoo portföy ekleri, portföy kataloğu, ileri test izleyicisi, coin tarama) · **Coin tarama kaynakları** · **Günlük arşiv**. Sorunsuz grup kapalı gelir (yalnız özet satırı), sorunlu grup açık.
@@ -15,6 +15,7 @@ Yan menüde Veri'nin altında üç sayfa var (66.0): **Kaynaklar** (aşağıdaki
 - Ana sayfa "veri kaynağı bayat / hata" dediğinde.
 - Bir simülasyonun hangi tarihe kadar veriyle koştuğunu merak ettiğinizde.
 - Coin tarama / dikkat listesinde bir bayrak "veri yok" ya da "bilinmiyor" dediğinde: hangi kaynağın düştüğünü ve neyi etkilediğini görmek için.
+- Sağlık "İleriye veri kaydı" satırını sarı gösterdiğinde: hangi kayıtçının yazmadığını görmek için.
 
 ## Ekran {#ekran}
 
@@ -23,6 +24,8 @@ Yan menüde Veri'nin altında üç sayfa var (66.0): **Kaynaklar** (aşağıdaki
 ![Veri › Coin tarama kaynakları](ekran:veri-dikkat-1400)
 
 ![Veri › Günlük arşiv](ekran:veri-arsiv-1400)
+
+![Veri › İleriye kayıt](ekran:veri-kayit-1400)
 
 ## Kaynaklar {#kaynaklar}
 
@@ -68,6 +71,26 @@ Dikkat listesinin **ileriye dönük ham kaydı** (F1; liste üretmez). Her gece 
 - **Hata**, **kota** (GitHub gibi bütçeli kaynaklarda "ertelendi") ve **belirsiz** (Binance tabanının CoinGecko eşlemesi tek anlamlı değil) "bilinmiyor" sayılır; **uygulanmaz** (ağa uygun değil, eşleme ya da repo yok — eşleme kaynağı o gün çalıştıysa) hesaba girmez — ön kaydın payda kuralı.
 - Evren eşikleri henüz yok: 30 resmî kayıt gününden sonra bir kez, önceden yazılmış kuralla sabitlenir (`npm run evren:esik`; daha önce reddeder).
 
+## İleriye kayıt {#ileriye-kayit}
+
+Sunucunun **ileriye dönük ham veri kaydı** (73.3). Bu verilerin çoğu borsada yalnız anlık ya da son 30 gün için durur; bugün kaydedilmezse sonradan **hiçbir yerden indirilemez**. Kayıtçılar **karar vermez, emir göndermez, anahtar kullanmaz** — yalnız ileride önceden yazılmış (ön kayıtlı) testler ve "Piyasa bağlamı" panosu için veri biriktirir.
+
+| Kayıtçı | Ne kaydeder | Sıklık | Tahmini disk |
+|---|---|---|---|
+| Vadeli pozisyon istatistikleri | Binance USDⓈ-M: açık pozisyon, büyük hesapların long/short oranı (pozisyon ve hesap), tüm hesapların long/short oranı, taker al/sat hacmi — 1 saatlik çözünürlük; 20 sabit likit coin + günün en hacimli 10 coini | 3 saatte bir; **ilk çalışmada son 30 gün** geriye doldurulur | ~2 MB / ay |
+| Opsiyon açık pozisyonu | OKX, Bybit ve Binance opsiyonları, BTC ve ETH, **tüm vadeler**: strike, vade, alım/satım, açık pozisyon, örtük oynaklık, delta / gamma, mark fiyat (GEX, max pain, put/call, skew bunlardan sonra hesaplanır) | 4 saatte bir anlık görüntü | ~75 MB / ay |
+| Hyperliquid büyük hesaplar | Herkese açık liderlik tablosunda hesap değeri en büyük 100 adres (günde bir) ve bu adreslerin açık pozisyonları | saatte bir | ~30 MB / ay |
+| Emir defteri derinliği ve makas | Binance spot ve vadeli: BTC, ETH, SOL, XRP, BNB, DOGE — en iyi alış / satış, makas, ±%0,1 / %0,5 / %1 derinlik | saatte bir | ~4 MB / ay |
+| Gerçekleşen tasfiyeler | Binance (tüm vadeli), OKX (tüm swap), Bybit (likit coinler) canlı tasfiye akışı | canlı; dakikada bir yazılır | ~90 MB / ay |
+
+- **Tabloda** her kayıtçı için son yazım zamanı, bugün yazılan satır, diskte kapladığı yer ve aylık büyüme tahmini, durum (**yazıyor** · **ilk yazım bekleniyor** · **6 saattir yazmıyor** · **hata**) ve son hata. Tasfiye satırında üç akışın bağlantısı (bağlı / bağlı değil, yeniden bağlanma sayısı) yazar.
+- **Disk:** dosyalar gün gün tutulur, gün bitince sıkıştırılır; toplam yaklaşık **200 MB / ay**. Ham veri **silinmez**. İsterseniz `ayarlar.json` içinde `"ileriyeKayit": { "saklaGun": { "tasfiye": 365 } }` gibi bir saklama süresi verilebilir (yalnız o kayıtçının o günden eski dosyaları silinir).
+- **Binance vadeli derinliği** borsa en çok 1000 seviye verdiği için BTC ve ETH'de ±%0,5 / %1'e çoğu zaman ulaşmaz; o bantlar boş (—) kalır, uydurulmaz. Spot BTC / ETH 5000 seviyeyle okunur.
+- **Binance tasfiye akışı** her sembol için saniyede yalnız son tasfiyeyi yayımlar: bir örnektir, tam liste değildir. OKX ve Bybit tam akıştır.
+- Botların gece **karar penceresinde** (02:50–04:30 TR) yeni indirme başlamaz; Binance istekleri botlarla **ortak istek bütçesine** uyar, borsa "yavaşla" derse (429 / 418) o borsaya bir süre istek gitmez. Deribit Türkiye'den erişilemediği için kullanılmaz.
+- **Geliştirme bilgisayarında** kayıtçılar çalışmaz (sunucu tek kaynak); sayfa sunucunun durumunu gösterir.
+- Kayıtlar veri klasöründe `ileriye-kayit/` altındadır (tür: araştırma — önbellek değil). Elle durum: `npm run ileri-kayit -- --durum`.
+
 ## Adım adım: elle güncellemek {#guncelle}
 
 1. Satırdaki **Güncelle** (tek kaynak) ya da en alttaki **Bayatları güncelle**.
@@ -83,3 +106,4 @@ Coin taramasında bir kaynak hata verirse (ör. "CoinGecko: 2/14 coinde veri al�
 - **Hata:** ağ ya da kaynak sorunu; 2 saat sonra yeniden dener (günde ≤ 3).
 - **Dikkat kaynağı "çalışmıyor":** bir gün düşmesi önemli değil; 30 g başarı oranı düşüyorsa "Bozulursa üretilemez" sütunundaki bayraklar o günlerde "bilinmiyor" olur. Ön kayda göre bir aile 2 ay üst üste günlerin ≥ %30'unda veri alamazsa ilgili hipotez "veri yetersiz" ile kapanır.
 - **Binance beklemesi:** Binance istek sınırına yaklaşıldı; canlı botu korumak için veri indirmesi bekler. Kendiliğinden geçer — elle zorlamayın.
+- **İleriye kayıt "6 saattir yazmıyor" / "hata":** kayıtçı 20 dk sonra kendisi yeniden dener (bir zaman diliminde en çok 3 kez), sonra bir sonraki dilimde. Kaçan saatler geriye doldurulamaz (pozisyon istatistikleri hariç: son 30 gün içinde kalan boşluk bir sonraki çalışmada tamamlanır). Uzun sürerse internet bağlantısını ve sunucunun açık olduğunu kontrol edin; botlar bundan etkilenmez.

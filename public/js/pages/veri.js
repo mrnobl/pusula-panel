@@ -8,6 +8,8 @@
  *     etiketleri (KULLANAN). Sorunsuz grup kapalı, sorunlu (bayat / hata) grup açık gelir.
  *   · #veriGrupTarama (içinde #veriDikkat — portfoy.js dikkatKaynakCiz) ve #veriGrupArsiv (içinde #veriArsiv —
  *     gunlukArsiv.js) — aynı kural: sorun varsa açık.
+ *   · 73.3 #veriGrupKayit (içinde #veriKayit) — İleriye kayıt: sunucunun ham veri kayıtçıları (GET /api/ileri-kayit/durum):
+ *     kayıtçı başına son yazım, bugünkü satır, disk + aylık tahmin, durum / hata; tasfiye akışlarının bağlantısı. kayitOzet() saf.
  * Güncelle düğmeleri POST /api/veri/guncelle (araştırma modunda sunucu reddeder). DOM yalnız AG.dom; sunucu metni metin.
  */
 (function (global) {
@@ -74,6 +76,58 @@
   }
   const trGun = (g) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(g || '')); return m ? `${m[3]}.${m[2]}.${m[1]}` : (g || '—'); };
   const kisaZaman = (z) => (z && AG.fmt && AG.fmt.tarihSaat ? AG.fmt.tarihSaat(Date.parse(z)) : '—');
+
+  /* ── 73.3 İleriye kayıt ─────────────────────────────────────────────── */
+  const KAYIT_ROZET = { iyi: ['yazıyor', 'iyi'], uyari: ['6 saattir yazmıyor', 'uyari'], hata: ['hata', 'tehlike'], bekliyor: ['ilk yazım bekleniyor', 'bilgi'], kapali: ['kapalı', null] };
+  const sayiTr = (n) => (Number(n) || 0).toLocaleString('tr-TR');
+  const mbTr = (b) => `${((Number(b) || 0) / 1048576).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} MB`;
+  const virgul = (x) => String(x == null ? '—' : x).replace('.', ',');
+  /** Saf: İleriye kayıt özeti → { deger, ton, alt, sorun }. */
+  function kayitOzet(d) {
+    if (!d) return { deger: 'okunamadı', ton: 'uyari', alt: '', sorun: true };
+    const l = d.kayitcilar || [];
+    if (!d.calisiyor) return { deger: 'çalışmıyor', ton: 'notr', alt: d.neden || 'kayıtçılar yalnız sunucuda çalışır', sorun: false };
+    const hata = l.filter(x => x.durum === 'hata').length, uyari = l.filter(x => x.durum === 'uyari').length;
+    const yazan = l.filter(x => x.durum === 'iyi').length;
+    return {
+      deger: `${yazan} / ${l.length} yazıyor`, ton: hata ? 'tehlike' : uyari ? 'uyari' : 'iyi',
+      alt: [d.disk ? `disk ${virgul(d.disk.toplamMB)} MB · ~${d.disk.aylikTahminMB} MB/ay` : '', hata ? `${hata} kayıtçıda hata` : '', uyari ? `${uyari} kayıtçı gecikiyor` : ''].filter(Boolean).join(' · '),
+      sorun: hata + uyari > 0
+    };
+  }
+  function akisMetni(a) {
+    const ad = { binance: 'Binance', okx: 'OKX', bybit: 'Bybit' }[a.ad] || a.ad;
+    return `${ad}: ${a.bagli ? 'bağlı' : 'bağlı değil'}${a.abone ? ` (${a.abone} sembol)` : ''} · ${sayiTr(a.satir)} tasfiye${a.yenidenBaglanma ? ` · ${a.yenidenBaglanma} yeniden bağlanma` : ''}${a.sonHata ? ` · ${a.sonHata}` : ''}`;
+  }
+  function kayitCiz(d) {
+    const k = bul('veriKayit');
+    if (!k || !AG.dom) return;
+    const { el, doldur } = AG.dom;
+    if (!d) { doldur(k, [el('p', { class: 'hint mb-0', text: 'İleriye kayıt durumu okunamadı.' })]); return; }
+    const satir = (x) => {
+      const [metin, tur] = KAYIT_ROZET[x.durum] || [x.durum || '—', null];
+      return el('tr', { title: x.kaynak || null }, [
+        el('td', { class: 'pf-sola', 'data-etiket': 'Kayıtçı' }, [el('strong', { text: x.kisaAd }), el('div', { class: 'pf-kucuk', text: x.kaynak || '' })]),
+        el('td', { class: 'pf-sola', 'data-etiket': 'Sıklık', text: x.siklik || '—' }),
+        el('td', { class: 'pf-sag sayi', 'data-etiket': 'Son yazım', text: kisaZaman(x.sonYazim) }),
+        el('td', { class: 'pf-sag sayi', 'data-etiket': 'Bugün', text: `${sayiTr(x.bugunSatir)} satır` }),
+        el('td', { class: 'pf-sag sayi', 'data-etiket': 'Disk', text: `${mbTr(x.disk && x.disk.bayt)} · ~${x.disk ? virgul(x.disk.aylikTahminMB) : '—'} MB/ay` }),
+        el('td', { 'data-etiket': 'Durum' }, [
+          el('span', { class: `pf-rozet${tur ? ' pf-rozet-' + tur : ''}`, text: metin }),
+          x.sonHata ? el('div', { class: 'pf-kucuk', text: `Hata: ${x.sonHata}` }) : null,
+          x.akislar && x.akislar.length ? el('div', { class: 'pf-kucuk', text: x.akislar.map(akisMetni).join(' — ') }) : null
+        ])
+      ]);
+    };
+    const o = kayitOzet(d);
+    const metin = d.calisiyor
+      ? `Toplam ${virgul(d.disk.toplamMB)} MB · tahmini büyüme ~${d.disk.aylikTahminMB} MB/ay (sıkıştırılmış) · saklama: ${d.disk.saklama}. Bir kayıtçı ${d.esikSaat || 6} saatten uzun yazmazsa Sağlık sarı olur.${d.kararPenceresi ? ' Şu an botların karar penceresi: yeni indirme başlamaz.' : ''}`
+      : `Kayıtçılar burada çalışmıyor — ${o.alt}.`;
+    doldur(k, [
+      el('p', { class: 'hint hint-sm mb-2', id: 'veriKayitOzet', text: metin }),
+      AG.tablo.kutulu({ sinif: 'pf-tablo pf-veri-tablo', basliklar: ['Kayıtçı', 'Sıklık', 'Son yazım', 'Bugün', 'Disk', 'Durum'], satirlar: (d.kayitcilar || []).map(satir) })
+    ]);
+  }
 
   /* ── Çizim ───────────────────────────────────────────────────────────── */
   const TON = { iyi: 'tone-success', uyari: 'tone-warning', tehlike: 'tone-danger', notr: 'tone-muted' };
@@ -155,16 +209,20 @@
   async function yukle() {
     if (!bul('veriKok')) return;
     const al = (f) => f().then(r => (r && r.success !== false ? r : null)).catch(() => null);
-    const [v, t, a] = await Promise.all([
+    const [v, t, a, ik] = await Promise.all([
       al(() => AG.api.veri.durum()),
       AG.api.tarama && AG.api.tarama.kaynakSagligi ? al(() => AG.api.tarama.kaynakSagligi()) : Promise.resolve(null),
-      AG.api.tarama && AG.api.tarama.arsiv ? al(() => AG.api.tarama.arsiv()) : Promise.resolve(null)
+      AG.api.tarama && AG.api.tarama.arsiv ? al(() => AG.api.tarama.arsiv()) : Promise.resolve(null),
+      AG.api.ileriKayit ? al(() => AG.api.ileriKayit.durum()) : Promise.resolve(null)
     ]);
     const o = ozet(v, t, a);
     ozetCiz(o);
     gruplarCiz(v);
     katliGrupCiz('veriGrupTarama', 'veriGrupTaramaOzet', 'Coin tarama kaynakları', o.tarama, o.taramaSorun);
     katliGrupCiz('veriGrupArsiv', 'veriGrupArsivOzet', 'Günlük arşiv', o.arsiv, o.arsivSorun);
+    const ko = kayitOzet(ik);
+    kayitCiz(ik);
+    katliGrupCiz('veriGrupKayit', 'veriGrupKayitOzet', 'İleriye kayıt', ko, true);   // yalnız kendi alt sayfasında görünür → hep açık
     global.clearTimeout(yoklama);
     if (v && v.calisiyor) yoklama = global.setTimeout(yukle, 4000);
   }
@@ -174,6 +232,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.veri = { yukle, gruplar, ozet, KULLANAN, sorunlu };
+  AG.pages.veri = { yukle, gruplar, ozet, KULLANAN, sorunlu, kayitOzet };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.veri;
 })(typeof window !== 'undefined' ? window : globalThis);

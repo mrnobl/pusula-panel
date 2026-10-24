@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.3 — Veri › İleriye kayıt (2026-10-24) {#s73-3}
+
+- **Yeni sayfa: [Veri › İleriye kayıt](#/kilavuz/veri/ileriye-kayit).** Sunucu bugünden itibaren, **geriye dönük indirilemeyen** ham piyasa verisini biriktiriyor: Binance vadeli **pozisyon istatistikleri** (açık pozisyon, büyük hesapların long/short oranı, taker al/sat — ilk çalışmada son 30 gün), BTC ve ETH **opsiyonlarının strike bazında açık pozisyonu** (OKX, Bybit, Binance), **Hyperliquid**'de hesap değeri en büyük 100 adresin pozisyonları, **emir defteri derinliği ve makas**, **gerçekleşen tasfiyeler** (canlı akış).
+- Kayıtçılar **karar vermez, emir göndermez, anahtar kullanmaz**; yalnız ileride ön kayıtlı testler ve "Piyasa bağlamı" panosu için veri toplar. Botların gece karar penceresinde (02:50–04:30 TR) yeni indirme başlamaz; Binance istekleri botlarla ortak istek bütçesine uyar.
+- Sayfada her kayıtçı için **son yazım**, **bugünkü satır**, **disk** ve aylık tahmin, **hata**. Bir kayıtçı **6 saatten uzun yazmazsa Sağlık sarı** olur (yalnız haber; botlar etkilenmez).
+- Disk: sıkıştırılmış toplam **yaklaşık 200 MB / ay**. Ham veri silinmez; isterseniz ayarla saklama süresi verilebilir.
+- Geliştirme bilgisayarında kayıtçılar çalışmaz (sunucu tek kaynak); sayfa sunucunun durumunu gösterir. Sunucuda ayrıca kurulacak bir şey yok — güncellemeyle gelir, Pusula yeniden başlayınca kendiliğinden çalışır.
+
 ## 73.2 — İleri test: Kairos-S gölgesi (2026-10-24) {#s73-2}
 
 - **Yeni sayfa: [İleri test › Kairos-S gölgesi](#/kilavuz/ileri-test/hucum-s).** Canlı hesaba geçecek bot Kairos-S (Kairos'un 1000 $'lık küçük hesap hali) artık **kendi emirsiz gölgesiyle** her gün izleniyor. Canlı botun kullanacağı aynı kural çağrılır: BTC ayağı Kairos'la aynı, coin sepeti her ay başında 1000 $'a göre süzülür (en küçük emri verilemeyen coinler o ay dışarıda), DCA kademe sayısı küçültülür. Emir yok, para yok.

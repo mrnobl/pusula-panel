@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.2';
+const APP_VERSION = '73.3';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -3225,6 +3225,8 @@ app.use(taramaSistemi.router());
 veriOrkestrator.hariciBagla('coin-tarama', () => taramaSistemi.hariciDurum());
 try { taramaSistemi.zincirTazele(); } catch (e) { db.addLog('WARN', `📋 Liste kayıt zinciri okunamadı: ${e.message}`); }
 taramaSistemi.zamanlayiciBaslat();
+// İLERİYE KAYIT (73.3, lib/ileriKayit): ham piyasa verisi kayıtçıları — karar/emir yok; araştırma kopyasında çalışmaz. GET /api/ileri-kayit/durum.
+require('./lib/ileriKayit').kur({ app, log: (lv, msg) => db.addLog(lv, msg), ozDenetim, binanceBekleme: veriOrk.binanceBeklemeErisimi('ileriye kayıt') });
 
 /**
  * ARAŞTIRMA DEFTERİ (lib/defter.js, sürüm 60.6, PLAN-DIKKAT-LISTESI §5 Ş1): deneme sayacının kanonik kaydı

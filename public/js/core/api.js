@@ -443,6 +443,8 @@
       durum: () => al('/api/veri/durum'),
       guncelle: (kaynak, zorla) => gonder('/api/veri/guncelle', kaynak ? { kaynak, zorla: !!zorla } : { zorla: !!zorla })
     },
+    /* 73.3 İleriye kayıt (lib/ileriKayit): sunucunun ham veri kayıtçıları — salt okur (araştırma kopyasında sunucudan, lib/evOkuma) */
+    ileriKayit: { durum: () => al('/api/ileri-kayit/durum') },
 
     /* ── Coin tarama + liste kaydı (lib/tarama, 60.3; panel: js/pages/tarama.js, listeler.js) ── */
     tarama: {

@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "supervise": "scripts\\start-bot.cmd",
+    "ileri-kayit": "node scripts/ileri-kayit.js",
     "defter": "node scripts/defter.js",
     "defter:denetle": "node scripts/defter.js denetle",
     "defter:sonraki": "node scripts/defter.js sonraki",
