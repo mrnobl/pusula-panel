@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.5';
+const APP_VERSION = '73.6';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1005,6 +1005,25 @@ app.post('/api/sistem/yeniden-baslat', (req, res) => {
   db.addLog('INFO', '🔄 Güncelleme: sunucu yeniden başlatılıyor (denetleyici 10 sn sonra açar)');
   setTimeout(() => shutdown('güncelleme sonrası yeniden başlatma', 75), 300);
 });
+/**
+ * 73.6 (S01): POST /api/sistem/durdur — güncelleyicinin paket kurulumu için Pusula'yı DURDURMASI (eskiden arka planda
+ * `powershell -ExecutionPolicy Bypass -File pusula-sunucu.ps1 -Islem Durdur` açılıyordu; antivirüs tetikleyicisi).
+ * Pusula-Durdur'un yaptığının aynısı, PowerShell'siz: "bilerek durduruldu" işareti (bekçi açmasın; içerikte "guncelleme pid=…"
+ * — güncelleyici yarıda ölürse nöbetçisi bu işareti tanıyıp Pusula'yı yeniden açar, S04), PID kaydı silinir (PusulaBot
+ * görevi "kendiliğinden kapandı" sanıp yeniden denemesin), sonra temiz kapanış (çıkış 0 → denetleyici de kapanır).
+ * Yalnız denetleyiciyle başlatılmışsa ve karar penceresi dışında; yerel PIN kapısının arkasında (betik sistem jetonuyla geçer).
+ */
+app.post('/api/sistem/durdur', (req, res) => {
+  if (!process.env.PUSULA_KONSOL_GUNLUGU) return res.status(409).json({ success: false, error: 'Pusula denetleyiciyle (kısayol / PusulaBot görevi) başlatılmamış: bu yoldan durdurulmaz.' });
+  if (kararPenceresinde()) return res.status(409).json({ success: false, error: KARAR_PENCERESI_METNI });
+  const pid = Math.max(0, parseInt((req.body && req.body.pid) || 0, 10) || 0);
+  try { fs.writeFileSync(yollar.veri('pusula-durduruldu.txt'), `guncelleme pid=${pid} ${new Date().toISOString()}\r\n`, 'ascii'); }
+  catch (e) { return res.status(500).json({ success: false, error: `durdurma işareti yazılamadı: ${e.message}` }); }
+  try { fs.unlinkSync(yollar.veri('pusula.pid')); } catch (e) { /* yok */ }
+  res.status(202).json({ success: true });
+  db.addLog('INFO', '⏸️ Güncelleme: paket kurulumu için Pusula durduruluyor (güncelleyici bitince yeniden açar)');
+  setTimeout(() => shutdown('güncelleme: paket kurulumu için durdurma', 0), 300);
+});
 
 // Lightweight liveness probe for supervisors / uptime monitors.
 /**
@@ -1091,7 +1110,8 @@ const ozDenetim = new OzDenetim({
     guncelleme: () => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, mesaj: d.neden, calisan: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(), yarida: !!(d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)),
       // 69.6 imza: son kontrolün sonucu; yoksa imza dosyası var mı
       imza: (d.imza && d.imza.durum && d.imza.durum !== 'atlandi') ? d.imza.durum : (fs.existsSync(guncelleme.imzaDosyasi(__dirname)) ? 'kurulu' : 'kurulmadi') }; },
-    telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length }),
+    telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length,
+      komut: (() => { try { return telegramYoklayici.durum(); } catch { return null; } })() }),   // 73.6 (S05) komut yoklaması
     sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: bindirmeArastirma.STRATEJILER[ad].ad, ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
     kalp: (b) => isletim.kalpOku(b.dizin),
     gunlukDizin: () => yollar.veri('gunluk'),
@@ -1136,7 +1156,8 @@ const ozDenetim = new OzDenetim({
 if (!ARASTIRMA_MODU) {
   const asilAddLog = db.addLog.bind(db);
   db.addLog = (seviye, mesaj) => { asilAddLog(seviye, mesaj); try { ozDenetim.gunlukGozle(seviye, mesaj); } catch { /* gözlem işi durdurmaz */ } };
-  ozDenetim.acilisKaydet();
+  // 73.6 (S12): önceki süreç TEMİZ kapandıysa (güncelleme / panelden yeniden başlatma / Pusula'yı durdur — kapat() işareti) açılış planlıdır.
+  ozDenetim.acilisKaydet({ planli: sonKapanisPlanliMi() });
   ozDenetim.baslat();
 }
 app.get('/api/saglik/oz', (req, res) => {
@@ -1199,6 +1220,7 @@ app.post('/api/saglik/oz/:ad/guvenli-kip-kaldir', (req, res) => {
   const b = bindirmeler[req.params.ad];
   if (!b) return res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad}` });
   const g = b.bot.guvenliKipKaldir();
+  if (g) { try { ozDenetim.onayVerildi(b.ad); } catch { /* */ } }   // 73.6 (Y-02): sayaçlar bu andan sonrasını sayar
   res.json({ success: true, kaldirilan: g, bot: b.bot.ozet() });
 });
 
@@ -2053,7 +2075,9 @@ app.post('/api/bindirme/:ad/mutabakat', async (req, res) => {
 /** Uygulama sapması ENGEL'ini elle kaldır (pozisyon uyuşmazlığı engeli yalnız temiz mutabakatla kalkar). */
 app.post('/api/bindirme/:ad/engel-kaldir', (req, res) => {
   const b = bindirmeBul(req, res); if (!b) return;
-  res.json({ success: true, kaldirilan: b.bot.engelKaldir(), bot: b.bot.ozet() });
+  const kaldirilan = b.bot.engelKaldir();
+  try { ozDenetim.onayVerildi(b.ad); } catch { /* */ }   // 73.6 (Y-02): öz denetim sayaçları bu andan sonrasını sayar
+  res.json({ success: true, kaldirilan, bot: b.bot.ozet() });
 });
 
 app.post('/api/bindirme/:ad/acil', async (req, res) => {
@@ -3836,7 +3860,10 @@ server.on('error', (e) => {
   }
   throw e;
 });
+// 73.6 (S03): donma bekçisi — iş parçacığı kendi sağlık ucunu yoklar; 10 dk yanıt yoksa YALNIZ kendi PID'ini kapatır (denetleyici açar).
+let donmaBekcisi = null;
 server.listen(PORT, HOST, () => {
+  try { donmaBekcisi = require('./lib/donmaBekcisi').baslat({ port: PORT, dosya: yollar.veri('donma.json') }); } catch (e) { console.error('donma bekçisi başlatılamadı:', e.message); }
   console.log(`====================================================`);
   console.log(`🧭 Pusula sunucusu çalışıyor: ${HOST}:${PORT}`);
   if (!guvenlik.yerel) console.log('🔒 Ağa açık dinleme: panel jetonu zorunlu (tarayıcıda giriş sayfası → oturum çerezi; betikte x-panel-token).');
@@ -3911,6 +3938,7 @@ function botlarMesgul() {
 function shutdown(reason, exitCode = 0, { bekleme = true } = {}) {
   if (shuttingDown) return;
   shuttingDown = true;
+  try { if (donmaBekcisi) donmaBekcisi.durdur(); } catch { /* */ }
   for (const b of Object.values(bindirmeler)) {
     if (b && b.bot.zamanlayici) { clearInterval(b.bot.zamanlayici); b.bot.zamanlayici = null; }
   }
@@ -3925,8 +3953,17 @@ function shutdown(reason, exitCode = 0, { bekleme = true } = {}) {
   }
   kapat(reason, exitCode);
 }
+/** 73.6 (S12): temiz kapanış işareti — sonraki açılış "planlı" sayılır (öz denetimin günlük açılış sayacına girmez). */
+const SON_KAPANIS = () => yollar.veri('son-kapanis.json');
+function sonKapanisPlanliMi(simdi = Date.now()) {
+  let k = null;
+  try { k = JSON.parse(fs.readFileSync(SON_KAPANIS(), 'utf8')); } catch { return false; }
+  try { fs.unlinkSync(SON_KAPANIS()); } catch { /* */ }
+  return !!k && [0, 75].includes(k.kod) && Number.isFinite(k.zaman) && simdi - k.zaman >= 0 && simdi - k.zaman < 30 * 60e3;
+}
 function kapat(reason, exitCode) {
   console.log(`\n⏹️  Kapatılıyor (${reason})...`);
+  try { fs.writeFileSync(SON_KAPANIS(), JSON.stringify({ zaman: Date.now(), kod: exitCode, neden: String(reason).slice(0, 120) }), 'utf8'); } catch { /* */ }
   try {
     telegramYoklayici.durdur();
     engine.stop();

@@ -82,4 +82,4 @@ Ayrıntı: [Backtest](#/kilavuz/backtest).
 
 **Kendiliğinden** (61.3'ten beri, görev kuruluysa): her gün 12:00'de yeni sürüm varsa panel değişiklikleri kurulur; bot kodu değiştiyse Telegram haber verir ve **Ayarlar › Güncelleme › Güncellemeyi kur** ile siz kurarsınız. Kurulum: [Otomatik güncelleme](#/kilavuz/kurulum/adim-22).
 
-**Elle** (görev yoksa ya da güncelleme "elle bakılmalı" dediyse): Botu durdur → yedekle → `git pull` → `npm install` → başlat → sürümü doğrula. Ayrıntı: [Sunucuya kurulum](#/kilavuz/kurulum).
+**Elle** (görev yoksa ya da güncelleme "elle bakılmalı" dediyse): Botu durdur → yedekle → `git pull` → `npm ci --ignore-scripts` (kilit dosyasındaki sürümleri aynen kurar; `npm install` kilit dosyasını değiştirir — 72.2 olayının sebebi) → başlat → sürümü doğrula. Ayrıntı: [Sunucuya kurulum](#/kilavuz/kurulum).

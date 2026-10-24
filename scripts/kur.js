@@ -85,7 +85,10 @@ function ortam(program) {
   return { ...process.env, [anahtar]: [...ek, process.env[anahtar] || ''].join(';') };
 }
 
+/** 73.6 (S01): panelin "Onar"ı kur.js'i PUSULA_PS_YOK=1 ile açar — sunucu sürecinin altında PowerShell AÇILMAZ (antivirüs). */
+function psYasakMi() { return process.env.PUSULA_PS_YOK === '1'; }
 function powershellDosya(betik, argumanlar, ctx, zamanMs = 180000) {
+  if (psYasakMi()) throw new Error(`${betik}: panelden çalıştırılmaz (Pusula arka planda PowerShell açmaz) — bu bilgisayarda kendiniz çalıştırın: powershell -ExecutionPolicy Bypass -File scripts\\${betik} ${argumanlar.join(' ')}`);
   const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', path.join(ctx.program, 'scripts', betik), ...argumanlar],
     { cwd: ctx.program, env: ortam(ctx.program), encoding: 'latin1', windowsHide: true, timeout: zamanMs });
   if (r.error) throw new Error(`${betik}: ${r.error.message}`);
@@ -114,6 +117,7 @@ function adimlar() {
     plan: (ctx) => (ctx.pathEksik && ctx.pathEksik.length ? `kullanıcı PATH'inin başına eklenecek: ${ctx.pathEksik.join(', ')}` : 'taşınabilir Node / Git klasörleri (varsa) kullanıcı PATH\'ine eklenir'),
     yap: (ctx) => {
       if (ctx.a.pathYok) return { atlandi: true, ayrinti: 'deneme: --path-yok' };
+      if (psYasakMi()) throw new Error('PATH panelden yazılmaz (Pusula arka planda PowerShell açmaz) — bu bilgisayarda kendiniz çalıştırın: npm run kur -- --adim yol');
       const betik = `$e = @(${ctx.pathEksik.map(kd.psDize).join(',')})\n$p = [Environment]::GetEnvironmentVariable('Path', 'User'); if (-not $p) { $p = '' }\n$l = @($p -split ';' | Where-Object { $_ })\nforeach ($d in $e) { if (-not ($l | Where-Object { $_.TrimEnd('\\') -ieq $d })) { $l = @($d) + $l } }\n[Environment]::SetEnvironmentVariable('Path', ($l -join ';'), 'User')\n'ok'`;
       const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command', '-'], { input: betik, encoding: 'utf8', windowsHide: true, timeout: 60000 });
       if (r.status !== 0 || !/ok/.test(r.stdout)) throw new Error(`PATH yazılamadı: ${sonSatirlar(r.stderr)}`);

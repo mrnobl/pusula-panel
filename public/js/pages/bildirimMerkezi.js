@@ -230,7 +230,7 @@
 
   function ureticiKart() {
     const u = veri.uretici || {};
-    const f = u.fiyat || {}, m = u.makine || {};
+    const f = u.fiyat || {}, m = u.makine || {}, bl = u.bilanco || {};
     const d = veri.ureticiDurum || {};
     const salt = telefon();
     const girdi = (id, deger, etiket, tip = 'number', ek = {}) => el('label', { class: 'bm-alan', for: id }, [el('span', { class: 'df-soluk', text: etiket }),
@@ -240,7 +240,7 @@
     const makineler = ((d.makine && d.makine.makineler) || []);
     const bilgi = [
       d.arastirma ? 'Bu bilgisayar araştırma kopyası: yeni türleri sunucu üretir (sunucuya bağlıysa bu ekranda sunucunun ayarı görünür).' : null,
-      d.bilanco ? `Bilanço: ${d.bilanco.izlenen || 0} şirket izleniyor (Lydia + Portföyüm BIST hisseleri) · son KAP denetimi ${zm(d.bilanco.kontrol)}${d.bilanco.hata ? ` · hata: ${d.bilanco.hata}` : ''}` : null,
+      d.bilanco ? `Bilanço: ${d.bilanco.izlenen == null ? 'tüm BIST' : `${d.bilanco.izlenen} şirket`} izleniyor${d.bilanco.evren100 ? ` (BIST 100 vekili ${d.bilanco.evren100.sayi} şirket${d.bilanco.evren100.veriGunu ? `, veri ${d.bilanco.evren100.veriGunu}` : ''}${d.bilanco.evren100.kaynak === 'bist-yedek' ? ', yedek liste' : ''})` : ''} · son KAP denetimi ${zm(d.bilanco.kontrol)}${d.bilanco.bekleyen ? ` · ${d.bilanco.bekleyen} sonuç özet saatini bekliyor` : ''}${d.bilanco.kuyruk ? ` · ${d.bilanco.kuyruk} bildirim okunacak` : ''}${d.bilanco.sonOzet ? ` · son özet ${zm(d.bilanco.sonOzet.zaman)}` : ''}${d.bilanco.hata ? ` · hata: ${d.bilanco.hata}` : ''}` : null,
       d.anahtar ? `Anahtar sınaması: son ${d.anahtar.gun || '—'} · ${d.anahtar.sayi || 0} anahtar · ${d.anahtar.sorun || 0} sorun` : null,
       d.golge && d.golge.hafta ? `Gölge testler özeti: son ${d.golge.hafta}` : null,
       d.fiyat ? `Fiyat denetimi: son ${zm(d.fiyat.kontrol)}${d.fiyat.hata ? ` · hata: ${d.fiyat.hata}` : ''}` : null,
@@ -248,7 +248,7 @@
     ].filter(Boolean);
     return el('section', { class: 'p-kart', id: 'bmUreticiKart' }, [
       el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Yeni bildirimlerin ayarı' })]),
-      el('p', { class: 'hint mb-3', text: 'Sert fiyat hareketi: son fiyat, seçilen süre içindeki en düşük / en yüksek kapanıştan eşik kadar uzaklaşınca (aynı sembol ve yön, tekrar süresinde bir kez). Makine sessiz: araştırma kopyası bu kadar saat sunucuya görünmezse; sunucu açılışta bu kadar dakikadan uzun kapalı kaldıysa.' }),
+      el('p', { class: 'hint mb-3', text: 'Sert fiyat hareketi: son fiyat, seçilen süre içindeki en düşük / en yüksek kapanıştan eşik kadar uzaklaşınca (aynı sembol ve yön, tekrar süresinde bir kez). Makine sessiz: araştırma kopyası bu kadar saat sunucuya görünmezse; sunucu açılışta bu kadar dakikadan uzun kapalı kaldıysa. Bilanço özeti: günde en çok 2 mesaj (bilanço yoksa mesaj yok); elinizdeki hisseler her zaman 📌 ile yazılır, satır sınırına sayılmaz.' }),
       el('div', { class: 'bm-uretici' }, [
         girdi('bmFiyatSembol', (f.semboller || []).join(', '), 'Semboller (Binance, ör. BTCUSDT, ETHUSDT)', 'text', { maxlength: '200' }),
         girdi('bmFiyatEsik', f.esikYuzde, 'Eşik (%)', 'number', { min: '1', max: '50', step: '0.5' }),
@@ -256,11 +256,17 @@
         girdi('bmFiyatTekrar', f.tekrarSaat, 'Tekrar (saat)', 'number', { min: '1', max: '72', step: '1' }),
         girdi('bmMakineEsik', m.esikSaat, 'Araştırma kopyası (saat)', 'number', { min: '1', max: '168', step: '1' }),
         girdi('bmSunucuEsik', m.sunucuEsikDk, 'Sunucu kapalı (dk)', 'number', { min: '10', max: '1440', step: '5' }),
+        el('label', { class: 'bm-alan', for: 'bmBilancoEvren' }, [el('span', { class: 'df-soluk', text: 'Bilanço: hangi şirketler' }),
+          el('select', { id: 'bmBilancoEvren', class: 'form-control bm-girdi', disabled: salt ? '' : null }, [['elde', 'Yalnız elimdekiler'], ['bist100', 'Elimdekiler + BIST 100'], ['tum', 'Tüm BIST']]
+            .map(([d2, a]) => { const op = el('option', { value: d2, text: a }); if ((bl.evren || 'bist100') === d2) op.selected = true; return op; }))]),
+        girdi('bmBilancoSaat', (bl.saatler || []).join(', '), 'Bilanço mesaj saatleri (en çok 2, ör. 13:00, 20:30)', 'text', { maxlength: '20' }),
+        girdi('bmBilancoSatir', bl.satir, 'Bilanço mesajı satır sayısı', 'number', { min: '3', max: '15', step: '1' }),
       ]),
       salt ? null : el('div', { class: 'bm-dugmeler mt-3' }, [el('button', { type: 'button', class: 'btn btn-secondary', id: 'bmUreticiKaydet',
         onclick: async () => {
           await cagir(() => AG.api.bildirim.uretici({ fiyat: { semboller: v('bmFiyatSembol'), esikYuzde: v('bmFiyatEsik'), pencereDk: v('bmFiyatPencere'), tekrarSaat: v('bmFiyatTekrar') },
-            makine: { esikSaat: v('bmMakineEsik'), sunucuEsikDk: v('bmSunucuEsik') } }), 'Kaydedildi.');
+            makine: { esikSaat: v('bmMakineEsik'), sunucuEsikDk: v('bmSunucuEsik') },
+            bilanco: { evren: v('bmBilancoEvren'), saatler: v('bmBilancoSaat'), satir: v('bmBilancoSatir') } }), 'Kaydedildi.');
           await yukle();
         } }, [el('span', { text: 'Kaydet' })])]),
       bilgi.length ? el('ul', { class: 'bm-bilgi mt-3' }, bilgi.map(b => el('li', { class: 'df-soluk', text: b }))) : null,

@@ -100,7 +100,7 @@ Telefondan bu sekme **yalnız görüntülenir**; değişiklik düğmeleri yoktur
 
 ![Ayarlar › Güncelleme](ekran:ayarlar-guncelleme-1400)
 
-**Güncelleme** alt sayfası (onay beklerken Ana sayfadaki Sistem kartının sürüm ışığı ve iş satırı doğrudan bu sayfayı açar): çalışan sürüm ve son kontrolün sonucu — **Güncel ✓**, **kuruldu** (otomatik ya da onayınızla), **kurulmayı bekliyor** (bot kodu değişti), **elle bakılmalı**, **geri alındı**. Sunucu her gün 12:00'de GitHub'daki yeni sürüme bakar: panel değişikliklerini kendisi kurar, bot kodu değiştiyse burada **Güncellemeyi kur** düğmesi çıkar (onay penceresi; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme döner). **Şimdi kontrol et** 12:00'yi beklemeden denetletir. **Telefonda da** çalışır (61.4): acil PIN ve onay için **GÜNCELLE** sorulur (acil durdurmayla aynı PIN, aynı yanlış deneme kilidi). Araştırma kopyasında düğme yoktur. Kurulum ve ayrıntı: [Otomatik güncelleme](#/kilavuz/kurulum/adim-22).
+**Güncelleme** alt sayfası (onay beklerken Ana sayfadaki Sistem kartının sürüm ışığı ve iş satırı doğrudan bu sayfayı açar): çalışan sürüm ve son kontrolün sonucu — **Güncel ✓**, **kuruldu** (otomatik ya da onayınızla), **kurulmayı bekliyor** (bot kodu değişti), **elle bakılmalı**, **geri alındı**. Sunucu her gün 12:00'de GitHub'daki yeni sürüme bakar: panel değişikliklerini kendisi kurar, bot kodu değiştiyse burada **Güncellemeyi kur** düğmesi çıkar (onay penceresi; Pusula yeniden başlar — paket kurulumu varsa birkaç dakika sürer —, ardından 8 dk kararlılık gözlemi; açılmazsa eski sürüme döner). **Şimdi kontrol et** 12:00'yi beklemeden denetletir. **Telefonda da** çalışır (61.4): acil PIN ve onay için **GÜNCELLE** sorulur (acil durdurmayla aynı PIN, aynı yanlış deneme kilidi). Araştırma kopyasında düğme yoktur. Kurulum ve ayrıntı: [Otomatik güncelleme](#/kilavuz/kurulum/adim-22).
 
 ### Güncellemeyi adım adım izlemek {#guncelleme-izleme}
 
@@ -112,7 +112,10 @@ Telefondan bu sekme **yalnız görüntülenir**; değişiklik düğmeleri yoktur
 - **Çubuk ve süre:** ne kadarının bittiği, ne zaman başladığı, kaç dakikadır sürdüğü.
 - **Günlük:** güncelleyicinin yazdığı her satır, saatiyle. Pusula yeniden başlarken panel birkaç saniye yanıt vermez — günlükte *"Panel yanıt vermiyor — bekleniyor…"* ve geri gelince *"Panel yeniden yanıt veriyor"* yazar; bu beklenen bir durumdur.
 - **Bitince:** başlık sonucu söyler (**Kuruldu ✓**, **Güncel ✓**, **onayınız bekleniyor**, **eski sürüme dönüldü** …). Yeni sürüm kurulduysa sayfa 5 sn içinde kendiliğinden yeni panelle yenilenir. Son işlemin adımları ve günlüğü bir sonraki işleme kadar burada kalır.
-- **Yarıda kaldı:** güncelleyici işlem bitmeden kapandıysa (ör. bilgisayar kapandı) bu yazar; **Şimdi kontrol et** ile yeniden başlatın.
+- **Yarıda kaldı:** güncelleyici işlem bitmeden kapandıysa (ör. bilgisayar kapandı) bu yazar; **Şimdi kontrol et** ile yeniden başlatın (73.6: düğme bu durumda da görünür). Güncelleyici paket kurulumu için Pusula'yı durdurduktan sonra kapanırsa, yanında açtığı **nöbetçi** bunu fark eder, Pusula'yı yeniden açar ve Telegram'a "güncelleme yarıda kaldı" yazar. Pusula yine de kapalıysa sunucuda masaüstündeki **Pusula** kısayoluna tıklayın.
+- **Aynı sürüm iki kez geri alındıysa (73.6):** güncelleyici o sürümü her gün yeniden denemez; "elle bakılmalı — bu sürüm 2 kez kurulup geri alındı" der ve eski sürüm çalışmaya devam eder. **Güncellemeyi kur** ile siz yine kurabilirsiniz; yeni bir sürüm gelince otomatik deneme kendiliğinden sürer.
+- **"Yeniden başlatma gerekli":** sarıysa eski Pusula çalışıyor, diskte yeni kod var — acil değil, uygun bir saatte **Yeniden başlat**. Kırmızıysa (*Pusula şu an KAPALI*) sunucuda Pusula kısayoluyla başlatın.
+- **PowerShell yok (73.6):** güncelleyici Pusula'yı durdurmak ve yeniden başlatmak için Pusula'nın kendi uçlarını kullanır; Pusula kapalıysa yalnız `schtasks /run /tn PusulaBot` ile Görev Zamanlayıcı'ya başlatır. Arka planda PowerShell açılmaz.
 
 İşlem sürerken düğmeler kapalıdır (aynı anda ikinci güncelleme başlamaz).
 
@@ -148,7 +151,7 @@ Bot kodunu değiştiren bir güncelleme kurulmadan önce Pusula botların **bug�
 
 ## Bildirimler {#bildirimler}
 
-**Telegram** ve **Sağlık sinyali** aynı sayfada, alt alta. En üstte iki durum satırı: Telegram bağlı mı (günlük özet, işlem ve alarm bildirimleri gidiyor mu; araştırma kopyasında "bilinçli olarak kapalı") ve **Telegram komutları** yoklaması çalışıyor mu. Hangi bildirimin, hangi metinle ve kanalla (Telegram / ntfy) gideceği ve **sessiz saatler** [Sistem › Bildirimler](#/kilavuz/bildirimler)'de.
+**Telegram** ve **Sağlık sinyali** aynı sayfada, alt alta. En üstte iki durum satırı: Telegram bağlı mı (günlük özet, işlem ve alarm bildirimleri gidiyor mu; araştırma kopyasında "bilinçli olarak kapalı") ve **Telegram komutları** yoklaması çalışıyor mu. 73.6: yoklama hata veriyorsa satır kırmızı olur ve sebebi yazar — **409** = aynı Telegram botunu başka bir bilgisayar ya da program da yokluyor ([Sorun giderme › Telegram 409](#/kilavuz/sorun-giderme/telegram-409)), **401** = jeton geçersiz. Hangi bildirimin, hangi metinle ve kanalla (Telegram / ntfy) gideceği ve **sessiz saatler** [Sistem › Bildirimler](#/kilavuz/bildirimler)'de.
 
 ## Adım adım: Telegram bildirimlerini kurmak {#telegram}
 

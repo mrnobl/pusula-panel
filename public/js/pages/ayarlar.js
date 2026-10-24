@@ -34,8 +34,12 @@
       ton: !pin.tanimli || pin.kilitli ? 'tone-warning' : 'tone-success', href: '#/kilavuz/telefon', nasil: 'Nasıl tanımlanır?' });
     l.push({ etiket: 'Telefon jetonu', deger: hh.telefonJeton === undefined ? '—' : hh.telefonJeton ? 'tanımlı ✓ (değeri gösterilmez)' : 'tanımlı değil — telefondan erişim kapalı (sunucuda: npm run telefon-jeton)',
       ton: hh.telefonJeton === false ? 'tone-warning' : hh.telefonJeton ? 'tone-success' : '', href: '#/kilavuz/telefon', nasil: 'Nasıl kurulur?' });
-    l.push({ etiket: 'Telegram komutları', deger: !tk ? '—' : tk.calisiyor ? 'yoklama çalışıyor (komutlara cevap veriliyor)' : hh.arastirmaModu ? 'kapalı (araştırma kopyası — komutlara sunucu cevap verir)' : 'kapalı — Telegram bildirimleri etkin değil',
-      ton: tk && !tk.calisiyor && !hh.arastirmaModu ? 'tone-warning' : '', href: '#/kilavuz/ayarlar/telegram', nasil: 'Nasıl açılır?' });
+    // 73.6 (S05): yoklama hata veriyorsa (409 çakışma / 401 jeton) "çalışıyor" yanlış-tamamı yok.
+    const tkHata = tk && tk.calisiyor && tk.sonHata ? String(tk.sonHata.metin || '') : '';
+    const tkHataMetin = /409|çakışma/i.test(tkHata) ? 'HATA 409 — aynı Telegram botunu başka bir bilgisayar ya da program da yokluyor (taşımadan sonra eski bilgisayar açık kalmış olabilir): o bilgisayarda Pusula\'yı durdurun. Komutlara bu bilgisayar cevap veremiyor.'
+      : /401|unauthorized|token/i.test(tkHata) ? 'HATA 401 — Telegram jetonu geçersiz: Ayarlar › Bildirimler › jetonu yeniden girin.' : tkHata ? `yoklama hata veriyor: ${tkHata.slice(0, 140)}` : '';
+    l.push({ etiket: 'Telegram komutları', deger: !tk ? '—' : tkHataMetin || (tk.calisiyor ? 'yoklama çalışıyor (komutlara cevap veriliyor)' : hh.arastirmaModu ? 'kapalı (araştırma kopyası — komutlara sunucu cevap verir)' : 'kapalı — Telegram bildirimleri etkin değil'),
+      ton: tkHataMetin ? 'tone-danger' : tk && !tk.calisiyor && !hh.arastirmaModu ? 'tone-warning' : '', href: tkHataMetin ? '#/kilavuz/sorun-giderme/telegram-409' : '#/kilavuz/ayarlar/telegram', nasil: tkHataMetin ? 'Ne yapmalı?' : 'Nasıl açılır?' });
     return l;
   }
 
@@ -57,12 +61,16 @@
         // 69.2: kuru denemede karar farkı — kurulum ancak "Farkı gördüm, yine de kur" ile.
         if (g.kuruFark && g.kuruFark.hedef === g.hedef) return { metin: `${s} kurulmadı: kuru denemede botun kararı değişti — ${g.kuruFark.ozet || ''}. Fark bekleniyorsa (ör. bir düzeltme) yine de kurabilirsiniz.`, ton: 'tone-warning', onay: g.hedef || null, kuruFark: true, kontrolDugmesi: true };
         const paket = g.paketFarki && g.paketFarki.length ? ` · paket değişikliği (${g.paketFarki.length}): ${g.paketFarki.slice(0, 5).map(x => `${x.ad} ${x.eski || '—'} → ${x.yeni || 'silindi'}`).join(', ')}${g.paketFarki.length > 5 ? ' …' : ''}` : '';
-        return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}${paket}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula ~30 sn yeniden başlar, açılmazsa eski sürüme kendiliğinden döner.`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
+        return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}${paket}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula yeniden başlar (paket kurulumu varsa birkaç dakika sürer), ardından 8 dk kararlılık gözlemi; açılmazsa eski sürüme kendiliğinden döner. Telefondan da kurulabilir (acil PIN ile).`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
       case 'elle': return { metin: `Elle bakılmalı: ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'geri-alindi': return { metin: `${s} kurulamadı, geri alındı (${g.geriDonus || ''}): ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
-      case 'yeniden-baslat': return { metin: g.neden || 'Yeniden başlatma gerekli.', ton: 'tone-warning', onay: null, kontrolDugmesi: true };
+      // 73.6 (S25): "Pusula KAPALI" varyantı kırmızı; eski süreç çalışıyorsa sarı (zararsız: sonraki yeniden başlatmada yeni kod açılır).
+      case 'yeniden-baslat': return { metin: g.neden || 'Yeniden başlatma gerekli.', ton: /KAPALI/.test(String(g.neden || '')) ? 'tone-danger' : 'tone-warning', onay: null, kontrolDugmesi: true };
       case 'ag-hatasi': return { metin: `GitHub'a ulaşılamadı (${g.agHatasi || 1}. kez; ${zaman(g.kontrol)}). İnternet gelince ertesi gün yeniden dener.`, ton: (g.agHatasi || 1) >= 3 ? 'tone-warning' : 'tone-muted', onay: null, kontrolDugmesi: true };
-      case 'kuruluyor': return { metin: `${s} kuruluyor… (adımlar aşağıda)`, ton: 'tone-warning', onay: null, kontrolDugmesi: false };
+      case 'kuruluyor':
+        // 73.6 (S04): güncelleyici süreç yarıda kapandıysa düğme GİZLENMEZ (öz denetim de "Şimdi kontrol et" der).
+        if (g.islem && g.islem.yarida) return { metin: `${s} kurulumu yarıda kaldı (güncelleyici süreç kapandı). "Şimdi kontrol et" yeniden dener. Paket kurulumu için Pusula durdurulmuşsa güncelleyicinin nöbetçisi onu yeniden açar; açılmadıysa sunucuda Pusula kısayoluna tıklayın.`, ton: 'tone-danger', onay: null, kontrolDugmesi: true, yarida: true };
+        return { metin: `${s} kuruluyor… (adımlar aşağıda)`, ton: 'tone-warning', onay: null, kontrolDugmesi: false };
       default: return { metin: 'Henüz kontrol yapılmadı. Günlük görev kurulu değilse: Kılavuz › Kurulum › Otomatik güncelleme.', ton: 'tone-muted', onay: null, kontrolDugmesi: true };
     }
   }

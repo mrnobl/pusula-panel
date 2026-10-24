@@ -342,6 +342,7 @@
 .kd-baslik { font-weight: 600; flex: 0 1 22rem; }
 .kd-ayrinti { flex: 1 1 16rem; overflow-wrap: anywhere; }
 .kd-onar { margin-left: auto; }
+.kd-elle { flex: 1 1 100%; font-size: .8rem; overflow-wrap: anywhere; user-select: all; }
 /* 68.3 Botlarımızın gerçekleşmiş sonuçları (js/pages/botPerformans.js) */
 .bp-ozet { cursor: pointer; list-style: revert; }
 .bp-kap[open] .bp-ozet { margin-bottom: var(--sp-3); }

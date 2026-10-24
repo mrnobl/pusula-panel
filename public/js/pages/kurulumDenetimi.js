@@ -18,6 +18,8 @@
   const ETIKET = { iyi: 'tamam', uyari: 'uyarı', kotu: 'eksik', bilgi: 'bilgi' };
   let son = null;
   let calisan = null;
+  /** 73.6 (S01): PowerShell isteyen onarımların komutu (Pusula çalıştırmaz; kullanıcı kendi penceresinde çalıştırır). */
+  const elleKomut = {};
 
   /** Saf: maddeler → gruplar (sıra korunur). */
   function grupla(maddeler) {
@@ -37,6 +39,12 @@
     let r = null;
     try { r = await AG.api.kurulumDenetimi.onar(adim); } catch (e) { r = { success: false, error: e.message }; }
     calisan = null;
+    if (r && r.elle && r.komut) {
+      elleKomut[adim] = r.komut;
+      AG.bildir('Bu onarımı Pusula kendisi çalıştırmaz (arka planda PowerShell açılmaz). Satırdaki komutu bu bilgisayarda Komut İstemi\'nde çalıştırın.', 'uyari');
+      if (son) ciz(son);
+      return;
+    }
     const a = r && r.sonuc && (r.sonuc.adimlar || []).find(x => x.id === adim);
     AG.bildir(r && r.success ? `Onarıldı: ${a ? a.ayrinti || a.durum : adim}` : `Onarılamadı: ${(a && a.ayrinti) || (r && (r.error || r.cikti)) || 'bilinmeyen hata'}`, r && r.success ? 'ok' : 'hata');
     yukle();
@@ -54,7 +62,7 @@
         el('span', { class: 'df-soluk', text: ` · ${o.iyi || 0} tamam · ${d.rol === 'gelistirme' ? 'geliştirme bilgisayarı' : d.rol === 'sunucu' ? 'sunucu kurulumu' : 'kullanıcı kurulumu'} · Pusula ${d.surum || '?'}` }),
       ]),
       el('p', { class: 'hint mb-0', text: yerel
-        ? 'Bu sayfa yalnız gösterir; hiçbir şeyi kendiliğinden değiştirmez. Kırmızı satırdaki "Onar" o adımı yeniden kurar (npm run kur -- --adim <ad>).'
+        ? 'Bu sayfa yalnız gösterir; hiçbir şeyi kendiliğinden değiştirmez ve PowerShell açmaz. Kırmızı satırdaki "Onar" o adımı yeniden kurar (npm run kur -- --adim <ad>); görev, kısayol ve PATH onarımında yalnız komutu gösterir — onu bu bilgisayarda kendiniz çalıştırırsınız.'
         : 'Telefondan salt okunur: onarım yalnız bu bilgisayardaki panelden yapılır.' }),
     ]);
     const gruplar = grupla(d.maddeler).map(g => el('div', { class: 'glass-panel panel-pad mb-4' }, [
@@ -63,6 +71,7 @@
         el('span', { class: `borsa-isik borsa-isik-${TON[m.durum] || 'notr'}`, 'aria-hidden': 'true', title: ETIKET[m.durum] || m.durum }),
         el('span', { class: 'kd-baslik', text: m.baslik }),
         el('span', { class: 'df-soluk kd-ayrinti', text: m.ayrinti || '' }),
+        m.onar && yerel && elleKomut[m.onar] ? el('code', { class: 'kd-elle', title: 'Bu bilgisayarda Komut İstemi\'nde çalıştırın', text: elleKomut[m.onar] }) : null,
         m.onar && yerel ? el('button', { type: 'button', class: 'btn btn-secondary btn-sm kd-onar', 'data-adim': m.onar, onclick: (e) => onar(m.onar, e.currentTarget) }, [el('span', { text: 'Onar' })]) : null,
       ]))),
     ]));

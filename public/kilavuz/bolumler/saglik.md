@@ -49,6 +49,8 @@ Sebep belirsiz ya da geçici olabilir; devam etmek risk büyütmesin diye bot **
 - **Ne zaman:** aynı hata 30 dakikada 3 kez tekrarlanınca (21 Ekim'deki "fiyat yok" hatası gibi), borsanın fiyatı ikinci bir kaynaktan (OKX) %3'ten fazla saptığında, Binance bakım penceresinde ya da **24 saatte 2 felaket stopu tetiklendiğinde** (piyasa olağan dışı: 24 saat yeni işlem yok).
 - **Ne zaman kalkar:** öz denetim koyduysa sebep geçince kendiliğinden: 60 dakika aynı hata tekrarlanmazsa, fiyat farkı %1'in altına inerse, bakım bittikten 15 dakika sonra, stop vuruşunda ilk vuruştan 24 saat sonra. İsterseniz Sağlık sayfasından ya da botun sayfasındaki sarı banttan **Güvenli kipi kaldır**.
 - Kısa internet kesintilerinin ağ hataları (zaman aşımı, bağlantı koptu, 429 / 418 geri çekilme) tekrar sayılmaz; onları **Borsa bağlantısı** ve **İnternet** denetimleri izler.
+- **Güvenli kipteyken alarm yağmuru yok (73.6):** günlük çalışma **ertelenir** ve size **tek bir bilgi iletisi** gelir ("günlük çalışma güvenli kip yüzünden ertelendi"); güvenli kip kalkınca bir de **"geçti"** iletisi. Eskiden 15 dakikada bir kırmızı "günlük çalışma yapılamadı" alarmı ve healthchecks "DOWN" e-postası geliyordu. Healthchecks'e güvenli kipte hiç sinyal gitmez; güvenli kip bir günden uzun sürerse healthchecks kendi süresinde haber verir. Ana sayfadaki "26 saattir çalışmadı" satırı güvenli kipte geçen süreyi **saymaz**.
+- **Borsa verisi şüpheliyse (veri kapısı):** mum bayat ya da anlamsız sıçrama varsa bot o gün karar vermez ve 15 dakika sonra yeniden dener. Bu bir **uyarıdır** (alarm değil); 2 saatten uzun sürerse geliştirme sohbetine yazın.
 
 ## Sunucu bilgisayarı {#sunucu-bilgisayari}
 
@@ -95,14 +97,14 @@ Devam etmek **para kaybettirebilecekse** bot tamamen durur ve siz açana kadar k
 | Mutabakat farkı | Borsadaki pozisyon ya da bakiye botun kaydından farklı; bot yanlış miktarla alıp satabilir |
 | Koruma stopu kurulamadı | Felaket stopu art arda 3 denetimde kurulamadı; pozisyon korumasız |
 | Bozuk bot kaydı | Durum dosyası bozuk açıldı; son sağlam kopya borsayla karşılaştırılana kadar bot kapalı |
-| Emirler art arda reddediliyor | "Margin is insufficient", geçersiz miktar gibi retler 30 dakikada 3 kez; miktar ya da bakiye hesabı bozuk olabilir |
+| Emirler art arda reddediliyor | **Borsa** emri 30 dakikada 3 kez gerçek bir sebeple reddetti: teminat ya da bakiye yetmedi (-2019, -2010) veya Pusula kurala uymayan istek yolladı (-1111 ondalık …). 73.6: Telegram ve olay metni koda göre ne yapacağınızı söyler. **Sayılmayanlar:** borsaya hiç gitmeyen ön kontrol retleri (asgari tutar altı -4164/-4003, fiyat bandı -4131, sıfır miktar -1013) — bunlar sık tekrarlarsa yalnız güvenli kip sayacına girer. Aynı ret günlükte iki satır yazsa da (yürütücü + DCA) **bir** kez sayılır |
 | Beklenmeyen emir ya da dolum | Botun göndermediği bir emir dolmuş; mutabakat yakalar |
-| Bot döngüsü tekrar tekrar çöküyor | Dakikalık döngü 30 dakikada 3 kez hata verdi |
+| Bot döngüsü tekrar tekrar çöküyor | Dakikalık döngü 30 dakikada 3 kez hata verdi (73.6: internet / borsa bağlantı hataları sayılmaz) |
 | Emir freni | Risk artıran emirler 24 saatte 600'ü, 10 dakikada 150'yi ya da 24 saatte sermaye tavanının 20 katını aştı — kaçak bir döngü (Knight Capital 2012 tipi kaza). Azaltan emirler ve stoplar serbest kalır |
 | API anahtarının yetkisi değişti | Para çekme izni açılırsa ya da IP kısıtı kalkarsa. **Henüz denetlenmiyor** — canlı hesaba geçmeden eklenecek |
 
 - **Açık pozisyona dokunulmaz;** borsadaki stoplar yerinde kalır. Pozisyonu kapatmak da bir al-sat kararıdır ve kötü bir fiyattan zarar yazdırabilir.
-- **Yeniden açmak:** sebebi inceleyin, düzeltin; Sağlık sayfasında **Sebebi okudum ve düzelttim** kutusunu işaretleyip **Botu yeniden aç**. Kayıt farkından kapanmışsa düğme **Borsayla karşılaştır** olur: karşılaştırma temiz çıkınca bot açılır. Aynı sebeple ikinci kez kapanırsa da her seferinde açabilirsiniz.
+- **Yeniden açmak:** sebebi inceleyin, düzeltin; Sağlık sayfasında **Sebebi okudum ve düzelttim** kutusunu işaretleyip **Botu yeniden aç**. Kayıt farkından kapanmışsa düğme **Borsayla karşılaştır** olur: karşılaştırma temiz çıkınca bot açılır. Aynı sebeple ikinci kez kapanırsa da her seferinde açabilirsiniz. **73.6:** açtığınız anda öz denetimin sayaçları sıfırlanır — bot yalnız açtıktan **sonraki yeni** olaylarla yeniden kapanabilir (eskiden 5 dakika sonra eski satırlarla yeniden kapanıyordu). Yeniden kapanırsa Telegram 6 saatlik tekrar kısıtına takılmaz: "açtığınız bot yeniden kapandı — sebep: …" iletisi her zaman gelir.
 - Zarar sınırları (en büyük düşüş kill-switch'i, günlük zarar limiti, felaket stopu) ayrıca ve aynen çalışır; tam kapanma zarara değil **sebebe** bakar.
 
 ## Demo kabul süresi {#demo-kabul}
@@ -111,7 +113,8 @@ Demo kipindeki bota (Kairos) öz denetim **9 Aralık 2026 sonuna kadar hiçbir �
 
 ## Yeniden başlatma {#yeniden-baslatma}
 
-- **Pusula çökerse** bekçi onu her seferinde yeniden açar (sınır yok). Günde 5'ten çok açıldıysa **Pusula süreci** kırmızıya döner ve Telegram'a yazar.
+- **Pusula çökerse** bekçi onu her seferinde yeniden açar (sınır yok). Günde 5'ten çok **beklenmedik biçimde** açıldıysa **Pusula süreci** kırmızıya döner ve Telegram'a yazar. 73.6: planlı yeniden başlatmalar (güncelleme, panelden yeniden başlatma, Pusula'yı durdur → Pusula) bu sayıya girmez; ayrıntıda "(+ N planlı)" diye ayrı yazılır.
+- **Pusula donarsa** (süreç açık ama yanıt vermiyor, 73.6): Pusula'nın içindeki **donma bekçisi** 10 dakika boyunca kendi sağlık adresinden yanıt alamazsa **yalnız kendi sürecini** kapatır; denetleyici 10 saniye sonra yeniden açar. Başka hiçbir program kapatılmaz. Yalnız Pusula kısayolu / PusulaBot göreviyle başlatıldıysa çalışır.
 - **Bir bot takılırsa** (işi 30 dakikadan uzun sürüyor) Pusula hemen yeniden başlatılır; açılıştan sonraki ilk 15 dakikada yapılmaz.
 - **Bellek şişerse** (1 GB üstü ya da 24 saatte 2 katı) Pusula yalnız **sessiz saatte** yeniden başlatılır: hiçbir botun işi sürmüyorken ve 02:30–04:30 dışında (03:02'deki günlük çalışma ve 02:50–04:30 güncelleme penceresi).
 - Yeniden başlatma yalnız Pusula denetleyiciyle (Pusula kısayolu / PusulaBot görevi) başlatıldıysa yapılır; yoksa yalnız haber verilir.
@@ -146,7 +149,7 @@ API anahtarları, Telegram jetonu ve sağlık adresleri `secrets.json` dosyasın
 - **Yabancı siteler paneli kullanamaz:** isteği gönderen sayfanın adresi panelin kendi adresiyle birebir aynı olmalı; başka bir sitenin (başka bir Tailscale adresi dahil) gizlice "acil kapat", "engeli kaldır" gibi istek göndermesi ve canlı yayını okuması kapalı. Panel başka bir sitede görünmez çerçeveye de konamaz.
 - **Taşıma paketi haberi:** her taşıma paketi oluşturulduğunda Telegram'a haber gelir. Siz yapmadıysanız API anahtarlarını hemen yenileyin.
 - **Yalnız imzalı kod kurulur:** sunucu, geliştirme bilgisayarında imzalanmamış güncellemeyi kurmaz; Telegram'a kritik uyarı gider. Kurulum bir kerelik: [Kod imzası](#/kilavuz/ayarlar/kod-imzasi).
-- **Antivirüse uyum (70.0):** Pusula arka planda **hiç PowerShell açmaz**; antivirüs ürünlerini, güvenlik duvarını, açık portları, pili ve olay günlüğünü sorgulamaz. Bu ölçümler (Virüs koruması, Dış erişim, Güç ve beklenmeyen kapanma, disk sağlığı) kaldırıldı: arka planda bunları soran bir program antivirüse virüs gibi görünüyordu. Antivirüsün açık olduğunu ve güvenlik duvarını Windows Güvenliği'nden elle kontrol edin.
+- **Antivirüse uyum (70.0; 73.6'da tamamlandı):** Pusula arka planda **hiç PowerShell açmaz** — 73.6'dan beri Kurulum denetimi sayfası (görevleri `schtasks` ile salt okur, kısayolu dosyadan okur) ve otomatik güncelleyici (Pusula'nın kendi durdurma / yeniden başlatma uçları, kapalıysa `schtasks /run PusulaBot`) dahil; antivirüs ürünlerini, güvenlik duvarını, açık portları, pili ve olay günlüğünü sorgulamaz. Bu ölçümler (Virüs koruması, Dış erişim, Güç ve beklenmeyen kapanma, disk sağlığı) kaldırıldı: arka planda bunları soran bir program antivirüse virüs gibi görünüyordu. Antivirüsün açık olduğunu ve güvenlik duvarını Windows Güvenliği'nden elle kontrol edin.
 
 ## Paket güvenliği ve Node desteği {#paket-guvenligi}
 
@@ -158,5 +161,8 @@ API anahtarları, Telegram jetonu ve sağlık adresleri `secrets.json` dosyasın
 - **Bilgisayar saati:** Windows › Ayarlar › Saat ve dil › Tarih ve saat › **Şimdi eşitle**. 1 saniyeden büyük fark borsanın emirleri reddetmesine yol açabilir.
 - **Yedek alınıyor (sarı):** [Yedek ve taşıma](#/kilavuz/yedek-tasima) — hedef disk takılı mı, görev çalışıyor mu.
 - **Kaçan planlı işlem:** satırda nedeni yazar (bot kapalı, güvenli kipte, son hata). Pusula kaçırılan işlemi kendisi yapmaz; bot sonraki çalışmada bugünkü hedefe gider.
-- **Takılı kilit:** güncelleme yarıda kalmışsa [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) "yarıda kaldı" der; **Şimdi kontrol et**.
+- **Takılı kilit:** güncelleme yarıda kalmışsa [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) "yarıda kaldı" der; **Şimdi kontrol et** (73.6: düğme bu durumda görünür).
+- **Sağlık sinyali "adres yok" (sarı, 73.6):** sunucu sinyali (healthchecks) kurulmamış — sunucu elektrik kesintisinde ya da çöküşte sessizce kapanırsa sizi uyaracak dış bir sinyal yok. [Sunucuya kurulum](#/kilavuz/kurulum) › Sağlık sinyali adımı (ücretsiz).
+- **Telegram "komutlara cevap verilemiyor" (sarı, 73.6):** bkz. [Sorun giderme › Telegram 409](#/kilavuz/sorun-giderme/telegram-409).
+- Belirti → anlam → adımlar biçiminde tüm durumlar: [Sorun giderme](#/kilavuz/sorun-giderme).
 - Kayıtlar `data/oz-denetim/` altında (git dışı): `durum.json`, `olaylar.jsonl`, `acilislar.jsonl`. Sıkıştırılan eski günlükler `data/gunluk/*.jsonl.gz` olarak kalır; hiçbir şey silinmez.

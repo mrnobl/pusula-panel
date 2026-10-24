@@ -175,17 +175,19 @@
     if (g && !g.gelistirme) {
       if (g.durum === 'onay') ekle('uyari', `Pusula ${g.hedefSurum || 'yeni sürüm'} kurulmayı bekliyor — bot kodu değişti, onayınız gerekli (Ayarlar › Güncelleme)`, '#/ayarlar/guncelleme', 'onay');
       else if (g.durum === 'elle' || g.durum === 'geri-alindi') ekle('tehlike', `Güncelleme: ${g.durum === 'geri-alindi' ? `${g.hedefSurum || 'yeni sürüm'} kurulamadı, geri alındı` : 'elle bakılmalı'} — ${String(g.neden || '').slice(0, 140)}`, '#/ayarlar/guncelleme', 'güncelleme');
-      else if (g.durum === 'yeniden-baslat') ekle('uyari', 'Güncelleme indirildi: Pusula yeniden başlatılmalı', '#/ayarlar/guncelleme', 'güncelleme');
+      else if (g.durum === 'yeniden-baslat') ekle(/KAPALI/.test(String(g.neden || '')) ? 'tehlike' : 'uyari', /KAPALI/.test(String(g.neden || '')) ? 'Güncelleme kuruldu ama Pusula KAPALI kaldı — sunucuda Pusula kısayoluyla başlatın' : 'Güncelleme indirildi: Pusula yeniden başlatılmalı (acil değil; eski sürüm çalışıyor)', '#/ayarlar/guncelleme', 'güncelleme');
     }
     (durumlar || []).forEach((d, i) => {
       const adY = BA(BOTLAR[i], String(BOTLAR[i] || 'bot'));
       if (!d || !d.success || !d.bot) { ekle('tehlike', `${adY}: durum alınamadı${d && d.error ? ` (${d.error})` : ''}`, '#/botlar', 'bot'); return; }
       const b = d.bot, ad = BA(b.ad || BOTLAR[i], adY);
       const du = D().durum(b);
-      if (du.onayBekliyor) ekle('tehlike', `${ad} durduruldu — onayınızı bekliyor: ${du.neden}`, '#/botlar', 'onay');
+      // 73.6 (Y-10): aynı olay tek adla ("durdu — onayınızı bekliyor") ve tek rotayla (Sistem › Sağlık kartı).
+      if (du.onayBekliyor) ekle('tehlike', `${ad} durdu — onayınızı bekliyor: ${du.neden}`, '#/saglik', 'onay');
       else if (b.model && b.model.durum === 'DUR') ekle('tehlike', `${ad}: modelin düşüş sınırı aşıldı — durdurmayı değerlendirin`, '#/botlar', 'bot');
       const kp = D().kalp(b);
-      if (b.calisiyor && kp.gecikti) ekle('tehlike', `${ad} 26 saattir çalışmadı (son çalışma ${kp.metin.replace(/ — 26 saati geçti$/, '')})`, '#/botlar', 'bot');
+      // 73.6 (Y-31): bot durmuş (onay bekliyor) ya da güvenli kipteyse "26 saattir çalışmadı" ayrı kırmızı DEĞİL — sebebi o satır.
+      if (b.calisiyor && kp.gecikti && !du.onayBekliyor && !b.guvenliKip) ekle('tehlike', `${ad} 26 saattir çalışmadı (son çalışma ${kp.metin.replace(/ — 26 saati geçti$/, '')})`, '#/botlar', 'bot');
       const modAd = D().mod(d, b);
       const mj = D().marj(b, modAd);
       if (mj.seviye === 'alarm' || mj.seviye === 'uyari') ekle(mj.seviye === 'alarm' ? 'tehlike' : 'uyari', `${ad} teminat: ${mj.metin}`, '#/botlar', 'bot');
@@ -340,8 +342,8 @@
     if (!oz || !Array.isArray(oz.denetimler)) return [{ kimlik: 'oz', ton: 'notr', metin: 'Öz denetim okunamadı', href: '#/saglik' }];
     const l = [];
     for (const b of oz.botlar || []) {
-      if (b.engel) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'tehlike', metin: `${GA(b)} tamamen kapalı — siz açana kadar çalışmaz`, href: '#/saglik' });
-      else if (b.guvenliKip) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'uyari', metin: `${GA(b)} güvenli kipte — yeni işlem açmıyor`, href: '#/saglik' });
+      if (b.engel) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'tehlike', metin: `${GA(b)} durdu — onayınızı bekliyor (siz açana kadar çalışmaz)`, href: '#/saglik' });
+      else if (b.guvenliKip) l.push({ kimlik: `oz-bot-${b.ad}`, ton: 'uyari', metin: `${GA(b)} güvenli kipte — yeni işlem açmıyor, sebep geçince kendisi kalkar`, href: '#/saglik' });
     }
     const sorunlu = (oz.denetimler || []).filter(d => d.durum === 'hata' || d.durum === 'uyari').sort((a, b) => (a.durum === 'hata' ? 0 : 1) - (b.durum === 'hata' ? 0 : 1));
     for (const d of sorunlu.slice(0, 3)) l.push({ kimlik: `oz-${d.kimlik}`, ton: d.durum === 'hata' ? 'tehlike' : 'uyari', metin: `${d.ad}: ${String(d.ayrinti || '').slice(0, 90)}`, href: '#/saglik' });
@@ -366,6 +368,8 @@
       else if (veri.binanceBekleme) l.push({ kimlik: 'veri', ton: 'uyari', metin: 'Binance hız sınırı — veri güncellemesi ertelendi', href: '#/veri' });
       else if (modelBayat) l.push({ kimlik: 'veri', ton: 'uyari', metin: 'Model portföy verisi bayat', href: '#/veri' });
       else if (bayat && !veri.calisiyor) l.push({ kimlik: 'veri', ton: 'notr', metin: `${bayat} kaynak bayat — gece güncellenir`, href: '#/veri' });
+      // 73.6 (S17): bu ayın tam coin evreni aylık arşivle gelir — "güncel" derken kısmi evren söylenir (yanlış-tamam olmasın).
+      else if (veri.kismiEvren && !veri.calisiyor) l.push({ kimlik: 'veri', ton: 'notr', metin: `Veri güncel · ${veri.kismiEvren.metin}`, href: '#/veri' });
       else l.push({ kimlik: 'veri', ton: 'iyi', metin: veri.calisiyor ? 'Veri güncelleniyor…' : 'Veri güncel', href: '#/veri' });
     }
     // Borsa hesapları (62.7): okunamayan hesap tehlike; borsaya bağlı hesap varsa iyi; yoksa gri.
@@ -381,7 +385,9 @@
     // PLAN-PANEL-2: son 24 saatin günlüğü (lib/gunluk.js) — hata varsa kırmızı, yalnız uyarı varsa sarı; Sistem › Günlükler'e gider.
     const gs = gunluk && gunluk.ozet && gunluk.ozet.sayilar;
     if (gs) {
-      if (gs.hata) l.push({ kimlik: 'gunluk', ton: 'tehlike', metin: `Son 24 saatte ${gs.hata} hata`, href: '#/gunluk' });
+      // 73.6 (S14): öz denetim kırmızı görmüyorsa tek tük günlük hata satırı ana sayfayı KIRMIZI yapmaz ("tüm denetimler tamam" + kırmızı çelişkisi).
+      const ozKirmizi = !!(oz && ((oz.denetimler || []).some(d => d.durum === 'hata') || (oz.botlar || []).some(b => b.engel)));
+      if (gs.hata) l.push({ kimlik: 'gunluk', ton: ozKirmizi || !oz ? 'tehlike' : 'uyari', metin: ozKirmizi || !oz ? `Son 24 saatte ${gs.hata} hata` : `Son 24 saatte ${gs.hata} hata satırı — öz denetim sorun görmüyor (Günlüklerde okuyun)`, href: '#/gunluk' });
       else if (gs.uyari) l.push({ kimlik: 'gunluk', ton: 'uyari', metin: `Son 24 saatte ${gs.uyari} uyarı, hata yok`, href: '#/gunluk' });
       else l.push({ kimlik: 'gunluk', ton: 'iyi', metin: 'Son 24 saatte hata yok', href: '#/gunluk' });
     }
@@ -392,9 +398,14 @@
     if (!g) l.push({ kimlik: 'surum', ton: 'notr', metin: 'Güncelleme durumu alınamadı', href: '#/ayarlar/guncelleme' });
     else if (g.gelistirme) l.push({ kimlik: 'surum', ton: 'notr', metin: `Pusula ${surum || ''} — geliştirme kopyası`.replace('  ', ' '), href: '#/ayarlar/guncelleme' });
     else if (g.durum === 'onay') l.push({ kimlik: 'surum', ton: 'uyari', metin: `Pusula ${g.hedefSurum || 'yeni sürüm'} onay bekliyor`, href: '#/ayarlar/guncelleme' });
-    else if (g.durum === 'elle' || g.durum === 'geri-alindi' || g.durum === 'yeniden-baslat') l.push({ kimlik: 'surum', ton: 'tehlike', metin: 'Güncellemeye elle bakılmalı', href: '#/ayarlar/guncelleme' });
+    // 73.6 (S25 / S08): "yeniden başlatma gerekli" ve "geri alındı, eski sürüm çalışıyor" çoğu zaman zararsız → sarı; Pusula KAPALI / eski sürüm de açılmadı → kırmızı.
+    else if (g.durum === 'yeniden-baslat') l.push({ kimlik: 'surum', ton: /KAPALI/.test(String(g.neden || '')) ? 'tehlike' : 'uyari', metin: /KAPALI/.test(String(g.neden || '')) ? 'Güncelleme sonrası Pusula kapalı kaldı' : 'Yeni kod indi — Pusula yeniden başlatılmalı (eski sürüm çalışıyor)', href: '#/ayarlar/guncelleme' });
+    else if (g.durum === 'geri-alindi' && /eski sürüm çalışıyor/.test(String(g.geriDonus || ''))) l.push({ kimlik: 'surum', ton: 'uyari', metin: `${g.hedefSurum || 'Yeni sürüm'} kurulamadı, geri alındı — eski sürüm çalışıyor`, href: '#/ayarlar/guncelleme' });
+    else if (g.durum === 'elle' || g.durum === 'geri-alindi') l.push({ kimlik: 'surum', ton: 'tehlike', metin: 'Güncellemeye elle bakılmalı', href: '#/ayarlar/guncelleme' });
     else if (g.durum === 'ag-hatasi' && (g.agHatasi || 0) >= 3) l.push({ kimlik: 'surum', ton: 'uyari', metin: `Güncelleme kontrolü ${g.agHatasi} gündür yapılamıyor`, href: '#/ayarlar/guncelleme' });
     else l.push({ kimlik: 'surum', ton: 'iyi', metin: `Pusula ${surum || ''} kurulu`.replace('  ', ' '), href: '#/ayarlar/guncelleme' });
+    // 73.6 (S16): geliştirme bilgisayarında ışıklar iki kaynaktan gelir — hangisinin sunucu, hangisinin bu bilgisayar olduğu yazılır.
+    if (g && g.gelistirme) for (const x of l) x.metin += (/^oz/.test(x.kimlik) || x.kimlik === 'gunluk' || x.kimlik === 'borsa') ? ' · sunucu' : ' · bu bilgisayar';
     return l;
   }
 
