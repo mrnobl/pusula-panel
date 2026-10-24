@@ -163,6 +163,7 @@ API anahtarları, Telegram jetonu ve sağlık adresleri `secrets.json` dosyasın
 - **Kaçan planlı işlem:** satırda nedeni yazar (bot kapalı, güvenli kipte, son hata). Pusula kaçırılan işlemi kendisi yapmaz; bot sonraki çalışmada bugünkü hedefe gider.
 - **Takılı kilit:** güncelleme yarıda kalmışsa [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) "yarıda kaldı" der; **Şimdi kontrol et** (73.6: düğme bu durumda görünür).
 - **Sağlık sinyali "adres yok" (sarı, 73.6):** sunucu sinyali (healthchecks) kurulmamış — sunucu elektrik kesintisinde ya da çöküşte sessizce kapanırsa sizi uyaracak dış bir sinyal yok. [Sunucuya kurulum](#/kilavuz/kurulum) › Sağlık sinyali adımı (ücretsiz).
+- **Bot kartı sorunları (73.8):** pozisyon uyuşmazlığı, felaket stopu / ADL sonrası kayıt farkı, K3 zarar sınırı, %5 sapma ENGEL'i ve kabul bekleyen yatırma için çözüm aracı Sistem › Sorunlar kartındadır (önizleme → acil PIN + onay). Ayrıntı: [Sorun giderme › Sorun araçları](#/kilavuz/sorun-giderme/sorun-araclari).
 - **Telegram "komutlara cevap verilemiyor" (sarı, 73.6):** bkz. [Sorun giderme › Telegram 409](#/kilavuz/sorun-giderme/telegram-409).
 - Belirti → anlam → adımlar biçiminde tüm durumlar: [Sorun giderme](#/kilavuz/sorun-giderme).
 - Kayıtlar `data/oz-denetim/` altında (git dışı): `durum.json`, `olaylar.jsonl`, `acilislar.jsonl`. Sıkıştırılan eski günlükler `data/gunluk/*.jsonl.gz` olarak kalır; hiçbir şey silinmez.

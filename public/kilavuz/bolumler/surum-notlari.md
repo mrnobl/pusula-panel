@@ -2,6 +2,19 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 73.8 — Sorun araçları: hiçbir düğmenin çözemediği durumlar (2026-10-24) {#s73-8}
+
+- **[Sorun araçları](#/kilavuz/sorun-giderme/sorun-araclari):** Sorunlar kartında önce **önizleme** (şimdi / sonra, uyarılar), sonra **acil PIN + onay kelimesi**. Önizlemeden sonra durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Telefondan da kullanılır; geliştirme bilgisayarından sunucuya iletilir. Araçlar **borsaya emir göndermez**; her uygulama günlüğe, botun olay kaydına ve Telegram'a (bilgi) yazılır.
+- **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası): tek coinin trend kolu ve kademeli alım kaydı borsadaki nete çekilir; sonra **Borsayla karşılaştır** temiz çıkınca kol engeli kalkar. Elle işlem, büyüyen pozisyon ya da belirsiz emirde uygulanmaz ve nedenini yazar.
+- **Zarar sınırı (K3):** artık kartta görünür, çekildiği an Telegram'a bir kez alarm gider; **Zarar sınırını sıfırla** (PIN + SIFIRLA) mandalı kaldırır, yeni tepe bugünkü değer olur. Bu bir strateji kararıdır; sıfırlarsanız bot yeniden risk alır.
+- **%5 uygulama sapması — Farkı kabul et:** bandın hangi günlerden geldiğini gösteren döküm; kabul edilen günler banda sayılmaz (kayıt silinmez), ENGEL kalkar ve aynı gün yeniden gelmez. Demo kabul ölçümü etkilenmez.
+- **Pozisyon uyuşmazlığı açıklayıcısı:** "Neyi saydı?" tablosu coin başına borsa / bot kaydı / fark / son emirler / son dolum / stop-ADL olayı ve olası neden.
+- **Emir freni dökümü:** fren sebebi, şu anki sayım ve son 24 saatin emirleri coin ve kol başına. Dökümde dolmadan iptal edilen emirler ayrıca sayılır; fren kapısının kendisi değişmedi (iptal edilen emirler nominale bugünkü gibi sayılır — gevşetmek sizin kararınıza bırakıldı).
+- **Yatırmayı kabul et** ayrı düğme (yalnız yatırmayı kabul eder; engel ve fren kalkmaz). Çoklu varlık engellerinde alt türe göre 2–3 adım ve doğru düğme.
+- **Kurulum denetimi:** görev sonuç kodlarının sade açıklaması (0x8007052E = Windows parolası değişti) ve kendiniz çalıştıracağınız tek komutluk düzeltme. **Taşıma sihirbazı:** "Eski bilgisayarda Pusula'yı durdurdum" onayı olmadan taşımaz.
+- **Rozet:** başlık rozeti yalnız müdahale ve dikkat sayar; kendiliğinden geçecek ve bilgi kartları yalnız sayfada.
+- Botların karar ve emir gönderme kodu değişmedi. Kayıt / engel / risk durumunu değiştiren araçlar ve emir freni sayımı canlı koda dokunduğu için sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 73.7 — Sorun merkezi, teşhis paketi ve Telegram /teshis (2026-10-24) {#s73-7}
 
 - **Yeni sayfa: [Sistem › Sorunlar](#/kilavuz/sorunlar).** O an etkin her sorun tek kart: **ne oldu · ciddi mi** (zararsız / dikkat / tehlike ve nedeni) **· kendiliğinden geçer mi** (geçecekse tahmini kalkış saati: bakım bitişi + 15 dk, son tekrar + 60 dk, son stop vuruşu + 24 sa, borsa beklemesinin bitişi …) **· ne yapmalı** (2–5 adım) **· dokunmayın**. Botlar, güvenli kip, borsa bağlantısı, güncelleme, Telegram, sağlık sinyali, veri kaynakları, ileri test izleyicisi, ileriye kayıt, yedek, disk, sunucu bilgisayarı — hepsi aynı biçimde. Pusula'nın tanımadığı bir durum da sessiz kalmaz: "Tanınmayan sorun — sohbete gönderin" kartı çıkar. Sorun yoksa yalnız **Her şey yolunda · son denetim N dk önce**.

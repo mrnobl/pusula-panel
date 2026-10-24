@@ -18,7 +18,7 @@ Ayrıca: **Neyi saydı?** (botu durduran satırlar, ret kodlarının sade açık
 
 ## Ne zaman kullanılır {#ne-zaman}
 
-- Başlık çubuğundaki küçük rozet ya da yan menüde **Sorunlar**'ın yanında sayı göründüğünde (kırmızı: müdahale bekliyor · sarı: dikkat · mavi: kendiliğinden geçecek / bilgi).
+- Başlık çubuğundaki küçük rozet ya da yan menüde **Sorunlar**'ın yanında sayı göründüğünde (kırmızı: müdahale bekliyor · sarı: dikkat). 73.8'den beri rozet yalnız bu ikisini sayar; kendiliğinden geçecek ve bilgi kartları yalnız sayfada görünür.
 - Ana sayfanın üstünde sorun bandı çıktığında (yalnız müdahale ya da dikkat varken).
 - Telegram'daki bir uyarının sonundaki **Sorunlar** bağlantısına tıkladığınızda.
 - Geliştirme sohbetine bir sorun anlatacağınızda: **Sohbete gönder**.
@@ -35,7 +35,7 @@ Ayrıca: **Neyi saydı?** (botu durduran satırlar, ret kodlarının sade açık
 | Kart rengi | Sol kenar: kırmızı müdahale bekliyor · sarı dikkat · mavi kendiliğinden geçecek ya da bilgi |
 | Tahmini saat | Mavi rozet ("~04:15"): sorunun kendiliğinden kalkması beklenen saat |
 | Sebebi okudum | Botu açan / güvenli kipi kaldıran düğmeler bu kutu işaretlenmeden çalışmaz (Sağlık sayfasındaki gibi) |
-| 73.8 düğmeleri | "Kaydı borsaya eşitle", "Zarar sınırını sıfırla", "Farkı kabul et" kapalı yer tutucudur; araçlar 73.8'de gelecek |
+| Sorun araçları (73.8) | **Kaydı borsaya eşitle**, **Zarar sınırını sıfırla**, **Farkı kabul et**, **Yatırmayı kabul et**: önce önizleme kartın altında açılır (şimdi / sonra, uyarılar); uygulanabilirse **Acil PIN** ve onay kelimesi (ESITLE / SIFIRLA / KABUL) ile **Uygula**. Arada durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Emir gönderilmez |
 | bu bilgisayar | Geliştirme bilgisayarında, sunucunun değil bu bilgisayarın sorunu (sunucu bağlantısı, yazma kuyruğu) |
 
 ## Sohbete gönder (teşhis paketi) {#teshis}
@@ -44,13 +44,13 @@ Tek düğme; panoya şunları kopyalar: sürüm ve commit, makine rolü (sunucu 
 
 ## Telefonda ve geliştirme bilgisayarında {#telefon}
 
-- **Telefon:** sayfa salt okunur; yalnız telefondan yapılabilen işlemler görünür (Acil durdur — acil PIN ile —, ilgili sayfaya gitmek, güncellemeyi kurmaya gitmek). Diğer düğmeler için kart "sunucudaki panelde" der.
-- **Geliştirme bilgisayarı:** kartlar sunucudan okunur (sunucuya ulaşılamıyorsa son okunan kopya, üstte not). Bu bilgisayarın kendi sorunları **bu bilgisayar** etiketiyle eklenir. Bot / borsa düğmeleri burada kapalıdır.
+- **Telefon:** yalnız telefondan yapılabilen işlemler görünür: Acil durdur (acil PIN ile), ilgili sayfaya gitmek, güncellemeyi kurmaya gitmek ve **sorun araçları** (acil PIN + onay kelimesi). Diğer düğmeler için kart "sunucudaki panelde" der.
+- **Geliştirme bilgisayarı:** kartlar sunucudan okunur (sunucuya ulaşılamıyorsa son okunan kopya, üstte not). Bu bilgisayarın kendi sorunları **bu bilgisayar** etiketiyle eklenir. Bot / borsa düğmeleri burada kapalıdır; sorun araçları ise sunucuya iletilir (yazma jetonu kuruluysa; kuyruğa girmez — sunucu kapalıysa yapılmaz).
 - **Telegram /teshis:** etkin sorunlar ve her biri için ilk iki adım (yalnız okuma).
 
 ## Uyarılar {#uyarilar}
 
-- Sayfa hiçbir şeyi kendiliğinden değiştirmez; düğmeler yalnız var olan işlemleri (Sağlık ve Botlar sayfalarındakilerin aynısı) çağırır.
+- Sayfa hiçbir şeyi kendiliğinden değiştirmez; düğmeler var olan işlemleri (Sağlık ve Botlar sayfalarındakilerin aynısı) ya da önizlemeli, PIN'li sorun araçlarını çağırır.
 - Kartlar en çok 30 saniyelik önbellekten gelir; **Yenile** hemen tazeler. Rozet her sayfada 5 dakikada bir tazelenir.
 - "Tanınmayan sorun" kartı Pusula'nın gördüğü ama henüz açıklayamadığı bir durumdur — **Sohbete gönder** ile iletin.
 - Kendiliğinden geçecek kartlarda tahmini saat bir tahmindir; geçmezse kart "kısa süre içinde … kalkmazsa Sağlık › Şimdi yokla" der.

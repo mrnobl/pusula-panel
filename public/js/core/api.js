@@ -65,9 +65,9 @@
     } catch (e) { return 'yerel'; }
   };
   let kademe = ilkKademe();
-  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur — ikisi de PIN'li.
-  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)/;
-  const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır — bu işlem sunucudaki panelden yapılır.';
+  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları — hepsi PIN'li.
+  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul)\/uygula$)/;
+  const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da) — bu işlem sunucudaki panelden yapılır.';
 
   /**
    * 69.6 YEREL PIN (lib/yerelPin.js): masaüstü panelin tehlikeli işlemleri sunucudan 403 + `kod: 'pin-gerekli'` alır.
@@ -587,6 +587,11 @@
       liste: (o) => al(`/api/sorunlar${o && o.ornek ? '?ornek=1' : o && o.taze ? '?taze=1' : ''}`),
       yerel: () => al('/api/sorunlar/yerel'),
       teshis: (kart) => al(`/api/sorunlar/teshis${kart ? `?kart=${q(kart)}` : ''}`)
+    },
+    /* 73.8 Sorun araçları (lib/sorunAraclari.js): önizleme → PIN + onay metni + parmak izi; 409 = durum değişti (yeni önizleme gövdede) */
+    sorunArac: {
+      onizle: (arac, bot, sembol) => al(`/api/sorun-arac/${q(arac)}/onizle?bot=${q(bot)}${sembol ? `&sembol=${q(sembol)}` : ''}`),
+      uygula: (arac, govde) => istek(`/api/sorun-arac/${q(arac)}/uygula`, { govde, pinYineleme: true })
     },
 
     /* ── Kılavuz (60.4; panel: js/pages/kilavuz.js) — durağan dosyalar public/kilavuz/ altında ── */

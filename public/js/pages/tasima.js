@@ -306,6 +306,8 @@
     }
     async function uygula(d) {
       const degistir = !!(bul(ID.degistir) || {}).checked;
+      // 73.8 (S06): iki Pusula aynı Telegram jetonunu ve borsa anahtarını kullanmasın — eski bilgisayar durduruldu onayı zorunlu
+      if (!eklentiMi && !(bul('tsIceEskiDurdu') || {}).checked) { AG.bildir('Önce eski bilgisayarda Pusula\'yı durdurduğunuzu onaylayın (kutuyu işaretleyin).', 'hata'); return; }
       if (!eklentiMi && onz.doluluk && onz.doluluk.dolu && !degistir) { AG.bildir('Bu bilgisayarda kişisel veri var — "Var olanı yedekleyip değiştir"i işaretle ya da boş bir kurulum kullan.', 'hata'); return; }
       if (!eklentiMi && degistir && !(await AG.onayla({ baslik: 'Var olan veri değiştirilsin mi?', metin: 'Bu bilgisayardaki kişisel ve gizli veri silinmez, veri klasöründe makine/onceki-<zaman> altına taşınır; yerine dosyadaki gelir.', onay: 'Yedekle ve değiştir', tehlikeli: true }))) return;
       AG.dom.mesgul(d, eklentiMi ? 'Yükleniyor…' : 'Taşınıyor…');
@@ -365,6 +367,9 @@
           onz.calisanBotlar && onz.calisanBotlar.length && !eklentiMi ? bant(`Önce çalışan botları durdur: ${onz.calisanBotlar.join(', ')}.`, 'tehlike') : null,
           dolu ? bant(`Bu bilgisayarda zaten kişisel veri var (${onz.doluluk.parcalar.map(x => x.ad).slice(0, 6).join(', ')}). Üzerine yazılmaz.`, 'uyari') : null,
           dolu ? kutu(ID.degistir, 'Var olanı yedekleyip değiştir', 'Var olan veri silinmez: veri klasöründe makine/onceki-<zaman> altına taşınır.') : null,
+          // 73.8 (S06): eski bilgisayar açık kalırsa iki Pusula aynı Telegram jetonunu (409 çakışması, çift bildirim) ve borsa anahtarını (çift emir riski) kullanır
+          !eklentiMi ? kutu('tsIceEskiDurdu', 'Eski bilgisayarda Pusula\'yı durdurdum (Pusula-Durdur) ve PusulaBot / PusulaBekci görevlerini devre dışı bıraktım',
+            'Gerekli: iki Pusula aynı anda açık kalırsa aynı Telegram jetonu ve aynı borsa anahtarı iki yerden kullanılır — çift bildirim, karışık komut cevabı, çift emir riski. Taşımadan sonra yeni bilgisayarda Telegram\'a /durum yazın: TEK cevap gelmeli.') : null,
           el('div', { class: 'ts-cubuk' }, [dugme(ID.vazgec2, 'Vazgeç', 'p-dugme-sessiz', vazgec),
             dugme(ID.uygula, eklentiMi ? 'Eklentiyi yükle' : 'Bu bilgisayara taşı', 'p-dugme-ana', (e) => uygula(e.currentTarget))]),
         ]);

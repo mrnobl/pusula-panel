@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '73.7';
+const APP_VERSION = '73.8';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -1246,7 +1246,15 @@ function sorunBotlari(simdi) {
       guvenliKip: o.guvenliKip || null, akisBekleyen: o.akisBekleyen || null, model: o.model ? { durum: o.model.durum, metin: o.model.metin } : null,
       uygulama: uy ? { bant: uy.bant } : null, sapmaMetin: uy && Number.isFinite(uy.birikim) ? `Son 30 günde gerçek − simülasyon farkı ${(uy.birikim * 100).toFixed(2).replace('.', ',')} puan (bant: ${uy.bant}).` : null,
       kalp: o.kalp || null, kalpDurumu: o.kalpDurumu || null, sonKarar: o.sonKarar ? { gun: o.sonKarar.gun, risk: o.sonKarar.risk || null } : null,
-      yurutucu: y ? { durum: y.durum, durmaTuru: y.durmaTuru, durmaSebebi: y.durmaSebebi, geriCekilme: y.geriCekilme ? { bitis: y.geriCekilme.bitis, aktif: y.geriCekilme.aktif } : null, kilitAcik: y.kilitAcik } : { durum: 'BAGLI_DEGIL' } };
+      yurutucu: y ? { durum: y.durum, durmaTuru: y.durmaTuru, durmaSebebi: y.durmaSebebi, geriCekilme: y.geriCekilme ? { bitis: y.geriCekilme.bitis, aktif: y.geriCekilme.aktif } : null, kilitAcik: y.kilitAcik } : { durum: 'BAGLI_DEGIL' },
+      // 73.8 Sorun araçları: K3 mandalı (canlı dosyadan), uyuşmazlık açıklayıcısı (Y-09b), emir freni dökümü (Y-14) — hepsi YEREL kayıttan, borsaya istek yok
+      riskDurum: o.riskDurum || null,
+      uyusmazlikAciklama: o.kolEngel ? sorunGuvenli(() => SORUN_ARAC.uyusmazlikAciklama({
+        farklar: (((b.bot.kol.durum.sonMutabakat || {}).pozisyon || {}).farklar) || [],
+        emirler: Object.fromEntries(((((b.bot.kol.durum.sonMutabakat || {}).pozisyon || {}).farklar) || []).map(f => [f.symbol, b.bot._sembolEmirleri(f.symbol, 10)])),
+        korumaOlaylari: (b.bot.koruma && b.bot.koruma.durum && b.bot.koruma.durum.olaylar) || [],
+        zorla: (sorunGuvenli(() => ozDenetim.olaylar(2), []) || []).filter(x => x.kimlik === 'zorla' && x.bot === b.ad), simdi }), null) : null,
+      frenNeyiSaydi: o.fren || /EMİR FRENİ/.test(o.bindirmeEngel || '') ? sorunGuvenli(() => SORUN_ARAC.frenNeyiSaydi(b.y.frenDokumu(simdi), simdi), null) : null };
   });
 }
 function sorunGirdisi(simdi = Date.now()) {
@@ -1287,6 +1295,8 @@ function sorunlarHesapla({ taze = false } = {}) {
 function yerelSorunlar() {
   const simdi = Date.now();
   if (!ARASTIRMA_MODU) return { sorunlar: [], sayac: SORUN.sayac([]) };
+  // 73.8: kılavuz görüntüsü üretimi (scripts/kilavuz-ekran.js SORUN_ORNEK=1) — araştırma kopyasına özgü kartlar görüntüye girmez
+  if (process.env.SORUN_ORNEK === '1') return { sorunlar: [], sayac: SORUN.sayac([]) };
   const kq = sorunGuvenli(() => evYazma.bilgi(), null);
   const bas = kq ? (kq.ogeler || []).filter(x => x.durum === 'bekliyor').pop() : null;
   const vd = sorunGuvenli(() => veriOrk.durum(), null);
@@ -1352,6 +1362,28 @@ app.get('/api/sorunlar/yerel', (req, res) => {
     const r = yerelSorunlar();
     res.json({ success: true, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu', ...r, metin: ARASTIRMA_MODU ? SORUN.sirTemizle(r.sorunlar.map(SORUN.kartMetni).join('\n'), bilinenSirlar()) : '' });
   } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+/**
+ * 73.8 SORUN ARAÇLARI (lib/sorunAraclari.js; Sorun merkezi P3): bugün hiçbir düğmenin çözemediği durumlar — kayıt eşitleme (Y-03/Y-33),
+ * zarar sınırı sıfırlama (Y-04), sapma kabulü (Y-05), yatırma kabulü (Y-44). EMİR GÖNDERMEZ; yalnız kayıt / engel / risk durumu.
+ *   GET  /api/sorun-arac/:arac/onizle?bot=&sembol=   ne değişecek + parmak izi (telefonda açık; araştırma kopyasında sunucudan — EV_YOLU)
+ *   POST /api/sorun-arac/:arac/uygula { bot, sembol?, pin, onay, parmak }   PIN + onay her kademede; durum değiştiyse 409 + yeni önizleme
+ * Telefon: lib/acilPin.js SORUN_ARAC_YOLU (beyaz liste + PIN kapısı). Araştırma kopyası: lib/guvenlik.js GELISTIRME_YAZMA ile sunucuya
+ * iletilir (kuyruğa girmez); bağlantı yoksa burada 409.
+ */
+const SORUN_ARAC = require('./lib/sorunAraclari');
+const sorunArac = SORUN_ARAC.olustur({ botBul: (ad) => bindirmeler[ad] || null, acilPin, log: (lv, msg) => db.addLog(lv, msg), sonra: () => { sorunOnbellek.zaman = 0; } });
+const SORUN_ARAC_ARASTIRMA = 'Araştırma kopyası: bu araç sunucuda çalışır. Sunucu bağlantısı (ve yazma jetonu) kurulu değil — sunucudaki panelden ya da telefondan yapın.';
+app.get('/api/sorun-arac/:arac/onizle', async (req, res) => {
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: SORUN_ARAC_ARASTIRMA });
+  try { res.json({ success: true, onizleme: await sorunArac.onizle(req.params.arac, { bot: req.query.bot, sembol: req.query.sembol }) }); }
+  catch (e) { res.status(e.durum || 500).json({ success: false, error: e.message }); }
+});
+app.post('/api/sorun-arac/:arac/uygula', async (req, res) => {
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: SORUN_ARAC_ARASTIRMA });
+  const r = await sorunArac.uygula(req.params.arac, req.body || {}, { kademe: req.kademe || 'yerel' });
+  res.status(r.durum).json(r.govde);
 });
 
 app.get('/api/health', (req, res) => {

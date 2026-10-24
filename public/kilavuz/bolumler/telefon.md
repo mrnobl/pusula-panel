@@ -52,6 +52,8 @@ npm run acil-pin
 
 2. Pencerede **DURDUR** yazmak (yanlışlıkla dokunmaya karşı).
 
+**Sorun araçları (73.8):** Sorunlar sayfasındaki **Kaydı borsaya eşitle**, **Zarar sınırını sıfırla**, **Farkı kabul et** ve **Yatırmayı kabul et** telefondan da kullanılır: önce önizleme, sonra aynı acil PIN ve onay kelimesi (ESITLE / SIFIRLA / KABUL). Önizlemeden sonra durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Ayrıntı: [Sorun giderme › Sorun araçları](#/kilavuz/sorun-giderme/sorun-araclari).
+
 PIN tanımlı değilse telefondan acil durdurma **kapalıdır**. 1 dakikada 5 yanlış PIN → 1 dakika kilit + Telegram uyarısı (73.0; kilit her zaman 1 dakika). PIN'i değiştirmek için komutu yeniden çalıştırın (eski PIN'i sormaz — unuttuysanız da böyle) ya da panelde [Ayarlar › Anahtarlar › PIN'i değiştir](#/kilavuz/ayarlar/pin-degistir) (eski PIN ister). **Ortak PIN:** PIN bütün bilgisayarlarda aynıdır; değiştirdiğinizde öbür bilgisayarlarda da aynı PIN'i girin (Faz 3'te kendiliğinden eşitlenecek). Silmek için `npm run acil-pin -- --sil`. Telegram'dan acil durdurma yoktur (Telegram yalnız okur).
 
 ## Wi-Fi köprüsüyle {#adimlar}

@@ -9,9 +9,19 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 ## Sorunlar sayfası ve /teshis {#sorunlar-sayfasi}
 
 - **Sistem › Sorunlar** (yan menüde, sayı rozetiyle): etkin sorunlar en ciddisi üstte. Sorun yoksa yalnız **Her şey yolunda · son denetim N dk önce** yazar. Ayrıntı: [Sorunlar sayfası](#/kilavuz/sorunlar).
-- Her sayfanın üstünde (başlık çubuğunda) küçük rozet: kırmızı / sarı / mavi sayılar. Tıklayınca Sorunlar açılır. Sorun yoksa görünmez.
+- Her sayfanın üstünde (başlık çubuğunda) küçük rozet: kırmızı / sarı sayılar — yalnız müdahale bekleyen ve dikkat isteyen sorunlar sayılır; kendiliğinden geçecek ve bilgi kartları rozete girmez (Sorunlar sayfasında yine görünür). Tıklayınca Sorunlar açılır. Sayılacak sorun yoksa görünmez.
 - Ana sayfada üstte bant: yalnız müdahale bekleyen ya da dikkat isteyen sorun varken.
-- Telefonda sayfa salt okunurdur; yalnız telefondan yapılabilen işlemler (acil durdurma, güncellemeyi kurmaya gitmek) görünür.
+- Telefonda yalnız telefondan yapılabilen işlemler görünür: acil durdurma, güncellemeyi kurmaya gitmek ve **sorun araçları** (aşağıda).
+
+### Sorun araçları: önizle, PIN, onay {#sorun-araclari}
+
+Bugün hiçbir düğmenin çözemediği dört durum için kartta araç düğmesi çıkar: **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası), **Zarar sınırını sıfırla** (K3), **Farkı kabul et** (%5 uygulama sapması) ve **Yatırmayı kabul et**. Hepsi aynı yolu izler:
+
+1. Düğmeye basın: önce **önizleme** açılır — şimdiki durum, ne değişeceği, uyarılar. Araç bu durumda güvenle uygulanamıyorsa nedenini yazar ve düğme çıkmaz.
+2. Önizlemeyi okuyun; doğruysa **acil PIN**'i ve onay kelimesini (ESITLE / SIFIRLA / KABUL) yazıp **Uygula**.
+3. Önizlemeden sonra durum değiştiyse (ör. bu arada bir dolum geldi) **hiçbir şey uygulanmaz**: yeni önizleme gelir, yeniden okuyup onaylarsınız.
+
+Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da risk durumunu değiştirir. Telefondan da kullanılır (aynı acil PIN ve aynı yanlış deneme sayacı: 5 yanlışta 1 dakika kilit). Geliştirme bilgisayarında sunucuya iletilir (kuyruğa girmez). Her uygulama günlüğe ve botun olay kaydına yazılır, Telegram'a bilgi iletisi gider. Demo hesaptaki botta (Kairos demo kabulü) müdahale ayrıca prova günlüğüne "ölçümden düşülecek" diye yazılır.
 - Geliştirme bilgisayarında sunucunun sorunları gösterilir; bu bilgisayarın kendi sorunları (sunucu bağlantısı, yazma kuyruğu) **bu bilgisayar** etiketiyle ayrıca çıkar.
 - Uzaktayken Telegram'a **/teshis** yazın: etkin sorunlar ve her biri için ilk iki adım gelir (yalnız Ayarlar'daki Chat ID'den gelen mesaja cevap verilir; komut yalnız okur).
 - Telegram'daki uyarıların "Ne yapmalı" satırı aynı kartın 2–3 kısa adımını ve **Sorunlar** bağlantısını taşır. Bağlantının tıklanabilir olması için **Ayarlar › Bildirimler › Panel adresi**'ne sunucunun Tailscale adresini girin (boşsa mesajda "Panel › Sorunlar" yazar).
@@ -49,7 +59,7 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Emir freni {#emir-freni}
 
-**Belirti:** "EMİR FRENİ — bot durdu". **Anlamı:** dikkat — kısa sürede beklenmeyen kadar çok emir (kaçak döngü olabilir); azaltan emirler ve stoplar serbest. **Adımlar:** Botlar › İşlemler › Bekleyen emirler'de aynı coinde onlarca emir varsa açmayın, **Acil durdur** ve sohbete yazın; açıklanabilir tek seferlik bir sebepse **Botu yeniden aç**.
+**Belirti:** "EMİR FRENİ — bot durdu". **Anlamı:** dikkat — kısa sürede beklenmeyen kadar çok emir (kaçak döngü olabilir); azaltan emirler ve stoplar serbest. Kartın **Neyi saydı?** bölümü fren sebebini, şu anki sayımı (10 dk / 24 saat / nominal ve sınırları) ve son 24 saatin risk artıran emirlerini coin ve kol başına gösterir. Nominal tavana yalnız açık ya da dolan kısım sayılır — dolmadan iptal edilen limit emir (kademeli alım merdiveni yenilemesi) sayılmaz. **Adımlar:** aynı coinde onlarca emir varsa açmayın, **Acil durdur** ve sohbete yazın; açıklanabilir tek seferlik bir sebepse **Botu yeniden aç** (fren de kalkar).
 
 ### Durum dosyası bozuk açıldı {#durum-dosyasi}
 
@@ -57,7 +67,7 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Uygulama sapması — ENGEL tekrar geliyor {#uygulama-sapmasi}
 
-**Belirti:** "gerçek sonuç simülasyondan %5'ten fazla ayrıldı" (kırmızı) ya da "%3 bandı" (sarı). **Anlamı:** para kaybı demek değil; 30 günde gerçek ile ideal arasında fark birikti (kaçırılan gün, kayma, funding). **Kendiliğinden geçer mi:** hayır; **Engeli kaldır** tek başına yetmeyebilir — 30 günlük pencere değişmediği için aynı gün yeniden gelebilir. **Adımlar:** İleri test › Kairos / Tao'da farkın tek bir güne mi yoksa her güne mi yayıldığına bakın; tek güne yığılmışsa (kaçırılan gün) bekleyip açabilirsiniz; her gün küçük farksa **Sohbete yazın**. "Farkı kabul et" aracı 73.8'de gelecek.
+**Belirti:** "gerçek sonuç simülasyondan %5'ten fazla ayrıldı" (kırmızı) ya da "%3 bandı" (sarı). **Anlamı:** para kaybı demek değil; 30 günde gerçek ile ideal arasında fark birikti (kaçırılan gün, kayma, funding). **Kendiliğinden geçer mi:** hayır; **Engeli kaldır** tek başına yetmez — 30 günlük pencere değişmediği için aynı gün yeniden gelir. **Adımlar:** kartta **Farkı kabul et**'e basın: önizleme bandın hangi aralıklardan geldiğini (gün, gerçek, gölge, fark) ve farkın ne kadarının tek aralıktan geldiğini gösterir. Tek güne yığılmış ve sebebi biliniyorsa (kaçırılan gün / telafi) PIN + **KABUL** ile kabul edin: o aralıklar "kabul edildi" diye işaretlenir (kayıt silinmez), %5 bandına sayılmaz, ENGEL kalkar ve aynı farkla yeniden gelmez; yeni günlerin farkı yine izlenir. Her gün küçük fark varsa (kayma / funding) kabul etmeden önce **Sohbete yazın**. Demo kabul ölçümü (U1/U2) kabulden etkilenmez — ham fark raporda kalır.
 
 ### Hesap kesicisi {#hesap-kesicisi}
 
@@ -65,21 +75,28 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Pozisyon uyuşmazlığı {#pozisyon-uyusmazligi}
 
-**Belirti:** "borsadaki pozisyonlar botun kayıtlarıyla uyuşmuyor". Kartın **Neyi saydı?** tablosu coin başına borsadaki miktarı, trend kolu ve kademeli alım kayıtlarını ve farkı gösterir. **Anlamı:** dikkat — elle işlem, gecikmeli dolum, ADL / likidasyon ya da stop tetiklenmesi. **Kendiliğinden geçer mi:** borsayla karşılaştırma temiz çıkınca kendisi açılır.
+**Belirti:** "borsadaki pozisyonlar botun kayıtlarıyla uyuşmuyor". Kartın **Neyi saydı?** tablosu coin başına borsadaki miktarı, botun kaydını, farkı, son emirleri, son dolumu, o coinde stop / ADL olayı olup olmadığını ve **olası nedeni** (gecikmeli dolum, elle işlem, felaket stopu, ADL / likidasyon) gösterir. **Anlamı:** dikkat — elle işlem, gecikmeli dolum, ADL / likidasyon ya da stop tetiklenmesi. **Kendiliğinden geçer mi:** borsayla karşılaştırma temiz çıkınca kendisi açılır.
 
-**Adımlar:** son 5 dakikada emir verildiyse 2 dakika bekleyip **Borsayla karşılaştır**; Binance'te elle işlem yaptıysanız geri alıp karşılaştırın; hiçbiri değilse **Sohbete gönder**. **Engeli kaldır**'a basmayın — bu engeli yalnız temiz karşılaştırma kaldırır.
+**Adımlar:** olası neden "gecikmeli dolum" ise 2 dakika bekleyip **Borsayla karşılaştır**; Binance'te elle işlem yaptıysanız geri alıp karşılaştırın; stop / ADL / likidasyon pozisyonu kapattıysa o coin için **Kaydı borsaya eşitle** (aşağıda), sonra **Borsayla karşılaştır**; hiçbiri değilse **Sohbete gönder**. **Engeli kaldır**'a basmayın — bu engeli yalnız temiz karşılaştırma kaldırır.
 
 ### Felaket stopu çalıştı, kayıtlar uyuşmuyor {#felaket-stopu}
 
-**Belirti:** Telegram "felaket stopu tetiklendi", ardından pozisyon uyuşmazlığı. **Anlamı:** koruma çalıştı, zarar sınırlandı; ama botun defteri pozisyonu hâlâ açık sanıyor. **Adımlar:** panik satış yapmayın; Binance'te o coinde pozisyon kaldı mı bakın; sıfırsa "Kaydı borsaya eşitle" aracı 73.8'de gelecek — o zamana kadar **Sohbete yazın**. **Acil fren**'e basmayın: kalan her şeyi kapatır.
+**Belirti:** Telegram "felaket stopu tetiklendi", ardından pozisyon uyuşmazlığı. **Anlamı:** koruma çalıştı, zarar sınırlandı; ama botun defteri pozisyonu hâlâ açık sanıyor. **Adımlar:** panik satış yapmayın; Binance'te o coinde pozisyon kaldı mı bakın. Kartta o coinin **Kaydı borsaya eşitle** düğmesine basın: önizleme borsadaki miktarı, trend kolu ve kademeli alım kayıtlarını, farkı ve eşitlemeden sonraki hâli gösterir. Doğruysa PIN + **ESITLE** ile uygulayın, sonra **Borsayla karşılaştır** — temiz çıkınca kol engeli kalkar. Araç **emir göndermez**: pozisyon borsada kapandıysa kayıt 0'a çekilir (kademeli alım deal'i kapanmış sayılır); yalnız trend kolu açıksa ve borsa aynı yönde küçüldüyse (kısmi ADL / kısmi stop) kayıt borsadaki miktara çekilir. Borsada botun bilmediği pozisyon (elle işlem), büyüyen pozisyon, iki kol birden kısmen açık, sonucu belirsiz ya da son 5 dakikadaki emir varsa araç **uygulanmaz** ve nedenini yazar. Borsada bu coinde botun açık kademeli alım emirleri kaldıysa önizleme uyarır: eşitlemeden sonraki karşılaştırma onları sahipsiz sayıp iptal eder (yeni pozisyon açmaz). **Acil fren**'e basmayın: kalan her şeyi kapatır.
 
 ### Çoklu varlık (BTC teminat) denetimi {#coklu-varlik}
 
-**Belirti:** "çoklu varlık modu KAPALI", "spot cüzdanda botun olmayan bakiye", "vadeli BTC ≠ beklenen". **Anlamı:** dikkat — elle aktarım, yatırma ya da satış. **Adımlar:** bakiye sizin yatırmanızsa **Engeli kaldır** kabul eder; mod kapalıysa Binance › Vadeli › Ayarlar'da çoklu varlık modunu açın; aktarım farkını bilmiyorsanız sohbete yazın.
+**Belirti:** "çoklu varlık modu KAPALI", "spot cüzdanda botun olmayan bakiye", "vadeli BTC ≠ beklenen", "çözülmemiş belirsiz akış". **Anlamı:** dikkat — elle aktarım, yatırma ya da satış. Kart alt türü tanır ve doğru düğmeyi gösterir:
+
+| Alt tür | Adımlar | Düğme |
+|---|---|---|
+| Çoklu varlık modu kapalı | Binance › Vadeli › Ayarlar › Asset Mode'u açın (canlıda Pusula açmaz), sonra karşılaştırın | Borsayla karşılaştır |
+| Spot cüzdanda botun bilmediği bakiye | Sizin yatırmanız / aktarımınızsa kabul edin; değilse spot cüzdandan başka hesaba taşıyıp karşılaştırın | Yatırmayı kabul et |
+| Vadeli BTC beklenenden farklı | Elle aktarım / satış yaptıysanız geri alın ya da kendi işleminiz olarak kabul edin; USDT eksiye düştüyse sohbete yazın | Engeli kaldır (kendi işlemimdi) |
+| Sonucu belirsiz akış | Karşılaştırma belirsiz adımı borsaya sorar; iki denemede çözülmezse sohbete yazın | Borsayla karşılaştır |
 
 ### Para yatırma kabulünüzü bekliyor {#yatirma-kabul}
 
-**Belirti:** "spot cüzdana para yatırıldı — kabul bekliyor". **Anlamı:** zararsız. **Adımlar:** yatırma sizinse **Sebebi okudum** → **Yatırmayı kabul et (Engeli kaldır)**; değilse Binance hesabınızı kontrol edin ve sohbete yazın.
+**Belirti:** "spot cüzdana para yatırıldı — kabul bekliyor". **Anlamı:** zararsız. **Adımlar:** yatırma sizinse kartta **Yatırmayı kabul et**: önizleme tutarı gösterir; PIN + **KABUL** ile ölçüm tabanları ve sermaye tavanı güncellenir. Bu düğme yalnız yatırmayı kabul eder — engel, emir freni ve sapma bandı değişmez (eskiden "Engeli kaldır" bunların hepsini birden kaldırıyordu; o düğme yine durur). Siz yapmadıysanız Binance hesabınızı kontrol edin ve sohbete yazın. Telefondan da yapılır.
 
 ### İleri test DUR {#ileri-dur}
 
@@ -141,7 +158,7 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Zarar sınırı (K3) çekildi {#zarar-siniri}
 
-**Belirti:** "zarar sınırı (K3) çekildi — bot nakitte bekliyor"; bot sayfasında son karar satırı "riski düşürüldü". **Anlamı:** dikkat — strateji tepeden düşüş sınırına çarptı; arıza değil, bot nakitte bekliyor. **Adımlar:** yeniden açmak bir strateji kararıdır — sohbette değerlendirin. "Zarar sınırını sıfırla" aracı 73.8'de gelecek.
+**Belirti:** "zarar sınırı (K3) çekildi — bot nakitte bekliyor"; bot sayfasında son karar satırı "riski düşürüldü". **Anlamı:** dikkat — strateji tepeden düşüş sınırına çarptı; arıza değil, bot nakitte bekliyor (çekildiği an Telegram'a bir kez alarm gider). **Adımlar:** önce İleri test sayfasında düşüşün modelle uyumlu olup olmadığına bakın; emin değilseniz sohbette değerlendirin. Yeniden risk almasını istiyorsanız kartta **Zarar sınırını sıfırla**: önizleme mandalı, sebebini, tepe ve bugünkü özsermayeyi gösterir; PIN + **SIFIRLA** ile mandal kalkar ve yeni tepe bugünkü değer olur. **Bu bir strateji kararıdır; sıfırlarsanız bot yeniden risk alır.** Etkisi bir sonraki günlük çalışmada görülür.
 
 ### Marj uyarısı {#marj}
 
@@ -149,7 +166,7 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Borsa pozisyonu zorla kapattı (ADL / likidasyon) {#adl-likidasyon}
 
-**Belirti:** "borsa pozisyonu ZORLA KAPATTI". **Anlamı:** tehlike — kalan bacaklar korumasız olabilir. **Adımlar:** Binance'te açık pozisyonları ve stopları kontrol edin; sohbete yazın.
+**Belirti:** "borsa pozisyonu ZORLA KAPATTI". **Anlamı:** tehlike — kalan bacaklar korumasız olabilir. **Adımlar:** Binance'te açık pozisyonları ve stopları kontrol edin. Sonraki mutabakat botu pozisyon uyuşmazlığıyla durdurur; o kartta ilgili coin için **Kaydı borsaya eşitle** (PIN + ESITLE), sonra **Borsayla karşılaştır**. Araç "uygulanamaz" derse sohbete yazın.
 
 ### Funding yüksek {#funding}
 
@@ -249,6 +266,7 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 | Telegram **/teshis**, **/durum** | Evet | — | — |
 | Botu **acil durdurmak** | Evet (acil PIN + DURDUR) | Hayır | Evet |
 | Onaylı **güncellemeyi kurmak** | Evet (acil PIN + GÜNCELLE) | Hayır | Evet |
+| **Sorun araçları** (kayıt eşitleme, zarar sınırı, sapma / yatırma kabulü) | Evet (acil PIN + onay kelimesi) | Evet (sunucuya iletilir) | Evet |
 | İşlem defterim / Portföyüm kaydı, API anahtarı | Hayır | Evet (yazma jetonu, kuyruk) | Evet |
 | **Botu yeniden aç**, Engeli kaldır, güvenli kipi kaldır, Borsayla karşılaştır | Hayır | Hayır | Evet |
 | Telegram jetonu / Chat ID, sağlık adresleri, acil PIN | Hayır | Hayır | Evet |
@@ -269,7 +287,7 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 
 ### Windows parolası değişti, görevler çalışmıyor {#parola}
 
-**Belirti:** elektrik kesintisinden sonra Pusula açılmıyor; yedek ve güncelleme durmuş; Kurulum denetiminde görev sonucu `0x8007052E`. **Anlamı:** tehlike — parolayla kaydedilmiş görevler (PusulaBot, Bekçi, Yedek, Güncelle) parola değişince çalışmaz. **Adımlar:** Sistem › Kurulum denetimi › **Onar** ile gösterilen komutları sunucuda çalıştırın (görevleri yeni parolayla yeniden kurar); bilgisayara PIN ile giriyorsanız PIN değil hesap parolası istenir; sonra bilgisayarı bir kez yeniden başlatıp Pusula'nın kendiliğinden açıldığını görün.
+**Belirti:** elektrik kesintisinden sonra Pusula açılmıyor; yedek ve güncelleme durmuş; Kurulum denetiminde görev sonucu `0x8007052E`. **Anlamı:** tehlike — parolayla kaydedilmiş görevler (PusulaBot, Bekçi, Yedek, Güncelle) parola değişince çalışmaz. Kurulum denetimi görev satırında kodun sade açıklamasını ("oturum açılamadı — parola değişmiş") ve tek komutluk düzeltmeyi yazar. Bilinen diğer kodlar: `0x80070005` erişim reddedildi (yetki / antivirüs), `0x800710E0` görev reddedildi, `0x1` betik hata ile bitti, `0x41303` hiç çalışmadı (zararsız). **Adımlar:** satırdaki komutu (ya da **Onar**'ın gösterdiğini) sunucuda Komut İstemi'ni açıp kendiniz çalıştırın — Pusula bunu kendisi çalıştırmaz; görevi yeni parolayla yeniden kurar; bilgisayara PIN ile giriyorsanız PIN değil hesap parolası istenir; sonra bilgisayarı bir kez yeniden başlatıp Pusula'nın kendiliğinden açıldığını görün.
 
 ### Çökme döngüsü {#cokme-dongusu}
 

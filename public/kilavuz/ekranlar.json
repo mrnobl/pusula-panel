@@ -325,11 +325,11 @@
         "dosya": "kurulum-tasi-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 66466,
+        "bayt": 66762,
         "olcek": 1,
-        "ozet": "1de8ec8c6ca6818539a26ba745bb5684f1c530bb9e37218c61e8421bb499d684",
-        "genel": "22ed26909301c5adc43625d3587a1a535ae5595b24a6fe38a2b90d7fd04416bc",
-        "surum": "73.4",
+        "ozet": "ae2f88e0617e74d891cd02ca40f4e0eb5043c93e6c00a59bd81d99961f4b7185",
+        "genel": "6b8bf457dd1c40ada8d1c595e22f22bdcd16593db63c0f5ef1b6d3842556c416",
+        "surum": "73.8",
         "tarih": "2026-10-24",
         "isaretler": [
           {
@@ -6588,11 +6588,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 54294,
+        "bayt": 54070,
         "olcek": 1,
-        "ozet": "eec49165a3ad8395a982b1bedde2dc1fd5dc92b940d142cba0b8a0eee29f6763",
-        "genel": "6536ca43c886460c987917fb629fdae57098ec917f3b690be8da4633ec0b2422",
-        "surum": "73.7",
+        "ozet": "b8261ea0f7693a20050ce35a5ed487ce90b3f611694fd3b14f510aee34aff3f0",
+        "genel": "6b8bf457dd1c40ada8d1c595e22f22bdcd16593db63c0f5ef1b6d3842556c416",
+        "surum": "73.8",
         "tarih": "2026-10-24",
         "isaretler": [
           {
@@ -6901,11 +6901,11 @@
         "dosya": "sorunlar-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 89758,
+        "bayt": 89676,
         "olcek": 1,
-        "ozet": "a8539302c11a96cf92f8a2b444b85bf3b90828929ad78c62f6a345c74c3b4b15",
-        "genel": "6536ca43c886460c987917fb629fdae57098ec917f3b690be8da4633ec0b2422",
-        "surum": "73.7",
+        "ozet": "f9cdcea4030f66f56f39e7129b17d2cc421519aa89714ad224481ab67d8e7c2d",
+        "genel": "6b8bf457dd1c40ada8d1c595e22f22bdcd16593db63c0f5ef1b6d3842556c416",
+        "surum": "73.8",
         "tarih": "2026-10-24",
         "isaretler": [
           {
@@ -6940,7 +6940,7 @@
             "secici": "#sorunUstRozet",
             "x": 484,
             "y": 18,
-            "w": 88,
+            "w": 65,
             "h": 34
           }
         ]
@@ -7534,11 +7534,11 @@
         "dosya": "yedek-tasima-1400.webp",
         "en": 1400,
         "boy": 1250,
-        "bayt": 76166,
+        "bayt": 75862,
         "olcek": 1,
-        "ozet": "0b81a2fb484ca44714b97eb16ace2b649ddd2ef5dd5275140d4a2d5a5b06db32",
-        "genel": "6536ca43c886460c987917fb629fdae57098ec917f3b690be8da4633ec0b2422",
-        "surum": "73.7",
+        "ozet": "aa8604fa3c3dfc19f8d604e7a6f94e77db1536217e58363e5dec4250d6193c8a",
+        "genel": "6b8bf457dd1c40ada8d1c595e22f22bdcd16593db63c0f5ef1b6d3842556c416",
+        "surum": "73.8",
         "tarih": "2026-10-24",
         "isaretler": [
           {

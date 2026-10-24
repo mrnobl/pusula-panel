@@ -239,11 +239,13 @@ Bu bilgisayar araştırma modundaysa acil fren de kilitlidir — acil durumda su
 
 ## Durduruldu bandı {#durduruldu}
 
-Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden görünür. Bot bu durumda yeni emir vermez (acil fren yine çalışır). İki ana neden:
+Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden görünür. Bot bu durumda yeni emir vermez (acil fren yine çalışır). Başlıca nedenler:
 
 1. **Borsa ile kayıtlar uyuşmuyor** (elle emir mi verdiniz?): nedeni bulun, düzeltin, banttaki **Borsayla karşılaştır** → temizse bot devam eder.
-2. **30 günde gerçek sonuç simülasyondan %5'ten fazla ayrıldı:** [İleri test](#/kilavuz/ileri-test) ekranında inceleyin, sonra **Engeli kaldır** (onaylı).
-3. **Öz denetim botu tamamen kapattı** (69.1 — kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü): neden "öz denetim: …" diye başlar. İnceleyin, sonra **Engeli kaldır** ya da [Sağlık](#/kilavuz/saglik/tam-kapanma) sayfasında **Botu yeniden aç**.
+2. **30 günde gerçek sonuç simülasyondan %5'ten fazla ayrıldı:** Engeli kaldır tek başına yetmez (aynı gün yeniden gelir). [Sorunlar](#/kilavuz/sorun-giderme/uygulama-sapmasi) kartındaki **Farkı kabul et** (73.8) bandın hangi günlerden geldiğini gösterir; kabul ederseniz (PIN + KABUL) o günler banda sayılmaz, kayıt silinmez.
+3. **Felaket stopu / ADL / likidasyon sonrası uyuşmazlık** (73.8): Sorunlar kartında o coin için **Kaydı borsaya eşitle** (önizleme → PIN + ESITLE; emir gönderilmez), sonra **Borsayla karşılaştır**. Ayrıntı: [Sorun giderme](#/kilavuz/sorun-giderme/felaket-stopu).
+4. **Zarar sınırı (K3) çekildi** (bot çalışıyor görünür ama nakitte kalır): çekildiği an Telegram'a bir kez yazılır; yeniden risk almak strateji kararıdır — Sorunlar kartındaki **Zarar sınırını sıfırla** (PIN + SIFIRLA; yeni tepe = bugünkü değer).
+5. **Öz denetim botu tamamen kapattı** (69.1 — kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü): neden "öz denetim: …" diye başlar. İnceleyin, sonra **Engeli kaldır** ya da [Sağlık](#/kilavuz/saglik/tam-kapanma) sayfasında **Botu yeniden aç**.
 
 **Sarı bant — güvenli kipte (69.1):** bot yeni işlem açmaz, açık pozisyonun stopu yerinde kalır. Öz denetim koyduysa sebep geçince kendiliğinden kalkar; banttaki **Güvenli kipi kaldır** ile de kaldırabilirsiniz ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
 
@@ -256,6 +258,7 @@ Sermaye artışları her ay ama tutarı belli olmadan yapılacağı için bot ha
 - **Para hemen çalışır:** yatırılan para o günkü çalışmada hedefe göre dağıtılır (BTC ayağında sebep **sermaye değişimi**; ay başını beklemez).
 - **Sermaye tavanı izler:** yatırma tavanı aynı tutarda yükseltir, çekme düşürür (ayarlı tavanın altına inmez). **Canlı hesapta** tavan onay dosyasındaki üst sınırı (G9) asla aşmaz: aşacaksa tavan sınırda kalır, fazlası kullanılmaz ve Telegram "onaylı üst sınırı artırın" der. İstenmezse ayarda `tavanAkis: false`.
 - Telegram'a "sermaye artışı / çekişi algılandı" iletisi gider. USDT ve BTC dışındaki coinler sermayeye sayılmaz (uyarı yazılır).
+- **Spot cüzdana yatırma (çoklu varlık) kabul bekler:** Sorunlar kartındaki **Yatırmayı kabul et** (73.8; PIN + KABUL, telefondan da) yalnız yatırmayı kabul eder — engel, emir freni ve sapma bandı değişmez. Eskiden bu iş Engeli kaldır'la yapılırdı; o düğme yine durur ama hepsini birden kaldırır.
 
 ## Para güvenliği (69.6) {#para-guvenligi}
 
