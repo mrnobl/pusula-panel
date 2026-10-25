@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.1 — İç düzenleme: sunucu programının bölünmesi tamamlandı (2026-10-25) {#s75-1}
+
+- **Görünür değişiklik yok.** Sunucu programının parçalara bölünmesinin son adımı: **bot yönetimi** (Kairos, Tao ve sizin oluşturduğunuz botlar — bot kaydı, açılışta bağlanma, bekçi, sağlık sinyali), **Botlar** ve **bot** uçları (başlat, durdur, mod, kâğıt hesabı sıfırla, acil fren, işlemler, grafik), **Borsa hesapları**, hesap işlemleri, **Kalkan** ile sunucunun **açılış ve kapanış** işleri ayrı dosyalara taşındı.
+- Panelin bütün düğmeleri, yanıtları, yetki kuralları (PIN, acil PIN, telefon, geliştirme bilgisayarı, araştırma kopyası) ve sıraları **aynı**; bunu uç listesinin birebir karşılaştırması, eski ve yeni sürümün yan yana yanıt karşılaştırması ve güvenlik testleri doğruluyor. **Botların kodu ve kararları değişmedi** (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı).
+- Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 75.0 — İç düzenleme: sunucu programının bölünmesi sürüyor (2026-10-25) {#s75-0}
 
 - **Görünür değişiklik yok.** Sunucu programının en büyük dosyasının parçalara bölünmesinin ikinci adımı: **ayar ve gizli anahtar saklama**, **Ayarlar** uçları, **Sağlık** (öz denetim, ikinci uyarı kanalı, olay raporu, veri kalitesi, sağlık sinyali), **Sorun merkezi** ve sorun araçları, **bildirimler** ve **Telegram komutları**, **ileri test** ile **Portföyüm**, **İşlem defterim**, **Anahtarlar**, portföy tasarımcısı ve **ayar geçmişi** uçları ayrı dosyalara taşındı.
