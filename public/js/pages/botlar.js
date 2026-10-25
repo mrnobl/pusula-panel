@@ -682,14 +682,14 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     ].flat())];
   }
   /**
-   * Saf (76.7, A2 parça 2): OKX botu — evrende (Binance PIT) olup işlem borsasında OLMAYAN coinler ayrı satırda ("OKX'te yok — nakitte"):
+   * Saf (76.7, A2 parça 2): OKX / Bybit botu — evrende (Binance PIT) olup işlem borsasında OLMAYAN coinler ayrı satırda ("OKX'te yok — nakitte"):
    * hedefleri 0, payları nakitte bekler. Yalnız yanıtta `borsadaYok` varsa (Binance botunda yok → satır yok).
    * @returns [{ etiket, metin, sinif, title }]
    */
   function borsadaYokSatiri(d) {
     const y = d && d.borsadaYok;
     if (!y || !y.borsa) return [];
-    const etiket = y.borsa === 'OKX' ? 'OKX\'te yok — nakitte' : `${y.borsa} borsasında yok — nakitte`;
+    const etiket = y.borsa === 'OKX' ? 'OKX\'te yok — nakitte' : y.borsa === 'Bybit' ? 'Bybit\'te yok — nakitte' : `${y.borsa} borsasında yok — nakitte`;
     const l = Array.isArray(y.semboller) ? y.semboller.map(x => String(x).split('/')[0]) : null;
     const metin = l === null ? 'ilk karardan sonra görünür' : l.length ? l.join(', ') : 'yok (evrenin bütün coinleri işlem borsasında var)';
     return [{ etiket, metin, sinif: l && l.length ? 'tone-warning' : '', title: `Bu coinler evrende (Binance) kalır ama işlem borsasında (${y.borsa}) yok: hedefleri 0, payları nakitte bekler (DCA dahil). Telegram'a bildirim gitmez.${y.gun ? ` Son karar ${y.gun}${y.kuru ? ' (kuru)' : ''}.` : ''}` }];

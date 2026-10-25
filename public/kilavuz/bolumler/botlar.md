@@ -65,7 +65,7 @@ Yer: **Ayarlar › Botlar › Bot kayıtları**. Yalnız sınanmış kurallarla 
 Yeni bot demo hesapta çalışacaksa önce bir **Binance demo** hesabı bağlanır: Bot kayıtları tablosunda **Demo hesabı** seçicisi (Ayarlar › Anahtarlar'daki Binance demo hesapları) → **acil PIN**. Sonra Botlar › <bot> › Yönetim › Hesap türü: **demo** (masaüstünde de PIN ister).
 
 - **Aynı borsa hesabını aynı anda yalnız bir bot kullanır** (kâğıt botlar hariç). Kairos demo hesabını (Binance demo) kullanırken o hesap başka bota bağlanamaz; her yeni bot için Binance'te ayrı bir demo hesabı / alt hesap açıp Anahtarlar'a ekleyin.
-- Bu sürümde yalnız **Binance** hesapları bağlanır (OKX hazırlıkta, Bybit sonra — bkz. [OKX botu](#/kilavuz/botlar/okx-bot)). Hesap türü moda uymalı (demo hesabı demo moda); hesabın borsası botun borsasıyla aynı olmalı (Binance botuna OKX hesabı, OKX botuna Binance hesabı bağlanmaz).
+- Bu sürümde yalnız **Binance** hesapları bağlanır (OKX ve Bybit hazırlıkta — bkz. [OKX botu](#/kilavuz/botlar/okx-bot), [Bybit botu](#/kilavuz/botlar/bybit-bot)). Hesap türü moda uymalı (demo hesabı demo moda); hesabın borsası botun borsasıyla aynı olmalı (Binance botuna OKX ya da Bybit hesabı, OKX / Bybit botuna başka borsanın hesabı bağlanmaz).
 - Bot demo modundayken hesap değişmez; önce kâğıda dönün. Bota bağlı bir hesap Anahtarlar'dan silinmez (önce bağı kaldırın).
 
 ### OKX botu (demo hazırlığı) {#okx-bot}
@@ -78,6 +78,17 @@ Yeni bot formunda **Borsa** seçimi vardır: **Binance** (varsayılan) ya da **O
 - **Durum: "OKX demo: hazırlık — henüz bağlanamaz".** OKX demo hesabını Anahtarlar'a ekleyebilirsiniz (hesap türü demo, parola alanı zorunlu); ama bu sürümde bota bağlanamaz, OKX botu demo moduna geçemez. Bağlantı, OKX demo hesabında salt okuma ölçümü yapıldıktan sonra ayrı bir sürümle açılacak.
 - **Canlı hesap yok:** OKX botu canlı hesap moduna geçemez; OKX canlı hesap yolu kapalıdır.
 - **Güncellemede kuru deneme:** güncelleyici kâğıttaki OKX botunu da eski ve yeni kodla emir göndermeden dener (OKX pazar kuralları anahtarsız okunur; Binance botları eskisi gibi).
+
+### Bybit botu (demo hazırlığı) {#bybit-bot}
+
+OKX botunun eşi. Yeni bot formunda **Borsa** seçiminde **Bybit** de vardır; kısayol olarak **Kural** listesinde **Kairos tipi — Bybit (demo hazırlığı)** şablonu (borsası Bybit'e sabit). Borsa bot kurulduktan sonra değişmez.
+
+- **Kâğıtta başlar:** Bybit botu kâğıt hesapta **Bybit'in pazar kurallarıyla** (miktar adımı, en küçük emir, piyasa emri üst sınırı) çalışır; gerçek emir yoktur. Bybit'in henüz işlem görmeyen (ön piyasa) sözleşmeleri sayılmaz.
+- **Karar verisi Binance'ten, evren = Binance ∩ Bybit:** OKX botundaki gibi. Bybit'te işlem görmeyen evren coininin hedefi **0** olur (pay nakitte) ve günlükte "Bybit'te yok" yazar; Botlar kartında **Bybit'te yok — nakitte** satırı görünür. Telegram'a bildirim gitmez. Evrenin yarısından çoğu Bybit'te görünmüyorsa bot o gün emir vermeden durur.
+- **Durum: "Bybit demo: hazırlık — henüz bağlanamaz".** Bybit demo hesabını Anahtarlar'a ekleyebilirsiniz (borsa Bybit, hesap türü demo; parola yok) ve salt okuma sınayabilirsiniz; ama bu sürümde bota bağlanamaz, Bybit botu demo moduna geçemez. Bağlantı, Bybit demo hesabında salt okuma ölçümü yapıldıktan sonra ayrı bir sürümle açılacak.
+- **Bağlantı açıldığında aranacak hesap kipi:** Bybit **Birleşik İşlem Hesabı** (UTA), **çapraz marj** (Cross Margin; izole ya da portföy marjı değil), **tek yön** pozisyon kipi (One-Way). API anahtarında **para çekme izni kapalı**, "Read-Write" ve Contract › Orders + Positions izni açık olmalı. Bunlardan biri uymazsa bot bağlanmaz; Pusula kipi kendiliğinden değiştirmez.
+- **Canlı hesap yok:** Bybit botu canlı hesap moduna geçemez; Bybit canlı hesap yolu kapalıdır.
+- **Güncellemede kuru deneme:** güncelleyici kâğıttaki Bybit botunu da eski ve yeni kodla emir göndermeden dener; bu koşuda yalnız Binance'in ve Bybit'in herkese açık adreslerine (api.bybit.com, api-demo.bybit.com) izin vardır.
 
 ### Sermaye üst sınırı {#bot-sermaye}
 
@@ -276,7 +287,7 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 |---|---|
 | Hesap türü | kâğıt ↔ demo (↔ CANLI HESAP, yalnız şartlar sağlanınca; altında neyin eksik olduğu yazar). Yalnız bot durmuşken değişir |
 | Canlı hesap emir onayı | Yalnız canlı hesapta: **CANLI** yazarak verilir, kalıcıdır; "Emir onayını kaldır" kaldırır ([ayrıntı](#/kilavuz/botlar/gercek-para)) |
-| Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz. 69.3'ten beri bot borsadaki yatırma/çekmeyi **kendisi de fark eder** ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)); elle kayıt yine yapılabilir |
+| Para yatırdım / çektim | Demo/canlı hesaba para ekleyip çektikten sonra tutarı (+/−) kaydedin: bot bunu kazanç/kayıp saymaz, gereksiz durdurma olmaz. Parayı taşımaz. 69.3'ten beri bot borsadaki yatırma/çekmeyi **kendisi de fark eder** ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)); 76.2'den beri algılanan hareket onayınızı bekler ve bu kayıt **ön onay** sayılır (72 saat içinde borsadaki eşleşen hareket onaylı işlenir, bot durmaz — [ayrıntı](#/kilavuz/sorun-giderme/para-akisi-onay)) |
 | Küçük hesap kipi | otomatik (< 5000 $) / açık / kapalı. Yalnız bot durmuşken değişir |
 | BTC ayağı (kâğıt) | Yalnız **kâğıt hesapta**: **spot** (varsayılan) ya da **çoklu varlık (canlı tasarımı)**. Değiştirmek kâğıt hesabı sıfırlar (onaylı); bot durmuşken açık ([aşağıda](#/kilavuz/botlar/btc-ayagi)) |
 | Bugünün kararını şimdi uygula | **Şimdi çalıştır** (onaylı) |
@@ -362,6 +373,8 @@ Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden 
 ## Sürpriz sermaye: yatırma ve çekmeyi bot kendisi fark eder {#surpriz-sermaye}
 
 Sermaye artışları her ay ama tutarı belli olmadan yapılacağı için bot hazırlıklıdır:
+
+> **76.2'den beri önce onay:** demo ve canlı hesaptaki botlarda algılanan her para girişi ve çıkışı **onayınızı bekler**; onaylanana kadar hesaba katılmaz, onaysız **çıkışta** bot durur (yalnız azaltan emir; koruma sürer). Onay Sorunlar kartında (**Para hareketini onayla**, PIN) ya da önceden **Para yatırdım / çektim** kaydıyla olur; aşağıdaki maddeler onaydan **sonra** geçerlidir. Siz yapmadığınız çıkış için **Bu ben değilim — reddet**. Kairos demo kabulü 2026-12-09'a kadar yalnız haber alır. Ayrıntı: [Para hareketi onayınızı bekliyor](#/kilavuz/sorun-giderme/para-akisi-onay).
 
 - **Algılama:** her günlük çalışmadan (03:02) önce bot borsadaki yatırma / çekme / aktarım geçmişine bakar. Vadeli hesapta (demo) vadeli cüzdana giren-çıkan USDT; canlı tasarımda (spot BTC + vadeli) Binance yatırma ve çekme geçmişi (USDT; BTC güncel fiyatla). Bot ilk kez çalıştığında saymaya o andan başlar; eski hareketler "yeni para" sayılmaz.
 - **Ölçüm bozulmaz:** algılanan tutar elle kaydedilmiş gibi işlenir — gölge sapma bandı, risk tepesi ve hesap kesicisi yanlış alarm vermez, yatırılan para kâr sayılmaz.

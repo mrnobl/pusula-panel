@@ -14,6 +14,8 @@
  *   · A2 parça 2 (OKX): yeni Kairos/Tao tipi botta BORSA seçimi (Binance | OKX) ve "Kairos tipi — OKX (demo hazırlığı)" şablonu (okxdemo,
  *     borsa OKX sabit). OKX botu kâğıtta OKX pazar kurallarıyla çalışır; karar verisi Binance'ten, evren Binance ∩ OKX. OKX bağdaştırıcısı
  *     hazır olmadığı için demo hesap hücresinde "OKX demo: hazırlık — henüz bağlanamaz" yazar (seçim kutusu yok; sunucu da reddeder).
+ *   · Bybit (OKX'in eşi): borsa seçiminde Bybit ve "Kairos tipi — Bybit (demo hazırlığı)" şablonu (bybitdemo, borsa Bybit sabit); kâğıtta
+ *     Bybit pazar kurallarıyla, evren Binance ∩ Bybit; demo hesap hücresinde "Bybit demo: hazırlık — henüz bağlanamaz".
  * Telefonda ve araştırma kopyasında salt okunur. DOM AG.dom ile (HTML dizgesi yok), istek AG.api.botKayit.
  */
 (function (global) {
@@ -28,14 +30,18 @@
   const KIMLIK_RE = /^[a-z][a-z0-9]{1,15}$/;
   const PIN_ALANI = { ad: 'pin', etiket: 'Acil PIN', tip: 'password', inputmode: 'numeric', dogrula: (v) => /^\d{6,12}$/.test(String(v).trim()) };
   const MOD_AD = { kagit: 'kâğıt', demo: 'demo', canli: 'CANLI HESAP' };
-  const SABLON_AD = { kairos: 'Kairos tipi', tao: 'Tao tipi', 'kairos-s': 'Kairos tipi (küçük sermaye)', okxdemo: 'Kairos tipi — OKX', nova: 'Nova örneği', lydia: 'Lydia örneği', simurg: 'Simurg örneği' };
+  const SABLON_AD = { kairos: 'Kairos tipi', tao: 'Tao tipi', 'kairos-s': 'Kairos tipi (küçük sermaye)', okxdemo: 'Kairos tipi — OKX', bybitdemo: 'Kairos tipi — Bybit', nova: 'Nova örneği', lydia: 'Lydia örneği', simurg: 'Simurg örneği' };
   /** A2 parça 2: borsa adları ve hazırlık metni (sunucu /api/botlar/sablonlar `borsalar` gelince onunki kullanılır). */
-  const BORSA_AD = { binance: 'Binance', okx: 'OKX' };
+  const BORSA_AD = { binance: 'Binance', okx: 'OKX', bybit: 'Bybit' };
   const OKX_HAZIRLIK = 'OKX demo: hazırlık — henüz bağlanamaz';
+  const BYBIT_HAZIRLIK = 'Bybit demo: hazırlık — henüz bağlanamaz';
+  const HAZIRLIK = { okx: OKX_HAZIRLIK, bybit: BYBIT_HAZIRLIK };
+  /** Binance dışı borsanın Türkçe bulunma eki ("OKX'te", "Bybit'te"). */
+  const borsadaAd = (k) => `${BORSA_AD[k] || k}'te`;
   let borsaDurumlari = null;
-  const borsaHazirlik = (k) => { const d = (borsaDurumlari || []).find(x => x.kimlik === k); return d ? d.durum : (k === 'okx' ? OKX_HAZIRLIK : null); };
-  /** Şablon borsayı sabitliyor mu (okxdemo → okx). */
-  const SABIT_BORSA = { okxdemo: 'okx' };
+  const borsaHazirlik = (k) => { const d = (borsaDurumlari || []).find(x => x.kimlik === k); return d ? d.durum : (HAZIRLIK[k] || null); };
+  /** Şablon borsayı sabitliyor mu (okxdemo → okx, bybitdemo → bybit). */
+  const SABIT_BORSA = { okxdemo: 'okx', bybitdemo: 'bybit' };
   /** 74.6: model örneği şablonları → model ve para birimi (sunucu lib/botSablonlari.js ile aynı). */
   const MODEL_SABLON = { nova: { model: 'm-qqq-m10', para: 'USD' }, lydia: { model: 'm-bist-m10', para: 'TRY' }, simurg: { model: 'm-837', para: 'USD' } };
   const modelSablonMu = (s) => Object.prototype.hasOwnProperty.call(MODEL_SABLON, s);
@@ -52,9 +58,9 @@
     const kimlik = String(f.kimlik || '').trim();
     const ad = String(f.adGorunen || '').trim();
     const tutar = Number(String(f.sermaye || '').replace(/\s/g, '').replace(',', '.'));
-    if (!['kairos', 'tao', 'kairos-s', 'okxdemo'].includes(f.sablon) && !modelSablonMu(f.sablon)) return { hata: 'Şablon seçin (Kairos tipi, Tao tipi ya da bir model örneği).' };
+    if (!['kairos', 'tao', 'kairos-s', 'okxdemo', 'bybitdemo'].includes(f.sablon) && !modelSablonMu(f.sablon)) return { hata: 'Şablon seçin (Kairos tipi, Tao tipi ya da bir model örneği).' };
     const borsa = SABIT_BORSA[f.sablon] || (modelSablonMu(f.sablon) ? 'binance' : (f.borsa || 'binance'));
-    if (!BORSA_AD[borsa]) return { hata: 'Borsa Binance ya da OKX olmalı.' };
+    if (!BORSA_AD[borsa]) return { hata: 'Borsa Binance, OKX ya da Bybit olmalı.' };
     if (!KIMLIK_RE.test(kimlik)) return { hata: 'Kimlik 2–16 karakter: küçük harf ve rakam, harfle başlar (ör. "ares").' };
     const ayni = mevcut.find(m => m === kimlik || m.slice(0, 2) === kimlik.slice(0, 2));
     if (ayni) return { hata: ayni === kimlik ? `"${kimlik}" kimliği kullanılıyor.` : `Kimliğin ilk iki harfi "${ayni}" botuyla aynı — emir kimliği öneki çakışır.` };
@@ -107,8 +113,8 @@
     }
     const ok = await AG.onayla({ baslik: `Yeni kâğıt bot: ${g.adGorunen}`, onay: 'Oluştur', iptal: 'Vazgeç',
       metin: `${SABLON_AD[g.sablon]} · kimlik "${g.kimlik}" · kâğıt sermayesi ${para(g.sermaye.kagit)}${g.kucukSermaye ? ` · küçük sermaye ${g.kucukSermaye === 'acik' ? 'açık (Kairos-S)' : 'kapalı'}` : ''}.\n`
-        + ((SABIT_BORSA[g.sablon] || g.borsa) === 'okx'
-          ? `Borsa OKX: bot KÂĞIT hesapta OKX pazar kurallarıyla başlar (gerçek emir yok); karar verisi Binance'ten, evren Binance ∩ OKX (OKX'te olmayan coinde hedef 0). ${borsaHazirlik('okx') || ''}`.trim()
+        + ((SABIT_BORSA[g.sablon] || g.borsa || 'binance') !== 'binance'
+          ? (() => { const k = SABIT_BORSA[g.sablon] || g.borsa, a = BORSA_AD[k] || k; return `Borsa ${a}: bot KÂĞIT hesapta ${a} pazar kurallarıyla başlar (gerçek emir yok); karar verisi Binance'ten, evren Binance ∩ ${a} (${borsadaAd(k)} olmayan coinde hedef 0). ${borsaHazirlik(k) || ''}`.trim(); })()
           : 'Bot KÂĞIT hesapta başlar (gerçek emir yok) ve durmuş olarak eklenir; Botlar sayfasından Başlat ile çalışır. Demo hesaba geçiş için önce bir Binance demo hesabı bağlanır (acil PIN).') });
     if (!ok) return;
     await is_(async () => { if (sonuc(await AG.api.botKayit.olustur(g), `${g.adGorunen} oluşturuldu (kâğıt, durmuş).`)) formSifirla(); });
@@ -168,7 +174,7 @@
     if (b.motor === 'model') return el('span', { class: 'hint hint-sm mb-0', text: '— (model örneği: yalnız kâğıt)' });   // 74.6
     if (!b.yeni) return el('span', { class: 'hint hint-sm mb-0', text: b.kimlik === 'hucum' || b.kimlik === 'denge' ? 'Binance demo / canlı (sabit)' : '—' });
     if (b.arsiv) return el('span', { text: (b.hesapAdlari && b.hesapAdlari.demo) || '—' });
-    // A2 parça 2: hazırlıktaki borsanın botu (OKX) — demo hesabı bağlanamaz; durum açıkça yazılır (seçim kutusu yok)
+    // A2 parça 2: hazırlıktaki borsanın botu (OKX / Bybit) — demo hesabı bağlanamaz; durum açıkça yazılır (seçim kutusu yok)
     const bh = b.borsa && b.borsa !== 'binance' ? (b.borsaDurum || borsaHazirlik(b.borsa)) : null;
     if (bh) return el('span', { class: 'tone-warning', id: `botKayitBorsaDurum-${b.kimlik}`, text: bh });
     const secenekler = [['', '— bağlı değil —'], ...(hesaplar || []).filter(h => h.tur === 'demo' && h.borsa === (b.borsa || 'binance')).map(h => [h.id, `${h.ad}${h.anahtarVar ? '' : ' (anahtar yok)'}`])];
@@ -210,7 +216,7 @@
     return el('tr', null, [
       el('td', { class: 'pf-sola' }, [el('span', { class: 'fw-semibold', text: adi(b) }), el('span', { class: 'hint hint-sm mb-0', text: ` ${b.kimlik}` }),
         b.kiyas ? el('div', { class: 'hint hint-sm mb-0', text: b.kiyas.metin }) : null]),
-      el('td', { class: 'pf-sola', text: `${kural}${b.kucukSermaye === true ? ' · küçük sermaye açık' : ''}${b.borsa && b.borsa !== 'binance' && b.sablon !== 'okxdemo' ? ` · ${BORSA_AD[b.borsa] || b.borsa}` : ''}` }),
+      el('td', { class: 'pf-sola', text: `${kural}${b.kucukSermaye === true ? ' · küçük sermaye açık' : ''}${b.borsa && b.borsa !== 'binance' && !SABIT_BORSA[b.sablon] ? ` · ${BORSA_AD[b.borsa] || b.borsa}` : ''}` }),
       el('td', { text: b.arsiv ? 'arşivde' : `${MOD_AD[b.mod] || b.mod || '—'}${b.calisiyor ? ' · çalışıyor' : ''}` }),
       el('td', { class: 'pf-sola' }, [hesapHucresi(b)]),
       el('td', { class: 'pf-sola' }, [sermayeHucresi(b)]),
@@ -236,19 +242,21 @@
       el('p', { class: 'hint hint-sm mb-3', text: 'Yalnız sınanmış kurallar: Kairos tipi, Tao tipi ya da bir model örneği (Nova, Lydia, Simurg — modelin ikinci kâğıt hesabı: aynı kararlar, ayrı sermaye). Bot gerçek emir vermez (kâğıt); demo hesaba geçiş için önce bir Binance demo hesabı bağlanır (model örneklerinde demo/canlı yok). Canlı hesap 5. faza kadar yalnız Kairos ve Tao\'da.' }),
       el('div', { class: 'grid-3 gap-3' }, [
         secim('sablon', 'Kural (şablon)', [['kairos', 'Kairos tipi — BTC trendi + coin sepeti'], ['tao', 'Tao tipi — yarı BTC, sakin'],
-          ['okxdemo', 'Kairos tipi — OKX (demo hazırlığı)'],
+          ['okxdemo', 'Kairos tipi — OKX (demo hazırlığı)'], ['bybitdemo', 'Kairos tipi — Bybit (demo hazırlığı)'],
           ['nova', 'Nova örneği — Nasdaq Momentum 10 (USD)'], ['lydia', 'Lydia örneği — BIST Momentum 10 (TL)'], ['simurg', 'Simurg örneği — %50 QQQ + %50 Kairos (USD)']]),
         modelSablonMu(form.sablon)
           ? secim('baslangic', 'Başlangıç (model örneği)', [['model', 'modelin ilk günü (ana kâğıt hesapla aynı dönem)'], ['yarin', 'yarından itibaren']])
           : secim('kucukSermaye', 'Küçük sermaye kuralı (Kairos-S)', [['oto', 'otomatik (< 5000 $ iken açık)'], ['acik', 'açık'], ['kapali', 'kapalı']], form.sablon !== 'kairos'),
-        // A2 parça 2: işlem borsası — model örneğinde yok (Binance sabit, kutu kapalı); okxdemo OKX'i sabitler
-        secim('borsa', 'Borsa (işlem)', [['binance', 'Binance'], ['okx', `OKX — ${borsaHazirlik('okx') || 'hazır'}`]], modelSablonMu(form.sablon) || !!SABIT_BORSA[form.sablon]),
+        // A2 parça 2: işlem borsası — model örneğinde yok (Binance sabit, kutu kapalı); okxdemo OKX'i, bybitdemo Bybit'i sabitler
+        secim('borsa', 'Borsa (işlem)', [['binance', 'Binance'], ['okx', `OKX — ${borsaHazirlik('okx') || 'hazır'}`], ['bybit', `Bybit — ${borsaHazirlik('bybit') || 'hazır'}`]], modelSablonMu(form.sablon) || !!SABIT_BORSA[form.sablon]),
         girdi('sermaye', modelSablonMu(form.sablon) ? `Kâğıt sermayesi (${MODEL_SABLON[form.sablon].para === 'TRY' ? 'TL' : 'USD'})` : 'Kâğıt sermayesi (USD, üst sınır)', { inputmode: 'decimal', ipucu: '10000' }),
         girdi('kimlik', 'Kimlik (küçük harf/rakam, ilk 2 harf benzersiz)', { ipucu: 'ör. ares', max: 16 }),
         girdi('adGorunen', 'Görünen ad', { ipucu: 'ör. Ares', max: 24 })
       ]),
       form.borsa === 'okx' ? el('p', { class: 'hint hint-sm mt-2 mb-0', id: 'yeniBotOkxNot' }, [el('span', { class: 'tone-warning fw-semibold', text: borsaHazirlik('okx') || 'OKX' }),
         el('span', { text: ' · Bot kâğıt hesapta OKX pazar kurallarıyla çalışır (gerçek emir yok). Karar verisi Binance\'ten (gölgeyle aynı); evren Binance PIT ∩ OKX — OKX\'te olmayan coinde hedef 0. OKX demo hesabı Anahtarlar\'a eklenebilir ama bota henüz bağlanamaz; canlı hesap yok.' })]) : null,
+      form.borsa === 'bybit' ? el('p', { class: 'hint hint-sm mt-2 mb-0', id: 'yeniBotBybitNot' }, [el('span', { class: 'tone-warning fw-semibold', text: borsaHazirlik('bybit') || 'Bybit' }),
+        el('span', { text: ' · Bot kâğıt hesapta Bybit pazar kurallarıyla çalışır (gerçek emir yok). Karar verisi Binance\'ten (gölgeyle aynı); evren Binance PIT ∩ Bybit — Bybit\'te olmayan coinde hedef 0. Bybit demo hesabı (Birleşik İşlem Hesabı, çapraz marj, tek yön) Anahtarlar\'a eklenebilir ama bota henüz bağlanamaz; canlı hesap yok.' })]) : null,
       el('div', { class: 'pf-dugmeler mt-3' }, [dugme('Oluştur…', () => olustur({ ...form }), 'btn-primary', { id: 'btnYeniBotOlustur' })])
     ]);
   }

@@ -4700,7 +4700,7 @@
       "kimlik": "ayarlar-anahtarlar-1400",
       "rota": "ayarlar/anahtarlar",
       "genislik": 1400,
-      "yukseklik": 1060,
+      "yukseklik": 1160,
       "once": [
         {
           "bekleSecici": "#anahtarlarKok .an-grup",
@@ -4710,7 +4710,7 @@
           "bekle": 600
         },
         {
-          "degerJs": "AG.pages.anahtarlar._veriAyarla({\"success\":true,\"arastirma\":false,\"kademe\":\"yerel\",\"yazilabilir\":true,\"kaynak\":\"yerel\",\"yerel\":{\"dosyalar\":[{\"ad\":\"secrets.json\",\"durum\":\"tamam\"}],\"pin\":{\"tanimli\":true,\"kilitli\":false}},\"satirlar\":[{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"tur\":\"canli\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-canli\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance canlı (Kairos)\",\"kullanan\":\"şu an hiçbir bot (canlı hesap kapalı)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Canlı hesap kapalı — şimdilik gerekmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":{\"zaman\":\"2026-10-23T09:12:00.000Z\",\"ok\":true,\"cekmeIzni\":null,\"ipKisitli\":null,\"saltOkuma\":null,\"izinler\":null,\"bakiye\":{\"varlikSayisi\":3,\"usdt\":4812.5},\"botAdi\":null,\"uyarilar\":[\"Demo hesapta izin sorgusu yok.\"],\"hata\":null},\"ek\":{\"borsa\":\"binance\",\"tur\":\"demo\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-demo\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance demo (Kairos)\",\"kullanan\":\"Kairos\",\"maske\":\"••••a1B2\",\"ozet\":\"5f7e8c3396b7177f\",\"durum\":\"tamam\",\"not\":\"Botların demo hesap anahtarı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"okx\",\"tur\":\"demo\",\"altHesap\":\"pusula-1\",\"eklendi\":null,\"degisti\":null},\"kimlik\":\"borsa:okx-ornek\",\"grup\":\"borsa\",\"tip\":\"borsa-hesap\",\"ad\":\"OKX alt hesap — deneme\",\"kullanan\":\"henüz hiçbir bot (bot → hesap bağlantısı Faz 2)\",\"maske\":\"••••7f3c\",\"ozet\":\"2d99ee1ad2d0c2d1\",\"durum\":\"tamam\",\"not\":\"Henüz sınanmadı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"hesap\":\"h-ornek\"},\"kimlik\":\"defter:binance:h-ornek\",\"grup\":\"defter\",\"tip\":\"defter-binance\",\"ad\":\"Binance — Binance ana hesap\",\"kullanan\":\"İşlem defterim (yalnız okuma: işlem geçmişi eşitleme)\",\"maske\":\"••••d4e8\",\"ozet\":\"93ac03ba2f6f753c\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telegram\",\"grup\":\"bildirim\",\"tip\":\"telegram\",\"ad\":\"Telegram bot jetonu\",\"kullanan\":\"Telegram bildirimleri ve komutları\",\"maske\":\"••••k9Qz\",\"ozet\":\"4cf07c27e4a4adbc\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Nasıl alınır?\",\"href\":\"#/kilavuz/yapay-zeka-notlari/anahtar\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"gemini\",\"grup\":\"yapayzeka\",\"tip\":\"gemini\",\"ad\":\"Gemini API anahtarı\",\"kullanan\":\"Yapay zekâ notları (günde bir kez, yalnız kamuya açık haber / bildirim metni)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Girilmemiş — Yapay zekâ notları \\\"anahtar bekliyor\\\". Ücretsiz alınır (Google AI Studio › Get API key).\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:hucum\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Kairos\",\"kullanan\":\"Kairos günlük çalışma sinyali (healthchecks.io)\",\"maske\":\"••••c1a5\",\"ozet\":\"193d34a84949d651\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:denge\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Tao\",\"kullanan\":\"Tao günlük çalışma sinyali (healthchecks.io)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Girilmemiş.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:sunucu\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — sunucu kalp atışı\",\"kullanan\":\"sunucu açık mı (saatte bir)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Sağlık sayfasından ayarlanır\",\"href\":\"#/saglik\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"ikinci-kanal\",\"grup\":\"bildirim\",\"tip\":\"bilgi\",\"ad\":\"İkinci kanal (ntfy) ve ikinci ölü adam\",\"kullanan\":\"Telegram çalışmazsa yedek bildirim\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Unutursanız bilgisayar başında sıfırlanır\",\"komut\":\"npm run acil-pin\",\"href\":\"#/kilavuz/telefon/acil-pin\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"acil-pin\",\"grup\":\"erisim\",\"tip\":\"pin\",\"ad\":\"Acil PIN\",\"kullanan\":\"telefondan acil durdurma, korumalı işlemler, bu ekrandaki her değişiklik\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Tanımlı (değeri hiçbir yerde gösterilmez). Bütün bilgisayarlarda aynı PIN.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"panel-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Panel jetonu\",\"kullanan\":\"paneli ağa açık dinletmek (HOST ≠ 127.0.0.1)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yerel dinlemede gerekmez (telefon jetonu kullanılır).\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telefon-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Telefon jetonu\",\"kullanan\":\"telefondan / Tailscale'den panele giriş, geliştirme bilgisayarının sunucuyu okuması\",\"maske\":\"••••5d2e\",\"ozet\":null,\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run sunucu-baglanti\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"sunucu-baglantisi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Sunucu bağlantısı\",\"kullanan\":\"geliştirme bilgisayarı → sunucudaki panel (okuma + yazma)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yalnız geliştirme bilgisayarında olur.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run gelistirme-jeton\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"gelistirme-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Geliştirme yazma jetonu\",\"kullanan\":\"geliştirme bilgisayarından sunucuya kayıt yazmak\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Sunucuda yalnız özeti saklanır.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Yedek ve taşıma sekmesinde\",\"href\":\"#/ayarlar/yedek\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"yedek-sifresi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Yedek şifresi\",\"kullanan\":\"USB yedeğinin gizli kısmını şifreler\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yok — USB yedeğine gizli bilgiler girmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run github-jeton\",\"href\":null},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"github-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"GitHub jetonu\",\"kullanan\":\"yalnız araştırma (787 GitHub sinyali)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"}]})"
+          "degerJs": "['arastirmaRozet','arastirmaBandi','kurulumBandi'].forEach(function(i){var x=document.getElementById(i);if(x)x.classList.add('is-hidden');});AG.pages.anahtarlar._veriAyarla({\"success\":true,\"arastirma\":false,\"kademe\":\"yerel\",\"yazilabilir\":true,\"kaynak\":\"yerel\",\"yerel\":{\"dosyalar\":[{\"ad\":\"secrets.json\",\"durum\":\"tamam\"}],\"pin\":{\"tanimli\":true,\"kilitli\":false}},\"satirlar\":[{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"tur\":\"canli\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-canli\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance canlı (Kairos)\",\"kullanan\":\"şu an hiçbir bot (canlı hesap kapalı)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Canlı hesap kapalı — şimdilik gerekmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":{\"zaman\":\"2026-10-23T09:12:00.000Z\",\"ok\":true,\"cekmeIzni\":null,\"ipKisitli\":null,\"saltOkuma\":null,\"izinler\":null,\"bakiye\":{\"varlikSayisi\":3,\"usdt\":4812.5},\"botAdi\":null,\"uyarilar\":[\"Demo hesapta izin sorgusu yok.\"],\"hata\":null},\"ek\":{\"borsa\":\"binance\",\"tur\":\"demo\",\"altHesap\":null,\"sabit\":true},\"kimlik\":\"borsa:binance-demo\",\"grup\":\"borsa\",\"tip\":\"borsa-sabit\",\"ad\":\"Binance demo (Kairos)\",\"kullanan\":\"Kairos\",\"maske\":\"••••a1B2\",\"ozet\":\"5f7e8c3396b7177f\",\"durum\":\"tamam\",\"not\":\"Botların demo hesap anahtarı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"okx\",\"tur\":\"demo\",\"altHesap\":\"pusula-1\",\"eklendi\":null,\"degisti\":null},\"kimlik\":\"borsa:okx-ornek\",\"grup\":\"borsa\",\"tip\":\"borsa-hesap\",\"ad\":\"OKX alt hesap — deneme\",\"kullanan\":\"henüz hiçbir bot (Ayarlar › Botlar › Hesap ile bağlanır)\",\"maske\":\"••••7f3c\",\"ozet\":\"2d99ee1ad2d0c2d1\",\"durum\":\"tamam\",\"not\":\"Henüz sınanmadı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":{\"borsa\":\"binance\",\"hesap\":\"h-ornek\"},\"kimlik\":\"defter:binance:h-ornek\",\"grup\":\"defter\",\"tip\":\"defter-binance\",\"ad\":\"Binance — Binance ana hesap\",\"kullanan\":\"İşlem defterim (yalnız okuma: işlem geçmişi eşitleme)\",\"maske\":\"••••d4e8\",\"ozet\":\"93ac03ba2f6f753c\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telegram\",\"grup\":\"bildirim\",\"tip\":\"telegram\",\"ad\":\"Telegram bot jetonu\",\"kullanan\":\"Telegram bildirimleri ve komutları\",\"maske\":\"••••k9Qz\",\"ozet\":\"4cf07c27e4a4adbc\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Nasıl alınır?\",\"href\":\"#/kilavuz/yapay-zeka-notlari/anahtar\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"gemini\",\"grup\":\"yapayzeka\",\"tip\":\"gemini\",\"ad\":\"Gemini API anahtarı\",\"kullanan\":\"Yapay zekâ notları (günde bir kez, yalnız kamuya açık haber / bildirim metni)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Girilmemiş — Yapay zekâ notları \\\"anahtar bekliyor\\\". Ücretsiz alınır (Google AI Studio › Get API key).\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":true,\"sinanabilir\":true,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:hucum\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Kairos\",\"kullanan\":\"Kairos günlük çalışma sinyali (healthchecks.io)\",\"maske\":\"••••c1a5\",\"ozet\":\"193d34a84949d651\",\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:denge\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — Tao\",\"kullanan\":\"Tao günlük çalışma sinyali (healthchecks.io)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Girilmemiş.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":null,\"sonSinama\":null,\"ek\":null,\"kimlik\":\"saglik:sunucu\",\"grup\":\"bildirim\",\"tip\":\"saglik\",\"ad\":\"Sağlık sinyali — sunucu kalp atışı\",\"kullanan\":\"sunucu açık mı (saatte bir)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Sağlık sayfasından ayarlanır\",\"href\":\"#/saglik\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"ikinci-kanal\",\"grup\":\"bildirim\",\"tip\":\"bilgi\",\"ad\":\"İkinci kanal (ntfy) ve ikinci ölü adam\",\"kullanan\":\"Telegram çalışmazsa yedek bildirim\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"},{\"makine\":\"bu\",\"degistirilebilir\":true,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Unutursanız bilgisayar başında sıfırlanır\",\"komut\":\"npm run acil-pin\",\"href\":\"#/kilavuz/telefon/acil-pin\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"acil-pin\",\"grup\":\"erisim\",\"tip\":\"pin\",\"ad\":\"Acil PIN\",\"kullanan\":\"telefondan acil durdurma, korumalı işlemler, bu ekrandaki her değişiklik\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Tanımlı (değeri hiçbir yerde gösterilmez). Bütün bilgisayarlarda aynı PIN.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"panel-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Panel jetonu\",\"kullanan\":\"paneli ağa açık dinletmek (HOST ≠ 127.0.0.1)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yerel dinlemede gerekmez (telefon jetonu kullanılır).\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run telefon-jeton\",\"href\":\"#/kilavuz/telefon\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"telefon-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Telefon jetonu\",\"kullanan\":\"telefondan / Tailscale'den panele giriş, geliştirme bilgisayarının sunucuyu okuması\",\"maske\":\"••••5d2e\",\"ozet\":null,\"durum\":\"tamam\",\"not\":null},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run sunucu-baglanti\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"sunucu-baglantisi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Sunucu bağlantısı\",\"kullanan\":\"geliştirme bilgisayarı → sunucudaki panel (okuma + yazma)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yalnız geliştirme bilgisayarında olur.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run gelistirme-jeton\",\"href\":\"#/kilavuz/kurulum\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"gelistirme-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Geliştirme yazma jetonu\",\"kullanan\":\"geliştirme bilgisayarından sunucuya kayıt yazmak\",\"maske\":null,\"ozet\":null,\"durum\":\"tamam\",\"not\":\"Sunucuda yalnız özeti saklanır.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Yedek ve taşıma sekmesinde\",\"href\":\"#/ayarlar/yedek\"},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"yedek-sifresi\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"Yedek şifresi\",\"kullanan\":\"USB yedeğinin gizli kısmını şifreler\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"Yok — USB yedeğine gizli bilgiler girmez.\"},{\"makine\":\"bu\",\"degistirilebilir\":false,\"silinebilir\":false,\"sinanabilir\":false,\"nasil\":{\"metin\":\"Komutla\",\"komut\":\"npm run github-jeton\",\"href\":null},\"sonSinama\":null,\"ek\":null,\"kimlik\":\"github-jetonu\",\"grup\":\"erisim\",\"tip\":\"bilgi\",\"ad\":\"GitHub jetonu\",\"kullanan\":\"yalnız araştırma (787 GitHub sinyali)\",\"maske\":null,\"ozet\":null,\"durum\":\"bos\",\"not\":\"İsteğe bağlı.\"}]})"
         },
         {
           "bekle": 400
@@ -4726,51 +4726,51 @@
           "etiket": "Hesap ekle"
         },
         {
-          "secici": "[id=\"anSina-borsa:binance-demo\"]",
-          "etiket": "Sına (yalnız okuma)"
-        },
-        {
           "secici": "[id=\"anDegistir-borsa:binance-demo\"]",
           "etiket": "Değiştir (PIN ister)"
+        },
+        {
+          "secici": "[id=\"anSina-borsa:binance-demo\"]",
+          "etiket": "Sına (yalnız okuma)"
         }
       ],
       "uretim": {
         "dosya": "ayarlar-anahtarlar-1400.webp",
         "en": 1400,
-        "boy": 1060,
-        "bayt": 67280,
+        "boy": 1160,
+        "bayt": 73306,
         "olcek": 1,
-        "ozet": "c4a5ed61bf9674d30ea335323bedcbd5634d3653ca3b652a10a44bf7edb4de7d",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "ozet": "48bb2b34e3fe4ef2d18454bb2b8379029026ff4882ee1a7f3bede1dcad5b1d82",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/anahtarlar\"]",
             "x": 8,
-            "y": 996,
+            "y": 1076,
             "w": 231,
             "h": 41
           },
           {
             "secici": "#anHesapEkle",
             "x": 279,
-            "y": 324,
+            "y": 286,
             "w": 92,
             "h": 35
           },
           {
-            "secici": "[id=\"anSina-borsa:binance-demo\"]",
-            "x": 1295,
-            "y": 455,
-            "w": 54,
+            "secici": "[id=\"anDegistir-borsa:binance-demo\"]",
+            "x": 1245,
+            "y": 435,
+            "w": 73,
             "h": 36
           },
           {
-            "secici": "[id=\"anDegistir-borsa:binance-demo\"]",
-            "x": 1226,
-            "y": 455,
-            "w": 73,
+            "secici": "[id=\"anSina-borsa:binance-demo\"]",
+            "x": 1245,
+            "y": 467,
+            "w": 54,
             "h": 36
           }
         ]
@@ -4844,7 +4844,7 @@
       "kimlik": "ayarlar-makineler-1400",
       "rota": "ayarlar/makineler",
       "genislik": 1400,
-      "yukseklik": 2080,
+      "yukseklik": 2500,
       "once": [
         {
           "bekleSecici": "#makinelerKok .p-kart",
@@ -4854,7 +4854,7 @@
           "bekle": 400
         },
         {
-          "degerJs": "AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:{kimlik:'m-3f9a1c07b2e4',surum:2,zaman:new Date(Date.now()-600*60000).toISOString(),secen:'m-3f9a1c07b2e4'},telegram:{dinle:true,kip:'yonetici',sebep:'bu makine yönetici (seçildi)',uygun:true,yoklamaCalisiyor:true,devir:null,cekisme:null},etkinYonetici:{kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',secildi:true},kopya:{etkin:true,rol:'sunucu',yedekSifre:true,suruyor:null,sonraki:new Date(Date.now()+25*60000).toISOString(),dakika:20,eskiSaat:2,denetim:{durum:'uyari',ayrinti:'YEDEK-PC: son kopya 2,3 sa önce — eşe ulaşılamadı'}},esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.3',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,yoneticiMi:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.3',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:false,kip:'uygun-degil'},kopyaYasi:null,kopya:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.2',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:true,kip:'bekle'},kopyaYasi:140,kopya:{sonuc:'ulasilamadi',metin:'eşe ulaşılamadı: eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',deneme:new Date(Date.now()-35*60000).toISOString(),basari:new Date(Date.now()-140*60000).toISOString(),dosya:41,bayt:2411724,aktarilan:null,gizli:'var',kaynakSurum:'75.2',verilen:{manifest:new Date(Date.now()-145*60000).toISOString(),paket:new Date(Date.now()-145*60000).toISOString()}}}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()}, {success:true,yazilabilir:true,rol:'sunucu',yedekSifre:true,tavanMB:64,hedefler:[{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net'}],botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:false,neden:'Kairos demo kabulü 2026-12-09\\'a kadar sürüyor — Kairos (ve demo kabul klasörü hucum-demo) bu tarihe kadar başka makineye taşınmaz'},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:true,neden:null},{kimlik:'atlas',adGorunen:'Atlas',mod:'kagit',calisiyor:false,nobet:1,makine:'m-c41d6e8f0a3b',makineAd:'YEDEK-PC',tasima:{asama:'tasindi',hedef:'m-c41d6e8f0a3b',hedefAd:'YEDEK-PC',nobet:1,zaman:new Date(Date.now()-300*60000).toISOString()},tasinabilir:false,neden:'bu bot YEDEK-PC makinesine taşındı (nöbet 1)'},{kimlik:'vega',adGorunen:'Vega',mod:'demo',calisiyor:false,nobet:2,makine:'m-3f9a1c07b2e4',makineAd:null,tasima:{asama:'geldi',kaynak:'m-c41d6e8f0a3b',kaynakAd:'YEDEK-PC',nobet:2,mutabakat:'temiz',zaman:new Date(Date.now()-20*60000).toISOString()},tasinabilir:true,neden:null}]})"
+          "degerJs": "['arastirmaRozet','arastirmaBandi','kurulumBandi'].forEach(function(i){var x=document.getElementById(i);if(x)x.classList.add('is-hidden');});AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:{kimlik:'m-3f9a1c07b2e4',surum:2,zaman:new Date(Date.now()-600*60000).toISOString(),secen:'m-3f9a1c07b2e4'},telegram:{dinle:true,kip:'yonetici',sebep:'bu makine yönetici (seçildi)',uygun:true,yoklamaCalisiyor:true,devir:null,cekisme:null},etkinYonetici:{kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',secildi:true},kopya:{etkin:true,rol:'sunucu',yedekSifre:true,suruyor:null,sonraki:new Date(Date.now()+25*60000).toISOString(),dakika:20,eskiSaat:2,denetim:{durum:'uyari',ayrinti:'YEDEK-PC: son kopya 2,3 sa önce — eşe ulaşılamadı'}},esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.3',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,yoneticiMi:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.3',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:false,kip:'uygun-degil'},kopyaYasi:null,kopya:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.2',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:true,kip:'bekle'},kopyaYasi:140,kopya:{sonuc:'ulasilamadi',metin:'eşe ulaşılamadı: eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',deneme:new Date(Date.now()-35*60000).toISOString(),basari:new Date(Date.now()-140*60000).toISOString(),dosya:41,bayt:2411724,aktarilan:null,gizli:'var',kaynakSurum:'75.2',verilen:{manifest:new Date(Date.now()-145*60000).toISOString(),paket:new Date(Date.now()-145*60000).toISOString()}}}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()}, {success:true,yazilabilir:true,rol:'sunucu',yedekSifre:true,tavanMB:64,hedefler:[{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net'}],botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:false,neden:'Kairos demo kabulü 2026-12-09\\'a kadar sürüyor — Kairos (ve demo kabul klasörü hucum-demo) bu tarihe kadar başka makineye taşınmaz'},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:true,neden:null},{kimlik:'atlas',adGorunen:'Atlas',mod:'kagit',calisiyor:false,nobet:1,makine:'m-c41d6e8f0a3b',makineAd:'YEDEK-PC',tasima:{asama:'tasindi',hedef:'m-c41d6e8f0a3b',hedefAd:'YEDEK-PC',nobet:1,zaman:new Date(Date.now()-300*60000).toISOString()},tasinabilir:false,neden:'bu bot YEDEK-PC makinesine taşındı (nöbet 1)'},{kimlik:'vega',adGorunen:'Vega',mod:'demo',calisiyor:false,nobet:2,makine:'m-3f9a1c07b2e4',makineAd:null,tasima:{asama:'geldi',kaynak:'m-c41d6e8f0a3b',kaynakAd:'YEDEK-PC',nobet:2,mutabakat:'temiz',zaman:new Date(Date.now()-20*60000).toISOString()},tasinabilir:true,neden:null}]})"
         },
         {
           "bekleSecici": "#mkTablo",
@@ -4886,41 +4886,41 @@
       "uretim": {
         "dosya": "ayarlar-makineler-1400.webp",
         "en": 1400,
-        "boy": 2080,
-        "bayt": 93716,
+        "boy": 2500,
+        "bayt": 105926,
         "olcek": 1,
-        "ozet": "0e1153d49f64c8aaa068b1f6a455f352ce30b8bdaa4c42de3b4c7ac5ec6c1600",
-        "genel": "7acc1057686c5b878dab7fbd5ff3679a841afcc413f316f621fd2cb8337cb4bd",
-        "surum": "76.1",
+        "ozet": "3d334881e46e821cb5fb4d956382b3cc7f6ac3fdc19b56d81aa6d42dbfcb5044",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.1",
         "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#mkYonetici",
             "x": 260,
-            "y": 656,
+            "y": 601,
             "w": 1128,
             "h": 178
           },
           {
             "secici": "#mkEsler",
             "x": 260,
-            "y": 838,
+            "y": 783,
             "w": 1128,
             "h": 324
           },
           {
             "secici": "#mkTasima",
             "x": 260,
-            "y": 1522,
+            "y": 1467,
             "w": 1128,
             "h": 427
           },
           {
             "secici": "#mkEsleme",
             "x": 260,
-            "y": 1954,
+            "y": 2051,
             "w": 1128,
-            "h": 124
+            "h": 417
           }
         ]
       }
@@ -7269,11 +7269,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 47258,
+        "bayt": 47642,
         "olcek": 1,
-        "ozet": "3c32786e6d6a1c5240f3baeb0216493edc39f8b7352736c852e8c65c579fefe7",
+        "ozet": "ee4299328a54ff5c95bcc11a02fffcad105aefcc4cb50f98d21221d853c5155b",
         "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
-        "surum": "77.1",
+        "surum": "77.2",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -8581,26 +8581,26 @@
         "dosya": "kitap-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 62800,
+        "bayt": 56774,
         "olcek": 1,
-        "ozet": "69efd80067448c7c2f8d5827c61f9c70be35a2722e9df33e03a5191ba74d8906",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "ozet": "13ee5911e2955c2c4b5e1f9acb4ce0d90c91ed45f73ca482d4ba24763eb99f14",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.1",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#kitapYeniSekme",
             "x": 1205,
-            "y": 191,
+            "y": 249,
             "w": 170,
             "h": 42
           },
           {
             "secici": "#kitapCerceve",
             "x": 273,
-            "y": 237,
+            "y": 296,
             "w": 1102,
-            "h": 661
+            "h": 602
           }
         ]
       },
@@ -8630,12 +8630,12 @@
         "dosya": "kitap-390.webp",
         "en": 780,
         "boy": 1688,
-        "bayt": 61484,
+        "bayt": 61288,
         "olcek": 2,
-        "ozet": "69efd80067448c7c2f8d5827c61f9c70be35a2722e9df33e03a5191ba74d8906",
-        "genel": "435d4446c9f3ed56c94756e1baa948b69d543dd7f2781deab16854190ec6c537",
-        "surum": "72.2",
-        "tarih": "2026-10-22",
+        "ozet": "13ee5911e2955c2c4b5e1f9acb4ce0d90c91ed45f73ca482d4ba24763eb99f14",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.1",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#kitapYeniSekme",
@@ -8681,33 +8681,33 @@
         "dosya": "kitapcik-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 72668,
+        "bayt": 71854,
         "olcek": 1,
-        "ozet": "936ad939c0308ef0dde5b3bddabe4731d8b944bc7e5a09b50acee0136e0b3931",
-        "genel": "435d4446c9f3ed56c94756e1baa948b69d543dd7f2781deab16854190ec6c537",
-        "surum": "72.2",
-        "tarih": "2026-10-22",
+        "ozet": "c7302747d7ce7a7bde36ad00af68476556a5b487cd471ace9cb069f7bf635005",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.1",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#ktpListe .ktp-kart",
             "x": 260,
-            "y": 178,
+            "y": 236,
             "w": 373,
             "h": 93
           },
           {
             "secici": "#ktpYeniSekme",
             "x": 1205,
-            "y": 399,
+            "y": 457,
             "w": 170,
             "h": 42
           },
           {
             "secici": "#ktpCerceve",
             "x": 273,
-            "y": 445,
+            "y": 503,
             "w": 1102,
-            "h": 453
+            "h": 395
           }
         ]
       }
@@ -8736,12 +8736,12 @@
         "dosya": "kitapcik-390.webp",
         "en": 780,
         "boy": 1688,
-        "bayt": 54454,
+        "bayt": 54094,
         "olcek": 2,
-        "ozet": "4b24db498ce3e616c7e7c3c525edb5434782d83913f5147150c6b4c0fb4385e2",
-        "genel": "435d4446c9f3ed56c94756e1baa948b69d543dd7f2781deab16854190ec6c537",
-        "surum": "72.2",
-        "tarih": "2026-10-22",
+        "ozet": "d31004bd9de56e663ab75957d4723c5adba13d400780b220a71869fbfba171e2",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.1",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#ktpYeniSekme",
@@ -8976,11 +8976,11 @@
         "dosya": "bot-performans-1400.webp",
         "en": 1400,
         "boy": 1150,
-        "bayt": 60732,
+        "bayt": 61246,
         "olcek": 1,
-        "ozet": "cb91f4c9f97e281173b2454f6e7a7513707d5313d2820e56d691c13c3c39176f",
-        "genel": "2d5869a1c839a9db645ee4bd3ff990ce96de6880529cb027cc5a4e4820fd3205",
-        "surum": "76.9",
+        "ozet": "833a6ba6ff7b4ed8b969bcfa6322c240a3d7c6100aa0e9fd5ed3f5adbda9f17c",
+        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
+        "surum": "77.2",
         "tarih": "2026-10-25",
         "isaretler": [
           {

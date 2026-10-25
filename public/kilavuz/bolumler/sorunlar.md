@@ -36,6 +36,7 @@ Ayrıca: **Neyi saydı?** (botu durduran satırlar, ret kodlarının sade açık
 | Tahmini saat | Mavi rozet ("~04:15"): sorunun kendiliğinden kalkması beklenen saat |
 | Sebebi okudum | Botu açan / güvenli kipi kaldıran düğmeler bu kutu işaretlenmeden çalışmaz (Sağlık sayfasındaki gibi) |
 | Sorun araçları (73.8) | **Kaydı borsaya eşitle**, **Zarar sınırını sıfırla**, **Farkı kabul et**, **Yatırmayı kabul et**: önce önizleme kartın altında açılır (şimdi / sonra, uyarılar); uygulanabilirse **Acil PIN** ve onay kelimesi (ESITLE / SIFIRLA / KABUL) ile **Uygula**. Arada durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Emir gönderilmez |
+| Para hareketi araçları (76.2, 76.4) | Borsada algılanan para girişi / çıkışı onayınızı bekliyorsa kartta **Para hareketini onayla** (PIN + **ONAY**); siz yapmadığınız çıkış için **Bu ben değilim — reddet** (PIN + **BEN DEĞİLİM**: bot durmuş kalır, Telegram'a güvenlik alarmı gider, kırmızı kart kalır); reddedilen hareket sonradan sizinse **Hareket benimmiş — onayla**. Telefondan da yapılır, Telegram'dan yapılmaz — ayrıntı: [Para hareketi onayınızı bekliyor](#/kilavuz/sorun-giderme/para-akisi-onay) |
 | bu bilgisayar | Geliştirme bilgisayarında, sunucunun değil bu bilgisayarın sorunu (sunucu bağlantısı, yazma kuyruğu) |
 
 ## Sohbete gönder (teşhis paketi) {#teshis}

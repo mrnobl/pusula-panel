@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.2 — Bybit hazırlığı (2026-10-26) {#s77-2}
+- **Bybit hazırlığı:** yeni bot formunda Borsa seçiminde Bybit ve "Kairos tipi — Bybit (demo hazırlığı)" şablonu. Bybit botu kâğıt hesapta Bybit'in pazar kurallarıyla çalışır (karar verisi Binance'ten, evren Binance ∩ Bybit; Bybit'te olmayan coin nakitte, Botlar kartında "Bybit'te yok — nakitte"). Bybit demo hesabı Anahtarlar'a eklenip sınanabilir ama bota henüz bağlanamaz ("Bybit demo: hazırlık — henüz bağlanamaz"); canlı hesap yok. Güncellemenin kuru denemesi Bybit botunu da dener. Kairos, Tao ve OKX botu değişmedi.
+- **Kılavuz:** Ayarlar › Makineler ve Anahtarlar görüntüleri yenilendi; para hareketi onayı [Botlar](#/kilavuz/botlar) ve [Sorunlar](#/kilavuz/sorunlar) bölümlerinde, aktarım hesap türü Anahtarlar'da anlatılıyor; eski menü yolları ve denetim sayısı düzeltildi.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)): borsa bağdaştırıcılarına dokunuldu; kuru deneme Bybit botunu da dener.
+
 ## 77.1 — DCA emri ikinci kez gönderilmez (2026-10-26) {#s77-1}
 - **Bot güvenliği:** bot yeniden başlarken borsada az önce dolmuş ama borsanın sorgusunda henüz görünmeyen bir DCA emri artık "gönderilmemiş" sayılıp ikinci kez gönderilmiyor. Bot birkaç dakika bekler, borsaya yeniden sorar; emir görünürse dolumu işler, görünmezse eskisi gibi yeniden kuyruğa alır. Bu bekleme kendiliğinden çözülür, elle bir şey yapmanız gerekmez.
 - Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)): botların mutabakat koduna dokunuldu; kuru denemede bütün botların kararları birebir aynı çıktı.
@@ -113,7 +118,7 @@ Canlı hesap yolu kapalı. Panelde görünen değişiklik yok. Güncelleme onayl
 ## 75.5 — Botu başka makineye taşımak, nöbet (2026-10-25) {#s75-5}
 
 - **Yeni: [botu başka makineye taşı](#/kilavuz/botlar/bot-tasima).** Eşlenmiş iki **sunucu** arasında bir kâğıt ya da demo botu taşırsınız: **Ayarlar › Makineler › Botu başka makineye taşı** — yalnız botun bulunduğu bilgisayardan, **TAŞI** yazıp acil PIN. Bot burada durur (açık pozisyonlara, emirlere ve felaket stoplarına dokunulmaz), verisi öteki makineye gider. Demo botun hesap anahtarı **yedek şifresiyle şifreli** gider (iki bilgisayarda aynı yedek şifresi). Hedefte bot **kendiliğinden başlamaz**: önce Mutabakat, temizse Başlat.
-- **Taşınmaz:** gerçek para botu, **Kairos** (demo kabulü 2026-12-09'a kadar), model örnekleri.
+- **Taşınmaz:** canlı hesap botu, **Kairos** (demo kabulü 2026-12-09'a kadar), model örnekleri.
 - **[Nöbet](#/kilavuz/botlar/bot-nobet):** aynı bot iki makinede aynı anda çalışamaz. Taşınan botun eski kopyası salt okunurdur (Başlat, Çalıştır, Acil … reddedilir; Durdur serbest). Eşlenmiş sunucu varken açılışta botlar önce eşlere sorulur; eşlere ulaşılamazsa bot **kendiliğinden başlamaz** ve Telegram'a haber gelir — bot başka yerde çalışmıyorsa elle Başlat. Kairos demo kabulü süresince bu kural Kairos için yalnız haber verir. Tek bilgisayarda hiçbir şey değişmez.
 - **Yarıda kalan taşıma:** hedef reddederse ya da paket bozuk gelirse hiçbir şey değişmez; bir makine kapanırsa yapılanlar geri alınır ya da sonuç açılışta kendiliğinden tamamlanır; sonucu belli değilse bot **iki makinede de başlamaz** ve kartta **Yeniden denetle** çıkar.
 - Botların karar kodu değişmedi (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı). Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur"). Botu taşımak için iki sunucu da 75.5'te olmalı.

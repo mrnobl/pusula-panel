@@ -52,7 +52,7 @@ Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API a
 
 ## Anahtarlar {#anahtarlar}
 
-![Ayarlar › Anahtarlar (örnek değerlerle)](ekran:ayarlar-anahtarlar-1400)
+![Ayarlar › Anahtarlar (sunucudaki panel, örnek değerlerle)](ekran:ayarlar-anahtarlar-1400)
 
 **Anahtarlar** alt sayfası (73.0) panelin kayıtlı **bütün** gizli bilgilerini tek yerde gösterir. *API anahtarı*, bir programın sizin adınıza borsaya bağlanmasını sağlayan kullanıcı adı–şifre çiftidir (iki parça: **API anahtarı** ve **gizli anahtar / secret**; OKX'te üçüncü parça **parola / passphrase**). *Jeton* (token), bir servise girişte kullanılan uzun gizli metindir.
 
@@ -60,7 +60,7 @@ Beş grup:
 
 | Grup | İçinde |
 |---|---|
-| **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit). OKX hesabında **parola (passphrase)** zorunludur; OKX satırında "OKX demo: hazırlık — henüz bota bağlanamaz" yazar (anahtar saklanır ve salt okuma sınanır — bkz. [OKX botu](#/kilavuz/botlar/okx-bot)) |
+| **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit). OKX hesabında **parola (passphrase)** zorunludur; OKX satırında "OKX demo: hazırlık — henüz bota bağlanamaz" yazar (anahtar saklanır ve salt okuma sınanır — bkz. [OKX botu](#/kilavuz/botlar/okx-bot)). Bybit hesabında parola yoktur; hesap türü **demo** Bybit Demo Trading anahtarıdır, satırda "Bybit demo: hazırlık — henüz bota bağlanamaz" yazar (bkz. [Bybit botu](#/kilavuz/botlar/bybit-bot)) |
 | **İşlem defterim** | işlem geçmişini okumak için **yalnız okuma** izinli anahtarlar |
 | **Yapay zekâ** (74.1) | **Gemini API anahtarı** — [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari) için Google AI Studio'nun **ücretsiz** anahtarı ([nasıl alınır](#/kilavuz/yapay-zeka-notlari/anahtar)); boşsa özellik "anahtar bekliyor". **Sına** Google'a yalnız model listesini sorar (kota harcamaz); günlük arka plan sınamasına girmez |
 | **Bildirim** | Telegram bot jetonu, sağlık sinyali (healthchecks.io) adresleri, ikinci kanal |
@@ -75,11 +75,11 @@ Her satırda: **Ad** · **Kullanan** (hangi bot ya da özellik) · **Değer** (y
 
 ### Değiştirmek, eklemek, silmek {#anahtar-degistir}
 
-1. Satırda **Değiştir** → yeni değeri yazın → **Kaydet**. Borsa hesabı için grubun üstündeki **Hesap ekle**: ad, borsa (Binance / OKX / Bybit), tür (**demo** = sahte para, **canlı** = canlı hesap, borsadaki asıl paranız), isterseniz *alt hesap* adı (borsadaki ana hesabın altındaki ayrı hesap), API anahtarı, gizli anahtar, OKX'te parola.
+1. Satırda **Değiştir** → yeni değeri yazın → **Kaydet**. Borsa hesabı için grubun üstündeki **Hesap ekle**: ad, borsa (Binance / OKX / Bybit), tür (**demo** = sahte para, **canlı** = canlı hesap, borsadaki asıl paranız; 77.0'dan beri **aktarım** = yalnız kendi alt hesaplarınız arasında para taşıyan ana hesap anahtarı, para çekme izni **kapalı** — bota bağlanmaz, [Sermaye dağıtımı](#/kilavuz/sermaye-dagitimi/kapi) kullanır), isterseniz *alt hesap* adı (borsadaki ana hesabın altındaki ayrı hesap), API anahtarı, gizli anahtar, OKX'te parola.
 2. Açılan pencerede **acil PIN**'i girin ve onaylayın. **Her** ekleme, değiştirme ve silme PIN ister — bu bilgisayarın masaüstü panelinde de. Yanlış PIN telefonla aynı sayaçtan düşer: 5 yanlışta **1 dakika** kilit.
 3. Kaydedilen değer bir daha gösterilmez; satırda yalnız son 4 karakter kalır.
 
-Botlar Faz 1'de **aynen** bugünkü iki anahtarı kullanır: "Binance canlı (Kairos)" / "Binance demo (Kairos)" satırında yaptığınız değişiklik, Bağlantılar sekmesindeki demo anahtarı formuyla **aynı yere** yazılır. Yeni eklenen hesaplar şimdilik hiçbir bota bağlı değildir (bot → hesap bağlantısı sonraki aşamada). İşlem defterim anahtarı da İşlem defterim ekranındakiyle aynı yoldan, aynı "yalnız okuma" denetimiyle kaydedilir.
+Kairos ve Tao **aynen** bugünkü iki anahtarı kullanır: "Binance canlı (Kairos)" / "Binance demo (Kairos)" satırında yaptığınız değişiklik, Bağlantılar sekmesindeki demo anahtarı formuyla **aynı yere** yazılır. Sonradan eklediğiniz bir demo hesabı (74.5) panelden kurduğunuz yeni bota **Ayarlar › Botlar › Bot kayıtları**'ndan bağlanır ([Demo hesabına bağlamak](#/kilavuz/botlar/bot-hesap)); satırın **Kullanan** sütunu bağlı botu yazar, bağlanmamışsa "henüz hiçbir bot". Bota bağlı hesap buradan silinmez. İşlem defterim anahtarı da İşlem defterim ekranındakiyle aynı yoldan, aynı "yalnız okuma" denetimiyle kaydedilir.
 
 Panelden **değişmeyenler** (yalnız durum + komut gösterilir): acil PIN'in kendisi (yalnız *değiştirme*, aşağıda), panel/telefon jetonu (`npm run telefon-jeton`), sunucu bağlantısı (`npm run sunucu-baglanti`), geliştirme yazma jetonu (`npm run gelistirme-jeton`), yedek şifresi (Yedek ve taşıma sekmesi), GitHub jetonu (`npm run github-jeton`). Bunları bilgisayar başında komutla değiştirmek, uzaktan ele geçirilmiş bir panelin kendi jetonunu koymasını engeller.
 

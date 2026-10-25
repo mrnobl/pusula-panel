@@ -18,7 +18,7 @@
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
 
   const GRUPLAR = [
-    ['borsa', 'Borsa hesapları', 'Botların ve hesapların borsa API anahtarları. Bugün Kairos ve Tao "Binance demo (Kairos)" / "Binance canlı (Kairos)" anahtarlarını kullanır; yeni eklenen hesaplar Faz 2\'de botlara bağlanacak.'],
+    ['borsa', 'Borsa hesapları', 'Botların ve hesapların borsa API anahtarları. Bugün Kairos ve Tao "Binance demo (Kairos)" / "Binance canlı (Kairos)" anahtarlarını kullanır; yeni eklenen hesaplar Ayarlar › Botlar › Hesap ile bir bota bağlanır.'],
     ['defter', 'İşlem defterim (salt okuma)', 'İşlem geçmişini okumak için yalnız okuma izinli anahtarlar.'],
     ['bildirim', 'Bildirim', 'Telegram ve healthchecks.io ("ölü adam anahtarı") adresleri.'],
     ['yapayzeka', 'Yapay zekâ', 'Yapay zekâ notları için Google Gemini anahtarı (ücretsiz katman; Google AI Studio). Yalnız kamuya açık haber ve bildirim metni gönderilir.'],
@@ -30,6 +30,9 @@
   const TUR_AD = { demo: 'demo', canli: 'canlı', aktarim: 'aktarım' };
   /** A2 parça 2: OKX hesabının hazırlık durumu (lib/live/borsalar/okx.js `durum`; hazir:true olunca kalkar). */
   const OKX_HAZIRLIK = 'OKX demo: hazırlık — henüz bota bağlanamaz (anahtar saklanır, salt okuma sınanır)';
+  /** Bybit hesabının hazırlık durumu (lib/live/borsalar/bybit.js `durum`; hazir:true olunca kalkar). */
+  const BYBIT_HAZIRLIK = 'Bybit demo: hazırlık — henüz bota bağlanamaz (anahtar saklanır, salt okuma sınanır)';
+  const HAZIRLIK = { okx: OKX_HAZIRLIK, bybit: BYBIT_HAZIRLIK };
   const DOSYA_AD = { 'secrets.json': 'API anahtarları dosyası (secrets.json)', 'telefon-jeton.json': 'Telefon jetonu dosyası (telefon-jeton.json)', 'ev-baglanti.json': 'Sunucu bağlantısı dosyası (ev-baglanti.json)', 'yedek-sifre.json': 'Yedek şifresi dosyası (yedek-sifre.json)' };
 
   let veri = null, form = null, cakisma = null, mesgul = false;
@@ -200,7 +203,7 @@
     });
     const baslik = form.ekle ? 'Hesap ekle' : form.tip === 'pin' ? 'Acil PIN\'i değiştir' : `Değiştir: ${form.satir.ad}`;
     const not = form.tip === 'pin' ? 'PIN bütün bilgisayarlarda ortaktır: değiştirdiğinizde öbür bilgisayarlarda da aynı PIN\'i girin (Faz 3\'te kendiliğinden eşitlenecek). Unutursanız bilgisayar başında `npm run acil-pin` (eski PIN istemez).'
-      : form.ekle ? 'Anahtarı borsada para çekme izni KAPALI oluşturun. Değer kaydedildikten sonra bir daha gösterilmez (yalnız son 4 karakter). OKX: parola (passphrase) zorunlu; OKX demo hesabı eklenebilir ve sınanabilir — bota bağlama hazırlıkta (henüz bağlanamaz).'
+      : form.ekle ? 'Anahtarı borsada para çekme izni KAPALI oluşturun. Değer kaydedildikten sonra bir daha gösterilmez (yalnız son 4 karakter). OKX: parola (passphrase) zorunlu; OKX demo hesabı eklenebilir ve sınanabilir — bota bağlama hazırlıkta (henüz bağlanamaz). Bybit: hesap türü demo = Bybit Demo Trading anahtarı (Birleşik İşlem Hesabı, çapraz marj, tek yön; parola yok) — bota bağlama hazırlıkta (henüz bağlanamaz).'
         : 'Yeni değer kaydedildikten sonra bir daha gösterilmez (yalnız son 4 karakter).';
     return el('section', { class: 'p-kart-kat an-form', id: 'anForm' }, [
       el('h4', { class: 'an-form-baslik', text: baslik }),
@@ -227,8 +230,9 @@
     }
     return el('tr', { 'data-anahtar': s.kimlik }, [
       el('td', null, [el('strong', { text: s.ad }), ek ? el('span', { class: 'an-alt', text: ek }) : null,
-        // A2 parça 2: OKX bağdaştırıcısı hazır değil — anahtar saklanır ve salt okuma sınanır, bota bağlanamaz
-        s.grup === 'borsa' && s.ek && s.ek.borsa === 'okx' ? el('span', { class: 'an-alt tone-warning', id: `anOkxHazirlik-${s.kimlik}`, text: OKX_HAZIRLIK }) : null]),
+        // A2 parça 2: OKX / Bybit bağdaştırıcısı hazır değil — anahtar saklanır ve salt okuma sınanır, bota bağlanamaz
+        s.grup === 'borsa' && s.ek && s.ek.borsa === 'okx' ? el('span', { class: 'an-alt tone-warning', id: `anOkxHazirlik-${s.kimlik}`, text: OKX_HAZIRLIK }) : null,
+        s.grup === 'borsa' && s.ek && s.ek.borsa === 'bybit' ? el('span', { class: 'an-alt tone-warning', id: `anBybitHazirlik-${s.kimlik}`, text: HAZIRLIK.bybit }) : null]),
       el('td', { class: 'an-soluk', text: s.kullanan || '—' }),
       el('td', { class: 'p-sayi an-maske', text: s.maske || (s.durum === 'bos' || s.durum === 'eksik' ? '—' : 'gizli') }),
       el('td', { text: makineAdi(s, veri && veri.arastirma) }),

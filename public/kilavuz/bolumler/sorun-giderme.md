@@ -117,11 +117,11 @@ Onaydan sonra bütün hesaplar yeni bakiyeye göre yapılır: sermaye tavanı, p
 
 ### Canlı hesap kapısı kapandı {#gercek-para-kapisi}
 
-**Belirti:** "canlı hesap kapısı kapandı — günlük çalışma yapılmadı". **Anlamı:** canlı hesap şartlarından biri eksik; risk artıran emir verilmiyor. **Adımlar:** Ayarlar › Botlar › Canlı hesap bölümünde eksik şartı tamamlayın.
+**Belirti:** "canlı hesap kapısı kapandı — günlük çalışma yapılmadı". **Anlamı:** canlı hesap şartlarından biri eksik; risk artıran emir verilmiyor. **Adımlar:** Botlar › <bot> › Yönetim › Hesap türü satırının altında neyin eksik olduğu yazar; eksik şartı tamamlayın ([Canlı hesap modu](#/kilavuz/botlar/gercek-para)).
 
 ### Canlı hesapta emir onayı kapalı {#canli-onay}
 
-**Belirti:** canlı botta "emir onayı kapalı". **Anlamı:** bot çalışıyor görünür ama emir vermez (onay bir elle durdurmadan sonra düşer). **Adımlar:** Ayarlar › Botlar › Canlı hesap emir onayı › CANLI.
+**Belirti:** canlı botta "emir onayı kapalı". **Anlamı:** bot çalışıyor görünür ama emir vermez (onay bir elle durdurmadan sonra düşer). **Adımlar:** Botlar › <bot> › Yönetim › Canlı hesap emir onayı › **CANLI** ([ayrıntı](#/kilavuz/botlar/ayarlar)).
 
 ## Güvenli kip ve kendiliğinden geçenler {#kendiliginden-gecenler}
 
