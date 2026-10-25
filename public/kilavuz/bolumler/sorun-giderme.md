@@ -354,6 +354,16 @@ Yalnız bilgi: düzeltme geliştirme tarafında yapılır, güncellemeyle gelir.
 
 Pusula-69.0 paketi duruyorsa onun `scripts\sir-coz.ps1` betiğini Pusula'yı çalıştıran kullanıcıyla bir kez çalıştırın; paket yoksa `secrets.json`'u kenara kopyalayıp silin, anahtarları ve Telegram jetonunu panelden yeniden girin.
 
+### API anahtarında para çekme izni açık / IP kısıtı yok {#anahtar-yetkisi}
+
+Sağlık'taki **API anahtarı yetkisi** denetimi günde bir kez her kayıtlı borsa hesabının ve İşlem defterim anahtarının izinlerini **yalnız okuyarak** sınar (Ayarlar › Anahtarlar › **Sına** ile aynı kod; emir yok). Yalnız haber verir, hiçbir botu durdurmaz.
+
+- **Kırmızı — para çekme izni açık:** borsanın sitesinde API yönetimine girin, bu anahtarın **Para çekme (Withdraw)** iznini kapatın; sonra Ayarlar › Anahtarlar › **Sına**. Telegram'a bir kez uyarı gider. Anahtarı başkasının gördüğünden şüpheleniyorsanız silip yenisini oluşturun.
+- **Sarı — IP kısıtı yok (canlı hesap):** anahtara yalnız sunucunun IP adresini ekleyin. Demo hesapta aranmaz.
+- **Sarı — İşlem defterim anahtarı salt okuma değil:** işlem iznini kapatın ya da salt okuma bir anahtarla değiştirin.
+- **Bilinmiyor:** sınama yapılamadı (internet, borsa yanıt vermedi, anahtar silinmiş). Ertesi gün yeniden denenir; hemen görmek için **Sına**.
+- Binance demo hesabı izin bilgisi vermez — demo hesap olduğu (canlı hesap olmadığı) için "tamam" sayılır.
+
 ### Ayar dosyası bozuk açıldı {#ayar-bozuk}
 
 Son sağlam kopyadan açıldı; son ayar değişikliğiniz kaybolmuş olabilir: yeniden girin. Bozuk dosya `.bozuk-*.bak` olarak saklandı; tekrar ederse (disk sorunu olabilir) sohbete yazın.

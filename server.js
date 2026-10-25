@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.5';
+const APP_VERSION = '75.6';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.

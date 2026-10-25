@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 33 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 34 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -122,7 +122,7 @@ Devam etmek **para kaybettirebilecekse** bot tamamen durur ve siz açana kadar k
 | Beklenmeyen emir ya da dolum | Botun göndermediği bir emir dolmuş; mutabakat yakalar |
 | Bot döngüsü tekrar tekrar çöküyor | Dakikalık döngü 30 dakikada 3 kez hata verdi (73.6: internet / borsa bağlantı hataları sayılmaz) |
 | Emir freni | Risk artıran emirler 24 saatte 600'ü, 10 dakikada 150'yi ya da 24 saatte sermaye tavanının 20 katını aştı — kaçak bir döngü (Knight Capital 2012 tipi kaza). Azaltan emirler ve stoplar serbest kalır |
-| API anahtarının yetkisi değişti | Para çekme izni açılırsa ya da IP kısıtı kalkarsa. **Henüz denetlenmiyor** — canlı hesaba geçmeden eklenecek |
+| API anahtarının yetkisi değişti | Para çekme izni açılırsa ya da IP kısıtı kalkarsa. **Günde bir denetleniyor ama şimdilik yalnız haber** (aşağıda: API anahtarları) — botu kapatmaya bağlanması canlı hesaba geçmeden ayrıca kararlaştırılacak |
 
 - **Açık pozisyona dokunulmaz;** borsadaki stoplar yerinde kalır. Pozisyonu kapatmak da bir al-sat kararıdır ve kötü bir fiyattan zarar yazdırabilir.
 - **Yeniden açmak:** sebebi inceleyin, düzeltin; Sağlık sayfasında **Sebebi okudum ve düzelttim** kutusunu işaretleyip **Botu yeniden aç**. Kayıt farkından kapanmışsa düğme **Borsayla karşılaştır** olur: karşılaştırma temiz çıkınca bot açılır. Aynı sebeple ikinci kez kapanırsa da her seferinde açabilirsiniz. **73.6:** açtığınız anda öz denetimin sayaçları sıfırlanır — bot yalnız açtıktan **sonraki yeni** olaylarla yeniden kapanabilir (eskiden 5 dakika sonra eski satırlarla yeniden kapanıyordu). Yeniden kapanırsa Telegram 6 saatlik tekrar kısıtına takılmaz: "açtığınız bot yeniden kapandı — sebep: …" iletisi her zaman gelir.
@@ -160,6 +160,7 @@ Telegram tek kanal olursa, Telegram düştüğünde (ya da jeton geçersizleşin
 API anahtarları, Telegram jetonu ve sağlık adresleri `secrets.json` dosyasında **düz** durur (69.0'daki gibi). 69.4–69.8 arasında bu dosya Windows'un şifrelemesiyle korunuyordu; Pusula bunun için arka planda PowerShell açıyordu ve 21–22 Ekim'de sunucudaki Kaspersky bu davranışı virüs sanıp Pusula'yı sildi. **70.0'da şifreleme kodu tamamen çıkarıldı.**
 
 - **Koruma anahtarın kendisinde:** Binance anahtarında **para çekme izni kapalı** ve canlı hesapta **IP kısıtı zorunlu** — dosya kopyalansa bile anahtar başka bir yerden kullanılamaz, para çekilemez.
+- **API anahtarı yetkisi (günde bir):** her kayıtlı borsa hesabı ve İşlem defterim anahtarı yalnız okunarak sınanır (Ayarlar › Anahtarlar › Sına ile aynı kod, emir yok). Para çekme izni **açıksa kırmızı**, Sorunlar sayfasında kart ve Telegram'a bir uyarı; canlı hesapta IP kısıtı yoksa ya da defter anahtarı salt okuma değilse **sarı**; okunamazsa **bilinmiyor**. Yalnız haber verir, botu durdurmaz. Ne yapmalı: Kılavuz › Sorun giderme › API anahtarında para çekme izni açık.
 - **Şifreli kalmış dosya:** o sürümlerde şifrelenmiş bir dosyayı Pusula çözmeye çalışmaz; Sağlık kırmızı gösterir. Çözümü: masaüstüne verilen **Pusula-69.0** paketindeki `scripts\sir-coz.ps1` (bir kez, Pusula'yı çalıştıran kullanıcıyla), sonra Pusula'yı yeniden başlatın.
 
 ## Saldırılara karşı korumalar {#guvenlik}

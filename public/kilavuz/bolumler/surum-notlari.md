@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.6 — API anahtarı yetkisi Sağlık'ta (2026-10-25) {#s75-6}
+- Sağlık sayfasına yeni denetim: **API anahtarı yetkisi**. Pusula günde bir kez her borsa anahtarının izinlerini yalnız okuyarak sınar (Anahtarlar › Sına ile aynı; emir yok). Para çekme izni açıksa kırmızı olur, Sorunlar sayfasında kart çıkar ve Telegram'a bir uyarı gelir. Canlı hesapta IP kısıtı yoksa sarı bilgi verir. Botları durdurmaz.
+- Düzeltme: Ayarlar › Anahtarlar'da "Binance canlı / demo (Kairos)" satırlarının son sınama sonucu artık görünüyor.
+
 ## 75.5 — Botu başka makineye taşımak, nöbet (2026-10-25) {#s75-5}
 
 - **Yeni: [botu başka makineye taşı](#/kilavuz/botlar/bot-tasima).** Eşlenmiş iki **sunucu** arasında bir kâğıt ya da demo botu taşırsınız: **Ayarlar › Makineler › Botu başka makineye taşı** — yalnız botun bulunduğu bilgisayardan, **TAŞI** yazıp acil PIN. Bot burada durur (açık pozisyonlara, emirlere ve felaket stoplarına dokunulmaz), verisi öteki makineye gider. Demo botun hesap anahtarı **yedek şifresiyle şifreli** gider (iki bilgisayarda aynı yedek şifresi). Hedefte bot **kendiliğinden başlamaz**: önce Mutabakat, temizse Başlat.
