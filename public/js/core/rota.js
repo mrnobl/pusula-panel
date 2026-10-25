@@ -17,7 +17,7 @@
  *                          js/pages/botlar.js). F5: eski "Borsa hesapları" (#/borsa, tab-exchange) → botlar/hucum/hesap.
  *   sinyaller · piyasa (73.9 Piyasa bağlamı — yalnız bilgi) · notlar (74.1 Yapay zekâ notları — yalnız not)
  *   ileri[/alt] · veri[/alt] · arsiv[/alt] → alt sayfalar bölümün data-alt-sayfalar listesinden (js/pages/kabuk.js altSayfaUygula):
- *                          İleri test genel · hucum-denge · hucum-s · bollinger · 876 · cbdr · temettu · momentum; Veri kaynaklar · tarama · arsiv; Arşiv genel · emekli
+ *                          İleri test genel · hucum-denge · hucum-s · kairos-10x · bollinger · 876 · cbdr · temettu · momentum; Veri kaynaklar · tarama · arsiv; Arşiv genel · emekli
  *   arastirma/…          → Araştırma: ozet (F5) · stratejiler · backtest · izleme (Backtest sembolleri) · laboratuvar[/sekme]
  *                          (tab-portfoy) · pine · defter (Pine ve Araştırma defteri Arşiv'den geri geldi — canlı araştırma)
  *   tarama[/…]           → Coin tarama AYRI bölüm (K-C): tarama · kacin (tab-dikkat) · izle · listeler · ayarlar

@@ -4,13 +4,14 @@
 
 "Canlı veride tutuyor mu?" Kuralları önceden kayda geçirilmiş stratejilerin, backtestte görmediği **yeni günlerde** nasıl davrandığını izler. Emir vermez. İki soruya cevap verir: **her şey yolunda mı** (alarm var mı) ve **sıradaki karar ne zaman**.
 
-Yan menüde İleri test'in altında sekiz sayfa var (66.0; 73.1'de BIST temettü ve 2 haftalık momentum, 73.2'de Kairos-S gölgesi eklendi):
+Yan menüde İleri test'in altında dokuz sayfa var (66.0; 73.1'de BIST temettü ve 2 haftalık momentum, 73.2'de Kairos-S gölgesi, 74.9'da Kairos 10× gölge hesabı eklendi):
 
 | Sayfa | Ne var |
 |---|---|
 | **Genel bakış** | **Testler** tablosu (her test, durumu ve karar günü; ada tıklayınca kendi sayfası açılır) + **Karar takvimi** (bütün karar ve kontrol günleri, bugünden başlayarak) |
 | **Kairos / Tao simülasyonu** | Simülasyon kartı ve en derin düşüş grafikleri, yan denemeler (3 günlük karar, yatay piyasa filtresi) |
 | **Kairos-S gölgesi** | Canlı hesaba geçecek 1000 $'lık Kairos-S'in emirsiz günlük gölgesi: kart + iki grafik ([aşağıda](#/kilavuz/ileri-test/hucum-s)) |
+| **Kairos 10× gölge** | Kairos demo botunun gerçek işlemleri, kolu 10× büyütülerek kâğıtta kopyalanır: karşılaştırma tablosu + iki grafik ([aşağıda](#/kilavuz/ileri-test/kairos-10x)) |
 | **Bollinger düşüş azaltıcı** | Bollinger kartı ve BTC en derin düşüş grafiği |
 | **876 gölge** | Kairos %90 + TVL L/S %10 gölge kartı ([aşağıda](#/kilavuz/ileri-test/g876)) |
 | **EUR/USD CBDR** | Londra girişi gölge kartı ve birikimli R grafiği ([aşağıda](#/kilavuz/ileri-test/cbdr)) |
@@ -188,6 +189,32 @@ Kontrol kuralı önceden yazıldı: 90 / 182 / 365. günde getiri alt sınırın
 > **Not:** Bu gölge model düzeyindedir: emir yuvarlama ayrıca simüle edilmez; çekilebilir USDT sınırı ve "açık DCA varken kademe değişmez" kuralı hesabın durumunu ister, gölgede yoktur (geçmiş ölçümde etkisi yılda yaklaşık −0,3 puan). Bir günün Kairos simülasyonu ya da coin mumları eksikse o gün **yetersiz** sayılır ve sonraki çalışmada tamamlanır.
 
 Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (Kairos simülasyonundan hemen sonra; sunucuda ayrıca kurulacak bir şey yok). Sunucu bu sürüme henüz güncellenmediyse kart "Kairos-S gölgesi özeti alınamadı" der — güncelleme kurulunca düzelir.
+
+## Kairos 10× gölge hesabı {#kairos-10x}
+
+**Ne:** sizin isteğinizle (25 Ekim 2026): "Kairos 10× kaldıraçla olsaydı ne olurdu?" sorusunun **emirsiz** cevabı. Sunucuda çalışan Kairos **demo** botunun demo kabul başlangıcından (**7 Ekim 2026**) bu yana yaptığı **gerçek dolumlar** kâğıt üstünde kopyalanır: **BTC ayağı aynen**, Donchian + DCA **kolu 3× yerine 10×** (her kol işleminin miktarı, ücreti ve funding payı 10/3 ile büyür). Başlangıç sermayesi aynı (demo kabuldeki bot değeri, 1000 $). **Emir yok, para yok, borsa ayarı yok** — gölge Kairos'un dosyalarını yalnız okur; demo kabul testi, demo sermaye sınırı ve Kairos'un kararları **etkilenmez**.
+
+**Hesap:** her gün botun dolumları iki ayağa ayrılır (BTC ayağı / kol), funding ödemesi o anki pozisyon payıyla bölünür, iki ayağın değeri günlük kapanış fiyatıyla çıkarılır. Gölge = başlangıç + BTC ayağı değişimi + **10/3 × kol değişimi** + defterin açıklayamadığı küçük **artık** (demo ile gerçek borsa fiyat farkı, kayıt saati — büyütülmez). **Mutabakat:** kol 3× alındığında hesap Kairos'un gerçek değerini birebir verir (kartta "Mutabakat: birebir").
+
+![Kairos 10× gölge hesabı — masaüstü](ekran:ileri-kairos-10x-1400)
+
+| Alan | Anlamı |
+|---|---|
+| Karşılaştırma tablosu | **Kairos 3× (gerçek demo)**, **10× gölge** ve **BTC al-tut** yan yana: getiri, en büyük düşüş (günlük kapanışla), en kötü gün içi (tarihli), en düşük marj tamponu (tarihli), tasfiye |
+| Getiri — 10× gölge / Kairos 3× / BTC | Üçünün aynı günlerdeki birikimli getirisi |
+| En düşük marj tamponu (10×) | Marj bakiyesi ÷ bakım marjı, gün içinin en kötü anında; tarihi ve son günün değeri altında |
+| Tasfiye | Tampon hiç 1'in altına indi mi; indiyse tarihi ve kalan para |
+| Şu an (güncel fiyatla, tahmini) | Sayfa açıldığında borsanın güncel fiyatıyla gölge / Kairos / BTC ve tampon (Kairos'un artığı eklenmez; tahmini) |
+| Kol büyüklüğü (son gün) | 10× gölgenin coin pozisyonları toplamı ve BTC ayağı |
+| Mutabakat | Kol 3× ile Kairos'un birebir çıkıp çıkmadığı ve defterin açıklayamadığı artık |
+
+Grafikler: **birikimli getiri** (10× gölge / Kairos 3× / BTC al-tut) ve **marj tamponu** (kesikli çizgiler: 2 = bilgi notu, 1 = tasfiye).
+
+**Gün içi kötümser değer:** günün başındaki ve sonundaki (gün içi DCA dolumlarından sonraki) pozisyonların hepsi **aynı anda günün en düşüğünde** değerlenir; ikisinin kötüsü alınır. **Bakım marjı** araştırma simülatörünün kademe tablosuyla hesaplanır; BTC ayağı araştırmadaki gibi **teminat** sayılır (bakım marjı doğurmaz, %95 değerle girer). **Marj tamponu 2'nin altına inerse** kartın başında bir **bilgi** notu çıkar ve Genel bakıştaki durum sarıya döner (Telegram'a gitmez). **1'in altına inerse** gölge **"tasfiye oldu"** diye işaretlenir (tarihiyle): araştırma simülatörüyle aynı kural — hesapta bakım marjı eksi %1,25 tasfiye ücreti kalır ve gölge bu kalan parayla, Kairos'un pozisyonlarını küçültülmüş oranda kopyalamaya **devam eder**.
+
+> **Not:** Bu bir **hesaptır**, kanıt değildir: birkaç haftalık veri, demo borsanın fiyatları ve gerçek borsanın 10× kaldıraçtaki kayma / sınırları (en büyük pozisyon, emir derinliği) burada yoktur. Gölge, kendi özsermayesine göre yeniden boyutlanmaz — Kairos'un pozisyonlarını kopyalar. Karar değildir; demo kabul hükmüyle (9 Aralık 2026) birlikte okunur.
+
+Kayıt sunucunun her gece çalışan ileri test işiyle yazılır (Kairos-S gölgesinden sonra; sunucuda ayrıca kurulacak bir şey yok); bu bilgisayarda kart sunucudaki kaydı gösterir. Sunucu bu sürüme henüz güncellenmediyse kart "Kairos 10× gölge özeti alınamadı" der — güncelleme kurulunca düzelir.
 
 ## BIST temettü kartı {#temettu}
 

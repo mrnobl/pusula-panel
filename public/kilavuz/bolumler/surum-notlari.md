@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.9 — İleri test: Kairos 10× gölge hesabı (2026-10-25) {#s74-9}
+
+- **Yeni: [Kairos 10× gölge hesabı](#/kilavuz/ileri-test/kairos-10x)** (İleri test › Kairos 10× gölge). Kairos demo botunun demo kabul başlangıcından (7 Ekim 2026) bu yana yaptığı **gerçek işlemler** kâğıt üstünde kopyalanır: BTC ayağı aynen, Donchian + DCA kolu **3× yerine 10×** (miktar, ücret ve funding 10/3 büyür), aynı başlangıç sermayesi. **Emir yok, para yok** — gölge Kairos'un dosyalarını yalnız okur; demo kabul testi ve Kairos'un kararları etkilenmez.
+- Kartta **karşılaştırma tablosu** (Kairos 3× gerçek demo / 10× gölge / BTC al-tut: getiri, en büyük düşüş, en kötü gün içi, en düşük marj tamponu, tasfiye), **güncel fiyatla anlık** satır ve iki grafik (birikimli getiri, marj tamponu).
+- **Marj tamponu** (marj bakiyesi ÷ bakım marjı, gün içinin en kötü anında) 2'nin altına inerse kartta **bilgi** notu (Telegram'a gitmez); 1'in altına inerse gölge **"tasfiye oldu"** diye işaretlenir ve araştırma simülatörüyle aynı kuralla kalan parayla sürer.
+- **Mutabakat:** kol 3× alınırsa hesap Kairos'un gerçek değerini birebir verir. Botların kodu değişmedi. Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.8 — İç düzenleme: sunucu programı parçalara bölünmeye başladı (2026-10-25) {#s74-8}
 
 - **Görünür değişiklik yok.** Sunucu programının en büyük dosyası, bakımı kolaylaşsın diye birkaç sürümde parçalara bölünüyor. Bu sürümde **güncelleme** uçları, **araştırma** uçları (gösterge, strateji listesi, Pine içe aktarma, backtest, tarama, veri indirme) ve eski **kâğıt motor** uçları ayrı dosyalara taşındı.

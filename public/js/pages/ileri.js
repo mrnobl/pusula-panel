@@ -28,6 +28,10 @@
  *          geçecek 1000 $'lık Kairos-S kuralının emirsiz günlük gölgesi — Kairos-S / Kairos simülasyonu / BTC al-tut yan yana, en derin
  *          düşüş ↔ uyarı / alarm eşiği (o ana en yakın ufuk), kontrol noktaları 2027-01-05 (canlı hesap kapısı) / 2027-04-07 /
  *          2027-10-07, bu ayın 1000 $ sepeti; iki grafik (en derin düşüş, birikimli getiri) #ileriG-hucum-s
+ *       9. Kairos 10× gölge hesabı (74.9; `/api/ileri/kairos-10x?anlik=1`, lib/ileri/kairos10xGolge.js; kullanıcı isteği 2026-10-25):
+ *          Kairos demo botunun gerçek dolumları kolu 10/3 büyütülerek kâğıtta kopyalanır (EMİR YOK). Tablo (getiri, en büyük düşüş,
+ *          en kötü gün içi, en düşük marj tamponu + tarih, tasfiye) Kairos 3× gerçek demo / 10× gölge / BTC al-tut; iki grafik
+ *          (birikimli getiri, marj tamponu) #ileriG-kairos-10x; anlık satır güncel fiyatla (tahmini)
  *
  * PROJE KURALI: ARA RAPORDA HÜKÜM YAZILMAZ. Yalnız betimlenir; "geçti/kaldı/kabul" yazılmaz, kural önerilmez. Önceden kayda
  * geçirilmiş uyarı / alarm eşikleri (eski adı p95 / p99) hüküm değil, izleme kuralıdır ve gösterilir.
@@ -552,6 +556,83 @@
     };
   }
 
+  /** Saf: tampon sayısı → "136,9" ("—" yoksa). */
+  const tamponMetin = (x) => (sayiMi(x) ? x.toLocaleString('tr-TR', { maximumFractionDigits: x < 10 ? 2 : 1 }) : '—');
+  /**
+   * Kairos 10× gölge hesabı (74.9). `x` = /api/ileri/kairos-10x ({ ozet: son.json, anlik, uyariTampon, kabulSonu }).
+   * Yalnız betimler: Kairos 3× gerçek demo ↔ 10× gölge ↔ BTC al-tut; tampon < 2 bilgi notu, < 1 tasfiye (araştırma simülatörüyle aynı kural).
+   */
+  function kairos10xModel(x) {
+    if (!x || !x.success) return { hata: `Kairos 10× gölge özeti alınamadı: ${(x && x.error) || 'sunucu bu sürümü henüz çalıştırmıyor olabilir'}` };
+    const o = x.ozet, r = o && o.rapor, esik = x.uyariTampon || 2;
+    const ozetMetin = `Kairos demo botunun demo kabul başlangıcından (${tarihAdi(x.bas || '2026-10-07')}) bu yana yaptığı gerçek işlemler kâğıt üstünde kopyalanır: BTC ayağı aynen, Donchian + DCA kolu 3× yerine 10× (miktar, ücret ve funding 10/3 büyür). Aynı başlangıç sermayesi. Emir yok, para yok — demo kabul testine dokunmaz.`;
+    const ortak = { baslik: 'Kairos 10× gölge hesabı', ozet: ozetMetin, hukumEtiket: 'Demo kabul hükmü', hukumTarihi: x.kabulSonu || '2026-12-09',
+      hukumAlt: 'gölge bir karar değildir; demo kabul hükmüyle birlikte okunur' };
+    const kural = `Hesap: her gün botun dolumları (BTC ayağı / kol ayrı), funding payı ve günlük kapanış fiyatıyla iki ayağın değeri çıkarılır; gölge = başlangıç + BTC ayağı değişimi + 10/3 × kol değişimi + defterin açıklayamadığı küçük artık (ölçeklenmez). Kol 3× alınırsa gölge Kairos’un kendisini birebir verir (mutabakat). Gün içi kötümser değer: uzun pozisyonlar günün en düşüğünde, hepsi aynı anda. Bakım marjı araştırma simülatörünün kademe tablosuyla; BTC ayağı teminat (bakım marjı yok, %95 değerle). Marj tamponu = marj bakiyesi ÷ bakım marjı: ${esik}’nin altı bilgi notu (bu kartta), 1’in altı tasfiye — gölge kalan parayla (bakım marjı − %1,25) Kairos’u küçültülmüş oranda kopyalamaya devam eder.`;
+    if (!r) return { ...ortak, durum: { metin: 'İzleyici henüz çalışmadı', ton: 'uyari' }, ana: [0, 1, 2], tablo: null, sayilar: [
+      { etiket: 'Getiri — 10× gölge / Kairos 3× / BTC', deger: '—', alt: 'ilk çalışmada dolar' },
+      { etiket: 'En düşük marj tamponu (10×)', deger: '—', alt: `${esik}’nin altı bilgi notu, 1’in altı tasfiye` },
+      { etiket: 'Tasfiye', deger: '—', alt: 'ilk çalışmada dolar' }
+    ], not: `${kural} Kayıt sunucunun ileri test işiyle her gün 00:15 UTC sonrası yazılır.${(o && o.eksik && o.eksik.length) ? ` Eksik: ${o.eksik.map(e => e.neden).slice(0, 2).join('; ')}.` : ''}` };
+    const g = r.golge || {}, k = r.kairos || {}, b = r.btc || {}, kr = r.kairosRef || {};
+    const tas = (g.tasfiye || [])[0] || null;
+    const seri = o.seri || [], son = seri[seri.length - 1] || {};
+    const an = x.anlik;
+    const S0 = r.sermaye || 1000;
+    const durum = tas ? { metin: `Tasfiye oldu (${tas.gun})`, ton: 'tehlike' }
+      : sayiMi(son.tampon) && son.tampon < esik ? { metin: `Marj tamponu ${esik}’nin altında`, ton: 'uyari' }
+        : (o.degisen || []).length ? { metin: 'Yeniden hesap farklı', ton: 'uyari' } : { metin: 'Hesap sürüyor', ton: '' };
+    const minT = (m) => (m && sayiMi(m.deger) ? `${tamponMetin(m.deger)} (${tarihAdi(m.gun)})` : '—');
+    const giMetin = (m) => (m && sayiMi(m.deger) ? `${yuzde(m.deger)} (${tarihAdi(m.gun)})` : '—');
+    const tablo = { basliklar: ['', 'Kairos 3× (gerçek demo)', '10× gölge', 'BTC al-tut'], satirlar: [
+      ['Getiri', yuzde(k.getiri), yuzde(g.getiri), yuzde(b.getiri)],
+      ['En büyük düşüş', yuzde(k.mdd), yuzde(g.mdd), yuzde(b.mdd)],
+      ['En kötü gün içi', giMetin(kr.enKotuGunIci), giMetin(g.enKotuGunIci), giMetin(b.enKotuGunIci)],
+      ['En düşük marj tamponu', minT(kr.minTampon), minT(g.minTampon), '—'],
+      ['Tasfiye', 'yok (gerçek hesap)', tas ? `${tarihAdi(tas.gun)} — kalan ${Math.round(tas.kalan).toLocaleString('tr-TR')} $` : 'yok', '—']
+    ] };
+    const mut = o.mutabakat;
+    const bilgiNotu = tas ? `Bilgi: 10× gölge ${tarihAdi(tas.gun)} günü tasfiye oldu (marj tamponu 1’in altına indi); kalan parayla sürüyor. Gerçek Kairos etkilenmez.`
+      : sayiMi(son.tampon) && son.tampon < esik ? `Bilgi: 10× gölgenin marj tamponu ${tamponMetin(son.tampon)} — ${esik}’nin altında (1’in altı tasfiye). Gerçek Kairos etkilenmez.` : null;
+    return {
+      ...ortak, ozet: bilgiNotu ? `${bilgiNotu} ${ozetMetin}` : ozetMetin, durum, ana: [0, 1, 2], tablo,
+      sayilar: [
+        { etiket: 'Getiri — 10× gölge / Kairos 3× / BTC', deger: `${yuzde(g.getiri)} / ${yuzde(k.getiri)} / ${yuzde(b.getiri)}`, alt: `${r.gun} gün (${tarihAdi(r.ilk)} → ${tarihAdi(r.son)}) · günlük kapanışla` },
+        { etiket: 'En düşük marj tamponu (10×)', deger: g.minTampon ? tamponMetin(g.minTampon.deger) : '—', ton: g.minTampon && g.minTampon.deger < 1 ? 'tone-danger' : g.minTampon && g.minTampon.deger < esik ? 'tone-warning' : '',
+          alt: `${g.minTampon ? tarihAdi(g.minTampon.gun) : ''} · son gün ${tamponMetin(son.tampon)} · ${esik}’nin altı bilgi notu, 1’in altı tasfiye` },
+        { etiket: 'Tasfiye', deger: tas ? tarihAdi(tas.gun) : 'yok', ton: tas ? 'tone-danger' : '', alt: tas ? `gölge kalan parayla sürüyor (${Math.round(tas.kalan).toLocaleString('tr-TR')} $)` : 'tampon hiç 1’in altına inmedi' },
+        { etiket: 'Şu an (güncel fiyatla, tahmini)', deger: an ? `${yuzde(an.golge / S0 - 1)} / ${yuzde(an.kairos / S0 - 1)}${sayiMi(an.btc) ? ` / ${yuzde(an.btc / S0 - 1)}` : ''}` : '—',
+          alt: an ? `10× gölge / Kairos / BTC · tampon ${tamponMetin(an.tampon)}${AG.fmt && AG.fmt.tarihSaat ? ` · ${AG.fmt.tarihSaat(an.zaman)}` : ''}` : (x.anlikHata ? `anlık hesap yapılamadı: ${x.anlikHata}` : 'anlık hesap yok (son kapanış gösteriliyor)') },
+        { etiket: 'Kol büyüklüğü (son gün)', deger: sayiMi(son.kolNominal) ? `${Math.round(son.kolNominal).toLocaleString('tr-TR')} $` : '—', alt: `10× gölgenin coin pozisyonları toplamı · BTC ayağı ${sayiMi(son.btNominal) ? Math.round(son.btNominal).toLocaleString('tr-TR') : '—'} $` },
+        { etiket: 'Mutabakat (kol 3× → Kairos)', deger: mut && sayiMi(mut.m3EnBuyukFark) ? (mut.m3EnBuyukFark < 1e-6 ? 'birebir' : `fark ${mut.m3EnBuyukFark.toFixed(6)} $`) : '—', ton: mut && mut.m3EnBuyukFark >= 1e-6 ? 'tone-warning' : '',
+          alt: `defterin açıklayamadığı artık ${sayiMi(son.artik) ? `${son.artik.toLocaleString('tr-TR', { maximumFractionDigits: 2 })} $` : '—'} (ölçeklenmez)` }
+      ],
+      not: [kural,
+        o.zaman ? `Son çalışma ${AG.fmt && AG.fmt.tarihSaat ? AG.fmt.tarihSaat(o.zaman) : o.zaman}.` : '',
+        (o.eksik || []).length ? `Eksik: ${o.eksik.length} kalem (${o.eksik.slice(0, 2).map(e => e.neden).join('; ')}) — sonraki çalışmada tamamlanır.` : '',
+        (o.degisen || []).length ? `UYARI: ${o.degisen.length} kayıtlı günün yeniden hesabı farklı — kayıt değişmedi.` : ''].filter(Boolean).join(' ')
+    };
+  }
+
+  /** Saf: Kairos 10× gölge grafikleri — birikimli getiri (10× gölge / Kairos 3× / BTC) ve marj tamponu (2 ve 1 çizgileriyle). */
+  function kairos10xGrafikleri(x) {
+    const o = x && x.success && x.ozet, r = o && o.rapor, seri = (o && o.seri) || [];
+    const S0 = (r && r.sermaye) || 1000, esik = (x && x.uyariTampon) || 2;
+    const tas = r && r.golge && (r.golge.tasfiye || [])[0];
+    const minT = r && r.golge && r.golge.minTampon;
+    const isik = tas ? 'tehlike' : minT && minT.deger < esik ? 'uyari' : seri.length ? 'iyi' : 'notr';
+    return [
+      { kimlik: 'ileriGrafik-k10-getiri', baslik: 'Birikimli getiri — 10× gölge / Kairos 3× / BTC al-tut', isik: 'notr', durum: seri.length ? 'hesap sürüyor' : 'kayıt bekleniyor', sifirli: true,
+        seriler: [{ ad: '10× gölge', sinif: 'ilg-c1', noktalar: seri.map(p => ({ gun: p.gun, v: p.golge / S0 - 1 })) }, { ad: 'Kairos 3× (gerçek demo)', sinif: 'ilg-hucum', noktalar: seri.map(p => ({ gun: p.gun, v: sayiMi(p.kairos) ? p.kairos / S0 - 1 : null })) },
+          { ad: 'BTC al-tut', sinif: 'ilg-c0', noktalar: seri.map(p => ({ gun: p.gun, v: p.btc / S0 - 1 })) }],
+        esikler: [], alt: r ? `10× gölge ${yuzde(r.golge.getiri)} · Kairos ${yuzde(r.kairos.getiri)} · BTC ${yuzde(r.btc.getiri)} (${r.gun} gün)` : 'gölge kaydı bekleniyor', bos: seri.length ? null : 'Gölge kaydı bekleniyor.' },
+      { kimlik: 'ileriGrafik-k10-tampon', baslik: 'Marj tamponu — 10× gölge (gün içi en kötü an)', isik, durum: tas ? 'tasfiye oldu' : isik === 'uyari' ? `${esik}’nin altına indi` : seri.length ? `${esik}’nin üstünde` : 'kayıt bekleniyor',
+        seriler: [{ ad: 'marj tamponu', sinif: 'ilg-c1', noktalar: seri.filter(p => sayiMi(p.tampon)).map(p => ({ gun: p.gun, v: p.tampon })) }],
+        esikler: [{ ad: `bilgi notu ${esik}`, v: esik, sinif: 'ilg-uyari' }, { ad: 'tasfiye 1', v: 1, sinif: 'ilg-alarm' }],
+        alt: minT ? `en düşük ${tamponMetin(minT.deger)} (${minT.gun})${tas ? ` · tasfiye ${tas.gun}` : ''}` : 'gölge kaydı bekleniyor', bos: seri.some(p => sayiMi(p.tampon)) ? null : 'Gölge kaydı bekleniyor.' }
+    ];
+  }
+
   /**
    * 2 haftalık momentum kolu gölgesi (PLAN-ILERI-MOMENTUM, deneme 971; geçmiş deneme 566). `m` = /api/ileri/momentum ({ ozet: son.json }).
    * Yalnız betimler: Kairos + %8,2 kol ↔ yalnız Kairos.
@@ -634,7 +715,7 @@
    * Saf: grafik tanımları — her test kendi grafiği. Seri yoksa `bos` metni.
    * → [{ kimlik, baslik, isik: 'iyi'|'uyari'|'tehlike'|'notr', durum, seriler: [{ ad, sinif, noktalar: [{ gun, v }] }], esikler: [{ ad, v, sinif }], alt, bos?, sifirli? }]
    */
-  function grafikModeli(v, k, c, h) {
+  function grafikModeli(v, k, c, h, k10) {
     const g = v && v.rapor && v.rapor.golge, m = g && g.model, seri = (g && g.seri) || [];
     const ddGrafik = (ad, kim) => {
       const x = m && m[ad];
@@ -666,7 +747,8 @@
       { kimlik: 'ileriGrafik-cbdr', baslik: 'EUR/USD CBDR — birikimli R', isik: 'notr', durum: cr ? 'ölçüm sürüyor' : 'rapor yok', sifirli: true,
         seriler: [{ ad: 'birikimli R', sinif: 'ilg-cbdr', noktalar: cs.map(x => ({ gun: x.gun, v: x.birikim })) }],
         esikler: [], alt: cr && cr.islem ? `${cr.islem} işlem · toplam ${rMetin(cr.toplamR)} · ortalama ${rMetin(cr.ortR)}` : 'ilk işlemle dolar (başlangıç 2026-10-15)', bos: cs.length ? null : 'İlk işlem bekleniyor.' },
-      ...hucumSGrafikleri(h)
+      ...hucumSGrafikleri(h),
+      ...kairos10xGrafikleri(k10)
     ];
   }
 
@@ -737,11 +819,11 @@
   /** Yeni panel F5: her grafik kendi testinin alt sayfasında (index.html #ileriG-<sayfa>); demo kabul Botlar › Hücum › Yönetim'de. */
   const GRAFIK_YERI = { 'ileriGrafik-hucum': 'ileriG-hucum-denge', 'ileriGrafik-denge': 'ileriG-hucum-denge', 'ileriGrafik-yan': 'ileriG-hucum-denge',
     'ileriGrafik-bollinger': 'ileriG-bollinger', 'ileriGrafik-demo': 'ileriG-demo', 'ileriGrafik-cbdr': 'ileriG-cbdr',
-    'ileriGrafik-hs-dd': 'ileriG-hucum-s', 'ileriGrafik-hs-getiri': 'ileriG-hucum-s' };
-  function grafiklerCiz(v, k, c, h) {
+    'ileriGrafik-hs-dd': 'ileriG-hucum-s', 'ileriGrafik-hs-getiri': 'ileriG-hucum-s', 'ileriGrafik-k10-getiri': 'ileriG-kairos-10x', 'ileriGrafik-k10-tampon': 'ileriG-kairos-10x' };
+  function grafiklerCiz(v, k, c, h, k10) {
     if (!AG.dom) return;
     const { el, doldur } = AG.dom;
-    const l = grafikModeli(v, k, c, h);
+    const l = grafikModeli(v, k, c, h, k10);
     const gruplar = new Map();
     for (const t of l) { const yer = GRAFIK_YERI[t.kimlik] || 'ileriGrafikler'; if (!gruplar.has(yer)) gruplar.set(yer, []); gruplar.get(yer).push(t); }
     for (const [yer, ts] of gruplar) {
@@ -759,7 +841,7 @@
   /** F5 Genel bakış: beş testin durum tablosu (test · durum · karar günü → alt sayfa). Demo kabul Botlar › Hücum › Yönetim'e götürür. */
   const SAYFA = [['bollinger', 'Bollinger düşüş azaltıcı', 'ileri/bollinger'], ['hucumDenge', 'Kairos / Tao simülasyonu', 'ileri/hucum-denge'], ['hucumS', 'Kairos-S gölgesi (1000 $)', 'ileri/hucum-s'],
     ['demo', 'Demo kabul süreci', 'botlar/hucum/yonetim'], ['cbdr', 'EUR/USD CBDR', 'ileri/cbdr'], ['l876', '876 gölge', 'ileri/876'],
-    ['temettu', 'BIST temettü', 'ileri/temettu'], ['momentum', '2 haftalık momentum', 'ileri/momentum']];
+    ['temettu', 'BIST temettü', 'ileri/temettu'], ['momentum', '2 haftalık momentum', 'ileri/momentum'], ['kairos10x', 'Kairos 10× gölge hesabı', 'ileri/kairos-10x']];
   function durumCiz(modeller) {
     const kap = bul('ileriDurum');
     if (!kap || !AG.dom) return;
@@ -835,6 +917,8 @@
         m.hukumAlt ? el('span', { class: 'hint hint-sm mb-0', text: m.hukumAlt }) : null
       ]),
       m.rapor ? raporBolumu(m.rapor) : null,
+      m.tablo ? el('div', { class: 'mt-3' }, [AG.tablo.kur({ sinif: 'table-dense pf-tablo', basliklar: m.tablo.basliklar,
+        satirlar: m.tablo.satirlar.map(r => el('tr', null, r.map((h, i) => (i === 0 ? el('td', { class: 'fw-semibold', text: h }) : el('td', { class: 'sayi', text: h }))))) })]) : null,
       el('details', { class: 'hs-kat-mini mt-3' }, [
         el('summary', { text: `Ayrıntı${diger.length ? ` — ${diger.map(s => s.etiket).join(', ')}` : ''}` }),
         diger.length ? el('div', { class: 'ana-sayilar mt-2 mb-2' }, diger.map(kutu)) : null,
@@ -843,11 +927,11 @@
     ])]);
   }
 
-  function ciz(v, k, c, rr, g8, tm, mo, hs) {
+  function ciz(v, k, c, rr, g8, tm, mo, hs, k10) {
     takvimCiz(v, k, c, g8, tm, mo, hs);
-    grafiklerCiz(v, k, c, hs);
+    grafiklerCiz(v, k, c, hs, k10);
     const m = { bollinger: bollingerModel(v), hucumDenge: v && v.success ? hucumDengeModel(v, k) : { hata: 'Simülasyon raporu alınamadı.' },
-      demo: demoModel(k, rr), cbdr: cbdrModel(c), l876: l876Model(g8), temettu: temettuModel(tm), momentum: momentumModel(mo), hucumS: hucumSGolgeModel(hs) };
+      demo: demoModel(k, rr), cbdr: cbdrModel(c), l876: l876Model(g8), temettu: temettuModel(tm), momentum: momentumModel(mo), hucumS: hucumSGolgeModel(hs), kairos10x: kairos10xModel(k10) };
     kartCiz('btIleriBollinger', m.bollinger);
     kartCiz('ileriHucumDenge', m.hucumDenge);
     kartCiz('ileriDemoKabul', m.demo);
@@ -856,6 +940,7 @@
     kartCiz('ileriTemettu', m.temettu);
     kartCiz('ileriMomentum', m.momentum);
     kartCiz('ileriHucumS', m.hucumS);
+    kartCiz('ileriKairos10x', m.kairos10x);
     durumCiz(m);
   }
 
@@ -864,7 +949,7 @@
     if (!zorla && Date.now() - zaman < 60000) return;
     zaman = Date.now();
     const hataYaniti = (e) => ({ success: false, error: e.message });
-    const [v, k, c, rr, g8, tm, mo, hs] = await Promise.all([
+    const [v, k, c, rr, g8, tm, mo, hs, k10] = await Promise.all([
       AG.api.ileriBollinger().catch(hataYaniti),
       AG.api.ileriKabul ? AG.api.ileriKabul().catch(hataYaniti) : Promise.resolve(null),
       AG.api.ileriCbdr ? AG.api.ileriCbdr().catch(hataYaniti) : Promise.resolve(null),
@@ -872,12 +957,13 @@
       AG.api.ileri876 ? AG.api.ileri876().catch(hataYaniti) : Promise.resolve(null),
       AG.api.ileriTemettu ? AG.api.ileriTemettu().catch(hataYaniti) : Promise.resolve(null),
       AG.api.ileriMomentum ? AG.api.ileriMomentum().catch(hataYaniti) : Promise.resolve(null),
-      AG.api.ileriHucumS ? AG.api.ileriHucumS().catch(hataYaniti) : Promise.resolve(null)
+      AG.api.ileriHucumS ? AG.api.ileriHucumS().catch(hataYaniti) : Promise.resolve(null),
+      AG.api.ileriKairos10x ? AG.api.ileriKairos10x(true).catch(hataYaniti) : Promise.resolve(null)
     ]);
-    ciz(v, k, c, rr, g8, tm, mo, hs);
+    ciz(v, k, c, rr, g8, tm, mo, hs, k10);
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.ileri = { yukle, ciz, durumCiz, GRAFIK_YERI, bollingerModel, hucumDengeModel, demoModel, demoRaporModel, OLCUT_ADI, ucGunSatiri, d3Satiri, hucumSSatiri, takvimModel, grafikModeli, tarihAdi, cbdrModel, cbdrSiradaki, l876Model, temettuModel, momentumModel, hucumSGolgeModel, hucumSGrafikleri };
+  AG.pages.ileri = { yukle, ciz, durumCiz, GRAFIK_YERI, bollingerModel, hucumDengeModel, demoModel, demoRaporModel, OLCUT_ADI, ucGunSatiri, d3Satiri, hucumSSatiri, takvimModel, grafikModeli, tarihAdi, cbdrModel, cbdrSiradaki, l876Model, temettuModel, momentumModel, hucumSGolgeModel, hucumSGrafikleri, kairos10xModel, kairos10xGrafikleri };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.ileri;
 })(typeof window !== 'undefined' ? window : globalThis);

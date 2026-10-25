@@ -328,6 +328,7 @@
     ileriMomentum: () => al('/api/ileri/momentum'),
     /* 73.2 Kairos-S (1000 $) ayrı emirsiz gölgesi (deneme 972; lib/ileri/hucumSGolge.js) — son.json özeti, salt okur */
     ileriHucumS: () => al('/api/ileri/hucum-s'),
+    ileriKairos10x: (anlik) => al(`/api/ileri/kairos-10x${anlik ? '?anlik=1' : ''}`),
     /* 63.3 Sinyaller: BTC trendi + coin sepeti bugün ne diyor (lib/research/sinyaller.js; tasarımcı yönlendiricisinde) — yalnız okur */
     sinyaller: () => al('/api/sinyaller'),
 
