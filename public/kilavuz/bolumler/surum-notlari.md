@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.1 — DCA emri ikinci kez gönderilmez (2026-10-26) {#s77-1}
+- **Bot güvenliği:** bot yeniden başlarken borsada az önce dolmuş ama borsanın sorgusunda henüz görünmeyen bir DCA emri artık "gönderilmemiş" sayılıp ikinci kez gönderilmiyor. Bot birkaç dakika bekler, borsaya yeniden sorar; emir görünürse dolumu işler, görünmezse eskisi gibi yeniden kuyruğa alır. Bu bekleme kendiliğinden çözülür, elle bir şey yapmanız gerekmez.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)): botların mutabakat koduna dokunuldu; kuru denemede bütün botların kararları birebir aynı çıktı.
+
 ## 77.0 — Sermaye dağıtımı (2026-10-26) {#s77-0}
 ```
 
