@@ -38,6 +38,7 @@ Salt okunur tablo: **Bot · Durum · Hesap türü · Küçük hesap kipi · Hesa
 Özetin altındaki tablo her botun kaydını gösterir: **Bot · Kural · Hesap türü · Demo hesabı · Sermaye üst sınırı** ve işlem düğmesi. Buradan:
 
 - **Yeni bot** kurulur (Kairos tipi ya da Tao tipi; her zaman kâğıt hesapta başlar, PIN istemez) — adım adım: [Yeni bot oluşturmak](#/kilavuz/botlar/yeni-bot).
+- (74.6) **Model örneği** açılır: Nova, Lydia ya da Simurg'un ikinci kâğıt hesabı (aynı kararlar, ayrı sermaye; Lydia TL; başlangıç modelin ilk günü ya da yarın). Satırında yalnız **Kâğıt…** sermayesi, **Aç →** (kendi sayfası) ve **Arşivle…** vardır; demo hesabı ve demo sermayesi yoktur — [Model örnekleri](#/kilavuz/portfoy-botlari/model-ornegi).
 - Yeni botun **demo hesabı** bağlanır (acil PIN; aynı hesabı aynı anda yalnız bir bot kullanır) — [Demo hesabına bağlamak](#/kilavuz/botlar/bot-hesap).
 - **Sermaye üst sınırı** değişir (kâğıt: onay; demo artışı: acil PIN) — [Sermaye üst sınırı](#/kilavuz/botlar/bot-sermaye).
 - Kâğıttaki durmuş yeni bot **arşivlenir** / arşivden **geri getirilir** (dosyalar silinmez) — [Arşivle ve geri getir](#/kilavuz/botlar/bot-arsiv).

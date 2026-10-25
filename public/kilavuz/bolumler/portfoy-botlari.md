@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Model portföylerin **kâğıt hesapları** Kairos ve Tao gibi izlenen botlardır. Yan menüde **Botlar › Portföy botları** altında üç öğe — her biri **kendi sayfası**, sayfa içinde sekme yok:
+Model portföylerin **kâğıt hesapları** Kairos ve Tao gibi izlenen botlardır. Yan menüde **Botlar › Portföy botları** altında üç öğe — her biri **kendi sayfası**, sayfa içinde sekme yok. Açtığınız [model örnekleri](#/kilavuz/portfoy-botlari/model-ornegi) de aynı yerde, modelinin hemen altında bir kademe içeride ayrı öğe olarak listelenir:
 
 | Menüde | Adres | Ne yapar | Kıyas (al-tut) |
 |---|---|---|---|
@@ -12,8 +12,25 @@ Model portföylerin **kâğıt hesapları** Kairos ve Tao gibi izlenen botlardı
 
 Kâğıt hesap = botun **sanal hesabı** (canlı hesap değil): modelin ay sonu kararlarını gerçek açılış fiyatından uygular (**tam adet**; ABD'de kesirli hisse ayarı açıksa — 73.4'ten beri varsayılan — bölünmüş adet), Midas komisyonu öder (ABD emir başına 1,5 $, BIST yok), temettü alır, bölünmede adet değişir; nakde faiz yoktur. Yeni karar üretmez — kararlar modelinkiler. Telefondan da tam okunur ("tutarları gizle" açıksa tutarlar "—", grafik yüzde). Kendi gerçek hesabına uygulamak için emirler Portföy › [Modeller](#/kilavuz/model-portfoy) › Bu ay'da.
 
+## Model örnekleri — ikinci kâğıt hesap (74.6) {#model-ornegi}
+
+Bir modelin kararlarını **farklı bir sermayeyle** de izlemek isterseniz (ör. Nova'yı 5 000 $ ile: tam adet ve komisyon küçük hesapta ne kadar kaybettirir?) aynı modelden bir **örnek** açılır. Örnek, modelin **aynı aylık kararlarını** kullanır; **kâğıt hesabı ayrıdır** (kendi sermayesi, kendi işlemleri, kendi grafiği). Ana kâğıt hesap (yukarıdaki üç sayfa) değişmez.
+
+1. **Ayarlar › Botlar › Bot kayıtları › Yeni bot**: **Kural** listesinden **Nova örneği** (USD), **Lydia örneği** (TL) ya da **Simurg örneği** (USD) seçin.
+2. **Başlangıç**: **modelin ilk günü** (ana kâğıt hesapla aynı dönem — iki sermayeyi baştan karşılaştırmak için) ya da **yarından itibaren** (bugünden sonraki kararlarla, ileriye doğru).
+3. **Kâğıt sermayesi** (modelin para biriminde; Lydia'da TL), **kimlik** (küçük harf/rakam, ilk iki harf her botta farklı; "nova" gibi bot adları kimlik olamaz) ve **görünen ad** (ör. "Nova-5k") → **Oluştur…** → onay. PIN istenmez.
+4. Örnek hemen **yan menüde** görünür: Botlar › Portföy botları altında, modelinin (Nova / Lydia / Simurg) altında bir kademe içeride kendi adıyla (masaüstünde ve telefon menüsünde aynı). Arşivlenen örnek menüden düşer. İlk hesap tasarımcının **sonraki 30 dakikalık hesabında** yapılır. Örnek **kendi sayfasında** açılır (`#/botlar/<kimlik>`): bu sayfayla aynı düzen; başlıkta "Nova örneği" ve başlangıç rozeti, altında **"Nova kâğıt hesapları: Nova (ana) · Nova-5k"** geçiş satırı. Botlar › [Özet](#/kilavuz/botlar/ozet)'te, Ayarlar › Botlar özetinde ve Ana sayfanın "Portföy botları" satırında da görünür.
+
+- **Yalnız kâğıt:** model örneği gerçek emir vermez; bu sürümde **borsa hesabı bağlanmaz, demo ya da canlı moda geçilmez** (denerseniz açık bir ret yanıtı gelir). Başlat/Durdur, acil fren ve sağlık sinyali yoktur — model botları gibi ay sonu kararıyla kendiliğinden işler.
+- **Kurallar ana kâğıt hesapla aynı:** tam adet (ABD'de kesirli hisse ayarı Portföy › Modeller › Bu ay › Ayarlar'dan gelir), komisyon, temettü, bölünme. "Model ↔ kâğıt fark" örneğin başlangıcına göre hesaplanır.
+- **Sermaye** Bot kayıtları tablosundaki **Kâğıt…** düğmesiyle değişir (onay); değişiklik kâğıt hesapta o gün **para yatırma / çekme** olarak işlenir, getiri bozulmaz.
+- **Arşivle…** örneği listelerden kaldırır ve hesaplamayı durdurur; kaydı ve kâğıt hesap dosyaları silinmez, **Geri getir…** ile döner (kâğıt hesap baştan yeniden hesaplanır).
+- Alım-satım olan her gün için Telegram'a örneğin kendi adıyla özet gider (tutar yok, yalnız emir sayısı ve yüzde); günlük/haftalık raporun "Portföy botları" bölümünde de yer alır.
+- Örnek kaydı (`live/botlar/<kimlik>.json`) ve kâğıt hesabı (`tasarimci/ornekler/<kimlik>/`) **kişisel veridir**: yedeğe ve taşıma dosyasına girer.
+
 ## Ne zaman kullanılır {#ne-zaman}
 
+- Aynı modeli iki farklı sermayeyle karşılaştırmak için: [model örneği](#/kilavuz/portfoy-botlari/model-ornegi).
 - Ay sonu kararından sonra: bot neyi aldı, neyi alamadı (neden), neyi sattı.
 - "Model ↔ kâğıt fark" büyüyorsa: tam adet ve komisyon ne kadar kaybettiriyor.
 - Bir hissede ne zaman, kaça alıp satıldığını görmek için (hisse grafiği).

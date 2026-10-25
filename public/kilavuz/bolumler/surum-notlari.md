@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.6 — Model örnekleri: Nova, Lydia, Simurg için ikinci kâğıt hesap (2026-10-25) {#s74-6}
+
+- **Yeni: [Model örnekleri](#/kilavuz/portfoy-botlari/model-ornegi)** — Ayarlar › Botlar › Bot kayıtları › Yeni bot listesinde **Nova örneği** (USD), **Lydia örneği** (TL) ve **Simurg örneği** (USD). Örnek modelin **aynı kararlarını** kullanır, **kâğıt hesabı ayrıdır** (kendi sermayesi, işlemleri, grafiği). Başlangıç: modelin ilk günü (ana kâğıt hesapla aynı dönem) ya da yarından itibaren. PIN istemez, onay ister.
+- Örnek **yan menüde ayrı öğe** (Botlar › Portföy botları, modelinin altında; arşivlenince düşer) ve **kendi sayfasında** (#/botlar/<kimlik>) portföy botları gibi görünür; Botlar › Özet'te, Ayarlar › Botlar özetinde, Ana sayfada, raporda ve Telegram'ın kâğıt hesap alım-satım özetinde de. Portföy botu sayfasının başlığında "bu modelin kâğıt hesapları" geçiş satırı.
+- **Yalnız kâğıt:** model örneğine bu sürümde borsa hesabı bağlanmaz, demo ya da canlı moda geçilmez (açık ret). Kâğıt sermayesi Bot kayıtları'ndan değişir (o gün para yatırma/çekme olarak işlenir); arşivle / geri getir dosyaları silmez.
+- Ana kâğıt hesaplar (Nova, Lydia, Simurg) ve Kairos / Tao **aynı**: kâğıt hesap kodu örnek verilmediğinde eskisiyle birebir çalışır (eski ve yeni kodla aynı girdiler — sonuç ve yazılan dosyalar aynı).
+- Bot adları (kairos, tao, nova, lydia, simurg) artık yeni botun kimliği olamaz (ör. "nova2" olur).
+
 ## 74.5 — Panelden yeni bot (kâğıt), hesap bağlama, sermaye üst sınırı, arşiv (2026-10-25) {#s74-5}
 
 - **Yeni: [Yeni bot oluşturmak](#/kilavuz/botlar/yeni-bot)** — Ayarlar › Botlar › **Bot kayıtları**. Yalnız sınanmış kurallar: **Kairos tipi** (küçük sermaye kuralı Kairos-S seçenek olarak) ya da **Tao tipi**. Yeni bot her zaman **kâğıt hesapta** ve durmuş başlar (gerçek emir yok); PIN istemez, onay ister. Botlar sayfasında, Ana sayfada, öz denetimde, raporda, Telegram'da ve Hesaplar'da kendi adıyla görünür.

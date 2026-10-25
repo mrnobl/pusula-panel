@@ -66,6 +66,12 @@
         for (const b of r.botlar) if (b && l.includes(b.kimlik)) BOT_BILGI[b.kimlik] = b;
         // 74.5: kullanıcının oluşturduğu botların adları ortak sözlüğe (Ana sayfa, Hesaplar, işlem listeleri de görsün)
         if (AG.botAd && AG.botAd.kaydet) AG.botAd.kaydet(r.botlar);
+        // 74.6: MODEL ÖRNEKLERİ (Nova / Lydia / Simurg'un ikinci kâğıt hesabı) — bindirme sekmelerine (ADLAR) GİRMEZ; portföy botu sayfası
+        // (js/pages/portfoyBotlari.js) ve Botlar › Özet onları model botları gibi gösterir. Sunucu eskiyse `ornekler` yok → boş liste.
+        ORNEKLER.length = 0; ORNEKLER.push(...(Array.isArray(r.ornekler) ? r.ornekler.filter(o => o && /^[a-z][a-z0-9]{1,15}$/.test(String(o.kimlik || '')) && !o.arsiv) : []));
+        if (AG.botAd && AG.botAd.kaydet) AG.botAd.kaydet(ORNEKLER);
+        if (AG.pages && AG.pages.portfoyBotlari && AG.pages.portfoyBotlari.ornekKaydet) AG.pages.portfoyBotlari.ornekKaydet(ORNEKLER);
+        menuOrnekleriCiz();   // 74.6: yan menüde (masaüstü + telefon çekmecesi — aynı #yanMenu) modelinin hemen altında
         // 74.5: arşivlenen botun kartı sayfadan kalkar (dosyaları sunucuda durur; Ayarlar › Botlar'dan geri getirilir)
         if (doc && doc.querySelectorAll) doc.querySelectorAll('article.bot-kart[id^="botKart-"]').forEach(k => { if (!l.includes(k.id.slice(8)) && k.parentNode) k.parentNode.removeChild(k); });
         listeZamani = Date.now();
@@ -76,6 +82,30 @@
   }
   /** 68.8: Botlar › Portföy botları (js/pages/portfoyBotlari.js) — Ayarlar › Botlar özetinde salt bağlantı satırı. */
   const PORTFOY_BOTLARI = ['m-qqq-m10', 'm-bist-m10', 'm-837'];
+  /** 74.6: etkin model örnekleri (/api/botlar `ornekler` satırları; dizi yerinde güncellenir). */
+  const ORNEKLER = [];
+  /**
+   * 74.6 (kullanıcı kararı): model örnekleri YAN MENÜDE ayrı öğe — Botlar › Portföy botları altında, modelinin (Nova / Lydia / Simurg)
+   * hemen ardından, aynı .menu-alt deseniyle (`data-rota="botlar/<kimlik>"` → rota.js işaretler; telefon çekmecesi aynı #yanMenu).
+   * Her liste tazelenişinde eski örnek öğeleri kaldırılıp yeniden kurulur: arşivlenen düşer, oluşturulan eklenir. Öğeler AG.dom.el ile kurulur (HTML dizgesi yok).
+   */
+  function menuOrnekleriCiz() {
+    if (!doc || !doc.querySelector) return;
+    const kap = doc.querySelector('#yanMenu [data-menu="botlar"] .menu-altlar');
+    if (!kap) return;
+    kap.querySelectorAll('a.menu-alt[data-ornek]').forEach(a => { if (a.parentNode) a.parentNode.removeChild(a); });
+    for (const o of ORNEKLER) {
+      const model = kap.querySelector(`a.menu-alt[data-rota="botlar/${o.model}"]`);
+      if (!model) continue;
+      let son = model;   // aynı modelin önceki örneklerinden sonra (oluşturma sırası)
+      while (son.nextElementSibling && son.nextElementSibling.getAttribute && son.nextElementSibling.getAttribute('data-ornek-model') === o.model) son = son.nextElementSibling;
+      const a = el('a', { class: 'menu-alt menu-alt-ornek', href: `#/botlar/${o.kimlik}`, 'data-rota': `botlar/${o.kimlik}`, 'data-ornek': o.kimlik, 'data-ornek-model': o.model,
+        title: `${o.modelAd || AD(o.model)} modelinin kâğıt örneği (aynı kararlar, ayrı sermaye)`, text: o.adGorunen || o.kimlik });
+      kap.insertBefore(a, son.nextSibling);
+    }
+    // Öğeler yeniden kurulduysa işaretler tazelensin (örnek sayfası açıksa yeni öğe yansın)
+    try { if (AG.rota && AG.rota.gecerli && AG.rota.gecerli() === 'botlar' && AG.rota.altDegisti) AG.rota.altDegisti(AG.rota.alt()); } catch (e) { /* rota henüz yok */ }
+  }
   const GRAFIK_MS = 5 * 60000;
   let durumZamani = 0;
   const acikMenu = {};
@@ -323,8 +353,11 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
             el('td', { class: 'sayi', text: E != null ? `${D().para(E)} USDT` : '—' }),
             el('td', null, [el('a', { href: `#/botlar/${ad}/yonetim`, class: 'no-underline', text: 'Yönet →' })])]);
         }).concat(PORTFOY_BOTLARI.map((id) => el('tr', null, [el('td', { class: 'fw-semibold', text: AD(id), title: AG.botAd ? AG.botAd.anlam(id) : null }), el('td', { text: 'ay sonu kararıyla çalışır' }), el('td', { text: 'kâğıt hesap' }),
-          el('td', { text: '—' }), el('td', { class: 'sayi', text: '—' }), el('td', null, [el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: 'Aç →' })])]))) }),
-      el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Portföy botları (model portföylerin kâğıt hesapları) yönetilmez: kararları ay sonu kuralından gelir, sermayesi Portföy › Modeller › Bu ay › Ayarlar\'da.' })
+          el('td', { text: '—' }), el('td', { class: 'sayi', text: '—' }), el('td', null, [el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: 'Aç →' })])])))
+          // 74.6: model örnekleri (ikinci kâğıt hesaplar) — portföy botları gibi
+          .concat(ORNEKLER.map((o) => el('tr', null, [el('td', { class: 'fw-semibold', text: o.adGorunen || o.kimlik, title: `${o.modelAd || AD(o.model)} modelinin kâğıt örneği` }), el('td', { text: 'ay sonu kararıyla çalışır' }), el('td', { text: `kâğıt hesap · ${o.modelAd || AD(o.model)} örneği` }),
+            el('td', { text: '—' }), el('td', { class: 'sayi', text: '—' }), el('td', null, [el('a', { href: `#/botlar/${o.kimlik}`, class: 'no-underline', text: 'Aç →' })])]))) }),
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Portföy botları (model portföylerin kâğıt hesapları) yönetilmez: kararları ay sonu kuralından gelir, sermayesi Portföy › Modeller › Bu ay › Ayarlar\'da. Model örneklerinin (ikinci kâğıt hesaplar) sermayesi ve arşivi: aşağıda Bot kayıtları.' })
     ]);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
@@ -883,7 +916,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
    * Botlar › Portföy botları). Sayfa açıkken bölüme .pbot-acik konur — Hücum/Denge kapları CSS ile gizlenir (kendi
    * is-hidden durumları bozulmaz; geri dönünce aynı görünüm açılır).
    */
-  const portfoyBotuMu = (alt) => !!(AG.pages && AG.pages.portfoyBotlari && AG.pages.portfoyBotlari.SIRA.includes(alt));
+  const portfoyBotuMu = (alt) => !!(AG.pages && AG.pages.portfoyBotlari && (AG.pages.portfoyBotlari.SIRA.includes(alt) || (AG.pages.portfoyBotlari.ornekMu && AG.pages.portfoyBotlari.ornekMu(alt))));
   function portfoyGorunumu(acik) {
     const b = bul('tab-botlar');
     if (b) b.classList.toggle('pbot-acik', !!acik);
@@ -1009,6 +1042,17 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       if (portfoyBotuMu(alt)) { ozetGorunumu(false); portfoyGorunumu(true); AG.pages.portfoyBotlari.ac(alt); return; }
       // 71.0: #/botlar ve #/botlar/ozet → Botlar › Özet (kullanıcı S7: Botlar ana sayfası) (kartlar + karşılaştırma tablosu, js/pages/botGetiri.js)
       if (alt === 'ozet' || alt === '') { portfoyGorunumu(false); ozetGorunumu(true); return; }
+      // 74.6: bilinmeyen kimlik bir MODEL ÖRNEĞİ olabilir (ilk açılışta liste henüz yüklenmemiş) — liste tazelenip yeniden bakılır
+      if (alt && !ADLAR.includes(alt) && /^[a-z][a-z0-9]{1,15}$/.test(alt)) {
+        listeYukle(true).then(() => {
+          if (portfoyBotuMu(alt)) { ozetGorunumu(false); portfoyGorunumu(true); AG.pages.portfoyBotlari.ac(alt); return; }
+          ozetGorunumu(false); portfoyGorunumu(false);
+          if (GORUNUMLER.includes(g)) gorunum = g;
+          if (ADLAR.includes(alt) && alt !== secili) sec(alt); else adresYaz(secili);
+          gorunumUygula();
+        });
+        return;
+      }
       ozetGorunumu(false);
       portfoyGorunumu(false);
       if (GORUNUMLER.includes(g)) gorunum = g;
@@ -1022,6 +1066,9 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       d.addEventListener('click', () => gorunumSec(d.getAttribute('data-bot-gorunum')));
     });
     if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', baglaGorunum); else baglaGorunum();
+    // 74.6: açılışta bir kez bot listesi — yan menüdeki model örnekleri her sayfada görünsün (Botlar açılmasa da)
+    const ilkListe = () => { if (global.setTimeout) global.setTimeout(() => { listeYukle(false).catch(() => null); }, 1500); };
+    if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', ilkListe); else ilkListe();
   }
 
   AG.pages = AG.pages || {};
@@ -1030,5 +1077,5 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye, islemler: r.islemler };
     defterCiz(ad); grafikCiz(ad, true); sayilarCiz(ad); aylikCiz(ad);
   }
-  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, ORNEKLER, menuOrnekleriCiz, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);

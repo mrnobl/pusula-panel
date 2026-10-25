@@ -335,7 +335,10 @@
       gitDugme('Modeller ›', () => portfoyAc(hedef || 'nasdaq'), 'btnAnaBuAy'),
       // 68.8: modellerin kâğıt hesapları Botlar'da kendi sayfasında (js/pages/portfoyBotlari.js)
       el('p', { class: 'hint hint-sm mb-0 mt-2', id: 'anaPortfoyBotlari' }, [el('span', { text: 'Portföy botları (kâğıt hesap): ' }),
-        ...[['m-qqq-m10', 'Nova'], ['m-bist-m10', 'Lydia'], ['m-837', 'Simurg']].flatMap(([id, ad], i) => [i ? el('span', { text: ' · ' }) : null, el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: BA(id, ad), title: AG.botAd ? AG.botAd.tam(id) : null })]).filter(Boolean)])
+        ...[['m-qqq-m10', 'Nova'], ['m-bist-m10', 'Lydia'], ['m-837', 'Simurg'],
+          // 74.6: model örnekleri (ikinci kâğıt hesaplar; Botlar sayfasının listesi)
+          ...((AG.pages && AG.pages.botlar && AG.pages.botlar.ORNEKLER) || []).map(o => [o.kimlik, o.adGorunen || o.kimlik])]
+          .flatMap(([id, ad], i) => [i ? el('span', { text: ' · ' }) : null, el('a', { href: `#/botlar/${id}`, class: 'no-underline', text: BA(id, ad), title: AG.botAd ? AG.botAd.tam(id) : null })]).filter(Boolean)])
     ]);
   }
 

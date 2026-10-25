@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.5';
+const APP_VERSION = '74.6';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -986,6 +986,26 @@ try {
   for (const [k, x] of Object.entries(BOT_KAYIT.arsivliler())) require('./lib/botAdlari').kaydet(k, x.adGorunen || k);   // geçmiş satırlarında ad
 } catch (e) { db.addLog('ERROR', `[BOT KAYDI] yeni botlar yüklenemedi: ${e.message}`); }
 /**
+ * 74.6 (A1 + 2. faz parça 2c — TASARIM-MAKINE-HESAP-BOT §2.6 "Model şablonları"): MODEL ÖRNEKLERİ (Nova / Lydia / Simurg'un ikinci
+ * kâğıt hesabı). Bot kaydı (live/botlar/<kimlik>.json, motor 'model') TEK KAYNAK; tasarımcı tarafına yansıması
+ * <tasarimci>/ornekler/<kimlik>/sermaye.json (lib/tasarimci/ornekler.js yansit) — tasarımcı tiki (alt süreç) yalnız onu okur ve
+ * ornekler/<kimlik>/kagit.json'u yazar. Model örneği BİNDİRME BOTU DEĞİLDİR: BINDIRME_ADLAR / bindirmeler / sağlık sinyali / öz denetim /
+ * veri kalitesi / emir uçlarında YOK (model botları da oralarda yok); görüldüğü yerler model botlarıyla aynı: Botlar › portföy botu sayfası,
+ * Botlar › Özet, rapor (kâğıt hesaplar), Telegram kâğıt hesap alım-satım özeti. Demo/canlı ve borsa hesabı bu sürümde YOK (açık ret).
+ */
+const ORNEKLER_LIB = require('./lib/tasarimci/ornekler');
+const tasarimciDefter = require('./lib/tasarimci/defter');
+const modelOrnegiMi = (k) => !!(BOT_KAYIT && botKayitLib.modelMi(BOT_KAYIT.kayit(k) || BOT_KAYIT.arsivKayit(k)));
+/** Kayıt → tasarımcı yansıması (sermaye.json). Hata yutulmaz (çağıran karar verir). */
+const ornekYansit = (kayit) => ORNEKLER_LIB.yansit(tasarimciDefter, kayit);
+try {
+  for (const x of [...Object.values(BOT_KAYIT.modelKayitlari()), ...Object.values(BOT_KAYIT.arsivliler()).filter(botKayitLib.modelMi)]) {
+    require('./lib/botAdlari').kaydet(x.kimlik, x.adGorunen || x.kimlik);
+    try { if (ornekYansit(x)) db.addLog('INFO', `[BOT KAYDI] ${x.adGorunen} (${x.kimlik}): model örneğinin tasarımcı yansıması kayıttan yenilendi`); }
+    catch (e) { db.addLog('ERROR', `[BOT KAYDI] ${x.kimlik}: model örneği yansıtılamadı — ${e.message}`); }
+  }
+} catch (e) { db.addLog('ERROR', `[BOT KAYDI] model örnekleri yüklenemedi: ${e.message}`); }
+/**
  * Y1 (61.8, DENETIM-CANLI-ALTYAPI): açılışta internet/DNS henüz yoksa bot bir daha denenmiyordu (panelden "Başlat"a kadar ölü).
  * Artık 1 · 2 · 5 · 10 · 30 dk (sonra 30 dk'da bir) yeniden denenir; ALARM ilk hatada değil, 15 dk süren başarısızlıkta
  * (internet o sırada gelmiş olur), bir kez. Bağlanınca alarm gitmişse "bağlantı kuruldu" bilgisi. Kullanıcı elle bağlarsa/durdurursa biter.
@@ -1101,6 +1121,8 @@ if (!ARASTIRMA_MODU) {
 /** `:ad` → bot kaydı; bilinmeyen ad 404. */
 function bindirmeBul(req, res) {
   const b = bindirmeler[req.params.ad];
+  // 74.6: model örneği bindirme botu değil — demo/canlı, başlat/durdur, acil fren yok (kâğıt hesap tasarımcı tikinde hesaplanır)
+  if (!b && modelOrnegiMi(String(req.params.ad || ''))) { res.status(409).json({ success: false, modelOrnegi: true, error: `${botEtiketi(req.params.ad)}: ${botKayitLib.MODEL_ORNEK_RED}. Kâğıt hesabı Botlar sayfasında (#/botlar/${req.params.ad}).` }); return null; }
   if (!b) { res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad} (${BINDIRME_ADLAR.join(' | ')})` }); return null; }
   return b;
 }
@@ -1163,11 +1185,27 @@ function botSatiri(ad, k, b, durumlar) {
 function botListesi({ arsiv = false } = {}) {
   const durumlar = BOT_KAYIT ? BOT_KAYIT.durum() : {};
   const l = BINDIRME_ADLAR.map(ad => botSatiri(ad, BOT_KAYIT ? BOT_KAYIT.kayit(ad) : null, bindirmeler[ad], durumlar));
-  if (arsiv && BOT_KAYIT) for (const [ad, k] of Object.entries(BOT_KAYIT.arsivliler())) l.push(botSatiri(ad, k, null, durumlar));
+  if (arsiv && BOT_KAYIT) for (const [ad, k] of Object.entries(BOT_KAYIT.arsivliler())) if (!botKayitLib.modelMi(k)) l.push(botSatiri(ad, k, null, durumlar));
+  return l;
+}
+/** 74.6: model örneği satırı (GET /api/botlar `ornekler`; `botlar` dizisi geriye uyum için YALNIZ bindirme botları). */
+function ornekSatiri(k, durumlar = {}) {
+  const sb = botSablonlari.sablon(k.sablon) || {};
+  const BA = require('./lib/botAdlari');
+  return { kimlik: k.kimlik, adGorunen: k.adGorunen || k.kimlik, motor: 'model', model: k.model, modelAd: BA.ad(k.model) || k.model, sablon: k.sablon,
+    aciklama: sb.aciklama || null, mod: 'kagit', calisiyor: false, para: k.para || 'USD', sermaye: { ...k.sermaye }, baslangic: k.baslangic || null,
+    kayit: durumlar[k.kimlik] || { durum: k.arsiv ? 'arsiv' : 'kayit', neden: null }, hesap: { ...k.hesap }, makine: k.makine || null,
+    yeni: true, arsiv: k.arsiv || null, arsivlenebilir: !k.arsiv, canliKapali: true, demoKapali: true, olusturma: k.olusturma || null, href: `#/botlar/${k.kimlik}` };
+}
+function ornekListesi({ arsiv = false } = {}) {
+  if (!BOT_KAYIT) return [];
+  const durumlar = BOT_KAYIT.durum();
+  const l = Object.values(BOT_KAYIT.modelKayitlari()).map(k => ornekSatiri(k, durumlar));
+  if (arsiv) for (const k of Object.values(BOT_KAYIT.arsivliler())) if (botKayitLib.modelMi(k)) l.push(ornekSatiri(k, durumlar));
   return l;
 }
 app.get('/api/botlar', (req, res) => {
-  try { res.json({ success: true, surum: botKayitLib.SURUM, kaynak: 'kayit', botlar: botListesi({ arsiv: String((req.query || {}).arsiv || '') === '1' }) }); }
+  try { const arsiv = String((req.query || {}).arsiv || '') === '1'; res.json({ success: true, surum: botKayitLib.SURUM, kaynak: 'kayit', botlar: botListesi({ arsiv }), ornekler: ornekListesi({ arsiv }) }); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 app.get('/api/botlar/sablonlar', (req, res) => res.json({ success: true, sablonlar: botSablonlari.liste(), olusturma: true,
@@ -1219,8 +1257,20 @@ app.post('/api/botlar', (req, res) => {
   if (g.onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
   try {
     const BA = require('./lib/botAdlari');
-    const kayit = BOT_KAYIT.yeni({ sablon: g.sablon, kimlik: g.kimlik, adGorunen: g.adGorunen, sermaye: g.sermaye, kucukSermaye: g.kucukSermaye },
+    const sb0 = botSablonlari.sablon(String(g.sablon || ''));
+    if (sb0 && sb0.motor === 'model' && (g.hesap != null || (g.mod != null && g.mod !== 'kagit'))) return res.status(409).json({ success: false, error: botKayitLib.MODEL_ORNEK_RED });
+    const kayit = BOT_KAYIT.yeni({ sablon: g.sablon, kimlik: g.kimlik, adGorunen: g.adGorunen, sermaye: g.sermaye, kucukSermaye: g.kucukSermaye, ...(sb0 && sb0.motor === 'model' ? { baslangic: g.baslangic } : {}) },
       { dolu: doluAdlar(), takma: (k) => !!BA.kimlik(k) });
+    if (botKayitLib.modelMi(kayit)) {
+      // 74.6: model örneği — bindirme botu KURULMAZ; tasarımcı yansıması yazılır (kâğıt hesap tasarımcının sonraki tikinde)
+      try { ornekYansit(kayit); }
+      catch (e) { try { BOT_KAYIT.arsivle(kayit.kimlik, `kurulamadı: ${e.message}`); } catch { /* */ } throw Object.assign(new Error(`model örneği kurulamadı (kayıt arşive alındı): ${e.message}`), { kod: 500 }); }
+      BA.kaydet(kayit.kimlik, kayit.adGorunen);
+      const modelAd = BA.ad(kayit.model) || kayit.model, birim = kayit.para === 'TRY' ? 'TL' : 'USD';
+      db.addLog('INFO', `[BOTLAR] yeni model örneği: ${kayit.adGorunen} (${kayit.kimlik}, ${modelAd} örneği, kâğıt sermayesi ${kayit.sermaye.kagit} ${birim}, başlangıç ${kayit.baslangic || 'modelin ilk günü'}) — kâğıt hesap tasarımcının sonraki tikinde`);
+      portfoyBildirici.gonder('bilgi', `Yeni model örneği: ${kayit.adGorunen}`, [`${modelAd} modelinin ikinci kâğıt hesabı (aynı kararlar, ayrı sermaye; gerçek emir yok).`, 'Siz oluşturmadıysanız: Ayarlar › Botlar › Arşivle.']);
+      return res.json({ success: true, bot: ornekSatiri(kayit, BOT_KAYIT.durum()) });
+    }
     try { botEkle(kayit.kimlik); }
     catch (e) { try { BOT_KAYIT.arsivle(kayit.kimlik, `kurulamadı: ${e.message}`); } catch { /* */ } throw Object.assign(new Error(`bot kurulamadı (kayıt arşive alındı): ${e.message}`), { kod: 500 }); }
     db.addLog('INFO', `[BOTLAR] yeni kâğıt bot: ${kayit.adGorunen} (${kayit.kimlik}, ${botSablonlari.sablon(kayit.sablon).ad || kayit.sablon}, üst sınır ${kayit.sermaye.kagit} USD) — durmuş; Başlat ile çalışır`);
@@ -1239,6 +1289,7 @@ function yeniBotBul(req, res, { goc = false } = {}) {
 /** POST /api/botlar/:k/hesap { mod: 'demo', hesap: <Anahtarlar kimliği> | null, pin, onay: true } — acil PIN + onay. */
 app.post('/api/botlar/:k/hesap', (req, res) => {
   if (botYerelDegil(req, res)) return;
+  if (modelOrnegiMi(String(req.params.k || ''))) return res.status(409).json({ success: false, error: botKayitLib.MODEL_ORNEK_RED });   // 74.6
   const b = yeniBotBul(req, res); if (!b) return;
   const g = req.body || {};
   const mod = String(g.mod || '');
@@ -1271,6 +1322,7 @@ app.post('/api/botlar/:k/hesap', (req, res) => {
  */
 app.post('/api/botlar/:k/sermaye', (req, res) => {
   if (botYerelDegil(req, res)) return;
+  if (modelOrnegiMi(String(req.params.k || ''))) return ornekSermaye(req, res);   // 74.6
   const b = yeniBotBul(req, res, { goc: true }); if (!b) return;
   const g = req.body || {};
   const mod = String(g.mod || '');
@@ -1306,10 +1358,43 @@ app.post('/api/botlar/:k/sermaye', (req, res) => {
     res.json({ success: true, mod, eski: simdiki, tutar: t });
   } catch (e) { botHata(res, e); }
 });
+/**
+ * 74.6: model örneğinin kâğıt sermayesi { mod: 'kagit', tutar, onay: true } — PIN yok (kâğıt). Kâğıt hesap değişikliği o gün para
+ * yatırma/çekme olarak işler (lib/tasarimci/kagit.js tikHesapla: getiri bozulmaz). demo/canlı 409.
+ */
+function ornekSermaye(req, res) {
+  const k = String(req.params.k || ''), g = req.body || {};
+  const kayit = BOT_KAYIT.kayit(k);
+  if (!kayit) return res.status(404).json({ success: false, error: 'model örneği arşivde — önce geri getirin' });
+  if (String(g.mod || '') !== 'kagit') return res.status(409).json({ success: false, error: botKayitLib.MODEL_ORNEK_RED });
+  if (g.onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+  const tutar = typeof g.tutar === 'string' && /^\d+(\.\d{1,2})?$/.test(g.tutar.trim()) ? +g.tutar.trim() : g.tutar;
+  const sh = botKayitLib.sermayeHatasi(tutar);
+  if (sh) return res.status(400).json({ success: false, error: kayit.para === 'TRY' ? sh.replace(/USD/g, 'TL') : sh });
+  const t = Math.round(tutar * 100) / 100, eski = kayit.sermaye.kagit;
+  if (t === eski) return res.json({ success: true, degismedi: true, tutar: t });
+  try {
+    const yeni = BOT_KAYIT.guncelle(k, (c) => { c.sermaye = { ...c.sermaye, kagit: t }; }, 'kâğıt sermayesi');
+    ornekYansit(yeni);
+    db.addLog('INFO', `[BOTLAR] ${kayit.adGorunen}: model örneğinin kâğıt sermayesi ${eski} → ${t} ${kayit.para === 'TRY' ? 'TL' : 'USD'} (kâğıt hesapta bugün para ${t > eski ? 'yatırma' : 'çekme'} olarak işlenir)`);
+    res.json({ success: true, mod: 'kagit', eski, tutar: t, para: kayit.para || 'USD' });
+  } catch (e) { botHata(res, e); }
+}
 /** POST /api/botlar/:k/arsivle { onay: true } — yalnız kâğıtta ve durmuş yeni bot; dosyalar SİLİNMEZ (kayıtta arsiv, bot dizini yerinde). */
 app.post('/api/botlar/:k/arsivle', (req, res) => {
   if (botYerelDegil(req, res)) return;
   if (!yeniBotMu(String(req.params.k || ''))) return res.status(409).json({ success: false, error: 'Kairos ve Tao arşivlenemez' });
+  if (modelOrnegiMi(String(req.params.k || ''))) {
+    // 74.6: model örneği — kayıtta arsiv + yansımada arsiv (tasarımcı hesaplamaz); kâğıt hesap dosyaları SİLİNMEZ
+    if ((req.body || {}).onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+    try {
+      const k = String(req.params.k), ad = botEtiketi(k);
+      const x = BOT_KAYIT.arsivle(k, 'panel');
+      ornekYansit(x);
+      db.addLog('INFO', `[BOTLAR] ${ad} (${k}) model örneği arşivlendi — kayıt ve kâğıt hesap dosyaları silinmedi (tasarimci/ornekler/${k}); geri getirilebilir`);
+      return res.json({ success: true, arsiv: true });
+    } catch (e) { return botHata(res, e); }
+  }
   const b = yeniBotBul(req, res); if (!b) return;
   if ((req.body || {}).onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
   if (b.mod !== 'kagit') return res.status(409).json({ success: false, error: 'yalnız kâğıt moddaki bot arşivlenir — önce kâğıda dönün' });
@@ -1328,7 +1413,13 @@ app.post('/api/botlar/:k/geri-getir', (req, res) => {
   const k = String(req.params.k || '');
   if ((req.body || {}).onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
   try {
-    BOT_KAYIT.geriGetir(k);
+    const x = BOT_KAYIT.geriGetir(k);
+    if (botKayitLib.modelMi(x)) {   // 74.6: model örneği — yansıma güncellenir, bindirme botu kurulmaz
+      ornekYansit(x);
+      require('./lib/botAdlari').kaydet(k, x.adGorunen || k);
+      db.addLog('INFO', `[BOTLAR] ${botEtiketi(k)} (${k}) model örneği arşivden geri getirildi — kâğıt hesap sonraki tikte yeniden hesaplanır`);
+      return res.json({ success: true, bot: ornekSatiri(x, BOT_KAYIT.durum()) });
+    }
     botEkle(k);
     db.addLog('INFO', `[BOTLAR] ${botEtiketi(k)} (${k}) arşivden geri getirildi (kâğıt, durmuş)`);
     res.json({ success: true, bot: botSatiri(k, BOT_KAYIT.kayit(k), bindirmeler[k], BOT_KAYIT.durum()) });

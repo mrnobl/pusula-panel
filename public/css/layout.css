@@ -246,6 +246,9 @@
   letter-spacing: 0.06em;
 }
 
+/* 74.6: model örneği (modelinin altında, bir kademe içeride). */
+.menu-alt-ornek { padding-left: 52px; font-weight: var(--fw-normal); }
+
 /* Telefon çekmecesinin perdesi: masaüstünde yok. */
 .menu-perde { display: none; }
 

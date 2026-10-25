@@ -18,6 +18,9 @@
  *   (f) "İşlem geçmişi"  tarih, işlem, hisse, adet, fiyat, tutar, komisyon, gerçekleşen K/Z, neden · CSV indir
  * Veri: GET /api/tasarimci/portfoy-bot/:id (lib/tasarimci/portfoyBot.js). Resmî kayıt sunucuda: geliştirme bilgisayarında uç
  * lib/evOkuma.js ile sunucudan okunur; sunucu eski sürümse (uç yok → "(404,") sakin "Sunucu güncellenince görünür" bandı.
+ * 74.6 MODEL ÖRNEKLERİ: Ayarlar › Botlar › Bot kayıtları'ndan açılan ikinci kâğıt hesaplar (#/botlar/<kimlik>) AYNI sayfayla gösterilir —
+ * `ornekKaydet` (botlar.js /api/botlar `ornekler`) kimlik → model eşlemesini verir; modele bağlı her şey (kural metni, simge, piyasa, renk)
+ * modelden, ad ve kâğıt hesap örnekten. Başlıkta "bu modelin kâğıt hesapları" bağlantı satırı (ana + örnekler).
  * Telefonda "tutarları gizle" açıksa tutarlar "—", grafik yüzde (100 taban). YALNIZ OKUR (73.4 tek istisna: "tam adet için yetmiyor" uyarısındaki onaylı "Kesirli hisseyi aç" düğmesi — hisseYapilari.tamAdetBlok; telefonda yok). Kurallar: AG.dom, AG.tablo, AG.grafik;
  * inline stil yok.
  */
@@ -33,7 +36,20 @@
   const KISA = { 'm-qqq-m10': 'qqq', 'm-bist-m10': 'bist', 'm-837': 'q837' };
   /** 72.0: görünen ad kimlikten (js/core/sozluk.js AG.botAd); sunucunun x.ad metni kullanılmaz. */
   const AD_YEDEK = { 'm-qqq-m10': 'Nova', 'm-bist-m10': 'Lydia', 'm-837': 'Simurg' };
-  const AD = new Proxy(AD_YEDEK, { get: (t, id) => (AG.botAd && AG.botAd.ad(id)) || t[id] });
+  /** 74.6: model örnekleri — kimlik → { model, adGorunen, para, baslangic } (botlar.js listeYukle → ornekKaydet). */
+  const ORNEK = Object.create(null);
+  const mid = (id) => (ORNEK[id] ? ORNEK[id].model : id);
+  const ornekMu = (id) => Object.prototype.hasOwnProperty.call(ORNEK, String(id || ''));
+  function ornekKaydet(liste) {
+    for (const x of Object.keys(ORNEK)) delete ORNEK[x];
+    for (const o of (Array.isArray(liste) ? liste : [])) {
+      const kim = String((o && o.kimlik) || '');
+      if (!/^[a-z][a-z0-9]{1,15}$/.test(kim) || !SIRA.includes(o.model) || o.arsiv) continue;
+      ORNEK[kim] = { model: o.model, adGorunen: String(o.adGorunen || kim).slice(0, 24), para: o.para || null, baslangic: o.baslangic || null };
+    }
+    return Object.keys(ORNEK);
+  }
+  const AD = new Proxy(AD_YEDEK, { get: (t, id) => (AG.botAd && AG.botAd.ad(id)) || t[id] || (ORNEK[id] && ORNEK[id].adGorunen) });
   const CV = (s) => (AG.botAd && typeof s === 'string' ? AG.botAd.cevir(s) : s);
   const KOL = 'Kairos kolu';
   const SIMGE_KISA = { 'm-qqq-m10': 'NV', 'm-bist-m10': 'LY', 'm-837': 'SM' };   // 72.0: Nova · Lydia · Simurg (hisseYapilari.js ile aynı)
@@ -155,7 +171,7 @@
   function kart(id) {
     let a = bul(`pbotKart-${k(id)}`);
     if (a) return a;
-    a = el('article', { id: `pbotKart-${k(id)}`, class: `glass-panel panel-pad bot-kart mp-kart mp-r-${k(id)} pbot-kart`, 'aria-label': AD[id] }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]);
+    a = el('article', { id: `pbotKart-${k(id)}`, class: `glass-panel panel-pad bot-kart mp-kart mp-r-${k(mid(id))} pbot-kart`, 'aria-label': AD[id] }, [el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]);
     const kap = bul('pbotKap');
     if (kap) kap.appendChild(a);
     return a;
@@ -167,14 +183,23 @@
       const s = x.evKaynak.zaman ? new Date(x.evKaynak.zaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—';
       ek.push(el('p', { class: `hint hint-sm mb-0 ${x.evKaynak.eski ? 'tone-warning' : ''}`, id: `pbotKaynak-${k(id)}`, text: x.evKaynak.eski ? `Sunucudaki panele şu an ulaşılamadı — ${s} tarihli son okuma gösteriliyor.` : `Resmî kayıt: sunucudaki panelden okundu (${s}).` }));
     }
-    return el('div', { class: `mp-bas mp-r-${k(id)}` }, [
-      el('div', { class: 'mp-simge', 'aria-hidden': 'true', text: SIMGE_KISA[id] }),
+    const m = mid(id), orn = ornekMu(id);
+    // 74.6: bu modelin kâğıt hesapları (ana + örnekler) — tek tıkla geçiş
+    const kardes = [m, ...Object.keys(ORNEK).filter(z => ORNEK[z].model === m)];
+    if (kardes.length > 1) {
+      ek.push(el('p', { class: 'hint hint-sm mb-0 pbot-ornekler', id: `pbotOrnekler-${k(id)}` }, [el('span', { text: `${AD[m]} kâğıt hesapları: ` }),
+        ...kardes.flatMap((z, i) => [i ? el('span', { text: ' · ' }) : null, z === id ? el('strong', { text: z === m ? `${AD[m]} (ana)` : AD[z] })
+          : el('a', { href: `#/botlar/${z}`, class: 'no-underline', text: z === m ? `${AD[m]} (ana)` : AD[z] })]).filter(Boolean)]));
+    }
+    return el('div', { class: `mp-bas mp-r-${k(m)}` }, [
+      el('div', { class: 'mp-simge', 'aria-hidden': 'true', text: SIMGE_KISA[m] }),
       el('div', { class: 'mp-bas-metin' }, [
         el('div', { class: 'row-inline row-wrap gap-2' }, [
-          el('h3', { class: 'card-title m-0', text: AD[id], title: AG.botAd ? AG.botAd.anlam(id) : null }),
-          AG.botAd && AG.botAd.alt(id) ? el('span', { class: 'hint hint-sm mb-0 bot-ad-alt', text: AG.botAd.alt(id) }) : null,
-          el('span', { class: 'badge', text: 'kâğıt hesap — canlı hesap değil' }), el('span', { class: 'badge', text: PIYASA[id] })]),
-        el('p', { class: 'mp-ne-yapar mb-0' }, [el('span', { text: kuralMetni(id) })]),
+          el('h3', { class: 'card-title m-0', text: AD[id], title: orn ? `${AD[m]} modelinin ikinci kâğıt hesabı (aynı kararlar, ayrı sermaye)` : (AG.botAd ? AG.botAd.anlam(id) : null) }),
+          orn ? el('span', { class: 'hint hint-sm mb-0 bot-ad-alt', text: `${AD[m]} örneği` }) : AG.botAd && AG.botAd.alt(id) ? el('span', { class: 'hint hint-sm mb-0 bot-ad-alt', text: AG.botAd.alt(id) }) : null,
+          el('span', { class: 'badge', text: 'kâğıt hesap — canlı hesap değil' }), el('span', { class: 'badge', text: PIYASA[m] }),
+          orn ? el('span', { class: 'badge', text: ORNEK[id].baslangic ? `başlangıç ${gunMetni(ORNEK[id].baslangic, true)}` : 'başlangıç: modelin ilk günü' }) : null]),
+        el('p', { class: 'mp-ne-yapar mb-0' }, [el('span', { text: kuralMetni(m) })]),
         ...ek
       ])
     ]);
@@ -408,7 +433,7 @@
     const ay = kg.ayar || {};
     // 73.4: Hisse yapılarıyla aynı "tam adet için yetmiyor" uyarısı + (ABD, kesirli kapalı) "Kesirli hisseyi aç" düğmesi — hisseYapilari.js
     const HY = AG.pages && AG.pages.hisseYapilari;
-    const tam = HY && HY.tamAdetUyarisi ? HY.tamAdetUyarisi({ ...kg, model: id, para: kg.para || x.para }) : null;
+    const tam = HY && HY.tamAdetUyarisi ? HY.tamAdetUyarisi({ ...kg, model: mid(id), para: kg.para || x.para }) : null;
     doldur(a, [
       baslikCiz(id, x),
       tam ? el('div', { class: 'mt-2' }, [HY.tamAdetBlok(tam, () => yukle(id, true), `btnPbotKesirliAc-${k(id)}`)]) : null,
@@ -428,7 +453,7 @@
       eldekilerCiz(id, x),
       kararDefteriCiz(id, x),
       islemGecmisiCiz(id, x),
-      el('p', { class: 'hint hint-sm mt-3 mb-0', text: `Kâğıt hesabın kuralları: ${x.para === 'USD' ? `emir başına ${para(ay.komisyonSabit, 'USD')} komisyon (Midas)` : 'komisyon yok (Midas BIST)'}, kayma %${((ay.kayma || 0) * 100).toLocaleString('tr-TR')}, ${ay.kesirli ? 'kesirli adet' : 'tam adet'}, temettü stopajı %${Math.round((ay.stopaj || 0) * 100)}, nakde faiz yok. Fiyatlar gerçek açılış/kapanış (Yahoo). Son hesap ${x.guncelleme ? new Date(x.guncelleme).toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '—'} (30 dakikada bir). Sermaye: Portföy › Modeller › Bu ay › Ayarlar.` })
+      el('p', { class: 'hint hint-sm mt-3 mb-0', text: `Kâğıt hesabın kuralları: ${x.para === 'USD' ? `emir başına ${para(ay.komisyonSabit, 'USD')} komisyon (Midas)` : 'komisyon yok (Midas BIST)'}, kayma %${((ay.kayma || 0) * 100).toLocaleString('tr-TR')}, ${ay.kesirli ? 'kesirli adet' : 'tam adet'}, temettü stopajı %${Math.round((ay.stopaj || 0) * 100)}, nakde faiz yok. Fiyatlar gerçek açılış/kapanış (Yahoo). Son hesap ${x.guncelleme ? new Date(x.guncelleme).toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '—'} (30 dakikada bir). ${ornekMu(id) ? `Bu bir model örneği: kararlar ${AD[mid(id)]} modeliyle ortak, kâğıt hesabı ayrı. Sermaye ve arşiv: Ayarlar › Botlar › Bot kayıtları.` : 'Sermaye: Portföy › Modeller › Bu ay › Ayarlar.'}` })
     ]);
     degerGrafikCiz(id, x);
     fiyatCiz(id);
@@ -436,7 +461,7 @@
   }
 
   async function yukle(id, zorla) {
-    if (!SIRA.includes(id)) return;
+    if (!SIRA.includes(id) && !ornekMu(id)) return;
     const v = veri[id];
     if (!zorla && v && Date.now() - v.zaman < yenilemeMs) { ciz(id); return; }
     if (!v) ciz(id);
@@ -451,11 +476,11 @@
 
   /** botlar.js çağırır: portföy botu sayfasını aç (Hücum/Denge kapları gizlenir). */
   function ac(id) {
-    if (!SIRA.includes(id)) return false;
+    if (!SIRA.includes(id) && !ornekMu(id)) return false;
     acik = id;
     const kap = bul('pbotKap');
     if (kap) kap.classList.remove('is-hidden');
-    for (const x of SIRA) { const a = bul(`pbotKart-${k(x)}`); if (a) a.classList.toggle('is-hidden', x !== id); }
+    for (const x of [...SIRA, ...Object.keys(veri)]) { const a = bul(`pbotKart-${k(x)}`); if (a) a.classList.toggle('is-hidden', x !== id); }
     kart(id).classList.remove('is-hidden');
     yukle(id, false);
     return true;
@@ -471,6 +496,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.portfoyBotlari = { ac, kapat, yukle, acik: () => acik, SIRA, KISA, AD, gerceklesenKz, islemCsv, ozetSayilari, degerSerileri, kararGunleri, kararOzeti, ucYokMu, grafikteGoster, _veri: veri };
+  AG.pages.portfoyBotlari = { ac, kapat, yukle, acik: () => acik, SIRA, KISA, AD, ornekKaydet, ornekMu, ornekler: () => Object.keys(ORNEK), modelOf: mid, gerceklesenKz, islemCsv, ozetSayilari, degerSerileri, kararGunleri, kararOzeti, ucYokMu, grafikteGoster, _veri: veri };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.portfoyBotlari;
 })(typeof window !== 'undefined' ? window : globalThis);

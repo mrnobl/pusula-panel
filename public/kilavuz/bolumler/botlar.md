@@ -50,7 +50,7 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 Yer: **Ayarlar › Botlar › Bot kayıtları**. Yalnız sınanmış kurallarla bot kurulur; yeni strateji yoktur.
 
-1. **Kural** seçin: **Kairos tipi** (BTC trendi + coin sepeti) ya da **Tao tipi** (yarı BTC, sakin). Kairos tipinde **küçük sermaye kuralı** (Kairos-S) seçilebilir: otomatik (5000 $ altında açık), açık ya da kapalı.
+1. **Kural** seçin: **Kairos tipi** (BTC trendi + coin sepeti) ya da **Tao tipi** (yarı BTC, sakin). (74.6: listede ayrıca **Nova / Lydia / Simurg örneği** var — model portföyün ikinci kâğıt hesabı; ayrıntı [Model örnekleri](#/kilavuz/portfoy-botlari/model-ornegi).) Kairos tipinde **küçük sermaye kuralı** (Kairos-S) seçilebilir: otomatik (5000 $ altında açık), açık ya da kapalı.
 2. **Kâğıt sermayesi** (USD) girin: botun kâğıt hesabı bu bakiyeyle açılır ve bot bu tutardan fazlasını kullanmaz.
 3. **Kimlik** girin: küçük harf ve rakam, 2–16 karakter (ör. `ares`). İlk iki harf her botta farklı olmalı (borsa emir kimliği botun ilk iki harfini taşır; Kairos `hu…`, Tao `de…` olduğu için bu iki başlangıç kullanılamaz). Kimlik sonradan değişmez.
 4. **Görünen ad** girin (ör. "Ares"): ekranda ve Telegram'da bu ad görünür. Başka bir botun adı (Kairos, Tao, Nova, Lydia, Simurg …) verilemez.
@@ -73,7 +73,7 @@ Her botun her mod için sabit bir üst sınırı vardır (USD): bot bu tutardan 
 
 ### Arşivle ve geri getir {#bot-arsiv}
 
-Kullanmadığınız yeni botu **Arşivle…** ile listelerden kaldırırsınız: yalnız **kâğıt** moddaki ve **durmuş** bot arşivlenir. Kaydı ve kâğıt hesap dosyaları **silinmez**; "Arşivdeki botlar" altında **Geri getir…** ile kâğıtta, durmuş olarak geri gelir. Arşivdeki botun kimliği ve görünen adı başka bota verilmez. Kairos ve Tao arşivlenemez.
+Kullanmadığınız yeni botu **Arşivle…** ile listelerden kaldırırsınız: yalnız **kâğıt** moddaki ve **durmuş** bot arşivlenir (model örnekleri her zaman kâğıttadır; arşivlenince hesaplanmaz). Kaydı ve kâğıt hesap dosyaları **silinmez**; "Arşivdeki botlar" altında **Geri getir…** ile kâğıtta, durmuş olarak geri gelir. Arşivdeki botun kimliği ve görünen adı başka bota verilmez. Kairos ve Tao arşivlenemez.
 
 Yeni bot, hesap bağlama, sermaye ve arşiv değişiklikleri [Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde **Bot kaydı** türüyle görünür. Kullanıcının oluşturduğu bot kaydı kişisel veridir: yedeğe ve taşıma dosyasına girer; taşıma sonrası diğer botlar gibi ilk borsa karşılaştırmasına kadar kendiliğinden başlamaz.
 

@@ -8,6 +8,9 @@
  *     acil PIN), Arşivle (yalnız kâğıt ve durmuş; dosyalar silinmez) / Geri getir.
  *   · Kairos ve Tao: hesapları sabit (eski anahtar alanları), arşivlenmez; sermaye sınırı değişebilir (Kairos demo kabulü süresince demo sınırı değişmez).
  *   · Canlı hesap 5. faza kadar yalnız Kairos ve Tao'da (sunucu da reddeder).
+ *   · 74.6 MODEL ÖRNEKLERİ: şablon Nova / Lydia / Simurg örneği → modelin İKİNCİ KÂĞIT HESABI (aynı kararlar, ayrı sermaye; Lydia TL).
+ *     Başlangıç: modelin ilk günü (ana kâğıt hesapla aynı dönem) ya da yarından itibaren. Yalnız kâğıt: demo hesabı / demo sermayesi YOK
+ *     (sunucu da reddeder). Satırda kâğıt sermayesi (onay), Arşivle / Geri getir, "Aç →" (Botlar › portföy botu sayfası).
  * Telefonda ve araştırma kopyasında salt okunur. DOM AG.dom ile (HTML dizgesi yok), istek AG.api.botKayit.
  */
 (function (global) {
@@ -22,13 +25,16 @@
   const KIMLIK_RE = /^[a-z][a-z0-9]{1,15}$/;
   const PIN_ALANI = { ad: 'pin', etiket: 'Acil PIN', tip: 'password', inputmode: 'numeric', dogrula: (v) => /^\d{6,12}$/.test(String(v).trim()) };
   const MOD_AD = { kagit: 'kâğıt', demo: 'demo', canli: 'CANLI HESAP' };
-  const SABLON_AD = { kairos: 'Kairos tipi', tao: 'Tao tipi', 'kairos-s': 'Kairos tipi (küçük sermaye)' };
+  const SABLON_AD = { kairos: 'Kairos tipi', tao: 'Tao tipi', 'kairos-s': 'Kairos tipi (küçük sermaye)', nova: 'Nova örneği', lydia: 'Lydia örneği', simurg: 'Simurg örneği' };
+  /** 74.6: model örneği şablonları → model ve para birimi (sunucu lib/botSablonlari.js ile aynı). */
+  const MODEL_SABLON = { nova: { model: 'm-qqq-m10', para: 'USD' }, lydia: { model: 'm-bist-m10', para: 'TRY' }, simurg: { model: 'm-837', para: 'USD' } };
+  const modelSablonMu = (s) => Object.prototype.hasOwnProperty.call(MODEL_SABLON, s);
 
   let veri = null, hesaplar = null, sinir = null, mesgul = false, hata = null;
   const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon');
   const arastirmaMu = () => !!(AG.pages && AG.pages.kabuk && AG.pages.kabuk.arastirmaModu && AG.pages.kabuk.arastirmaModu());
   const yazilabilir = () => !telefonMu() && !arastirmaMu();
-  const para = (x) => (typeof x === 'number' && Number.isFinite(x) ? `${x.toLocaleString('tr-TR', { maximumFractionDigits: 2 })} $` : '—');
+  const para = (x, p) => (typeof x === 'number' && Number.isFinite(x) ? `${x.toLocaleString('tr-TR', { maximumFractionDigits: 2 })} ${p === 'TRY' ? '₺' : '$'}` : '—');
   const adi = (b) => (b && (b.adGorunen || b.kimlik)) || '—';
 
   /** Saf: yeni bot formu → { govde } | { hata } (sunucu aynısını yeniden denetler). */
@@ -36,14 +42,16 @@
     const kimlik = String(f.kimlik || '').trim();
     const ad = String(f.adGorunen || '').trim();
     const tutar = Number(String(f.sermaye || '').replace(/\s/g, '').replace(',', '.'));
-    if (!['kairos', 'tao', 'kairos-s'].includes(f.sablon)) return { hata: 'Şablon seçin (Kairos tipi ya da Tao tipi).' };
+    if (!['kairos', 'tao', 'kairos-s'].includes(f.sablon) && !modelSablonMu(f.sablon)) return { hata: 'Şablon seçin (Kairos tipi, Tao tipi ya da bir model örneği).' };
     if (!KIMLIK_RE.test(kimlik)) return { hata: 'Kimlik 2–16 karakter: küçük harf ve rakam, harfle başlar (ör. "ares").' };
     const ayni = mevcut.find(m => m === kimlik || m.slice(0, 2) === kimlik.slice(0, 2));
     if (ayni) return { hata: ayni === kimlik ? `"${kimlik}" kimliği kullanılıyor.` : `Kimliğin ilk iki harfi "${ayni}" botuyla aynı — emir kimliği öneki çakışır.` };
     if (ad.length < 2 || ad.length > 24) return { hata: 'Görünen ad 2–24 karakter olmalı.' };
-    if (!Number.isFinite(tutar) || tutar < 100 || tutar > 1e7) return { hata: 'Kâğıt sermayesi 100 – 10.000.000 USD arasında olmalı.' };
+    const birim = modelSablonMu(f.sablon) && MODEL_SABLON[f.sablon].para === 'TRY' ? 'TL' : 'USD';
+    if (!Number.isFinite(tutar) || tutar < 100 || tutar > 1e7) return { hata: `Kâğıt sermayesi 100 – 10.000.000 ${birim} arasında olmalı.` };
     const govde = { sablon: f.sablon, kimlik, adGorunen: ad, sermaye: { kagit: Math.round(tutar * 100) / 100 } };
     if (f.sablon === 'kairos' && f.kucukSermaye && f.kucukSermaye !== 'oto') govde.kucukSermaye = f.kucukSermaye;
+    if (modelSablonMu(f.sablon)) govde.baslangic = f.baslangic === 'yarin' ? 'yarin' : 'model';   // 74.6
     return { govde };
   }
 
@@ -71,10 +79,19 @@
 
   // ── Eylemler ─────────────────────────────────────────────────────────────
   async function olustur(form) {
-    const mevcut = ((veri && veri.botlar) || []).map(b => b.kimlik);
+    const mevcut = tumKayitlar().map(b => b.kimlik);
     const d = formDenetle(form, mevcut);
     if (d.hata) { bildir(d.hata, 'uyari', { sure: 8000 }); return; }
     const g = d.govde;
+    if (modelSablonMu(g.sablon)) {   // 74.6: model örneği
+      const p = MODEL_SABLON[g.sablon].para;
+      const ok = await AG.onayla({ baslik: `Yeni model örneği: ${g.adGorunen}`, onay: 'Oluştur', iptal: 'Vazgeç',
+        metin: `${SABLON_AD[g.sablon]} · kimlik "${g.kimlik}" · kâğıt sermayesi ${para(g.sermaye.kagit, p)} · başlangıç ${g.baslangic === 'yarin' ? 'yarından itibaren' : 'modelin ilk günü (ana kâğıt hesapla aynı dönem)'}.\n`
+          + 'Modelin aylık kararları ORTAK, kâğıt hesabı AYRI (tam adet, komisyon, temettü — ana kâğıt hesapla aynı kurallar). Gerçek emir yok; demo ya da canlı hesaba geçiş bu sürümde yok. İlk hesap tasarımcının sonraki tikinde (30 dakikada bir).' });
+      if (!ok) return;
+      await is_(async () => { if (sonuc(await AG.api.botKayit.olustur(g), `${g.adGorunen} oluşturuldu (model örneği, kâğıt).`)) formSifirla(); });
+      return;
+    }
     const ok = await AG.onayla({ baslik: `Yeni kâğıt bot: ${g.adGorunen}`, onay: 'Oluştur', iptal: 'Vazgeç',
       metin: `${SABLON_AD[g.sablon]} · kimlik "${g.kimlik}" · kâğıt sermayesi ${para(g.sermaye.kagit)}${g.kucukSermaye ? ` · küçük sermaye ${g.kucukSermaye === 'acik' ? 'açık (Kairos-S)' : 'kapalı'}` : ''}.\n`
         + 'Bot KÂĞIT hesapta başlar (gerçek emir yok) ve durmuş olarak eklenir; Botlar sayfasından Başlat ile çalışır. Demo hesaba geçiş için önce bir Binance demo hesabı bağlanır (acil PIN).' });
@@ -88,6 +105,16 @@
         : 'Bot demo moda geçemez (yeniden bağlanana kadar). Onaylamak için acil PIN\'i girin.');
     if (!pin) { ciz(); return; }
     await is_(async () => { sonuc(await AG.api.botKayit.hesap(b.kimlik, 'demo', id || null, pin), id ? 'Demo hesabı bağlandı.' : 'Demo hesap bağı kaldırıldı.'); });
+  }
+  /** 74.6: model örneğinin kâğıt sermayesi (onay; PIN yok). Değişiklik kâğıt hesapta o gün para yatırma/çekme olarak işler. */
+  async function ornekSermaye(b) {
+    const simdiki = b.sermaye ? b.sermaye.kagit : null, p = b.para || 'USD', birim = p === 'TRY' ? 'TL' : 'USD';
+    const v = await AG.onayla({ baslik: `${adi(b)}: kâğıt sermayesi`, onay: 'Kaydet', iptal: 'Vazgeç',
+      metin: `Şimdiki: ${para(simdiki, p)}. Değişiklik kâğıt hesapta bugün para yatırma ya da çekme olarak işlenir (getiri bozulmaz).`,
+      alanlar: [{ ad: 'tutar', etiket: `Yeni kâğıt sermayesi (${birim})`, inputmode: 'decimal', deger: simdiki != null ? String(simdiki) : '', dogrula: (x) => { const n = Number(String(x).replace(',', '.')); return Number.isFinite(n) && n >= 100 && n <= 1e7; } }] });
+    if (!v) return;
+    const tutar = Math.round(Number(String(v.tutar).replace(',', '.')) * 100) / 100;
+    await is_(async () => { sonuc(await AG.api.botKayit.sermaye(b.kimlik, 'kagit', tutar), `${adi(b)}: kâğıt sermayesi ${para(tutar, p)}.`); });
   }
   async function sermayeDegistir(b, mod) {
     const simdiki = b.sermaye ? (mod === 'demo' ? b.sermaye.demo : b.sermaye.kagit) : null;
@@ -105,21 +132,25 @@
   }
   async function arsivle(b) {
     const ok = await AG.onayla({ baslik: `${adi(b)} arşivlensin mi?`, onay: 'Arşivle', iptal: 'Vazgeç', tehlikeli: true,
-      metin: 'Bot listelerden kalkar ve çalışmaz. Kaydı ve kâğıt hesap dosyaları SİLİNMEZ; "Arşivdeki botlar"dan geri getirebilirsiniz. Kimliği ve görünen adı başka bota verilemez.' });
+      metin: b.motor === 'model' ? 'Model örneği listelerden kalkar ve kâğıt hesabı artık hesaplanmaz. Kaydı ve kâğıt hesap dosyaları SİLİNMEZ; "Arşivdeki botlar"dan geri getirebilirsiniz (kâğıt hesap baştan yeniden hesaplanır). Kimliği ve görünen adı başka bota verilemez.'
+        : 'Bot listelerden kalkar ve çalışmaz. Kaydı ve kâğıt hesap dosyaları SİLİNMEZ; "Arşivdeki botlar"dan geri getirebilirsiniz. Kimliği ve görünen adı başka bota verilemez.' });
     if (!ok) return;
     await is_(async () => { sonuc(await AG.api.botKayit.arsivle(b.kimlik), `${adi(b)} arşivlendi.`); });
   }
   async function geriGetir(b) {
-    if (!(await AG.onayla({ baslik: `${adi(b)} arşivden geri getirilsin mi?`, onay: 'Geri getir', iptal: 'Vazgeç', metin: 'Bot kâğıt hesapta ve durmuş olarak geri gelir; eski kayıtları olduğu gibi durur.' }))) return;
+    if (!(await AG.onayla({ baslik: `${adi(b)} arşivden geri getirilsin mi?`, onay: 'Geri getir', iptal: 'Vazgeç', metin: b.motor === 'model' ? 'Model örneği geri gelir; kâğıt hesabı tasarımcının sonraki tikinde yeniden hesaplanır.' : 'Bot kâğıt hesapta ve durmuş olarak geri gelir; eski kayıtları olduğu gibi durur.' }))) return;
     await is_(async () => { sonuc(await AG.api.botKayit.geriGetir(b.kimlik), `${adi(b)} geri getirildi (kâğıt, durmuş).`); });
   }
 
   // ── Çizim ────────────────────────────────────────────────────────────────
-  const form = { sablon: 'kairos', kucukSermaye: 'oto', kimlik: '', adGorunen: '', sermaye: '10000' };
-  function formSifirla() { Object.assign(form, { sablon: 'kairos', kucukSermaye: 'oto', kimlik: '', adGorunen: '', sermaye: '10000' }); }
+  const form = { sablon: 'kairos', kucukSermaye: 'oto', kimlik: '', adGorunen: '', sermaye: '10000', baslangic: 'model' };
+  function formSifirla() { Object.assign(form, { sablon: 'kairos', kucukSermaye: 'oto', kimlik: '', adGorunen: '', sermaye: '10000', baslangic: 'model' }); }
+  /** 74.6: bindirme botları + model örnekleri (sunucu eskiyse `ornekler` yok). */
+  const tumKayitlar = () => [...((veri && veri.botlar) || []), ...((veri && veri.ornekler) || [])];
   const dugme = (metin, onclick, sinif, ek) => { const x = el('button', { type: 'button', class: `btn btn-sm ${sinif || 'btn-secondary'}`, ...(ek || {}) }, [el('span', { text: metin })]); x.addEventListener('click', () => onclick(x)); return x; };
 
   function hesapHucresi(b) {
+    if (b.motor === 'model') return el('span', { class: 'hint hint-sm mb-0', text: '— (model örneği: yalnız kâğıt)' });   // 74.6
     if (!b.yeni) return el('span', { class: 'hint hint-sm mb-0', text: b.kimlik === 'hucum' || b.kimlik === 'denge' ? 'Binance demo / canlı (sabit)' : '—' });
     if (b.arsiv) return el('span', { text: (b.hesapAdlari && b.hesapAdlari.demo) || '—' });
     const secenekler = [['', '— bağlı değil —'], ...(hesaplar || []).filter(h => h.tur === 'demo' && h.borsa === 'binance').map(h => [h.id, `${h.ad}${h.anahtarVar ? '' : ' (anahtar yok)'}`])];
@@ -133,12 +164,22 @@
   }
   function sermayeHucresi(b) {
     const s = b.sermaye || {};
+    if (b.motor === 'model') {   // 74.6: yalnız kâğıt sermayesi (modelin para biriminde)
+      const m = el('span', { class: 'sayi', text: `kâğıt ${para(s.kagit, b.para)}` });
+      if (!yazilabilir() || b.arsiv) return m;
+      return el('div', { class: 'pf-dugmeler' }, [m, dugme('Kâğıt…', () => ornekSermaye(b), null, { id: `btnOrnekSermaye-${b.kimlik}` })]);
+    }
     const metin = el('span', { class: 'sayi', text: `kâğıt ${para(s.kagit)} · demo ${para(s.demo)}` });
     if (!yazilabilir() || b.arsiv) return metin;
     return el('div', { class: 'pf-dugmeler' }, [metin, dugme('Kâğıt…', () => sermayeDegistir(b, 'kagit')), dugme('Demo…', () => sermayeDegistir(b, 'demo'))]);
   }
   function islemHucresi(b) {
-    if (!yazilabilir()) return el('span', { text: '' });
+    const ac = b.motor === 'model' && !b.arsiv ? el('a', { href: `#/botlar/${b.kimlik}`, class: 'no-underline', text: 'Aç →' }) : null;   // 74.6
+    if (!yazilabilir()) return ac || el('span', { text: '' });
+    if (ac) {
+      const x = dugme('Arşivle…', () => arsivle(b), 'btn-outline-danger', { id: `btnBotArsivle-${b.kimlik}` });
+      return el('div', { class: 'pf-dugmeler' }, [ac, x]);
+    }
     if (b.arsiv) return dugme('Geri getir…', () => geriGetir(b));
     if (!b.yeni) return el('span', { class: 'hint hint-sm mb-0', text: 'arşivlenmez' });
     const x = dugme('Arşivle…', () => arsivle(b), 'btn-outline-danger', { id: `btnBotArsivle-${b.kimlik}` });
@@ -146,7 +187,8 @@
     return x;
   }
   function satir(b) {
-    const kural = SABLON_AD[b.sablon] || (b.strateji === 'denge' ? 'Tao tipi' : 'Kairos tipi');
+    const kural = b.motor === 'model' ? `${SABLON_AD[b.sablon] || `${b.modelAd || b.model} örneği`} · ${b.baslangic ? `başlangıç ${b.baslangic}` : 'modelin ilk gününden'}`
+      : SABLON_AD[b.sablon] || (b.strateji === 'denge' ? 'Tao tipi' : 'Kairos tipi');
     return el('tr', null, [
       el('td', { class: 'pf-sola' }, [el('span', { class: 'fw-semibold', text: adi(b) }), el('span', { class: 'hint hint-sm mb-0', text: ` ${b.kimlik}` }),
         b.kiyas ? el('div', { class: 'hint hint-sm mb-0', text: b.kiyas.metin }) : null]),
@@ -172,11 +214,14 @@
     };
     return el('section', { class: 'bot-kayit-form mt-4', 'aria-label': 'Yeni bot' }, [
       el('h3', { class: 'pf-bolum-baslik mb-2', text: 'Yeni bot (kâğıt hesapta başlar)' }),
-      el('p', { class: 'hint hint-sm mb-3', text: 'Yalnız sınanmış kurallar: Kairos tipi ya da Tao tipi. Bot gerçek emir vermez (kâğıt); demo hesaba geçiş için önce bir Binance demo hesabı bağlanır. Canlı hesap 5. faza kadar yalnız Kairos ve Tao\'da.' }),
+      el('p', { class: 'hint hint-sm mb-3', text: 'Yalnız sınanmış kurallar: Kairos tipi, Tao tipi ya da bir model örneği (Nova, Lydia, Simurg — modelin ikinci kâğıt hesabı: aynı kararlar, ayrı sermaye). Bot gerçek emir vermez (kâğıt); demo hesaba geçiş için önce bir Binance demo hesabı bağlanır (model örneklerinde demo/canlı yok). Canlı hesap 5. faza kadar yalnız Kairos ve Tao\'da.' }),
       el('div', { class: 'grid-3 gap-3' }, [
-        secim('sablon', 'Kural (şablon)', [['kairos', 'Kairos tipi — BTC trendi + coin sepeti'], ['tao', 'Tao tipi — yarı BTC, sakin']]),
-        secim('kucukSermaye', 'Küçük sermaye kuralı (Kairos-S)', [['oto', 'otomatik (< 5000 $ iken açık)'], ['acik', 'açık'], ['kapali', 'kapalı']], form.sablon !== 'kairos'),
-        girdi('sermaye', 'Kâğıt sermayesi (USD, üst sınır)', { inputmode: 'decimal', ipucu: '10000' }),
+        secim('sablon', 'Kural (şablon)', [['kairos', 'Kairos tipi — BTC trendi + coin sepeti'], ['tao', 'Tao tipi — yarı BTC, sakin'],
+          ['nova', 'Nova örneği — Nasdaq Momentum 10 (USD)'], ['lydia', 'Lydia örneği — BIST Momentum 10 (TL)'], ['simurg', 'Simurg örneği — %50 QQQ + %50 Kairos (USD)']]),
+        modelSablonMu(form.sablon)
+          ? secim('baslangic', 'Başlangıç (model örneği)', [['model', 'modelin ilk günü (ana kâğıt hesapla aynı dönem)'], ['yarin', 'yarından itibaren']])
+          : secim('kucukSermaye', 'Küçük sermaye kuralı (Kairos-S)', [['oto', 'otomatik (< 5000 $ iken açık)'], ['acik', 'açık'], ['kapali', 'kapalı']], form.sablon !== 'kairos'),
+        girdi('sermaye', modelSablonMu(form.sablon) ? `Kâğıt sermayesi (${MODEL_SABLON[form.sablon].para === 'TRY' ? 'TL' : 'USD'})` : 'Kâğıt sermayesi (USD, üst sınır)', { inputmode: 'decimal', ipucu: '10000' }),
         girdi('kimlik', 'Kimlik (küçük harf/rakam, ilk 2 harf benzersiz)', { ipucu: 'ör. ares', max: 16 }),
         girdi('adGorunen', 'Görünen ad', { ipucu: 'ör. Ares', max: 24 })
       ]),
@@ -189,7 +234,8 @@
     const bas = el('h2', { class: 'page-title-sm mb-3' }, [el('i', { class: 'tone-primary', 'data-lucide': 'list-plus' }), el('span', { text: ' Bot kayıtları — yeni bot, hesap, sermaye, arşiv' })]);
     if (hata) { doldur(k, [bas, el('p', { class: 'tone-danger mb-0', text: `Bot kayıtları okunamadı: ${hata}` })]); return; }
     if (!veri) { doldur(k, [bas, el('p', { class: 'hint mb-0', text: 'Yükleniyor…' })]); return; }
-    const etkin = veri.botlar.filter(b => !b.arsiv), arsiv = veri.botlar.filter(b => b.arsiv);
+    const hepsi = tumKayitlar();   // 74.6: model örnekleri de
+    const etkin = hepsi.filter(b => !b.arsiv), arsiv = hepsi.filter(b => b.arsiv);
     const basliklar = ['Bot', 'Kural', 'Hesap türü', 'Demo hesabı', 'Sermaye üst sınırı', ''];
     doldur(k, [bas,
       el('p', { class: 'hint mb-3', text: telefonMu() ? 'Telefonda salt okunur — botlar sunucudaki panelden oluşturulur ve yönetilir.'
@@ -211,7 +257,7 @@
       veri = l; hata = null;
       hesaplar = h && h.success ? h.hesaplar : (hesaplar || []);
       if (s && s.success) sinir = s.sinirlar || {};
-      if (AG.botAd && AG.botAd.kaydet) AG.botAd.kaydet(l.botlar);
+      if (AG.botAd && AG.botAd.kaydet) { AG.botAd.kaydet(l.botlar); AG.botAd.kaydet(l.ornekler || []); }
     } catch (e) { hata = e.message; }
     ciz();
   }

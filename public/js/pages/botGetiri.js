@@ -402,7 +402,9 @@
       const b = d && d.bot;
       return botSatiri(ad, (AG.botAd && AG.botAd.ad(ad)) || (ad === 'hucum' ? 'Kairos' : 'Tao'), r, b && AG.botDil ? AG.botDil.durum(b).metin : null);
     });
-    const portfoy = (P ? P.SIRA : []).map(async (id) => {
+    // 74.6: model örnekleri (ikinci kâğıt hesaplar) portföy botlarından hemen sonra
+    if (B && B.listeYukle) await B.listeYukle(false);
+    const portfoy = (P ? [...P.SIRA, ...(P.ornekler ? P.ornekler() : [])] : []).map(async (id) => {
       const r = await AG.api.tasarimci.portfoyBot(id).catch(e => ({ success: false, error: e.message }));
       return portfoySatiri(id, P.AD[id] || id, r);
     });
