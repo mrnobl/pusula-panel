@@ -499,7 +499,7 @@ Bot kaydındaki `makine` ve `nobet` (2. faz alanları) burada anlam kazanır.
 - **Güncelleme:** kademe kapısı hiç açılmazsa güncelleme takılır. Kapı 24 saatten uzun kapalı kalırsa Telegram uyarısı.
 
 ### 4.10 Bölme, büyüklük, bağımlılık
-- **3a (L):** makine kimliği, eşleme, makine kademesi, nabız, B1 pano (salt okuma), C3-uyum fikstür testi.
+- **3a (L):** makine kimliği, eşleme, makine kademesi, nabız, B1 pano (salt okuma), C3-uyum fikstür testi. **YAPILDI — 75.2** (CLAUDE.md "Panel 75.2"). Uygulamada iki sapma: (1) jeton yönü — her makine KENDİSİNE gelecek jetonu üretir ve yalnız özetini saklar (§4.2 metnindeki yön karışıktı); (2) makine kademesinin okuması EV_YOLU'nun bot/sağlık alt kümesi (kişisel finans okumaları makineye kapalı — "telefonda tutarları gizle" kuralı yalnız telefonu tanıyor). Botlar sayfasındaki "Y makinesinde" kartı (evOkuma eş başına okuma) 3c'ye kaldı.
 - **3b (L):** yönetici seçimi + 30 dk geçici devralma, B3 kademe kapısı.
 - **3c (L–XL):** taşıma + nöbet + iki makine e2e + kılavuz.
 - **Bağımlılık:** A1 (kayıt, `makine`/`nobet` alanları) ve C1 (bot blokları modülde; nöbet kancası `botYonetimi`'ne).

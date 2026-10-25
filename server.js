@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.1';
+const APP_VERSION = '75.2';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -79,6 +79,8 @@ const ctx = require('./lib/sunucu/baglam').olustur({
   // 75.1 (C1 parça 3): borsa yürütücüleri, bot yönetimi, bot uçları ve süreç modüllerinin okudukları; BOT_KAYIT yazımı (bot yönetimi kurar)
   borsa: () => BORSA, botYonetimi: () => BOTLAR, borsaModu: () => borsaModu, botKayitYaz: () => (k) => { BOT_KAYIT = k; },
   wss: () => wss, server: () => server, HOST: () => HOST, bildirimKurulum: () => BILDIRIM_KURULUM,
+  // 75.2 (3a): makine eşlemesi (lib/makine/eslesme) — güvenlik katmanının makine kademesiyle AYNI örnek
+  makineEslesme: () => MAKINE_ESLESME,
 });
 
 /**
@@ -127,6 +129,12 @@ const server = http.createServer(app);
  * okunur (guvenlik.jetonOkuyucu: PANEL_TOKEN → secrets.json panelToken → telefon-jeton.json; `npm run telefon-jeton`).
  */
 const HOST = process.env.HOST || '127.0.0.1';
+/**
+ * 75.2 MAKİNE KADEMESİ (3. faz parça 3a, TASARIM-MAKINE-HESAP-BOT §4.2): eşlenmiş başka bir Pusula makinesi x-pusula-makine +
+ * x-pusula-makine-jeton ile gelir; jeton <veri>/makine-jetonlari.json'daki özete karşı (lib/makine/eslesme). Yalnız MAKINE_IZINLI uçları
+ * (lib/guvenlik.js). Uçlar ve nabız lib/sunucu/makineUclari.js'te (aşağıda, bildirim uçlarından sonra).
+ */
+const MAKINE_ESLESME = require('./lib/makine/eslesme').olustur();
 const guvenlik = guvenlikKur.kur({
   dinlenen: HOST,
   jeton: guvenlikKur.geriDonusMu(HOST) ? '' : (process.env.PANEL_TOKEN || loadSecrets().panelToken || ''),
@@ -135,7 +143,8 @@ const guvenlik = guvenlikKur.kur({
   // 64.8 geliştirme yazma kademesi: sunucuda `npm run gelistirme-jeton` (data/gelistirme-jeton.json yalnız SHA-256 özet). Araştırma
   // modundaki makine (geliştirme bilgisayarı) bu jetonu hiç kabul etmez — iletilen yazmayı yalnız sunucu alır.
   gelistirmeOzetOku: ARASTIRMA_MODU ? null : guvenlikKur.gelistirmeOzetOkuyucu(__dirname),
-  gelistirmeKapali: ARASTIRMA_MODU
+  gelistirmeKapali: ARASTIRMA_MODU,
+  makineDogrula: (kimlik, jeton) => MAKINE_ESLESME.gelenDogru(kimlik, jeton)
 });
 const acilPin = require('./lib/acilPin').olustur({
   // Kilit uyarısı Telegram'a (portfoyBildirici aşağıda tanımlanır; çağrı anında hazırdır).
@@ -531,6 +540,8 @@ const isler = new Isler((tur, veri) => broadcast(tur, veri));
 const KISISEL_UCLAR = require('./lib/sunucu/kisiselUclar').olustur(ctx);   // C1 (75.0)
 const { veriOrk, piyasaBaglami, yapayZeka } = KISISEL_UCLAR.laboratuvarUclari();
 BILDIRIM_KURULUM.uclar();   // C1 (75.0): /api/bildirim*, GET /api/makine/nabiz, rapor motoru (/api/rapor*) — lib/sunucu/bildirimKurulum.js
+/* 75.2 (3a) MAKİNELER: kimlik, eşleme, nabız (POST /api/makine/nabiz — makine kademesi), B1 pano (salt okuma) — lib/sunucu/makineUclari.js. */
+require('./lib/sunucu/makineUclari').kur(ctx);
 
 /* PORTFÖYÜM (lib/portfoyum), İŞLEM DEFTERİ (lib/islemDefteri), 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar) — lib/sunucu/kisiselUclar.js portfoyUclari(). */
 const { portfoyum, islemDefteri, anahtarlar } = KISISEL_UCLAR.portfoyUclari();   // C1 (75.0)

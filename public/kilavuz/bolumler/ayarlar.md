@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Panelin ayarları **sekiz alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
+Panelin ayarları **dokuz alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
 
 | Alt sayfa | Adres | İçinde ne var |
 |---|---|---|
@@ -14,6 +14,7 @@ Panelin ayarları **sekiz alt sayfada**; yan menüde Ayarlar'ın altında durur 
 | **Güncelleme** | `#/ayarlar/guncelleme` | otomatik güncellemenin durumu, onay bekleyen kurulum |
 | **Yedek ve taşıma** | `#/ayarlar/yedek` | taşıma dosyası, araştırma eklentisi, USB yedeği şifresi, eski yedekten geri yükleme — [ayrıntı](#/kilavuz/yedek-tasima) |
 | **Ayar geçmişi** | `#/ayarlar/gecmis` | her ayar değişikliği (ne zaman, hangi makine, nereden, eski → yeni) ve PIN'li **Geri al** — [ayrıntı](#/kilavuz/ayarlar/ayar-gecmisi) |
+| **Makineler** | `#/ayarlar/makineler` | bu bilgisayarın makine kimliği, eşlenmiş Pusula makineleri (son görülme, sürüm, botlar, güncelleme, disk) ve PIN'li **eşleme** — [ayrıntı](#/kilavuz/ayarlar/makineler) |
 
 Ayarlar menüden açılınca **Botlar (özet)** ile başlar. **Piyasa verisi** ve **İzleme listesi** botları etkilemediği için Araştırma'dadır: [Veri ve izleme listesi](#/kilavuz/izleme).
 
@@ -134,6 +135,46 @@ Telefondan bu sekme **yalnız görüntülenir**; değişiklik düğmeleri yoktur
 Geri alınamayanlar: sırlar ve tutarlar; botun hesap türü, küçük sermaye seçimi, bot başlat/durdur gibi **kendi ekranında ek onayla** değişen ayarlar (o ekrandan geri çevirin); geçici sessiz (süreyle biter). Ayar o satırdan **sonra yeniden değiştiyse** geri alma reddedilir — önce sonraki değişikliği geri alın (sonraki değişiklik sessizce ezilmez).
 
 Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucunun ayar geçmişi de gelir ("sunucu" notlu satırlar); onlar sunucudaki panelden geri alınır.
+
+## Makineler {#makineler}
+
+![Ayarlar › Makineler (örnek makinelerle)](ekran:ayarlar-makineler-1400)
+
+**Makineler** alt sayfası (75.2) Pusula'nın çalıştığı bilgisayarları bir arada gösterir. Tek bilgisayar kullanıyorsanız burada yapmanız gereken bir şey yok: eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**.
+
+- **Bu bilgisayar:** adı, **makine kimliği** (`m-` ile başlayan 12 haneli kod; ilk açılışta bir kez üretilir, hiç değişmez — yeni bilgisayar yeni kimlik alır), rolü (**sunucu** ya da **geliştirme / araştırma bilgisayarı**), sürümü, Tailscale adresi, botları.
+- **Eşlenmiş makineler** tablosu: her makinenin **durumu** (*Bağlı* · *Sessiz* — 15 dakikadan uzun ses yok · *Henüz görülmedi* · *Bu makineyi reddediyor* · *Sürüm uyumsuz*) ve son görülme zamanı, **sürümü** (bu bilgisayardan farklıysa yazar), **botları** (ad · hesap türü · çalışıyor / durmuş), **güncelleme** durumu ve **boş disk**. Satırdaki **Kaldır** (acil PIN) o makinenin jetonunu siler.
+- **Şimdi yokla** eşlere hemen nabız yollar; kendiliğinden her **5 dakikada** bir yollanır. Sekmedeki ışık: yeşil hepsi bağlı, sarı sessiz makine var, kırmızı reddeden ya da sürümü uyumsuz makine var.
+
+**Bu pano yalnız görüntüler.** Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir** ve **nabız** gönderebilir: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, Portföyüm ve İşlem defterim'i okuyamaz. **Yönetici makine seçimi** (Telegram'ı hangi bilgisayarın dinleyeceği) ve **botu başka makineye taşıma** sonraki sürümlerde gelecek.
+
+### Önce: Tailscale {#makine-tailscale}
+
+Makineler birbirine yalnız **Tailscale** üzerinden bağlanır (ücretsiz; telefon için zaten kurulu olabilir — [Telefondan izleme](#/kilavuz/telefon)). Pusula Tailscale komutlarını **kendisi çalıştırmaz**; her bilgisayarda bir kez siz kurarsınız:
+
+1. Tailscale'i kurun ve aynı hesapla oturum açın (iki bilgisayar aynı ağda görünmeli).
+2. Her bilgisayarda Pusula'yı Tailscale'e açın — komut satırında bir kez: `tailscale serve --bg 3000`
+3. Bilgisayarın adresini Tailscale yönetim sayfasından ya da `tailscale status` çıktısından alın: `https://<bilgisayar-adı>.<ağ-adı>.ts.net`
+
+### İki makineyi eşlemek {#makine-esle}
+
+1. **Kodu üretecek bilgisayarda** (örneğin sunucu) **Ayarlar › Makineler › 1. Bu bilgisayarda kod üret**: isterseniz bu bilgisayarın adresini yazın, **Kod üret**'e basın, acil PIN'i girin. Ekranda 8 grup × 4 rakamlık **eşleme kodu** çıkar; **10 dakika** geçerli ve **tek kullanımlıktır**.
+2. **Öteki bilgisayarda** **2. Öteki bilgisayarın koduyla eşle**: birinci bilgisayarın **adresini**, **kodu** ve bu bilgisayarın **kendi adresini** yazın, **Eşle**'ye basın, acil PIN'i girin.
+3. İki tarafın tablosunda da öteki makine görünür; birkaç saniye içinde durumu **Bağlı** olur. Her eşleme Telegram'a bir uyarı olarak da gider ("Makine eşlendi") — siz yapmadıysanız hemen **Kaldır**.
+
+Kod yanlış girilirse eşleme olmaz; 5 yanlış denemede kod iptal edilir (yenisini üretin). Aynı makineyle yeniden eşlemek iki tarafın jetonlarını **yeniler** (jeton eskidiyse ya da bir taraf kaldırıldıysa bunu yapın).
+
+### Ne yapmalı {#makine-sorun}
+
+| Görünen | Anlamı | Ne yapmalı |
+|---|---|---|
+| **Sessiz** | 15 dakikadan uzun süredir o makineden ses yok | Bilgisayar kapalı ya da uykuda olabilir; açıksa Tailscale bağlantısına ve Pusula'nın çalıştığına bakın |
+| **Henüz görülmedi** | eşleme yapıldı ama hiç nabız alınmadı | **Şimdi yokla**; sürerse iki bilgisayarın adreslerini denetleyin |
+| **Bu makineyi reddediyor** | o makine bu bilgisayarın jetonunu kabul etmiyor | Orada eşleme kaldırılmış ya da jeton yenilenmiş olabilir — iki makineyi **yeniden eşleyin** |
+| **Sürüm uyumsuz** | iki makinenin sürümleri birbirini anlamıyor | İki makineyi de aynı sürüme güncelleyin (Ayarlar › Güncelleme) |
+| sürüm satırında "yalnız okuma" | bir sürüm fark var | Görüntüleme çalışır; ileride bot taşımak için aynı sürüm gerekir |
+
+Telefondan bu sekme **yalnız görüntülenir** (eşleme ve kaldırma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.
 
 ## Bu bilgisayar {#bu-bilgisayar}
 

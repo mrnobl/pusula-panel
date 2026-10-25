@@ -208,6 +208,14 @@
       durum: () => al('/api/veri-kalitesi'),
       kip: (kip) => gonder('/api/veri-kalitesi/kip', { kip, onay: true })
     },
+    /* 75.2 Makineler (lib/makine/api.js; panel js/pages/makineler.js) — pano salt okur; eşleme kodu, eşleşme ve kaldır yalnız bilgisayardan + yerel PIN */
+    makine: {
+      pano: (yenile) => al(`/api/makine/pano${yenile ? '?yenile=1' : ''}`),
+      kodUret: (kendiAdres) => gonder('/api/makine/esle/kod', kendiAdres ? { kendiAdres } : {}),
+      esleBaslat: (adres, kod, kendiAdres) => gonder('/api/makine/esle-baslat', { adres, kod, kendiAdres }),
+      kaldir: (kimlik) => gonder('/api/makine/kaldir', { kimlik }),
+      nabizSimdi: () => gonder('/api/makine/nabiz/simdi', {})
+    },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {
       liste: (sorgu) => al(`/api/ayar-gecmisi${sorgu || ''}`),

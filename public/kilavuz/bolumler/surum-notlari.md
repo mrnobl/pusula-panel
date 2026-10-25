@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.2 — Makineler: makine kimliği, eşleme, nabız ve Makineler panosu (2026-10-25) {#s75-2}
+
+- **Yeni: [Ayarlar › Makineler](#/kilavuz/ayarlar/makineler).** Her Pusula kendine bir **makine kimliği** verir (ilk açılışta bir kez). İki bilgisayar (örneğin sunucu ve geliştirme bilgisayarı) Tailscale üzerinden bir kez **eşlenir**: birinde 10 dakikalık tek kullanımlık kod üretilir, ötekinde o kod yazılır; iki işlem de **acil PIN** ister ve Telegram'a "Makine eşlendi" uyarısı gider.
+- Eşlenen makineler **5 dakikada bir** birbirine **nabız** gönderir (sürüm, botlar, güncelleme durumu, boş disk). Pano her makinenin **son görülme** zamanını, sürüm uyumunu ve botlarını gösterir; sekmedeki ışık sessiz ya da reddeden makineyi haber verir.
+- **Pano yalnız görüntüler.** Eşlenen makine yalnız bot durumunu okuyabilir ve nabız gönderebilir; bot başlatamaz, emir veremez, ayar / anahtar değiştiremez, Portföyüm'ü okuyamaz. Eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**. Yönetici makine seçimi ve botu başka makineye taşıma sonraki sürümlerde.
+- Botların kodu ve kararları değişmedi (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı). Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 75.1 — İç düzenleme: sunucu programının bölünmesi tamamlandı (2026-10-25) {#s75-1}
 
 - **Görünür değişiklik yok.** Sunucu programının parçalara bölünmesinin son adımı: **bot yönetimi** (Kairos, Tao ve sizin oluşturduğunuz botlar — bot kaydı, açılışta bağlanma, bekçi, sağlık sinyali), **Botlar** ve **bot** uçları (başlat, durdur, mod, kâğıt hesabı sıfırla, acil fren, işlemler, grafik), **Borsa hesapları**, hesap işlemleri, **Kalkan** ile sunucunun **açılış ve kapanış** işleri ayrı dosyalara taşındı.

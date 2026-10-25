@@ -311,7 +311,8 @@
   // ── 63.0: sekmeler (Botlar · Bildirimler · Borsa · Bu bilgisayar · Güncelleme; 68.1 + Yedek ve taşıma — js/pages/tasima.js;
   //    73.0 + Anahtarlar — js/pages/anahtarlar.js kendi ag:rota dinleyicisiyle yükler) ──
   //    74.2 + Ayar geçmişi — js/pages/ayarGecmisi.js kendi ag:rota dinleyicisiyle yükler
-  const SEKMELER = ['botlar', 'bildirimler', 'borsa', 'anahtarlar', 'bilgisayar', 'guncelleme', 'yedek', 'gecmis'];
+  //    75.2 + Makineler — js/pages/makineler.js kendi ag:rota dinleyicisiyle yükler
+  const SEKMELER = ['botlar', 'bildirimler', 'borsa', 'anahtarlar', 'bilgisayar', 'guncelleme', 'yedek', 'gecmis', 'makineler'];
   /** Saf: adresin alt parçası → sekme (bilinmeyen ya da boş → Botlar; açılış her zaman Botlar). */
   const sekmeCoz = (alt) => { const a = String(alt || '').split('/')[0]; return SEKMELER.includes(a) ? a : 'botlar'; };
   function sekmeSec(ad) {
