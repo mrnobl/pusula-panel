@@ -1,5 +1,5 @@
 {
-  "surum": "75.9",
+  "surum": "76.0",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -63,6 +63,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"76.0","tarih":"2026-10-25","yeni":["Yeni: Sistem › Sağlık › Toplam risk — bütün botların borsa hesapları birlikte ölçülür (yalnız okuma): brüt kaldıraç, net BTC payı, tek coin payı, felaket kaybı; kâğıt, demo ve canlı hesap ayrı. Ana sayfada yeni ışık.","İlk 14 gün yalnız izleme: eşik aşılınca yalnız panelde uyarı, Telegram yok, hiçbir emir engellenmez. Sınırları 14 gün sonra siz onaylarsınız (PIN); sınır yalnız canlı hesaba uygulanır.","Telegram: pazartesi eski haftalık rapor mesajı artık gelmez (yerini haftalık karne aldı); para çekme izni öz denetimde alarm verdiyse sabah anahtar bildirimi aynı satırı tekrarlamaz."]},
     {"surum":"75.9","tarih":"2026-10-25","yeni":["Yeni: Botlar › Özet'te \"Başka makinelerdeki botlar\" kartı — eşlenmiş sunuculardaki botlar (taşınanlar dahil): makine, hesap türü, durum, son nabız ve \"o makinede aç\" bağlantısı. Yalnız okuma.","Telegram › Makineler: hangi makinenin yönetici olduğu, komutları şu an kimin dinlediği (geçici devralma dahil) ve eşlerin son nabzı.","Haftalık karne artık eşlenmiş sunucuların botlarını da sayar (makine başına ayrı; okunamazsa \"okunamadı\")."]},
     {"surum":"75.8","tarih":"2026-10-25","yeni":["İç düzenleme: borsa bağlantısı ortak bir arayüze taşındı (Binance davranışı birebir aynı). OKX bağlantısının kodu hazır ama henüz hiçbir bota bağlanamaz; OKX demo bir sonraki adımda.","Sağlamlık: borsadan boş ya da bozuk cevap gelirse artık \"belirsiz\" sayılıyor (pozisyon yok sanılmıyor)."]},
     {"surum":"75.7","tarih":"2026-10-25","yeni":["Yeni: Sistem › Olay akışı — emirler, başlat/durdur, sorunlar, bildirimler, ayar ve güncellemeler tek çizelgede; süzgeçli, 1 yıl saklanır, tutar yazılmaz.","Yeni: Raporlar › Haftalık karne — geçen haftanın bot getirisi, BTC'ye fark, düşüş, işlem sayısı, sorunlar; pazartesi sabahı Telegram'a tek mesaj (yalnız yüzde)."]},

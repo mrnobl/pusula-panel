@@ -208,6 +208,12 @@
       durum: () => al('/api/veri-kalitesi'),
       kip: (kip) => gonder('/api/veri-kalitesi/kip', { kip, onay: true })
     },
+    /* A3 Toplam risk (lib/toplamRisk.js; panel Sistem › Sağlık) — durum telefonda da; sınır onayı yalnız sunucu bilgisayarından + yerel PIN; izlemeye dönüş PIN'siz */
+    toplamRisk: {
+      durum: (yenile) => al(`/api/toplam-risk${yenile ? '?yenile=1' : ''}`),
+      esikler: (esikler) => gonder('/api/toplam-risk/esikler', { esikler, onay: true }),
+      izlemeyeDon: () => gonder('/api/toplam-risk/kip', { kip: 'izleme', onay: true })
+    },
     /* 75.2 Makineler (lib/makine/api.js; panel js/pages/makineler.js) — pano salt okur; eşleme kodu, eşleşme ve kaldır yalnız bilgisayardan + yerel PIN */
     makine: {
       pano: (yenile) => al(`/api/makine/pano${yenile ? '?yenile=1' : ''}`),

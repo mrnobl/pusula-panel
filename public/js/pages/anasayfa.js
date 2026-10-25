@@ -366,7 +366,7 @@
     return l;
   }
 
-  function sistemIsiklari({ veri, tdurum, hesaplar, guncelleme, gunluk, oz }) {
+  function sistemIsiklari({ veri, tdurum, hesaplar, guncelleme, gunluk, oz, toplamRisk }) {
     const l = oz === undefined ? [] : ozIsiklari(oz);
     // Veri: güncellenemeyen kaynak / Binance bekleme / model verisi bayat / bayat (gece güncellenir).
     if (!veri) l.push({ kimlik: 'veri', ton: 'notr', metin: 'Veri durumu alınamadı', href: '#/veri' });
@@ -401,6 +401,20 @@
       else if (gs.uyari) l.push({ kimlik: 'gunluk', ton: 'uyari', metin: `Son 24 saatte ${gs.uyari} uyarı, hata yok`, href: '#/gunluk' });
       else l.push({ kimlik: 'gunluk', ton: 'iyi', metin: 'Son 24 saatte hata yok', href: '#/gunluk' });
     }
+    // A3 toplam risk (GET /api/toplam-risk): bütün hesaplar birlikte — eşik aşımı sarı (izleme kipinde yalnız uyarı). Girdi verilmezse satır yok.
+    if (toplamRisk !== undefined) {
+      const t = toplamRisk;
+      const KISA = { kagit: 'kâğıt', demo: 'demo', canli: 'canlı' };
+      const gr = t && t.son ? Object.values(t.son.gruplar || {}).filter(g => g.botSayisi > 0) : [];
+      const asim = (t && t.son && t.son.asim) || [];
+      const esU = (t && t.son && t.son.esUyarilari) || [];
+      if (!t) l.push({ kimlik: 'toplamRisk', ton: 'notr', metin: 'Toplam risk okunamadı', href: '#/saglik' });
+      else if (!t.son) l.push({ kimlik: 'toplamRisk', ton: 'notr', metin: 'Toplam risk henüz ölçülmedi', href: '#/saglik' });
+      else if (asim.length) l.push({ kimlik: 'toplamRisk', ton: 'uyari', metin: `Toplam risk: ${asim[0].metin}${asim.length > 1 ? ` (+${asim.length - 1})` : ''}${t.kip === 'sinir' && asim[0].grup === 'canli' ? '' : ' — yalnız uyarı'}`, href: '#/saglik' });
+      else if (esU.length) l.push({ kimlik: 'toplamRisk', ton: 'uyari', metin: `Toplam risk: ${esU[0]}`, href: '#/saglik' });
+      else if (!gr.length) l.push({ kimlik: 'toplamRisk', ton: 'notr', metin: 'Toplam risk: borsaya bağlı bot yok', href: '#/saglik' });
+      else l.push({ kimlik: 'toplamRisk', ton: 'iyi', metin: `Toplam risk eşiklerin altında · ${gr.map(g => `${KISA[g.grup] || g.grup} ${Number.isFinite(g.brutKaldirac) ? g.brutKaldirac.toFixed(2).replace('.', ',') : '—'}×`).join(' · ')}`, href: '#/saglik' });
+    }
     // Pusula sürümü / otomatik güncelleme.
     const g = guncelleme;
     // app.js'teki APP_VERSION (klasik betik, genel kapsam) — geliştirme kopyasında güncelleme kaydında sürüm yok.
@@ -415,7 +429,7 @@
     else if (g.durum === 'ag-hatasi' && (g.agHatasi || 0) >= 3) l.push({ kimlik: 'surum', ton: 'uyari', metin: `Güncelleme kontrolü ${g.agHatasi} gündür yapılamıyor`, href: '#/ayarlar/guncelleme' });
     else l.push({ kimlik: 'surum', ton: 'iyi', metin: `Pusula ${surum || ''} kurulu`.replace('  ', ' '), href: '#/ayarlar/guncelleme' });
     // 73.6 (S16): geliştirme bilgisayarında ışıklar iki kaynaktan gelir — hangisinin sunucu, hangisinin bu bilgisayar olduğu yazılır.
-    if (g && g.gelistirme) for (const x of l) x.metin += (/^oz/.test(x.kimlik) || x.kimlik === 'gunluk' || x.kimlik === 'borsa') ? ' · sunucu' : ' · bu bilgisayar';
+    if (g && g.gelistirme) for (const x of l) x.metin += (/^oz/.test(x.kimlik) || x.kimlik === 'gunluk' || x.kimlik === 'borsa' || x.kimlik === 'toplamRisk') ? ' · sunucu' : ' · bu bilgisayar';
     return l;
   }
 
@@ -451,7 +465,7 @@
     try {
       await listeTazele();
       const tz = AG.api.tasarimci;
-      const [durumlar, egriListe, pm, veri, modeller, oneri, tdurum, guncelleme, emirler, hesaplar, gunluk, oz] = await Promise.all([
+      const [durumlar, egriListe, pm, veri, modeller, oneri, tdurum, guncelleme, emirler, hesaplar, gunluk, oz, toplamRisk] = await Promise.all([
         Promise.all(BOTLAR.map(ad => AG.api.bindirmeDurum(ad).catch(e => ({ success: false, error: e.message })))),
         Promise.all(BOTLAR.map(ad => egriAl(ad))),
         AG.api.portfoyum ? AG.api.portfoyum.ozet().catch(() => null) : Promise.resolve(null),
@@ -463,7 +477,8 @@
         tz && tz.emirler ? tz.emirler().catch(() => null) : Promise.resolve(null),
         AG.api.hesaplar ? AG.api.hesaplar(false).catch(() => null) : Promise.resolve(null),
         AG.api.gunluk ? AG.api.gunluk.liste({ limit: 1 }).catch(() => null) : Promise.resolve(null),
-        AG.api.saglikOz ? AG.api.saglikOz.durum().catch(() => null) : Promise.resolve(null)
+        AG.api.saglikOz ? AG.api.saglikOz.durum().catch(() => null) : Promise.resolve(null),
+        AG.api.toplamRisk ? AG.api.toplamRisk.durum().catch(() => null) : Promise.resolve(null)   // A3
       ]);
       const bugun = bugunStr();
       const ok = (x) => (x && x.success !== false ? x : null);
@@ -472,7 +487,7 @@
       yapilacaklarCiz(yapilacaklar({ pm: ok(pm), oneri: ok(oneri), durumlar, bugun, guncelleme: ok(guncelleme), emirler: ok(emirler) }));
       portfoyCiz({ portfoyum: ok(pm) });
       modellerCiz({ modeller: ok(modeller), oneri: ok(oneri), emirler: ok(emirler), bugun });
-      sistemCiz({ veri: ok(veri), tdurum: ok(tdurum), hesaplar: ok(hesaplar), guncelleme: ok(guncelleme), gunluk: ok(gunluk), oz: ok(oz) });
+      sistemCiz({ veri: ok(veri), tdurum: ok(tdurum), hesaplar: ok(hesaplar), guncelleme: ok(guncelleme), gunluk: ok(gunluk), oz: ok(oz), toplamRisk: ok(toplamRisk) });
       if (ok(oz) && AG.pages.saglik) AG.pages.saglik.rozetGuncelle(oz);
       ikonla();
     } finally {

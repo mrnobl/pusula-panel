@@ -291,5 +291,11 @@
       "fundingHafif": 0.01,
       "zamanAsimiMs": 8000
     }
+  },
+  "toplamRisk": {
+    "kip": "izleme",
+    "baslangic": null,
+    "esikler": null,
+    "onay": null
   }
 }

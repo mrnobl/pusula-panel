@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.9';
+const APP_VERSION = '76.0';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -85,6 +85,8 @@ const ctx = require('./lib/sunucu/baglam').olustur({
   makine: () => MAKINE,
   // B2 + D2: olay akışı ve haftalık karne (bildirim üreticisi karneyi buradan alır — çağrı anında okunur)
   olayAkisi: () => OLAY_UCLARI,
+  // A3 toplam risk (lib/sunucu/toplamRiskUclari.js) — bot kurulumu (kapı kancası) ve makine risk ucu çağrı anında okur
+  toplamRisk: () => TOPLAM_RISK,
 });
 
 /**
@@ -556,6 +558,8 @@ const { veriOrk, piyasaBaglami, yapayZeka } = KISISEL_UCLAR.laboratuvarUclari();
 BILDIRIM_KURULUM.uclar();   // C1 (75.0): /api/bildirim*, GET /api/makine/nabiz, rapor motoru (/api/rapor*) — lib/sunucu/bildirimKurulum.js
 /* 75.2 (3a) MAKİNELER: kimlik, eşleme, nabız (POST /api/makine/nabiz — makine kademesi), B1 pano (salt okuma); 75.3 (3b) yönetici makine + B3 kademe — lib/sunucu/makineUclari.js. */
 const MAKINE = require('./lib/sunucu/makineUclari').kur(ctx);
+/* A3 TOPLAM RİSK (bütün hesaplar): ölçüm + kayıt + uyarı, GET /api/toplam-risk, POST /api/toplam-risk/{esikler,kip}; sınır kipinde kapı kancası — lib/sunucu/toplamRiskUclari.js. */
+const TOPLAM_RISK = require('./lib/sunucu/toplamRiskUclari').kur(ctx);
 
 /* PORTFÖYÜM (lib/portfoyum), İŞLEM DEFTERİ (lib/islemDefteri), 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar) — lib/sunucu/kisiselUclar.js portfoyUclari(). */
 const { portfoyum, islemDefteri, anahtarlar } = KISISEL_UCLAR.portfoyUclari();   // C1 (75.0)

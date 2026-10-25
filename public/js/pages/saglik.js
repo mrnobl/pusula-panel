@@ -29,7 +29,7 @@
   const KILAVUZ = { surec: 'acilis-sayaci', donma: 'donma', bellek: 'bellek', disk: 'disk', paket: 'paket-guvenligi', node: 'node', saat: 'saat-farki', sir: 'sir-dosyasi', kilit: 'kilit',
     dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', veri: 'veri-kalitesi', bakim: 'guvenli-kip',
     delist: 'delist', kayitci: 'ileriye-kayit', internet: 'internet', mutabakat: 'pozisyon-uyusmazligi', stop: 'stop-kurulamadi', marj: 'marj', zorla: 'adl-likidasyon', funding: 'funding',
-    sapma: 'golge-kaymasi', maliyet: 'islem-maliyeti', tekrar: 'guvenli-kip-tekrar', kacan: 'kacan-calisma', telegram: 'telegram-gonderim', sinyal: 'saglik-sinyali', yetki: 'anahtar-yetkisi' };
+    sapma: 'golge-kaymasi', maliyet: 'islem-maliyeti', toplamRisk: 'toplam-risk', tekrar: 'guvenli-kip-tekrar', kacan: 'kacan-calisma', telegram: 'telegram-gonderim', sinyal: 'saglik-sinyali', yetki: 'anahtar-yetkisi' };
   /** Saf (73.7, S13): denetim satırının "ne yapmalı" modeli → { metin, kilavuz, sorunlar } (sorunlu satırda Sorunlar bağlantısı). */
   function nasilModeli(d) {
     if (!d) return null;
@@ -246,6 +246,106 @@
     ]);
   }
 
+  /**
+   * A3 TOPLAM RİSK (GET /api/toplam-risk, lib/toplamRisk.js). Saf model (test edilir): kip, izleme (14 gün — OTOMATİK GEÇİŞ YOK),
+   * hesap türü başına dört değer + eşik + 14 günlük dağılım, bot satırları, eş uyarıları, düğmeler.
+   */
+  let trVeri = null;
+  const TR_KIP_AD = { izleme: 'İzleme kipi', sinir: 'Sınır kipi' };
+  const trBicim = (m, v) => (!Number.isFinite(v) ? '—' : m.bicim === 'kat' ? `${v.toFixed(2).replace('.', ',')}×` : `%${(v * 100).toFixed(1).replace('.', ',')}`);
+  const trPara = (v) => (Number.isFinite(v) ? `${Math.round(v).toLocaleString('tr-TR')} $` : '—');
+  function toplamRiskModeli(v, simdi = Date.now()) {
+    if (!v || !v.success) return null;
+    const sinir = v.kip === 'sinir';
+    const iz = v.izleme || {};
+    const metrikler = v.metrikler || [];
+    const son = v.son || null;
+    const gruplar = Object.values((son && son.gruplar) || {}).map(g => {
+      const dg = (v.dagilim || {})[g.grup] || {};
+      const asan = new Set((g.asim || []).map(a => a.metrik));
+      const esik = (v.grupEsikleri && v.grupEsikleri[g.grup]) || v.gecerliEsikler || {};
+      const sinirli = sinir && g.grup === (v.sinirGrup || 'canli');   // sınır yalnız canlı hesapta; kâğıt / demo öneri eşiğiyle izlenir
+      return { grup: g.grup, ad: g.ad, sinirli, botSayisi: g.botSayisi || 0, olculemeyen: g.olculemeyen || 0, ozsermaye: trPara(g.ozsermaye), uyari: g.uyari || null,
+        tekHesap: Number.isFinite(g.tekHesapPay) ? `tek hesap payı ${trBicim({ bicim: 'yuzde' }, g.tekHesapPay)}` : null,
+        satirlar: metrikler.map(m => {
+          const d = dg[m.anahtar];
+          return { anahtar: m.anahtar, ad: m.ad, deger: trBicim(m, m.anahtar === 'netBtcPay' && Number.isFinite(g[m.anahtar]) ? Math.abs(g[m.anahtar]) : g[m.anahtar]) + (m.anahtar === 'tekSembolPay' && g.tekSembol ? ` (${g.tekSembol})` : ''),
+            esik: trBicim(m, esik[m.anahtar]), asti: asan.has(m.anahtar),
+            dagilim: d && d.n ? `14 gün: orta ${trBicim(m, d.p50)} · %95 ${trBicim(m, d.p95)} · en yüksek ${trBicim(m, d.maks)} (${d.n} ölçüm)` : null };
+        }) };
+    });
+    const botlar = ((son && son.botlar) || []).map(b => ({ ad: b.kimlik, adGorunen: b.adGorunen || b.kimlik, mod: b.mod, makine: b.makine || null,
+      metin: b.olculemedi ? `ölçülemedi — ${b.olculemedi}` : `özsermaye ${trPara(b.ozsermaye)} · kaldıraç ${trBicim({ bicim: 'kat' }, b.kaldirac)} · felaket kaybı ${trPara(b.felaketKayip)}${Number.isFinite(b.marjOrani) ? ` · marj %${(b.marjOrani * 100).toFixed(1).replace('.', ',')}` : ''}${b.enKotu ? ' · eş bayat: son bilinen en kötü' : ''}${b.kaynak === 'kayit' ? ' · son kayıttan (borsadan okunmadı)' : ''}${b.not ? ` · ${b.not}` : ''}`,
+      notlar: [b.dokunulmaz ? 'demo kabul — yalnız haber' : null, b.makine ? 'eş makine' : null].filter(Boolean).join(' · ') }));
+    const yazilabilir = v.calisiyor !== false && !(AG.api && typeof AG.api.kademe === 'function' && AG.api.kademe() === 'telefon');
+    return { kip: v.kip, sinir, kipAd: TR_KIP_AD[v.kip] || v.kip, rozet: sinir ? 'p-rozet-warn' : 'p-rozet-pos',
+      aciklama: sinir ? 'Sınır yalnız canlı hesapta: onaylı sınırı aşacak BÜYÜTEN emir verilmez; azaltan emirler, stoplar ve acil durdurma her zaman serbest. Kâğıt ve demo hesaplar yalnız izlenir.'
+        : 'Ölçüm saatte bir; öneri eşikleri yalnız bu sayfada uyarı içindir (Telegram yok) — hiçbir emir engellenmez. İlk 14 gün gerçek değerleri görmek için.',
+      esikBozuk: !!v.esikBozuk, izleme: iz.mesaj || null, doldu: !!iz.doldu, sonZaman: son ? saat(Date.parse(son.zaman), simdi) : null,
+      gruplar, botlar, esUyarilari: (son && son.esUyarilari) || [], asimSayisi: ((son && son.asim) || []).length,
+      onayAcik: yazilabilir && !sinir && !!iz.doldu, izlemeDon: yazilabilir && sinir, olcAcik: yazilabilir,
+      oneri: v.oneriEsikler || {}, metrikler, yazilabilir };
+  }
+  function toplamRiskKarti(v, simdi) {
+    const m = toplamRiskModeli(v, simdi);
+    if (!m) return null;
+    const olc = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnTrOlc', disabled: m.olcAcik ? null : 'disabled' }, [el('span', { text: 'Şimdi ölç' })]);
+    olc.addEventListener('click', () => eylem(olc, () => AG.api.toplamRisk.durum(true), 'Toplam risk ölçüldü'));
+    const dugmeler = [olc];
+    let form = null;
+    if (m.izlemeDon) {
+      const don = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnTrIzleme' }, [el('span', { text: 'İzleme kipine dön' })]);
+      don.addEventListener('click', async () => {
+        const tamam = await AG.onayla({ baslik: 'İzleme kipine dönülsün mü?', tehlikeli: false, metin: 'İzleme kipinde toplam risk yalnız ölçülür ve uyarı verir; hiçbir emir engellenmez. Hemen geçerli olur. Onaylı sınırlar saklanır; yeniden sınır kipine geçmek için sınırları yeniden onaylarsınız (PIN).', onay: 'İzleme kipine dön', iptal: 'Vazgeç' });
+        if (tamam) eylem(don, () => AG.api.toplamRisk.izlemeyeDon(), 'Toplam risk: izleme kipine dönüldü');
+      });
+      dugmeler.push(don);
+    }
+    if (m.onayAcik) {
+      const girdiler = m.metrikler.map(x => {
+        const v0 = m.oneri[x.anahtar];
+        const deger = x.bicim === 'kat' ? v0 : Number.isFinite(v0) ? Math.round(v0 * 1000) / 10 : '';
+        return { x, inp: el('input', { type: 'number', class: 'form-control', id: `inpTr-${x.anahtar}`, step: x.bicim === 'kat' ? '0.1' : '1', min: '0', value: String(deger) }) };
+      });
+      const onay = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnTrSinir' }, [el('span', { text: 'Sınırları onayla' })]);
+      onay.addEventListener('click', async () => {
+        const e = {};
+        for (const { x, inp } of girdiler) { const n = Number(String(inp.value).replace(',', '.')); e[x.anahtar] = x.bicim === 'kat' ? n : n / 100; }
+        const ozet = girdiler.map(({ x, inp }) => `${x.ad} ${inp.value}${x.bicim === 'kat' ? '×' : '%'}`).join(' · ');
+        const tamam = await AG.onayla({ baslik: 'Sınır kipine geçilsin mi?', tehlikeli: true, metin: `${ozet}. Sınırlar yalnız CANLI hesaba uygulanır: aşacak, pozisyonu BÜYÜTEN emir verilmez (BTC ayağı artırılmaz); azaltan emirler, felaket stopları ve acil durdurma serbest kalır. Kâğıt ve demo hesaplar yalnız izlenir. İzleme kipine dönüş her zaman serbesttir.`, onay: 'Sınırları onayla', iptal: 'Vazgeç' });
+        if (tamam) eylem(onay, () => AG.api.toplamRisk.esikler(e), 'Toplam risk: sınır kipi açıldı');
+      });
+      form = el('div', { class: 'oz-kanal-alanlar', id: 'trEsikForm' }, girdiler.map(({ x, inp }) => el('label', { class: 'form-group', for: inp.id }, [el('span', { text: `${x.ad} (${x.bicim === 'kat' ? 'kat' : '%'})` }), inp])));
+      dugmeler.push(onay);
+    }
+    dugmeler.push(el('a', { class: 'btn btn-secondary btn-sm no-underline', href: '#/kilavuz/saglik/toplam-risk' }, [el('span', { text: 'Kılavuz' })]));
+    return el('section', { class: 'p-kart mt-4', id: 'saglikToplamRisk' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Toplam risk' }), el('span', { class: `p-rozet ${m.rozet}`, text: m.kipAd })]),
+      el('p', { class: 'hint hint-sm', text: `Bütün botların borsa hesapları birlikte ölçülür (yalnız okuma; kâğıt, demo ve canlı hesap ayrı; demo kabul botu borsadan ek okuma yapılmadan son kaydından). ${m.aciklama}` }),
+      m.izleme ? el('p', { class: `oz-sebep${m.doldu && !m.sinir ? ' p-warn' : ''}`, id: 'trIzleme' }, [el('strong', { text: m.sinir ? 'Kip: ' : 'İzleme: ' }), el('span', { text: m.izleme })]) : null,
+      m.esikBozuk ? el('p', { class: 'oz-sebep p-warn', text: 'Sınır kipi istendi ama onaylı eşik okunamadı — izleme kipinde çalışıyor. Sınırları yeniden onaylayın.' }) : null,
+      ...m.esUyarilari.map(x => el('p', { class: 'oz-sebep p-warn', text: x })),
+      m.gruplar.length ? el('div', { id: 'trGruplar' }, m.gruplar.map(g => el('div', { class: 'mt-2', 'data-grup': g.grup }, [
+        el('p', { class: 'oz-ad', text: `${g.ad} · ${g.botSayisi} bot · özsermaye ${g.ozsermaye}${g.olculemeyen ? ` · ölçülemeyen ${g.olculemeyen}` : ''}${g.tekHesap ? ` · ${g.tekHesap}` : ''}` }),
+        g.uyari ? el('p', { class: 'hint hint-sm', text: g.uyari }) : null,
+        AG.tablo.kutulu({ sinif: 'p-tablo', basliklar: ['Değer', 'Şimdi', g.sinirli ? 'Sınır' : 'Öneri eşiği', '14 gün'],
+          satirlar: g.satirlar.map(s => el('tr', { 'data-metrik': s.anahtar }, [el('td', { text: s.ad }),
+            el('td', null, [el('span', { class: s.asti ? 'p-rozet p-rozet-warn' : '', text: s.deger })]),
+            el('td', { class: 'df-soluk', text: s.esik }), el('td', { class: 'df-soluk', text: s.dagilim || '—' })])) }, 'p-tablo-kap'),
+      ]))) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: m.sonZaman ? 'Ölçülebilen bot yok (borsaya bağlı bot yok).' : 'Henüz ölçülmedi (açılıştan 2 dk sonra, sonra saatte bir).' })]),
+      m.botlar.length ? el('ul', { class: 'oz-liste mt-2', id: 'trBotlar' }, m.botlar.map(b => el('li', { class: 'oz-satir', 'data-bot': b.ad }, [
+        el('div', { class: 'oz-govde' }, [
+          el('div', { class: 'oz-ad-satir' }, [el('span', { class: 'oz-ad', text: GA(b) }), b.notlar ? el('span', { class: 'p-rozet', text: b.notlar }) : null]),
+          el('div', { class: 'oz-ayrinti', text: b.metin }),
+        ]),
+      ]))) : null,
+      m.sonZaman ? el('p', { class: 'hint hint-sm', text: `Son ölçüm: ${m.sonZaman}` }) : null,
+      form,
+      el('div', { class: 'oz-bot-dugmeler' }, dugmeler),
+      m.yazilabilir ? null : el('p', { class: 'hint hint-sm mb-0', text: 'Kip ve sınırlar yalnız sunucu bilgisayarındaki panelden değiştirilir.' }),
+    ]);
+  }
+
   /** 69.4 İkinci uyarı kanalı: Telegram düşerse ACİL uyarı ntfy ile telefona; ikinci ölü adam sunucu susarsa ayrı bir hizmetten uyarır. */
   let kanal = null;
   function kanalKarti(v) {
@@ -297,6 +397,7 @@
         el('ul', { class: 'oz-liste' }, gr.denetimler.map(d => denetimSatiri(d, simdi))),
       ]))),
       vkVeri ? veriKalitesiKarti(vkVeri, simdi) : null,
+      trVeri ? toplamRiskKarti(trVeri, simdi) : null,
       el('section', { class: 'p-kart mt-4', id: 'saglikKayit' }, [
         el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Onarım ve olay kaydı · 30 gün' }), el('span', { class: 'df-soluk', text: `${olaylar.length} kayıt` })]),
         olaylar.length ? el('ul', { class: 'oz-olaylar' }, olaylar.slice(0, 60).map(x => {
@@ -342,6 +443,7 @@
     rozetGuncelle(r);
     try { const kk = AG.api.saglikOz.ikinciKanal ? await AG.api.saglikOz.ikinciKanal() : null; kanal = kk && kk.success ? kk : null; } catch (e) { kanal = null; }
     try { const vv = AG.api.veriKalitesi ? await AG.api.veriKalitesi.durum() : null; vkVeri = vv && vv.success ? vv : null; } catch (e) { vkVeri = null; }   // 74.3
+    try { const tt = AG.api.toplamRisk ? await AG.api.toplamRisk.durum() : null; trVeri = tt && tt.success ? tt : null; } catch (e) { trVeri = null; }   // A3
     ciz();
     return r;
   }
@@ -358,7 +460,7 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, nasilModeli, veriKalitesiModeli, KILAVUZ,
-    _durum: { veriAyarla: (v) => { veri = v; }, vkAyarla: (v) => { vkVeri = v; } }, _ciz: { ciz } };
+  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, nasilModeli, veriKalitesiModeli, toplamRiskModeli, KILAVUZ,
+    _durum: { veriAyarla: (v) => { veri = v; }, vkAyarla: (v) => { vkVeri = v; }, trAyarla: (v) => { trVeri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.saglik;
 })(typeof window !== 'undefined' ? window : globalThis);

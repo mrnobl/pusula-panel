@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Dün (geçen hafta, geçen ay, geçen yıl) ne oldu?" sorusunun tek sayfalık cevabı. Her sabah 09:00'dan sonra **dünün günlük raporu**, pazartesi sabahı **geçen haftanın (pazartesi–pazar) haftalık raporu**, ayın 1'i 09:00'dan sonra **geçen ayın aylık raporu** ve 1 Ocak 09:00'dan sonra **geçen yılın yıllık raporu** kendiliğinden hazırlanır, burada arşivlenir ve kısa özeti Telegram'a gider ([Bildirimler](#/kilavuz/bildirimler) › "Günlük / haftalık rapor" — aylık ve yıllık da aynı türdedir). Aylık ve yıllık rapor günlükle **aynı içeriktir**, yalnız dönem uzundur.
+"Dün (geçen hafta, geçen ay, geçen yıl) ne oldu?" sorusunun tek sayfalık cevabı. Her sabah 09:00'dan sonra **dünün günlük raporu**, pazartesi sabahı **geçen haftanın (pazartesi–pazar) haftalık raporu**, ayın 1'i 09:00'dan sonra **geçen ayın aylık raporu** ve 1 Ocak 09:00'dan sonra **geçen yılın yıllık raporu** kendiliğinden hazırlanır, burada arşivlenir ve kısa özeti Telegram'a gider ([Bildirimler](#/kilavuz/bildirimler) › "Günlük / haftalık rapor" — aylık ve yıllık da aynı türdedir). **Haftalık rapor Telegram'a gitmez (76.0):** pazartesi tek mesaj [Haftalık karne](#/kilavuz/raporlar/karne)'dir; haftalık rapor yine hazırlanır ve burada okunur. Aylık ve yıllık rapor günlükle **aynı içeriktir**, yalnız dönem uzundur.
 
 Rapor üç şeyi anlatır:
 

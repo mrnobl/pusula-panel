@@ -2,6 +2,15 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.0 — Bütün hesapların toplam riski (2026-10-25) {#s76-0}
+- **Yeni: [Sistem › Sağlık › Toplam risk](#/kilavuz/saglik/toplam-risk).** Bütün botların borsa hesapları birlikte ölçülür (yalnız okuma; demo kabul botu Kairos borsaya ek istek atılmadan son kaydından): **brüt kaldıraç**, **net BTC payı**, **tek coin payı** (BTC dışındaki en büyük coin, bütün hesaplarda) ve **felaket kaybı** (bütün felaket stopları tetiklenseydi; stopsuz kısımda %30 düşüş). Kâğıt, demo ve canlı hesap ayrı hesaplanır. Eşlenmiş başka bir sunucu varsa onun botları da girer.
+- **İlk 14 gün yalnız izleme:** ölçüm saatte bir kaydedilir; öneri eşiği (4× · %120 · %35 · %25) aşılınca yalnız panelde **uyarı** görünür — Telegram'a ileti gitmez. **Hiçbir emir engellenmez.**
+- 14 gün dolunca kart her değerin orta / %95 / en yüksek değerini gösterir; sınırları **siz** yazıp **Sınırları onayla** (PIN) dersiniz. Sınır kipinde sınır yalnız **canlı hesaba** uygulanır (kâğıt ve demo yalnız izlenir): aşacak **büyüten** emir verilmez, BTC ayağı artırılmaz, Telegram gelir; azaltan emirler, felaket stopları ve acil durdurma her zaman serbest. **İzleme kipine dön** PIN istemez, hemen geçerli. Pusula kendiliğinden kip değiştirmez.
+- Demo kabul botu (Kairos) 2026-12-09 sonuna kadar yalnız haber alır; ölçümü için borsaya ek istek atılmaz.
+- Ana sayfa › Sistem sağlığı'nda yeni ışık **Toplam risk**; Sağlık'ta yeni denetim satırı **Bütün hesapların toplam riski** (yalnız haber) — öz denetim artık 35 denetim. Sorun giderme: [Toplam risk eşiği aşıldı](#/kilavuz/sorun-giderme/toplam-risk).
+- **Telegram sadeleşti:** pazartesi eski 📋 haftalık rapor mesajı artık gelmez — yerini [Haftalık karne](#/kilavuz/raporlar/karne) aldı (haftalık rapor yine hazırlanır, Raporlar'da okunur). Para çekme izni açık bir anahtar için Sağlık'taki **API anahtarı yetkisi** alarmı gittiyse sabah 06:15 [anahtar sınaması](#/kilavuz/bildirimler) bildirimi aynı satırı tekrarlamaz (tek ileti).
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)): botların emir kapısına (yalnız sınır kipinde takılan) bir kanca eklendi; izleme kipinde davranış birebir aynı.
+
 ## 75.9 — Başka makinelerdeki botlar, Telegram'da yönetici, karnede eşler (2026-10-25) {#s75-9}
 - **Yeni: [Botlar › Özet › Başka makinelerdeki botlar](#/kilavuz/botlar/baska-makine).** Eşlenmiş sunucu varsa o makinelerde çalışan botlar (taşıdıklarınız dahil) ayrı bir kartta: makine, hesap türü, durum, son nabız ve **o makinede aç ↗**. Yalnız okuma — Başlat / Durdur botun çalıştığı makinenin panelinde. Başka makineye taşınan botun bu bilgisayardaki eski kopyasının kartında "Bu bot artık … makinesinde çalışıyor" bandı çıkar.
 - **[Telegram › Makineler](#/kilavuz/telegram-menu):** hangi makinenin yönetici olduğu, komutları **şu an kimin dinlediği** (geçici devralma dahil, başladığı saatle) ve eşlerin son nabzı. Telegram'dan yazma yine yok.

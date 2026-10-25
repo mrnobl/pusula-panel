@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 34 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 35 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -37,6 +37,7 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 | Bot kartı | Yalnız güvenli kipteki ya da kapalı bot için çıkar: sebep, **Sebebi okudum ve düzelttim** kutusu ve **Botu yeniden aç** / **Güvenli kipi kaldır** düğmesi. Kutu işaretlenmeden düğme çalışmaz |
 | Denetim satırı | Nokta (yeşil tamam · sarı uyarı · kırmızı hata · gri ölçülemedi), denetimin adı, kademesi, son sonuç ve varsa son onarım. Sorunlu satırlar grubun üstünde durur. 73.7: her satırın altında **Sorun olursa / Ne yapmalı** satırı (Pusula ne yapar, siz ne yaparsınız) ve [Sorun giderme](#/kilavuz/sorun-giderme) bağlantısı; sorunlu satırda [Sorunlar](#/kilavuz/sorunlar) sayfasındaki adımlara bağlantı |
 | Veri kalitesi | 74.3: kip rozeti (**İzleme kipi** / **Etkin kip**), izleme başlangıcı ve bulgu sayıları, bot başına son günlük çalışmanın sonucu, 30 günlük sayaç ve son bulgular; **Etkin kipe geç** / **İzleme kipine dön** düğmesi (yalnız sunucu bilgisayarında). Ayrıntı aşağıda: [Veri kalitesi](#/kilavuz/saglik/veri-kalitesi) |
+| Toplam risk | Bütün hesapların toplam riski: kip rozeti (**İzleme kipi** / **Sınır kipi**), hesap türü başına (kâğıt / demo / canlı hesap) dört değer ve eşiği, bot başına ölçüm, 14 günlük dağılım; **Şimdi ölç**, **Sınırları onayla** (14 gün dolunca, PIN; yalnız canlı hesaba uygulanır) ve **İzleme kipine dön** düğmeleri (yalnız sunucu bilgisayarında). Ayrıntı aşağıda: [Toplam risk](#/kilavuz/saglik/toplam-risk) |
 | Olay raporları | Bot güvenli kipe girince ya da kapanınca yazılan "kara kutu" dosyaları; adına tıklayınca iner. **Şimdi rapor al** o anın raporunu elle yazar |
 | Onarım ve olay kaydı | Son 30 gün: **ONARILDI**, **ONARILAMADI**, **GÜVENLİ KİP**, **TAMAMEN KAPANDI**, **UYARI**, **HATA**, **DÜZELDİ** |
 | Bot ne zaman tamamen kapanır | Tam kapanma ve güvenli kip sebeplerinin listesi (aşağıda) |
@@ -72,6 +73,31 @@ Sebep belirsiz ya da geçici olabilir; devam etmek risk büyütmesin diye bot **
 - İkinci kaynak (Binance spot) okunamazsa bu yalnız **hafif** bulgudur; karar hiçbir zaman bu yüzden engellenmez. Binance hız sınırı beklemesi varsa istek atılmaz.
 - **Kip değiştirmek:** Sağlık › Veri kalitesi › **Etkin kipe geç** / **İzleme kipine dön** → onay. Yalnız sunucu bilgisayarındaki panelden; telefonda ve geliştirme bilgisayarında yalnız görüntüleme. İzleme kipine dönünce veri kalitesinin koyduğu güvenli kip hemen kalkar. Değişiklik Ayar geçmişine de yazılır.
 - Bulgu çıkınca ne yapılır: [Sorun giderme › Veri kalitesi bulgusu](#/kilavuz/sorun-giderme/veri-kalitesi).
+
+## Toplam risk {#toplam-risk}
+
+Her bot kendi sınırlarını (emir ve coin tavanı, emir freni, felaket stopu) zaten taşır. **Toplam risk** bütün botları **birlikte** ölçer: aynı anda hepsi aynı yöne mi yükleniyor, tek bir coin ya da tek bir hesap toplamın ne kadarı? Ölçüm her botun borsa hesabından **yalnız okuyarak** yapılır (bakiye, pozisyonlar, felaket stopları); emir vermez. Eşlenmiş başka bir sunucu varsa (Ayarlar › Makineler) onun botları da toplama girer.
+
+Değerler hesap türü başına ayrı hesaplanır — kâğıt hesaplar, demo hesaplar ve canlı hesap birbirine karışmaz (biri ötekinin parasıyla karşılanmaz):
+
+| Değer | Nasıl hesaplanır | Öneri eşiği (uyarı) |
+|---|---|---|
+| Brüt kaldıraç | Bütün pozisyonların toplam büyüklüğü ÷ toplam özsermaye | 4× |
+| Net BTC payı | BTC pozisyonlarının (BTC ayağı + kolun BTC'si) net büyüklüğü ÷ özsermaye | %120 |
+| Tek coin payı | BTC dışındaki en büyük coin pozisyonu (bütün hesaplarda toplam) ÷ özsermaye | %35 |
+| Felaket kaybı | Bütün felaket stopları tetiklenseydi kayıp ÷ özsermaye; stopu olmayan kısımda (BTC ayağı, kâğıt hesap) %30 düşüş varsayılır | %25 |
+
+Ayrıca bilgi olarak **tek hesap payı** (en büyük hesabın özsermayesi ÷ toplam) ve bot başına kaldıraç ile marj oranı gösterilir.
+
+- **Demo kabul botu (Kairos)** 2026-12-09 sonuna kadar borsaya **ek istek atılmadan** ölçülür: değerleri botun kendi son kaydından (son günlük çalışmanın özsermayesi, emir defterindeki pozisyonlar, felaket stopu konurken okunan fiyat) gelir — kartta "son kayıttan (borsadan okunmadı)" yazar. Ona hiçbir kapı takılmaz.
+- **İzleme kipi (varsayılan, ilk 14 gün):** ölçüm saatte bir yapılır ve kaydedilir (`live/toplam-risk.jsonl`, yalnız eklenir, yedeğe girer). Öneri eşiği aşılınca **yalnız bu sayfada** ve Sağlık'taki denetim satırında uyarı görünür — **Telegram'a ileti gitmez, hiçbir emir engellenmez.** Öneri eşikleri bu botların gerçek değerlerine göre ayarlanmamıştır; amaç önce gerçek değerleri görmek.
+- **14 gün dolunca:** kart her değer için 14 günün **orta değerini**, **%95'ini** ve **en yüksek** değerini gösterir. Bunlara bakıp sınırları **siz** yazarsınız → **Sınırları onayla** → onay penceresi → yerel PIN. Pusula kendiliğinden sınır kipine geçmez.
+- **Sınır kipi — yalnız canlı hesap:** sınırlar yalnız **canlı hesaptaki** botlara uygulanır; kâğıt ve demo hesaplar yine yalnız izlenir. Canlı hesapta onaylı sınırı aşacak, pozisyonu **büyüten** emir gönderilmez ("Emir gönderilmedi: toplam risk sınırı …"); BTC ayağı artırılmaz. **Pozisyonu küçülten / kapatan emirler, felaket stopları ve acil durdurma her zaman serbesttir** (emir freni gibi). Ölçüm 5 dakikada bir; ölçüm 15 dakikadan eskiyse büyüten emir yine verilmez (kapalı-başarısız). Canlı hesabın sınırı aşılınca ya da bir emir durunca Telegram gelir (aynı bot ve değer için 6 saatte bir).
+- **İzleme kipine dön** her zaman serbesttir (PIN istemez) ve **hemen** geçerlidir — yanlış bir sınır botu kilitliyorsa ilk yapılacak budur.
+- **Eşin verisi 6 saatten eskiyse** (eş kapalı / ulaşılamıyor) eşin son 14 gündeki **en kötü** değerleri kullanılır ve kartta uyarı çıkar — tutucu yön.
+- Borsaya bağlı olmayan bot (durmuş kâğıt bot gibi) "ölçülemedi" satırıyla görünür ve toplama girmez.
+- Kip ve sınırlar yalnız sunucu bilgisayarındaki panelden değişir; telefonda ve geliştirme bilgisayarında yalnız görüntüleme (geliştirme bilgisayarı sunucunun değerlerini gösterir). Değişiklik Ayar geçmişine de yazılır.
+- Uyarı görünce ne yapılır: [Sorun giderme › Toplam risk eşiği](#/kilavuz/sorun-giderme/toplam-risk).
 
 ## Sunucu bilgisayarı {#sunucu-bilgisayari}
 

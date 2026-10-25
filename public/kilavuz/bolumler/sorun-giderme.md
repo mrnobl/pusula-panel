@@ -139,6 +139,18 @@ Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da ri
 4. Etkin kipte güvenli kip 2 saatten uzun sürer ve Binance'te her şey normal görünürse Sağlık › Veri kalitesi › **İzleme kipine dön** (güvenli kip hemen kalkar).
 5. İzleme 7 günü doldurduğunda Sağlık › Veri kalitesi kartı bulgu sayılarını gösterir; etkin kipe geçmeye **siz** karar verirsiniz — Pusula kendiliğinden geçmez.
 
+### Toplam risk eşiği aşıldı {#toplam-risk}
+
+**Belirti:** Sağlık'ta **Bütün hesapların toplam riski** satırı sarı, Toplam risk kartında işaretli değer; sınır kipinde canlı hesap için ayrıca Telegram'da "Toplam risk sınırı aşıldı" ya da "emir verilmedi". **Anlamı:** botların hep birlikte taşıdığı risk (brüt kaldıraç, net BTC payı, tek coin payı ya da felaket kaybı) bir eşiğin üstüne çıktı; ya da eşlenmiş sunucunun risk verisi 6 saattir okunamıyor.
+
+**İzleme kipinde (varsayılan, ilk 14 gün) ve kâğıt / demo hesaplarda:** yalnız panelde haber — Telegram yok, **hiçbir emir engellenmedi**. Öneri eşikleri henüz bu botlara göre ayarlanmadı; uyarı "bot bozuk" demek değildir. **Sınır kipinde canlı hesapta:** sınırı aşacak büyüten emir verilmedi; azaltan emirler, stoplar ve acil durdurma serbest.
+
+**Adımlar:**
+1. Sağlık › Toplam risk kartında hangi hesap türünde, hangi değerin aştığına ve hangi botun payının büyük olduğuna bakın.
+2. İzleme kipindeyseniz dokunmayın; 14 gün dolunca kart dağılımı gösterir, canlı hesabın sınırlarını ona göre siz onaylarsınız.
+3. Sınır kipinde canlı hesaptaki bot beklenmedik biçimde emir veremiyorsa ve Binance'te her şey normal görünüyorsa **İzleme kipine dön** (PIN istemez, hemen geçerli) ve sohbete yazın — sınır dar seçilmiş olabilir.
+4. "Eşin risk verisi okunamadı" uyarısında öbür sunucunun açık ve Tailscale'e bağlı olduğuna bakın (Ayarlar › Makineler). O sırada eşin son bilinen en kötü değerleri kullanılır.
+
 ### Borsa beklemesi (hız sınırı / geçici IP yasağı) {#borsa-beklemesi}
 
 **Belirti:** "yürütücü durdu [GERI_CEKILME]". **Anlamı:** zararsız — süre bitene kadar bot borsaya istek atmıyor; stoplar borsada. **Kendiliğinden geçer mi:** evet, kartta bitiş saati yazar. **Adımlar:** paneli yenilemeyin, düğmelere tekrar tekrar basmayın — 418 yasağını uzatır.
