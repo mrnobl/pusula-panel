@@ -140,13 +140,15 @@ Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucun
 
 ![Ayarlar › Makineler (örnek makinelerle)](ekran:ayarlar-makineler-1400)
 
-**Makineler** alt sayfası (75.2; 75.3'te yönetici makine) Pusula'nın çalıştığı bilgisayarları bir arada gösterir. Tek bilgisayar kullanıyorsanız burada yapmanız gereken bir şey yok: eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**.
+**Makineler** alt sayfası (75.2; 75.3'te yönetici makine; 75.5'te bot taşıma) Pusula'nın çalıştığı bilgisayarları bir arada gösterir. Tek bilgisayar kullanıyorsanız burada yapmanız gereken bir şey yok: eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**.
 
 - **Bu bilgisayar:** adı, **makine kimliği** (`m-` ile başlayan 12 haneli kod; ilk açılışta bir kez üretilir, hiç değişmez — yeni bilgisayar yeni kimlik alır), rolü (**sunucu** ya da **geliştirme / araştırma bilgisayarı**), sürümü, Tailscale adresi, botları.
 - **Eşlenmiş makineler** tablosu: her makinenin **durumu** (*Bağlı* · *Sessiz* — 15 dakikadan uzun ses yok · *Henüz görülmedi* · *Bu makineyi reddediyor* · *Sürüm uyumsuz*) ve son görülme zamanı, **sürümü** (bu bilgisayardan farklıysa yazar), **botları** (ad · hesap türü · çalışıyor / durmuş), **güncelleme** durumu ve **boş disk**. Satırdaki **Yönetici yap** (75.3, acil PIN) o makineyi Telegram'ı dinleyen makine yapar; **Kaldır** (acil PIN) o makinenin jetonunu siler. Yönetici makinenin satırında **Yönetici** rozeti, geçici dinleyen makinede **Komutları geçici dinliyor** rozeti görünür.
 - **Şimdi yokla** eşlere hemen nabız yollar; kendiliğinden her **5 dakikada** bir yollanır. Sekmedeki ışık: yeşil hepsi bağlı, sarı sessiz makine var, kırmızı reddeden ya da sürümü uyumsuz makine var.
 
-**Pano botlara dokunmaz.** Buradan yalnız eşleme ve yönetici makine seçimi yapılır. Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir** ve **nabız** gönderebilir: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, yönetici seçemez, Portföyüm ve İşlem defterim'i okuyamaz. **Botu başka makineye taşıma** sonraki sürümde gelecek.
+**Pano botlara dokunmaz.** Buradan eşleme, yönetici makine seçimi ve (75.5) **bot taşıma** yapılır. Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir**, **nabız** gönderebilir ve sizin onu hedef seçtiğiniz bir taşımada **bot paketini teslim edebilir**: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, yönetici seçemez, taşımayı kendisi başlatamaz, Portföyüm ve İşlem defterim'i okuyamaz.
+
+- **Botu başka makineye taşı** kartı (yalnız eş varken): bu bilgisayardaki her bot için *taşınabilir mi* (değilse nedeni — canlı hesap, Kairos demo kabulü …), taşıma durumu (*taşınıyor*, *… makinesinde çalışır*, *… makinesinden geldi*, *son taşıma yapılamadı*) ve **hedef makine + Taşı** (onay penceresinde **TAŞI** yazılır, acil PIN). Sonucu belli olmayan taşımada **Yeniden denetle**. Ayrıntı ve adım adım: [Botu başka makineye taşımak](#/kilavuz/botlar/bot-tasima). Aynı bot iki makinede aynı anda çalışamaz: [nöbet kuralı](#/kilavuz/botlar/bot-nobet).
 
 ### Önce: Tailscale {#makine-tailscale}
 
@@ -196,12 +198,14 @@ Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda
 | **Henüz görülmedi** | eşleme yapıldı ama hiç nabız alınmadı | **Şimdi yokla**; sürerse iki bilgisayarın adreslerini denetleyin |
 | **Bu makineyi reddediyor** | o makine bu bilgisayarın jetonunu kabul etmiyor | Orada eşleme kaldırılmış ya da jeton yenilenmiş olabilir — iki makineyi **yeniden eşleyin** |
 | **Sürüm uyumsuz** | iki makinenin sürümleri birbirini anlamıyor | İki makineyi de aynı sürüme güncelleyin (Ayarlar › Güncelleme) |
-| sürüm satırında "yalnız okuma" | bir sürüm fark var | Görüntüleme çalışır; ileride bot taşımak için aynı sürüm gerekir |
+| sürüm satırında "yalnız okuma" | bir sürüm fark var | Görüntüleme çalışır; bot taşımak için iki makine aynı sürümde olmalı |
+| Taşıma kartında **taşınıyor — sonuç belli değil** (sarı bant) | taşıma sırasında hedefe ulaşılamadı | Bot iki makinede de başlamaz; hedef açılınca **Yeniden denetle** |
+| Telegram: **Bot açılışta başlamadı (nöbet denetimi)** | eşlenmiş sunuculara ulaşılamadı ya da bot başka makineye geçmiş | Eşlerin durumuna bakın; bot başka makinede çalışmıyorsa Botlar'dan elle **Başlat** — [nöbet](#/kilavuz/botlar/bot-nobet) |
 | **Geçici devralma** (sarı bant) | yönetici 30 dakikadır görünmüyor; komutları bu bilgisayar dinliyor | Yönetici bilgisayarın açık olduğuna ve Tailscale'e bakın; geri gelince kendiliğinden düzelir |
 | **Telegram'ı başka bir makine dinliyor (409)** | yönetici bu bilgisayardan görünmüyor ama çalışıyor | İki bilgisayarda Tailscale bağlantısına bakın, **Şimdi yokla** |
 | Güncelleme **sırada bekliyor** | kademeli güncelleme: önce başka makine kurmalı | Bekleyin; bot kodu değiştiyse önce bot çalıştırmayan makinede **Güncellemeyi kur** |
 
-Telefondan bu sekme **yalnız görüntülenir** (eşleme ve kaldırma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.
+Telefondan bu sekme **yalnız görüntülenir** (eşleme, kaldırma ve bot taşıma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.
 
 ## Bu bilgisayar {#bu-bilgisayar}
 

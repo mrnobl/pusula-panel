@@ -4594,7 +4594,7 @@
       "kimlik": "ayarlar-makineler-1400",
       "rota": "ayarlar/makineler",
       "genislik": 1400,
-      "yukseklik": 1690,
+      "yukseklik": 2080,
       "once": [
         {
           "bekleSecici": "#makinelerKok .p-kart",
@@ -4604,7 +4604,7 @@
           "bekle": 400
         },
         {
-          "degerJs": "AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:{kimlik:'m-3f9a1c07b2e4',surum:2,zaman:new Date(Date.now()-600*60000).toISOString(),secen:'m-3f9a1c07b2e4'},telegram:{dinle:true,kip:'yonetici',sebep:'bu makine yönetici (seçildi)',uygun:true,yoklamaCalisiyor:true,devir:null,cekisme:null},etkinYonetici:{kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',secildi:true},esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.3',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,yoneticiMi:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.3',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:false,kip:'uygun-degil'},kopyaYasi:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.2',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:true,kip:'bekle'},kopyaYasi:null}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()})"
+          "degerJs": "AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:{kimlik:'m-3f9a1c07b2e4',surum:2,zaman:new Date(Date.now()-600*60000).toISOString(),secen:'m-3f9a1c07b2e4'},telegram:{dinle:true,kip:'yonetici',sebep:'bu makine yönetici (seçildi)',uygun:true,yoklamaCalisiyor:true,devir:null,cekisme:null},etkinYonetici:{kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',secildi:true},esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.3',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,yoneticiMi:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.3',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:false,kip:'uygun-degil'},kopyaYasi:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.2',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:true,kip:'bekle'},kopyaYasi:null}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()}, {success:true,yazilabilir:true,rol:'sunucu',yedekSifre:true,tavanMB:64,hedefler:[{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net'}],botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:false,neden:'Kairos demo kabulü 2026-12-09\\'a kadar sürüyor — Kairos (ve demo kabul klasörü hucum-demo) bu tarihe kadar başka makineye taşınmaz'},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0,makine:null,makineAd:null,tasima:null,tasinabilir:true,neden:null},{kimlik:'atlas',adGorunen:'Atlas',mod:'kagit',calisiyor:false,nobet:1,makine:'m-c41d6e8f0a3b',makineAd:'YEDEK-PC',tasima:{asama:'tasindi',hedef:'m-c41d6e8f0a3b',hedefAd:'YEDEK-PC',nobet:1,zaman:new Date(Date.now()-300*60000).toISOString()},tasinabilir:false,neden:'bu bot YEDEK-PC makinesine taşındı (nöbet 1)'},{kimlik:'vega',adGorunen:'Vega',mod:'demo',calisiyor:false,nobet:2,makine:'m-3f9a1c07b2e4',makineAd:null,tasima:{asama:'geldi',kaynak:'m-c41d6e8f0a3b',kaynakAd:'YEDEK-PC',nobet:2,mutabakat:'temiz',zaman:new Date(Date.now()-20*60000).toISOString()},tasinabilir:true,neden:null}]})"
         },
         {
           "bekleSecici": "#mkTablo",
@@ -4624,20 +4624,24 @@
           "etiket": "Eşlenmiş makineler: durum, sürüm, botlar, Yönetici yap"
         },
         {
+          "secici": "#mkTasima",
+          "etiket": "Botu başka makineye taşı (TAŞI + PIN)"
+        },
+        {
           "secici": "#mkEsleme",
           "etiket": "Eşle: kod üret / koduyla eşle (PIN)"
         }
       ],
-      "kalite": 20,
+      "kalite": 18,
       "uretim": {
         "dosya": "ayarlar-makineler-1400.webp",
         "en": 1400,
-        "boy": 1690,
-        "bayt": 70244,
+        "boy": 2080,
+        "bayt": 87960,
         "olcek": 1,
-        "ozet": "9288c4d90c023d8b2e53eea3ceaf89ec51018352151f2b4fdb4684512b3457d2",
-        "genel": "1e2ba57921bef1df6035875b005f49a13a7c8c9956ba9a8fed1c8c5ca6ffcefc",
-        "surum": "75.3",
+        "ozet": "76a85fb62ce0e4dfb47dda21329454fe117152bca22c27791caa51859cd8c128",
+        "genel": "d4c7328e4b5b149cdca7ead245d7d92d30bbe4d08e5ed1373429add3397f383c",
+        "surum": "75.5",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -4655,9 +4659,16 @@
             "h": 324
           },
           {
-            "secici": "#mkEsleme",
+            "secici": "#mkTasima",
             "x": 260,
             "y": 1166,
+            "w": 1128,
+            "h": 427
+          },
+          {
+            "secici": "#mkEsleme",
+            "x": 260,
+            "y": 1597,
             "w": 1128,
             "h": 417
           }
@@ -7008,11 +7019,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 53822,
+        "bayt": 53722,
         "olcek": 1,
-        "ozet": "e75ae421be27decbe82bd098bdf2ec32d0f94f3efa72d5717e2101281fc14f62",
-        "genel": "1e2ba57921bef1df6035875b005f49a13a7c8c9956ba9a8fed1c8c5ca6ffcefc",
-        "surum": "75.4",
+        "ozet": "c6c59c3cfc34ff92bd44d32958408054dc97926486ffa53b0051db144af38c10",
+        "genel": "d4c7328e4b5b149cdca7ead245d7d92d30bbe4d08e5ed1373429add3397f383c",
+        "surum": "75.5",
         "tarih": "2026-10-25",
         "isaretler": [
           {

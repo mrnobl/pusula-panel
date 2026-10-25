@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.4';
+const APP_VERSION = '75.5';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -311,6 +311,16 @@ app.use((req, res, next) => {
     return res.status(409).json({ success: false, kod: 'mutabakat-bekliyor', error: 'Bu bilgisayara taşıma dosyasıyla gelindi: bot ilk temiz borsa mutabakatından önce başlamaz. Önce "Mutabakat" (borsayla karşılaştır), temiz çıkınca "Başlat".' });
   }
   next();
+});
+// 75.5 (3c) NÖBET KAPISI (lib/makine/nobet.js; lib/sunucu/makineUclari.js nobetKapisi): başka makineye taşınmış ya da taşınmakta olan bot
+// burada başlamaz, çalışmaz, borsaya bağlanmaz, ayarı değişmez (durdur serbest); eşli sunucuda elle Başlat / Çalıştır taze nöbet denetiminden geçer.
+app.use((req, res, next) => {
+  if (req.method !== 'POST') return next();
+  const m = guvenlikKur.yasakYolu(req.path).match(/^\/api\/bindirme\/([a-z][a-z0-9]{1,15})\/([a-z-]{2,24})$/);
+  if (!m || m[2] === 'durdur') return next();
+  let p;
+  try { p = ctx.makine.nobetKapisi(m[1], m[2]); } catch { return next(); }
+  Promise.resolve(p).then((e) => (e ? res.status(409).json({ success: false, kod: 'nobet', nobet: { kod: e.kod, makine: e.makine || null, nobet: e.nobet == null ? null : e.nobet }, error: e.metin }) : next()), () => next());
 });
 // F10b (denetim 64.8): gövde ayrıştırma hatası (bozuk JSON, 10 MB üstü) geliştirme kademesine JSON döner — geliştirme bilgisayarı
 // kaydı "hata" yapar (HTML 400 yanıtı kuyruğu sonsuza dek bekletirdi). Diğer kademeler Express'in varsayılan davranışında.

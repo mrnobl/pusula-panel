@@ -78,6 +78,44 @@ Kullanmadığınız yeni botu **Arşivle…** ile listelerden kaldırırsınız:
 
 Yeni bot, hesap bağlama, sermaye ve arşiv değişiklikleri [Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde **Bot kaydı** türüyle görünür. Kullanıcının oluşturduğu bot kaydı kişisel veridir: yedeğe ve taşıma dosyasına girer; taşıma sonrası diğer botlar gibi ilk borsa karşılaştırmasına kadar kendiliğinden başlamaz.
 
+## Botu başka makineye taşımak (75.5) {#bot-tasima}
+
+İki **sunucu** eşlenmişse ([Ayarlar › Makineler](#/kilavuz/ayarlar/makineler)) bir botu birinden ötekine taşıyabilirsiniz — örneğin yeni bir bilgisayar aldınız ya da botu daha sağlam çalışan makineye almak istiyorsunuz. Taşıma **Ayarlar › Makineler › Botu başka makineye taşı** kartından, **yalnız botun şu an bulunduğu bilgisayarın panelinden** yapılır (telefondan ve başka makineden yapılamaz).
+
+**Neler taşınabilir:** kâğıt ve demo moddaki botlar (Kairos tipi, Tao tipi, sizin oluşturduğunuz botlar). **Taşınamaz:** canlı hesap botu; **Kairos — demo kabulü 2026-12-09'a kadar** (demo kabul klasörü `hucum-demo` botla birlikte gideceği için Kairos bu tarihe kadar hiçbir modda taşınmaz); model örnekleri (Nova / Lydia / Simurg kâğıt hesabı). Taşınamayan botun satırında nedeni yazar.
+
+**Adım adım:**
+
+1. Botun bulunduğu bilgisayarda **Ayarlar › Makineler** → "Botu başka makineye taşı" kartında botun satırında **hedef makineyi** seçin → **Taşı**.
+2. Açılan pencerede ne olacağı yazar; onaylamak için **TAŞI** yazın, sonra **acil PIN**'i girin.
+3. Pusula önce hedefe sorar ("alabilir misin?"). Hedef reddederse (ör. orada aynı bot çalışıyor, aynı emir önekini kullanan başka bot var, demo hesabının orada başka anahtarı kayıtlı) **hiçbir şey değişmez**, bot çalışmaya devam eder.
+4. Hedef kabul ederse bot bu bilgisayarda **durdurulur** — açık pozisyonlara, borsadaki emirlere ve felaket stoplarına **dokunulmaz** — ve verisi hedefe gönderilir. Demo botta bağlı demo hesabının anahtarı da gider: **yedek şifresiyle şifrelenmiş** olarak (iki bilgisayarda [yedek şifresi](#/kilavuz/yedek-tasima) **aynı** olmalı; hedefte şifre yoksa ya da farklıysa taşıma reddedilir). Kâğıt botta hiçbir sır gönderilmez; sağlık sinyali adresi hedefte yeniden girilir.
+5. Hedef her dosyayı doğrular, eski kopyasını silmeden kenara alır (`onceki-bot-…` klasörü), botu yerleştirir. **Bot hedefte kendiliğinden başlamaz:** hedefin Botlar sayfasında önce **Mutabakat** (borsayla karşılaştırma), temiz çıkınca **Başlat** — bunu siz yaparsınız.
+6. İki tarafa da Telegram mesajı gider: "… artık … makinesinde" ve hedefte karşılaştırmanın sonucu.
+
+**Taşındıktan sonra eski bilgisayarda** bot listede durur ama **salt okunurdur**: Başlat, Çalıştır, Mutabakat, Acil, hesap türü değişikliği … hepsi "bu bot … makinesine taşındı" diye reddedilir; yalnız Durdur serbesttir. Eski bilgisayardaki dosyalar silinmez. **Geri getirmek** için aynı kartı yeni makinede kullanıp botu eski bilgisayara taşıyın (nöbet numarası bir artar).
+
+### Nöbet: aynı bot iki makinede aynı anda çalışmaz {#bot-nobet}
+
+Her botun kaydında **hangi makinede çalıştığı** ve bir **nöbet numarası** vardır; her taşımada numara bir artar. Kurallar:
+
+- **Bot kaydı başka makineyi gösteriyorsa ya da taşıma sürüyorsa** bot o bilgisayarda başlamaz ve borsaya bağlanmaz (ağ bağlantısı gerekmez — bilgisayarlar birbirini görmese de geçerli).
+- **Açılışta** eşlenmiş bir sunucu varsa, çalışması gereken her bot önce eşlere sorulur: bir eş o botun **daha yeni nöbetini** taşıyorsa bot başlamaz ve kayıt o makineye devredilir (ör. eski bir yedekten açılan bilgisayar). Eş aynı botu demo/canlıda **zaten çalıştırıyorsa** bot başlamaz (iki makine aynı kimlikle — aynı emir önekiyle — aynı hesaba emir göndermesin).
+- **Eşlerin hiçbirine ulaşılamazsa** bot açılışta **kendiliğinden başlamaz** ve Telegram'a "Bot açılışta başlamadı (nöbet denetimi)" gelir. Bot başka makinede çalışmıyorsa Botlar sayfasından **elle Başlat** — elle Başlat'ı yalnız eşin olumlu bir çakışma bildirmesi durdurur. Eşlenmiş sunucu yoksa (tek bilgisayar ya da yalnız geliştirme bilgisayarı eşli) davranış eskisi gibidir.
+- **Kairos demo kabulü süresince** (2026-12-09'a kadar) bu açılış kuralı Kairos için yalnız **haber** verir, Kairos yine başlar (kabul ölçümü kesilmesin). Kairos zaten taşınamadığı için başka makinede sahibi olamaz.
+
+### Taşıma yarıda kalırsa {#bot-tasima-yarida}
+
+| Durum | Ne olur | Ne yapmalı |
+|---|---|---|
+| Hedef reddetti / paket bozuk geldi | Hedefte hiçbir şey değişmez; bot bu bilgisayarda **durmuş** kalır ("Son taşıma yapılamadı: …") | Nedeni giderip yeniden **Taşı**, ya da Botlar sayfasından **Başlat** |
+| Hedef yerleştirirken hata / hedef kapandı | Hedef yaptığı her adımı geri alır (kapandıysa açılışta) | Yukarıdaki gibi |
+| Yanıt gelmedi (bağlantı koptu) | Pusula hedefe hemen sorar: bot oraya geçtiyse "taşındı", geçmediyse "yapılamadı" | — |
+| Hedefe hiç ulaşılamıyor | Sonuç **belli değil**: bot **iki makinede de başlamaz**; kartta "Yeniden denetle" | Hedef açılınca **Yeniden denetle** (açılışta da kendiliğinden sorulur) |
+| Bu bilgisayar taşıma sırasında kapandı | Açılışta hedefe sorulur, sonuç kendiliğinden tamamlanır | — |
+
+Taşıma günlük karar penceresinde (UTC 23:50–01:30, TR 02:50–04:30) yapılmaz. Bot verisi en çok 64 MB olabilir (bugünkü botlar birkaç MB).
+
 ## Ne zaman kullanılır {#ne-zaman}
 
 - Sabah: bot gece ne yaptı, ne kadar kazandı, bir sorun var mı.

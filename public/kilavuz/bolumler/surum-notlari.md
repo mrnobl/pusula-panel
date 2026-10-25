@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.5 — Botu başka makineye taşımak, nöbet (2026-10-25) {#s75-5}
+
+- **Yeni: [botu başka makineye taşı](#/kilavuz/botlar/bot-tasima).** Eşlenmiş iki **sunucu** arasında bir kâğıt ya da demo botu taşırsınız: **Ayarlar › Makineler › Botu başka makineye taşı** — yalnız botun bulunduğu bilgisayardan, **TAŞI** yazıp acil PIN. Bot burada durur (açık pozisyonlara, emirlere ve felaket stoplarına dokunulmaz), verisi öteki makineye gider. Demo botun hesap anahtarı **yedek şifresiyle şifreli** gider (iki bilgisayarda aynı yedek şifresi). Hedefte bot **kendiliğinden başlamaz**: önce Mutabakat, temizse Başlat.
+- **Taşınmaz:** gerçek para botu, **Kairos** (demo kabulü 2026-12-09'a kadar), model örnekleri.
+- **[Nöbet](#/kilavuz/botlar/bot-nobet):** aynı bot iki makinede aynı anda çalışamaz. Taşınan botun eski kopyası salt okunurdur (Başlat, Çalıştır, Acil … reddedilir; Durdur serbest). Eşlenmiş sunucu varken açılışta botlar önce eşlere sorulur; eşlere ulaşılamazsa bot **kendiliğinden başlamaz** ve Telegram'a haber gelir — bot başka yerde çalışmıyorsa elle Başlat. Kairos demo kabulü süresince bu kural Kairos için yalnız haber verir. Tek bilgisayarda hiçbir şey değişmez.
+- **Yarıda kalan taşıma:** hedef reddederse ya da paket bozuk gelirse hiçbir şey değişmez; bir makine kapanırsa yapılanlar geri alınır ya da sonuç açılışta kendiliğinden tamamlanır; sonucu belli değilse bot **iki makinede de başlamaz** ve kartta **Yeniden denetle** çıkar.
+- Botların karar kodu değişmedi (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı). Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur"). Botu taşımak için iki sunucu da 75.5'te olmalı.
+
 ## 75.4 — Planlı kapanış doğru tanınıyor (2026-10-25) {#s75-4}
 
 - **Düzeltme:** planlı kapanış (Pusula'yı durdur, güncelleme sonrası yeniden başlatma, düzgün kapatma) artık doğru tanınıyor. [Sağlık](#/kilavuz/saglik)'taki beklenmedik kapanış (günlük açılış) sayacı bundan sonra doğru sayar: planlı açılışlar ayrı gösterilir, "günde 5'ten çok" uyarısına girmez.

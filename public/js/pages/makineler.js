@@ -6,7 +6,9 @@
  * PANO SALT OKUMA: buradan hiçbir bota, emre, ayara dokunulmaz. Yazan tek şey eşleme yönetimi — "Kod üret", "Eşle", "Kaldır" —
  * yalnız bilgisayardan ve yerel PIN'le (sunucu her şeyi yeniden doğrular). Telefonda yalnız görüntüleme.
  * 75.3 (3b): YÖNETİCİ MAKİNE — Telegram komutlarını dinleyen tek makine ("Yönetici yap", yalnız bilgisayardan + yerel PIN); seçilen
- * 30 dk ulaşılamazsa öbür sunucu geçici devralır (kart + bant gösterir). Bot taşıma (3c) sonraki sürümde.
+ * 30 dk ulaşılamazsa öbür sunucu geçici devralır (kart + bant gösterir).
+ * 75.5 (3c): BOTU BAŞKA MAKİNEYE TAŞI kartı (GET /api/makine/tasima; POST /api/makine/tasi — yalnız bilgisayardan + yerel PIN + "TAŞI";
+ * belirsiz taşımada "Yeniden denetle"). Canlı hesap ve Kairos demo kabulü (2026-12-09'a kadar) taşınmaz — satırda nedeni yazar.
  * DOM AG.dom ile (HTML dizgesi yok), stil p- / an- aileleri, istek AG.api.makine.
  */
 (function (global) {
@@ -25,7 +27,7 @@
   const KIP = { tek: 'Tek makine — komutları bu bilgisayar dinliyor', yonetici: 'Yönetici — komutları bu bilgisayar dinliyor', gecici: 'Geçici devralma — yönetici ulaşılamadığı için komutları bu bilgisayar dinliyor',
     bekle: 'Komutları yönetici makine dinliyor', cekisme: 'Bekliyor — Telegram\'ı başka bir makine dinliyor (409)', 'uygun-degil': 'Bu bilgisayar komut dinlemez (geliştirme / araştırma kopyası ya da Telegram kurulu değil)' };
 
-  let veri = null, mesgul = false, sonKod = null;
+  let veri = null, mesgul = false, sonKod = null, tasimaVeri = null, tasimaHata = null;
   const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon') || !!(veri && veri.yazilabilir === false);
   const zaman = (iso) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? String(iso) : d.toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); };
 
@@ -73,6 +75,23 @@
   }
   /** Saf (75.3): bu satır için "Yönetici yap" gösterilir mi — sunucu, Telegram dinleyebilir, şu an yönetici değil. */
   function yoneticiYapilabilir(m) { return !!m && m.rol === 'sunucu' && !(m.telegram && m.telegram.uygun === false) && !m.yonetici; }
+  /**
+   * Saf (75.5): taşıma satırının durum metni → { metin, ton ('' | 'uyari' | 'iyi'), eylem: 'tasi' | 'denetle' | null }.
+   * Aşamalar (lib/makine/botTasima.js): tasiniyor (sürüyor / belirsiz) · tasindi (başka makinede) · basarisiz · yerlesiyor · geldi.
+   */
+  function tasimaDurumMetni(b) {
+    const t = b && b.tasima;
+    const hedef = (t && (t.hedefAd || t.hedef)) || (b && (b.makineAd || b.makine)) || 'öteki makine';
+    if (t && t.asama === 'tasiniyor') return { metin: t.belirsiz ? `${hedef} makinesine taşınıyor — sonuç belli değil (hedefe ulaşılamadı). Bot iki makinede de başlamaz.` : `${hedef} makinesine taşınıyor…`, ton: 'uyari', eylem: 'denetle' };
+    if (b && b.makine && b.makineAd) return { metin: `${b.makineAd} makinesinde çalışır (nöbet ${b.nobet}) — buradaki kopya salt okunur.`, ton: '', eylem: null };
+    if (t && t.asama === 'geldi') {
+      const m = t.mutabakat === 'temiz' ? 'borsayla karşılaştırma TEMİZ — Botlar sayfasında Başlat' : t.mutabakat === 'engel' ? 'borsayla karşılaştırma TEMİZ DEĞİL — Botlar sayfasındaki farklara bakın' : 'Botlar sayfasında önce Mutabakat, temizse Başlat';
+      return { metin: `${(t.kaynakAd || t.kaynak || 'öteki makine')} makinesinden geldi (nöbet ${t.nobet}) — ${m}.`, ton: t.mutabakat === 'engel' ? 'uyari' : 'iyi', eylem: b.tasinabilir ? 'tasi' : null };
+    }
+    if (t && t.asama === 'basarisiz') return { metin: `Son taşıma yapılamadı: ${t.neden || '—'}. Bot burada (durmuş) — Botlar sayfasından Başlat ile açılır ya da yeniden taşınabilir.`, ton: 'uyari', eylem: b.tasinabilir ? 'tasi' : null };
+    if (b && !b.tasinabilir) return { metin: `Taşınamaz: ${b.neden || '—'}`, ton: '', eylem: null };
+    return { metin: b && b.calisiyor ? 'Taşınabilir — taşıma botu burada DURDURUR (pozisyon ve emirlere dokunmaz), hedefte siz başlatırsınız.' : 'Taşınabilir.', ton: '', eylem: 'tasi' };
+  }
   /** Saf: sekme ışığı — reddeden / uyumsuz eş varsa tehlike, sessiz varsa uyarı, hepsi bağlıysa iyi, eş yoksa gizli. */
   function sekmeIsigi(v) {
     const l = (v && v.makineler) || [];
@@ -140,6 +159,37 @@
       if (r && r.success) AG.bildir(`Kaldırıldı: ${m.ad}.`, 'ok');
       else AG.bildir(`Kaldırılamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata');
     } catch (e) { AG.bildir(`Kaldırılamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+
+  /** 75.5: botu seçilen hedefe taşı — onay penceresinde "TAŞI" yazılır, sonra acil PIN (api.js pin-gerekli akışı). */
+  async function tasi(b) {
+    if (mesgul || telefonMu()) return;
+    const sec = bul(`mkTasiHedef-${b.kimlik}`);
+    const hedef = sec ? sec.value : '';
+    const h = ((tasimaVeri && tasimaVeri.hedefler) || []).find(x => x.kimlik === hedef);
+    if (!h) { AG.bildir('Önce hedef makineyi seçin.', 'uyari'); return; }
+    const c = await AG.onayla({ baslik: `${b.adGorunen} → ${h.ad} taşınsın mı?`, tehlikeli: true, onay: 'Taşı',
+      metin: `Bot bu bilgisayarda DURDURULUR (açık pozisyonlara, borsadaki emirlere ve felaket stoplarına dokunulmaz), verisi${b.mod === 'demo' ? ' ve demo hesabının anahtarı (yedek şifresiyle şifreli)' : ''} ${h.ad} makinesine gönderilir. Orada kendiliğinden başlamaz: ${h.ad}'de Botlar sayfasından önce Mutabakat, temizse Başlat. Bu bilgisayardaki kopya silinmez ama artık burada başlamaz; geri getirmek için ${h.ad}'den buraya taşıyın. Acil PIN istenir.`,
+      alanlar: [{ ad: 'onay', etiket: 'Onaylamak için TAŞI yazın', ipucu: 'TAŞI', dogrula: (s) => s.trim().toLocaleUpperCase('tr-TR') === 'TAŞI' }] });
+    if (!c) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.tasi(b.kimlik, h.kimlik);
+      if (r && r.success) AG.bildir(`${b.adGorunen} artık ${r.hedefAd || h.ad} makinesinde (nöbet ${r.nobet}). Orada Botlar sayfasından Mutabakat, sonra Başlat.${(r.uyarilar || []).length ? ` Not: ${r.uyarilar.join(' · ')}` : ''}`, 'ok', { sure: 14000 });
+      else if (r && r.belirsiz) AG.bildir(`Taşımanın sonucu belli değil: ${r.metin || r.error}`, 'uyari', { sure: 16000 });
+      else AG.bildir(`Taşınamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 14000 });
+    } catch (e) { AG.bildir(`Taşınamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+  async function denetle(b) {
+    if (mesgul || telefonMu()) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.tasimaCozumle(b.kimlik);
+      if (r && r.success) AG.bildir(r.metin || 'Denetlendi.', r.asama === 'tasindi' ? 'ok' : 'uyari', { sure: 12000 });
+      else AG.bildir(`Denetlenemedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata');
+    } catch (e) { AG.bildir(`Denetlenemedi: ${e.message}`, 'hata'); } finally { mesgul = false; }
     await yukle();
   }
 
@@ -223,10 +273,43 @@
       ])
     ]);
   }
+  /** 75.5: Botu başka makineye taşı kartı — eş yokken çizilmez. */
+  function tasimaKarti() {
+    if (!(veri.makineler || []).length) return null;
+    const tv = tasimaVeri;
+    const ust = el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Botu başka makineye taşı' }), el('a', { href: '#/kilavuz/botlar/bot-tasima', text: 'Kılavuz: Bot taşıma →' })]);
+    const alt = el('p', { class: 'p-kart-alt', text: 'Bir kâğıt ya da demo botu eşlenmiş başka bir SUNUCUYA taşır: bot burada durur, verisi (demo ise hesap anahtarı yedek şifresiyle şifreli) öteki makineye gider; orada kendiliğinden başlamaz — önce Mutabakat, temizse Başlat. Aynı bot iki makinede aynı anda çalışamaz (nöbet). Canlı hesap botu ve Kairos demo kabulü (2026-12-09\'a kadar) taşınmaz.' });
+    if (!tv) return el('section', { class: 'p-kart', id: 'mkTasima' }, [ust, alt, el('p', { class: 'an-alt', text: tasimaHata ? `Taşıma bilgisi okunamadı: ${tasimaHata}` : 'yükleniyor…' })]);
+    const hedefler = tv.hedefler || [];
+    const notlar = [];
+    if (tv.rol !== 'sunucu') notlar.push(el('p', { class: 'an-alt', text: 'Bu bilgisayar geliştirme / araştırma kopyası — buradan bot taşınmaz (botlar sunucuda çalışır).' }));
+    else if (!hedefler.length) notlar.push(el('p', { class: 'an-alt', text: 'Eşlenmiş SUNUCU yok — bot yalnız sunucuya taşınır.' }));
+    if (!tv.yedekSifre) notlar.push(el('p', { class: 'an-alt', text: 'Bu bilgisayarda yedek şifresi yok: demo botların hesap anahtarı yedek şifresiyle şifrelenip taşınır (Ayarlar › Yedek & taşıma; iki bilgisayarda AYNI şifre). Kâğıt botlar şifresiz taşınır.' }));
+    const satirlar = (tv.botlar || []).map(b => {
+      const d = tasimaDurumMetni(b);
+      const dugmeler = [];
+      if (!telefonMu() && tv.yazilabilir !== false) {
+        if (d.eylem === 'tasi' && tv.rol === 'sunucu' && hedefler.length) {
+          const sec = el('select', { id: `mkTasiHedef-${b.kimlik}`, class: 'form-control', 'aria-label': `${b.adGorunen} için hedef makine` }, hedefler.map(h => el('option', { value: h.kimlik, text: h.ad })));
+          dugmeler.push(sec, dugme(`mkTasi-${b.kimlik}`, 'Taşı', () => tasi(b)));
+        }
+        if (d.eylem === 'denetle') dugmeler.push(dugme(`mkDenetle-${b.kimlik}`, 'Yeniden denetle', () => denetle(b)));
+      }
+      return el('tr', { 'data-tasima': b.kimlik }, [
+        el('td', null, [el('strong', { text: b.adGorunen || b.kimlik }), el('span', { class: 'an-alt', text: `${b.kimlik} · ${MOD[b.mod] || b.mod || '—'} · ${b.calisiyor ? 'çalışıyor' : 'durmuş'} · nöbet ${b.nobet || 0}` })]),
+        el('td', null, [el('span', { class: d.ton === 'uyari' ? 'p-neg' : d.ton === 'iyi' ? 'p-pos' : '', text: d.metin })]),
+        el('td', null, [el('div', { class: 'an-dugmeler' }, dugmeler)])
+      ]);
+    });
+    return el('section', { class: 'p-kart', id: 'mkTasima' }, [ust, alt, ...notlar,
+      satirlar.length ? AG.tablo.kutulu({ id: 'mkTasimaTablo', sinif: 'an-tablo', basliklar: ['Bot', 'Durum', 'Taşı'], satirlar }) : el('p', { class: 'an-alt', text: 'Bu bilgisayarda bot yok.' })]);
+  }
   function bantlar() {
     const l = [];
     if (telefonMu()) l.push(bant('Telefondan makineler yalnız görüntülenir — eşleme ve kaldırma bilgisayardaki panelden.', ''));
-    l.push(bant('Pano botlara dokunmaz: buradan yalnız eşleme ve yönetici makine seçimi yapılır; botu başka makineye taşıma sonraki sürümde gelecek. Eşlenmiş makine yokken Pusula hiçbir makineye istek göndermez.', ''));
+    l.push(bant('Pano botlara dokunmaz: buradan eşleme, yönetici makine seçimi ve (aşağıdaki kartta, PIN ile) bot taşıma yapılır. Eşlenmiş makine yokken Pusula hiçbir makineye istek göndermez.', ''));
+    const belirsiz = ((tasimaVeri && tasimaVeri.botlar) || []).filter(b => b.tasima && b.tasima.asama === 'tasiniyor');
+    if (belirsiz.length) l.push(bant(`${belirsiz.map(b => b.adGorunen).join(', ')}: taşıma sürüyor ya da sonucu belli değil — bot iki makinede de başlamaz. Hedef makine açıkken "Yeniden denetle"ye basın.`, 'uyari'));
     const t = veri.telegram;
     if (t && t.kip === 'gecici') l.push(bant(`Geçici devralma: ${t.sebep}. Yönetici geri gelince bu bilgisayar dinlemeyi kendiliğinden bırakır.`, 'uyari'));
     if (t && t.kip === 'cekisme') l.push(bant(`${t.sebep}. İki makine çalışıyor ama birbirini görmüyor olabilir — Tailscale bağlantısına bakın ve "Şimdi yokla"ya basın.`, 'uyari'));
@@ -262,6 +345,7 @@
         l.length ? AG.tablo.kutulu({ id: 'mkTablo', sinif: 'an-tablo', basliklar: ['Makine', 'Durum', 'Sürüm', 'Botlar', 'Güncelleme · disk', 'İşlem'], satirlar: l.map(makineSatiri) })
           : el('p', { class: 'p-kart-alt', id: 'mkBos', text: 'Henüz eşlenmiş makine yok. Bot çalıştıran sunucuyla bu bilgisayarı aşağıdan eşleyebilirsiniz; tek bilgisayar kullanıyorsanız bir şey yapmanız gerekmez.' })
       ]),
+      tasimaKarti(),
       telefonMu() ? null : eslemeKarti()
     ]);
     isikYaz();
@@ -273,6 +357,12 @@
     try { r = await AG.api.makine.pano(!!yenile); } catch (e) { r = { success: false, error: e.message }; }
     if (!r || !r.success) { doldur(kap, [AG.bildirim && AG.bildirim.hataKutusu ? AG.bildirim.hataKutusu((r && r.error) || 'sunucu yanıt vermedi', { baslik: 'Makineler okunamadı', yeniden: () => yukle() }) : bant((r && r.error) || 'Makineler okunamadı', 'tehlike')]); return; }
     veri = r;
+    // 75.5: taşıma bilgisi (eş varken) — okunamazsa kart hatayı yazar, pano yine çizilir
+    tasimaHata = null;
+    if ((r.makineler || []).length && AG.api.makine.tasimaListe) {
+      try { const t = await AG.api.makine.tasimaListe(); if (t && t.success) tasimaVeri = t; else { tasimaVeri = null; tasimaHata = (t && t.error) || 'yanıt yok'; } }
+      catch (e) { tasimaVeri = null; tasimaHata = e.message; }
+    } else tasimaVeri = null;
     ciz();
   }
 
@@ -281,6 +371,7 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, _veriAyarla: (v, kod) => { veri = v; sonKod = kod || null; ciz(); } };
+  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, tasimaDurumMetni,
+    _veriAyarla: (v, kod, tasima) => { veri = v; sonKod = kod || null; tasimaVeri = tasima || null; tasimaHata = null; ciz(); } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.makineler;
 })(typeof window !== 'undefined' ? window : globalThis);

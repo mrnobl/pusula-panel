@@ -216,7 +216,11 @@
       kaldir: (kimlik) => gonder('/api/makine/kaldir', { kimlik }),
       nabizSimdi: () => gonder('/api/makine/nabiz/simdi', {}),
       // 75.3 (3b): Telegram komutlarını dinleyecek yönetici makine — yalnız bilgisayardan + yerel PIN
-      yoneticiSec: (kimlik) => gonder('/api/makine/yonetici', { kimlik })
+      yoneticiSec: (kimlik) => gonder('/api/makine/yonetici', { kimlik }),
+      // 75.5 (3c): bot taşıma — liste salt okur; taşıma yalnız bilgisayardan + yerel PIN + "TAŞI"; yeniden denetle (belirsiz taşıma)
+      tasimaListe: () => al('/api/makine/tasima'),
+      tasi: (bot, hedef) => gonder('/api/makine/tasi', { bot, hedef, onay: 'TAŞI' }),
+      tasimaCozumle: (bot) => gonder('/api/makine/tasima/cozumle', { bot })
     },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {
