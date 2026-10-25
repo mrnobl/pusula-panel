@@ -65,8 +65,18 @@ Yer: **Ayarlar › Botlar › Bot kayıtları**. Yalnız sınanmış kurallarla 
 Yeni bot demo hesapta çalışacaksa önce bir **Binance demo** hesabı bağlanır: Bot kayıtları tablosunda **Demo hesabı** seçicisi (Ayarlar › Anahtarlar'daki Binance demo hesapları) → **acil PIN**. Sonra Botlar › <bot> › Yönetim › Hesap türü: **demo** (masaüstünde de PIN ister).
 
 - **Aynı borsa hesabını aynı anda yalnız bir bot kullanır** (kâğıt botlar hariç). Kairos demo hesabını (Binance demo) kullanırken o hesap başka bota bağlanamaz; her yeni bot için Binance'te ayrı bir demo hesabı / alt hesap açıp Anahtarlar'a ekleyin.
-- Bu sürümde yalnız **Binance** hesapları bağlanır (OKX ve Bybit 5. fazda). Hesap türü moda uymalı (demo hesabı demo moda).
+- Bu sürümde yalnız **Binance** hesapları bağlanır (OKX hazırlıkta, Bybit sonra — bkz. [OKX botu](#/kilavuz/botlar/okx-bot)). Hesap türü moda uymalı (demo hesabı demo moda); hesabın borsası botun borsasıyla aynı olmalı (Binance botuna OKX hesabı, OKX botuna Binance hesabı bağlanmaz).
 - Bot demo modundayken hesap değişmez; önce kâğıda dönün. Bota bağlı bir hesap Anahtarlar'dan silinmez (önce bağı kaldırın).
+
+### OKX botu (demo hazırlığı) {#okx-bot}
+
+Yeni bot formunda **Borsa** seçimi vardır: **Binance** (varsayılan) ya da **OKX**. Kısayol olarak **Kural** listesinde **Kairos tipi — OKX (demo hazırlığı)** şablonu da var (borsası OKX'e sabit). Borsa bot kurulduktan sonra değişmez.
+
+- **Kâğıtta başlar:** OKX botu kâğıt hesapta **OKX'in pazar kurallarıyla** (miktar adımı, en küçük emir) çalışır; gerçek emir yoktur.
+- **Karar verisi Binance'ten:** mumlar ve coin seçimi Binance'in herkese açık verisinden gelir — Kairos'un gölgesiyle aynı veri, aynı kural. Fark yalnız uygulamayı (OKX'te işlem) ölçer.
+- **Evren = Binance ∩ OKX:** ay başında Binance'in 15 coinlik evreni seçilir; bu coinlerden OKX'te işlem görmeyen olursa onun hedefi **0** olur (o pay nakitte kalır) ve günlükte "OKX'te yok" yazar. Evrenin yarısından çoğu OKX'te görünmüyorsa (liste eksik okunduysa) bot o gün emir vermeden durur.
+- **Durum: "OKX demo: hazırlık — henüz bağlanamaz".** OKX demo hesabını Anahtarlar'a ekleyebilirsiniz (hesap türü demo, parola alanı zorunlu); ama bu sürümde bota bağlanamaz, OKX botu demo moduna geçemez. Bağlantı, OKX demo hesabında salt okuma ölçümü yapıldıktan sonra ayrı bir sürümle açılacak.
+- **Canlı hesap yok:** OKX botu canlı hesap moduna geçemez; OKX canlı hesap yolu kapalıdır.
 
 ### Sermaye üst sınırı {#bot-sermaye}
 

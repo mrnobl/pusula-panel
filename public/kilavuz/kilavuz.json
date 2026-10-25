@@ -1,5 +1,5 @@
 {
-  "surum": "76.2",
+  "surum": "76.3",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -63,6 +63,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"76.3","tarih":"2026-10-25","yeni":["Yeni: Ayarlar › Botlar › yeni bot formunda borsa seçimi ve OKX demo şablonu (Kairos kuralı). OKX botu şimdilik kâğıtta çalışır; OKX hesabı henüz bağlanamaz (\"OKX demo: hazırlık\").","OKX'te olmayan coinde bot pozisyon açmaz, o payı nakitte tutar."]},
     {"surum":"76.2","tarih":"2026-10-25","yeni":["Yeni: borsada algılanan her para girişi ve çıkışı onayınızı bekler. Onaysız çıkışta bot durur (yalnız azaltan emir, koruma sürer) ve Telegram alarmı gider; onaysız giriş hesaba katılmaz. Onay: Sorunlar › Para hareketini onayla (PIN) ya da önceden \"Para yatırdım/çektim\" kaydı. Onaydan sonra tavan, pozisyon boyutu ve risk yeni bakiyeyle hesaplanır.","Kairos demo kabulü 2026-12-09'a kadar muaf (yalnız haber)."]},
     {"surum":"76.1","tarih":"2026-10-25","yeni":["Yeni: eşlenmiş sunucular her saat birbirinin bot verisinin şifreli kopyasını alır (yalnız değişen dosyalar; canlı hesap ve Kairos demo anahtarları kopyaya girmez). Ayarlar › Makineler › Eş kopyaları kartı; Sağlık'ta \"Eş makine kopyası\" satırı (2 saatten eskiyse sarı, yalnız haber)."]},
     {"surum":"76.0","tarih":"2026-10-25","yeni":["Yeni: Sistem › Sağlık › Toplam risk — bütün botların borsa hesapları birlikte ölçülür (yalnız okuma): brüt kaldıraç, net BTC payı, tek coin payı, felaket kaybı; kâğıt, demo ve canlı hesap ayrı. Ana sayfada yeni ışık.","İlk 14 gün yalnız izleme: eşik aşılınca yalnız panelde uyarı, Telegram yok, hiçbir emir engellenmez. Sınırları 14 gün sonra siz onaylarsınız (PIN); sınır yalnız canlı hesaba uygulanır.","Telegram: pazartesi eski haftalık rapor mesajı artık gelmez (yerini haftalık karne aldı); para çekme izni öz denetimde alarm verdiyse sabah anahtar bildirimi aynı satırı tekrarlamaz."]},

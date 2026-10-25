@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.3 — OKX demo botu hazırlığı (2026-10-25) {#s76-3}
+**OKX botu hazırlığı (kâğıtta).** Ayarlar › Botlar'da yeni bot kurarken artık borsa seçilebiliyor (Binance ya da OKX); listede "Kairos
+tipi — OKX (demo hazırlığı)" şablonu da var. OKX botu kâğıt hesapta OKX'in pazar kurallarıyla çalışır; kararlarını Kairos'la aynı
+Binance verisinden verir. Ayın 15 coinlik evreninden OKX'te olmayan bir coin olursa o coinin payı nakitte kalır ("OKX'te yok").
+OKX demo hesabını Anahtarlar'a ekleyebilirsiniz ama bu sürümde bota bağlanamaz — ekranda "OKX demo: hazırlık — henüz bağlanamaz" yazar.
+Kairos, Tao ve Binance botlarının davranışı değişmedi.
+
 ## 76.2 — Para girişi ve çıkışı onay ister (2026-10-25) {#s76-2}
 - **Para giriş/çıkışı artık onayınızı istiyor.** Bot borsadaki her para hareketini kendisi görür. Sizin kaydınız olmadan para çıkarsa
   bot yeni işlem açmayı durdurur (açık pozisyonların stopu yerinde kalır) ve Telegram'a alarm gelir; Panel › Sorunlar › "Para hareketini

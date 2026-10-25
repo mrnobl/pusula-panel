@@ -60,7 +60,7 @@ Beş grup:
 
 | Grup | İçinde |
 |---|---|
-| **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit) |
+| **Borsa hesapları** | **Binance canlı (Kairos)** ve **Binance demo (Kairos)** — botların bugün kullandığı iki anahtar; sonradan eklediğiniz hesaplar (Binance, OKX, Bybit). OKX hesabında **parola (passphrase)** zorunludur; OKX satırında "OKX demo: hazırlık — henüz bota bağlanamaz" yazar (anahtar saklanır ve salt okuma sınanır — bkz. [OKX botu](#/kilavuz/botlar/okx-bot)) |
 | **İşlem defterim** | işlem geçmişini okumak için **yalnız okuma** izinli anahtarlar |
 | **Yapay zekâ** (74.1) | **Gemini API anahtarı** — [Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari) için Google AI Studio'nun **ücretsiz** anahtarı ([nasıl alınır](#/kilavuz/yapay-zeka-notlari/anahtar)); boşsa özellik "anahtar bekliyor". **Sına** Google'a yalnız model listesini sorar (kota harcamaz); günlük arka plan sınamasına girmez |
 | **Bildirim** | Telegram bot jetonu, sağlık sinyali (healthchecks.io) adresleri, ikinci kanal |
