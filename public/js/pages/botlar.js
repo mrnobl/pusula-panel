@@ -215,7 +215,9 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   async function sermayeAkisi(ad, d, dugme) {
     const b = d.bot;
     const v = await AG.onayla({ baslik: `${GA(b)}: para yatırdım / çektim`, onay: 'Kaydet', iptal: 'Vazgeç',
-      metin: 'Binance hesabına para yatırdıysanız ya da çektiyseniz tutarı buraya yazın (yatırma artı, çekme eksi; USDT). Bot parayı taşımaz; yalnız ölçümünü düzeltir. Çoğu zaman gerekmez: bot vadeli cüzdana gelen aktarımı kendisi algılar. Büyük tutar (özsermayenin %20 üstü) borsadaki bakiyede görünmüyorsa kayıt reddedilir.',
+      metin: b.paraAkisi && b.paraAkisi.etkin
+        ? 'Binance hesabına para yatıracaksanız ya da çekecekseniz tutarı buraya yazın (yatırma artı, çekme eksi; USDT). Bot parayı taşımaz. Bot borsadaki giriş ve çıkışı kendisi algılar ve onayınızı ister; çekimden ÖNCE ya da hemen sonra buraya kaydederseniz (72 saat geçerli) bot hareketi sizin yaptığınızı bilir ve durmaz. Kayıtsız çekimde bot yeni işlem açmayı durdurur; onaylayınca sürer.'
+        : 'Binance hesabına para yatırdıysanız ya da çektiyseniz tutarı buraya yazın (yatırma artı, çekme eksi; USDT). Bot parayı taşımaz; yalnız ölçümünü düzeltir. Çoğu zaman gerekmez: bot vadeli cüzdana gelen aktarımı kendisi algılar. Büyük tutar (özsermayenin %20 üstü) borsadaki bakiyede görünmüyorsa kayıt reddedilir.',
       alanlar: [
         { ad: 'tutar', etiket: 'Tutar (USDT, + yatırma / − çekme)', ipucu: 'ör. 500 ya da -200', inputmode: 'decimal', dogrula: (s) => /^[-+]?\d+([.,]\d+)?$/.test(s.trim()) && Number(s.trim().replace(',', '.')) !== 0 },
         { ad: 'not', etiket: 'Not (isteğe bağlı)', ipucu: 'ör. Binance P2P yatırma' },
@@ -226,7 +228,9 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     try {
       const r = await AG.api.bindirmeSermayeAkisi(ad, Number(v.tutar.trim().replace(',', '.')), v.not || null, v.onay.trim());
       if (!r.success) throw new Error(r.error);
-      bildir(`Kaydedildi: ${r.kayit.tutar > 0 ? '+' : ''}${r.kayit.tutar} USDT`, 'ok');
+      const kt = `${r.kayit.tutar > 0 ? '+' : ''}${r.kayit.tutar} USDT`;
+      bildir(r.kayit.onKayit ? `Önceden kaydedildi: ${kt} — borsada görülünce (72 saat) bot onaylı sayar, durmaz`
+        : r.kayit.onaylandi ? `Bekleyen hareket onaylandı: ${kt}${r.kayit.devam ? ' — bot yeniden çalışır' : ''}` : `Kaydedildi: ${kt}`, 'ok');
     } catch (e) { bildir(`Kaydedilemedi: ${e.message}`, 'hata'); }
     finally { AG.dom.hazir(dugme); yukle(true); }
   }
@@ -457,6 +461,20 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     ]);
   }
 
+  /** Para akışı onayı (2026-10-25): borsada onay bekleyen giriş / çıkış — onay Sorunlar sayfasında (PIN + ONAY). */
+  function paraAkisiBandi(d) {
+    const pa = d.bot.paraAkisi;
+    const cik = pa.bekleyen.filter(x => x.tutar < 0);
+    const t = pa.bekleyen.map(x => `${x.tutar > 0 ? '+' : ''}${D().para(x.tutar)} USDT`).join(', ');
+    return el('div', { class: 'bot-dur-bandi bot-gk-bandi', role: 'status' }, [
+      el('div', { class: 'bot-dur-metin' }, [
+        el('strong', { text: cik.length ? 'Onaysız para çıkışı — yeni işlem açmıyor' : 'Para girişi onayınızı bekliyor' }),
+        el('div', { text: cik.length ? `Bekleyen hareket: ${t}. Açık pozisyonların stopu yerinde.` : `Bekleyen hareket: ${t}. Bot sürüyor; onaylanana kadar bu para hesaba katılmıyor.` }),
+        el('div', { class: 'hint hint-sm mb-0' }, [el('span', { text: 'Siz yaptıysanız onaylayın (PIN + ONAY) · ' }), el('a', { href: '#/sorunlar', text: 'Sorunlar' })]),
+      ]),
+    ]);
+  }
+
   /** 69.1 öz denetim: güvenli kip (yeni işlem yok, stop korunur) — sarı bant; ayrıntı ve tam kapanma Sistem › Sağlık'ta. */
   function guvenliKipBandi(ad, d) {
     const g = d.bot.guvenliKip;
@@ -564,6 +582,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       ]),
       du.onayBekliyor ? durdurmaBandi(ad, d, du) : null,
       !du.onayBekliyor && d.bot && d.bot.guvenliKip ? guvenliKipBandi(ad, d) : null,
+      d.bot && d.bot.paraAkisi && (d.bot.paraAkisi.bekleyen || []).length ? paraAkisiBandi(d) : null,
       arastirmaMu() ? el('p', { class: 'hint hint-sm bot-eski-kayit mb-0', text: 'Bu bilgisayardaki eski kayıt — asıl durum sunucudaki panelde (bot sunucuda çalışır).' }) : null,
       telefonMu() && telefonAcilNotu(telefonPin()) ? el('p', { class: 'hint hint-sm tone-warning mb-0', text: telefonAcilNotu(telefonPin()) }) : null
     ];

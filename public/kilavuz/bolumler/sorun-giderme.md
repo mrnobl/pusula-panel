@@ -98,6 +98,18 @@ Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da ri
 
 **Belirti:** "spot cüzdana para yatırıldı — kabul bekliyor". **Anlamı:** zararsız. **Adımlar:** yatırma sizinse kartta **Yatırmayı kabul et**: önizleme tutarı gösterir; PIN + **KABUL** ile ölçüm tabanları ve sermaye tavanı güncellenir. Bu düğme yalnız yatırmayı kabul eder — engel, emir freni ve sapma bandı değişmez (eskiden "Engeli kaldır" bunların hepsini birden kaldırıyordu; o düğme yine durur). Siz yapmadıysanız Binance hesabınızı kontrol edin ve sohbete yazın. Telefondan da yapılır.
 
+### Para hareketi onayınızı bekliyor {#para-akisi-onay}
+
+**Kural:** hesaptan kazanılan parayı yalnız siz çekersiniz; bot API anahtarıyla para çekmez (anahtarda çekme izni olmamalı). Borsadaki her para girişi ve çıkışı kendiliğinden algılanır ve **onayınızı bekler**. Kâğıt hesapta para hareketi yoktur.
+
+| Durum | Bot ne yapar | Siz ne yaparsınız |
+|---|---|---|
+| Onaysız **çıkış** ("onaysız para çıkışı — bot durdu") | Yeni işlem açmaz, günlük karar vermez. Açık pozisyonlar, felaket stopları ve azaltan emirler sürer. | Siz çektiyseniz **Para hareketini onayla** (PIN + **ONAY**). Siz çekmediyseniz onaylamayın: Binance hesabınızı kontrol edin, API anahtarlarını yenileyin, sohbete yazın. |
+| Onaysız **giriş** ("para girişi algılandı — onayınızı bekliyor") | Durmaz; ama bu parayı hesaba katmaz — sermaye tavanı, pozisyon boyutu, risk ve kesici tabanları eski bakiyeyle sürer. | Siz yatırdıysanız **Para hareketini onayla**. |
+| Önceden kayıtlı hareket | Bot sayfasında **Para yatırdım / çektim** ile girdiğiniz kayıt (72 saat geçerli) borsadaki hareketle eşleşirse hareket onaylı sayılır; bot durmaz. Eşleşme: aynı yön, tutar farkı en çok 2 USDT ya da %2, hareket kayıttan en çok 24 saat önce ya da 72 saat sonra. | Çekimden önce (ya da hemen sonra) kaydedin. 72 saatte borsada görünmeyen kayıt düşer, hiçbir hesap değişmez. |
+
+Onaydan sonra bütün hesaplar yeni bakiyeye göre yapılır: sermaye tavanı, pozisyon boyutu, risk ve kesici tabanları, toplam risk; hareket getiri sayılmaz. Bekleyen durum yeniden başlatmada kaybolmaz. **Kairos demo kabulü (2026-12-09'a kadar):** kural yalnız haber verir, bot durmaz ve onay istenmez. Onay telefondan da yapılır.
+
 ### İleri test DUR {#ileri-dur}
 
 **Belirti:** "modelin düşüş sınırı aşıldı". **Anlamı:** dikkat — model beklendiği gibi davranmıyor olabilir. **Adımlar:** İleri test › Kairos / Tao'da en derin düşüş satırına bakın; alarmda botu **Durdur** (acil değil) ve sohbette değerlendirin.

@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.2 — Para girişi ve çıkışı onay ister (2026-10-25) {#s76-2}
+- **Para giriş/çıkışı artık onayınızı istiyor.** Bot borsadaki her para hareketini kendisi görür. Sizin kaydınız olmadan para çıkarsa
+  bot yeni işlem açmayı durdurur (açık pozisyonların stopu yerinde kalır) ve Telegram'a alarm gelir; Panel › Sorunlar › "Para hareketini
+  onayla" (PIN + ONAY, telefondan da) ile onaylayınca bot yeni bakiyeyle sürer. Para girişinde bot durmaz ama onaylayana kadar o parayı
+  hesaba katmaz. Çekimden önce (ya da hemen sonra) bot sayfasında "Para yatırdım / çektim" ile kaydederseniz bot durmaz. Kairos demo
+  kabulü süresince (2026-12-09'a kadar) yalnız haber verilir.
+
 ## 76.1 — Eş makine kopyası (2026-10-25) {#s76-1}
 **Eş makine kopyası (saat başı).** İki sunucu eşlediyseniz artık her biri **her saatin 20. dakikasında** öbürünün bot verisinin (bot durumları, emir defterleri, bot kayıtları, hesap işlemleri, ayarlar) bir kopyasını alır — bir bilgisayar bozulursa öbüründe en çok bir saatlik kopya kalır. Kopya **yedek şifresiyle şifreli** gider (iki bilgisayarda aynı yedek şifresi gerekir); demo hesap anahtarı kopyada ayrıca şifreli durur ve açılmaz; **canlı hesap ve Kairos demo kabulünün anahtarı kopyaya hiç girmez**. Kopya botlara dokunmaz. Durum: **Ayarlar › Makineler › Eş kopyaları** (son kopyanın yaşı, dosya sayısı, "Şimdi kopya al"). Sağlık'ta yeni satır **Eş makine kopyası**: kopya 2 saatten eskiyse sarı (yalnız haber). Geliştirme bilgisayarı kopya almaz. Tek bilgisayar kullanıyorsanız hiçbir şey değişmez. *(Devralma — kapanan makinenin botunu kopyadan almak — sonraki sürümde.)*
 
