@@ -5,6 +5,7 @@
  * hüküm), Kairos demo kabul provalarının durumu, aylık otomatik denetim, geçmiş. Yazma: POST /api/tatbikat/{baslat,adim,kaydet,iptal,otomatik}
  * (yalnız bu bilgisayardan; kaydet yerel PIN — api katmanı sorar). Sihirbaz emir vermez, botu başlatmaz/durdurmaz, programı kapatmaz:
  * adımları kullanıcı yapar, Pusula kayıtlardan doğrular. Süren tatbikat varken sayfa 30 sn'de bir yenilenir.
+ * 76.7: geliştirme bilgisayarında GET sunucudan okunur (yanıtta evKaynak) → sunucunun tatbikat durumu salt okuma gösterilir.
  */
 (function (global) {
   'use strict';
@@ -97,7 +98,7 @@
       el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: `Süren tatbikat: ${e.ad}` }), el('span', { class: 'df-soluk', text: `${e.botAd} (${modAd(e.mod)}) · başladı ${zaman(e.bas)} · ${kalanMetni(e.kalanMs)}` })]),
       el('p', { class: 'hint', text: e.amac }),
       el('ol', { class: 'tb-adimlar', id: 'tbAdimlar' }, adimlar.map(a => el('li', { class: a.yapildi ? 'tb-tamam' : a.id === e.aktifAdim ? 'tb-aktif' : '' }, [
-        el('strong', { text: a.baslik }), a.yapildi ? el('span', { class: 'df-soluk', text: ` · ${zaman(a.yapildi)}` }) : null,
+        el('strong', { text: a.baslik }), a.yapildi ? el('span', { class: 'df-soluk', text: ` · ${zaman(a.yapildi)}` }) : a.atlandi ? el('span', { class: 'df-soluk', text: ' · atlandı (tatbikat önceki sürümde başlamıştı)' }) : null,
         a.id === e.aktifAdim ? el('div', { class: 'tb-adim-metin' }, (a.metin || []).map(m => el('p', { text: m }))) : null,
       ]))),
     ];
@@ -189,7 +190,8 @@
     const k = bul('tatbikatKok');
     if (!k || !veri) return;
     doldur(k, [
-      veri.arastirma ? el('p', { class: 'hint mb-4', text: 'Bu bilgisayar araştırma kopyası: botlar sunucuda çalışır, tatbikatlar sunucunun panelinden yapılır.' }) : null,
+      veri.sunucudan ? el('p', { class: 'hint mb-4', id: 'tbSunucudan', text: `Bu bilgisayar araştırma kopyası: aşağıda sunucunun tatbikat durumu görünür (salt okuma — tatbikatı sunucunun panelinden yapın).${veri.sunucudan.eski ? ` Sunucuya şu an ulaşılamadı; son okunan durum (${zaman(veri.sunucudan.zaman)}).` : ''}` })
+        : veri.arastirma ? el('p', { class: 'hint mb-4', text: 'Bu bilgisayar araştırma kopyası: botlar sunucuda çalışır, tatbikatlar sunucunun panelinden yapılır.' }) : null,
       veri.etkin ? etkinKart(veri.etkin) : null,
       demoKart(veri.demoKabul),
       ...(veri.provalar || []).map(provaKart),
@@ -206,6 +208,8 @@
     try { r = await AG.api.tatbikat.durum(); } catch (e) { r = { success: false, error: e.message }; }
     if (!r || !r.success) { doldur(k, [AG.bildirim.hataKutusu((r && r.error) || 'sunucu yanıt vermedi', { baslik: 'Tatbikatlar okunamadı', yeniden: yukle })]); return; }
     veri = r;
+    // 76.7: geliştirme bilgisayarında yanıt sunucudan gelir (lib/evOkuma EV_YOLU) — salt okuma: düğmeler kapalı
+    if (r.evKaynak) { veri.sunucudan = r.evKaynak; veri.arastirma = true; }
     ciz();
     if (zamanlayici) { global.clearTimeout(zamanlayici); zamanlayici = null; }
     if (veri.etkin) zamanlayici = global.setTimeout(() => { if (bul('tatbikatKok') && doc && doc.querySelector && doc.querySelector('#tab-tatbikat.active')) yukle(); }, 30000);

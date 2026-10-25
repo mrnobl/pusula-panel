@@ -207,14 +207,14 @@
       for (let deneme = 0; deneme < 3; deneme++) {
         const g = await onayla({
           baslik: 'PIN gerekli',
-          metin: `Bu işlem korumalı: acil PIN'inizi girin. Doğru PIN ${d.sureDk || 10} dakika geçerli olur.${Number.isFinite(d.kalanHak) && d.kalanHak < 5 ? ` Kalan hak: ${d.kalanHak}.` : ''}`,
+          metin: `${d.taze ? 'Bu onay PIN\'i yeniden ister: açık PIN oturumu bu işlem için yetmez, acil PIN\'inizi bir kez daha girin.' : `Bu işlem korumalı: acil PIN'inizi girin. Doğru PIN ${d.sureDk || 10} dakika geçerli olur.`}${Number.isFinite(d.kalanHak) && d.kalanHak < 5 ? ` Kalan hak: ${d.kalanHak}.` : ''}`,
           onay: 'Doğrula',
           alanlar: [{ ad: 'pin', etiket: 'PIN (6–12 hane)', tip: 'password', inputmode: 'numeric', dogrula: (v) => /^\d{6,12}$/.test(v.trim()) }]
         });
         if (!g || !g.pin) return false;
         let r;
         try { r = await AG.api.yerelPin.dogrula(g.pin.trim()); } catch (e) { bildir(`PIN doğrulanamadı: ${e.message}`, 'hata'); return false; }
-        if (r && r.success) { bildir('PIN doğru — 10 dakika boyunca korumalı işlemler PIN sormaz.', 'ok'); return true; }
+        if (r && r.success) { bildir(d.taze ? 'PIN doğru.' : 'PIN doğru — 10 dakika boyunca korumalı işlemler PIN sormaz.', 'ok'); return true; }
         bildir((r && r.error) || 'PIN yanlış.', 'hata');
         if (r && (r.kilitli || r[AG.api.DURUM] === 429)) return false;
         if (r && Number.isFinite(r.kalanHak)) d.kalanHak = r.kalanHak;

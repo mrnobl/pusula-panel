@@ -5,11 +5,16 @@
  * karşılaştırır. Botun veri dizininin KOPYASIYLA çalışır — gerçek bot dosyalarına, gerçek hesaba dokunmaz.
  *
  *   node scripts/kuru-deneme.js --kok <kod kökü> --dizin <bot verisi kopyası> --ad denge --mod kagit --btcAyak coklu
- *        --tavan 10000 --k 15 --bakiye 10000 [--kucuk oto] [--strateji denge]
+ *        --tavan 10000 --k 15 --bakiye 10000 [--kucuk oto] [--strateji denge] [--borsa okx]
  *
  * Kip: mod 'kagit' → "karar": kâğıt borsa kopyası + anahtarsız piyasa verisi (ccxt, yalnız okuma) → mutabakat + calistir({kuru}).
  *      mod 'demo' / 'canli' → "yükleme": bot yalnız kurulur ve özeti alınır; hesaba bağlanılmaz (demo kabul: demo hesaba başka
  *      araç dokunmaz). Yeni kodun botun kayıtlarını açabildiği, ENGEL / bozuk dosya görmediği denetlenir.
+ * 76.7 --borsa okx (bot kaydındaki işlem borsası Binance DEĞİLSE güncelleyici verir): botun sunucudaki kuruluşu gibi — yürütücü
+ *      ayarına borsa, bot ayarına islemBorsasi + evren aday 'veri'; kâğıt borsa pazar KURALLARINI o borsanın anahtarsız pazar
+ *      istemcisinden (lib/live/borsalar/<borsa>.js pazarIstemcisi — yalnız loadMarkets), mum/ticker/mark yine Binance'ten. Ağ kalkanı
+ *      bu koşuda Binance + o borsanın herkese açık veri adresine izin verir (lib/kuruDeneme KALKAN_OKX_KODU). --borsa verilmezse
+ *      (Binance botu) yol BİREBİR eskisi.
  * Çıktı: { ok, kip, karar?, hata?, sureMs }
  */
 'use strict';
@@ -48,12 +53,21 @@ async function main() {
   const strateji = deger('strateji', null);
   const stratejiAyar = strateji && strateji !== ad ? { strateji } : {};
   const kucukSermaye = kucukHam === 'true' ? true : kucukHam === 'false' ? false : 'oto';
+  // 76.7: işlem borsası (yalnız Binance dışı botta verilir; Binance botunda nesneler eskisiyle BİREBİR)
+  const borsaKim = deger('borsa', null);
+  if (borsaKim && !/^[a-z]{2,12}$/.test(borsaKim)) throw new Error(`geçersiz --borsa: ${borsaKim}`);
+  const disBorsa = borsaKim && borsaKim !== 'binance' ? borsaKim : null;
   const L = (p) => require(path.join(kok, 'lib', ...p.split('/')));
   const { BindirmeBot } = L('live/bindirmeBot');
   const { CanliYurutucu } = L('live/yurutucu');
   const sessiz = () => {};
-  const y = new CanliYurutucu({ dizin, maxEmirNominal: 3 * tavan, maxPozisyonNominal: 3 * tavan, cokluVarlik: btcAyak === 'coklu', kaydet: sessiz });
-  const bot = new BindirmeBot(y, { ad, ...stratejiAyar, dizin, sermayeTavani: tavan, evren: { k }, kaydet: sessiz, mod, btcAyak, bildirici: null, golgeDosya: null, saglik: null, kucukSermaye, hesapKesicisi: null, kapiFn: null });
+  const bd = disBorsa ? L('live/borsalar').al(disBorsa) : null;
+  const yAyar = { dizin, maxEmirNominal: 3 * tavan, maxPozisyonNominal: 3 * tavan, cokluVarlik: btcAyak === 'coklu', kaydet: sessiz };
+  if (bd) yAyar.borsa = bd.kimlik;
+  const y = new CanliYurutucu(yAyar);
+  const botAyar = { ad, ...stratejiAyar, dizin, sermayeTavani: tavan, evren: { k }, kaydet: sessiz, mod, btcAyak, bildirici: null, golgeDosya: null, saglik: null, kucukSermaye, hesapKesicisi: null, kapiFn: null };
+  if (bd) { botAyar.islemBorsasi = bd.ad; botAyar.evren = { ...botAyar.evren, aday: 'veri' }; }
+  const bot = new BindirmeBot(y, botAyar);
   if (mod !== 'kagit') {
     let o = null;
     try { o = bot.ozet(); } catch (e) { return yaz({ ok: false, kip: 'yukleme', hata: `özet alınamadı: ${e.message}` }); }
@@ -62,7 +76,12 @@ async function main() {
   const ccxt = require('ccxt');
   const { KagitBorsa } = L('live/kagitBorsa');
   const veri = new ccxt.binanceusdm({ enableRateLimit: true });
-  const borsa = new KagitBorsa({ veri, bakiye, dosya: path.join(dizin, 'kagit-borsa.json') });
+  let pazar = {};
+  if (bd) {
+    if (typeof bd.pazarIstemcisi !== 'function') throw new Error(`${bd.ad}: kâğıt pazar kuralları okunamıyor (bağdaştırıcıda pazar istemcisi yok)`);
+    pazar = { pazarKaynagi: bd.pazarIstemcisi() };   // anahtarsız; yalnız loadMarkets (herkese açık uç)
+  }
+  const borsa = new KagitBorsa({ veri, bakiye, dosya: path.join(dizin, 'kagit-borsa.json'), ...pazar });
   await y.baglanKagit(borsa);
   let m = null;
   try { m = await bot.mutabakat(); } catch (e) { m = { engel: `mutabakat hata verdi: ${e.message}` }; }

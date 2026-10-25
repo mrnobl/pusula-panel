@@ -2,6 +2,23 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.7 — Tatbikat ekleri, SAHİPLEN'de ikinci PIN, OKX'te yok satırı, kopya boyutu uyarısı (2026-10-25) {#s76-7}
+**Tatbikatlar.** Yeni **prova 8 — karar saatinde internet kesintisi**: gece 02:55'te interneti kesip 03:45'te açarsınız; Pusula kesintinin
+botun 03:02 çalışmasını kapsadığını, botun durmadığını, bağlantı dönünce günlük çalışmayı bir kez yaptığını, çift emir olmadığını ve
+mutabakatın temiz olduğunu kayıtlardan denetler (demo kabulünün parçası değildir; Kairos demo kabulü sürerken başlatılamaz).
+**Prova 1**'e bir adım eklendi: Pusula'yı (ya da sunucuyu) kapatıp **telefondaki Binance uygulamasından** felaket stoplarının borsada
+durduğunu görürsünüz, sonra Pusula'yı açıp stop iptaline geçersiniz. **Kâğıt botlarda** sonuç ayrıca botun klasöründeki ayrı bir prova
+günlüğüne yazılır (Kairos demo kabul prova günlüğü değişmedi). Geliştirme bilgisayarı artık **sunucunun** tatbikat durumunu salt okuma
+gösterir. Aylık otomatik denetim acil durdurmayı **denemez**, yalnız son denemenin kaydını yazar.
+
+**Devralma.** Borsadaki emirleri deftere alan **SAHİPLEN** onayı PIN'i yeniden ister — Devral'da girdiğiniz PIN yetmez.
+
+**OKX botu.** OKX'te işlem görmeyen evren coinleri Botlar'da OKX botunun kartında ayrı satırda görünür: **OKX'te yok — nakitte**.
+Bunun için Telegram'a bildirim gitmez. Güncellemenin kuru denemesi kâğıttaki OKX botunu da dener (OKX'in herkese açık verisiyle).
+
+**Eş kopyası.** Bir makinenin kopyası 64 MB sınırına yaklaşınca (%80) ya da aşınca Sağlık'ta "Eş makine kopyası" sarı yanar
+(yalnız haber; Telegram'a anında gitmez).
+
 ## 76.6 — Tatbikatlar: provaları Pusula yönetir (2026-10-25) {#s76-6}
 **Tatbikatlar (yeni):** Sistem › Tatbikatlar. Provaları artık Pusula kendisi yönetiyor: felaket stopu kaybolması, Pusula çökmesi, 30 dakikalık
 internet kesintisi, 26 saatlik kapanış, acil durdurma denemesi, mutabakat ve botu başka makineye taşıma. Pusula önce hazır olup olmadığını denetler,

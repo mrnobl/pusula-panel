@@ -677,8 +677,22 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       telafi ? satir('Kaçırılan gün', `${telafi.kacirilanGun} (${telafi.kararGun})${telafi.fark != null ? ` · simülasyona göre ${L.isaretli(telafi.fark, 2)}` : ''}`) : [],
       b.asgariNominal && b.asgariNominal.toplam ? satir('Verilmeyen küçük emir', String(b.asgariNominal.toplam), '', null, 'borsanın asgari emir tutarının altında kaldığı için verilmeyen emir sayısı') : [],
       b.demoNot ? satir('Demo / gerçek farkı', 'demoda BTC vadeli işlemde alım (LONG); canlı hesapta spot BTC', '', 'btcAyagi') : [],
-      ks.farkliFiltre && ks.farkliFiltre.length ? satir('Kuralı demo ile gerçekte farklı coin', ks.farkliFiltre.map(x => String(x).split('/')[0]).join(', '), 'tone-warning', 'demoGercekFark') : []
+      ks.farkliFiltre && ks.farkliFiltre.length ? satir('Kuralı demo ile gerçekte farklı coin', ks.farkliFiltre.map(x => String(x).split('/')[0]).join(', '), 'tone-warning', 'demoGercekFark') : [],
+      ...borsadaYokSatiri(d).map(x => satir(x.etiket, x.metin, x.sinif, null, x.title))
     ].flat())];
+  }
+  /**
+   * Saf (76.7, A2 parça 2): OKX botu — evrende (Binance PIT) olup işlem borsasında OLMAYAN coinler ayrı satırda ("OKX'te yok — nakitte"):
+   * hedefleri 0, payları nakitte bekler. Yalnız yanıtta `borsadaYok` varsa (Binance botunda yok → satır yok).
+   * @returns [{ etiket, metin, sinif, title }]
+   */
+  function borsadaYokSatiri(d) {
+    const y = d && d.borsadaYok;
+    if (!y || !y.borsa) return [];
+    const etiket = y.borsa === 'OKX' ? 'OKX\'te yok — nakitte' : `${y.borsa} borsasında yok — nakitte`;
+    const l = Array.isArray(y.semboller) ? y.semboller.map(x => String(x).split('/')[0]) : null;
+    const metin = l === null ? 'ilk karardan sonra görünür' : l.length ? l.join(', ') : 'yok (evrenin bütün coinleri işlem borsasında var)';
+    return [{ etiket, metin, sinif: l && l.length ? 'tone-warning' : '', title: `Bu coinler evrende (Binance) kalır ama işlem borsasında (${y.borsa}) yok: hedefleri 0, payları nakitte bekler (DCA dahil). Telegram'a bildirim gitmez.${y.gun ? ` Son karar ${y.gun}${y.kuru ? ' (kuru)' : ''}.` : ''}` }];
   }
 
   // ── Bot sermayesi tabanı (64.5) ──────────────────────────────────────────
@@ -1110,5 +1124,5 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye, islemler: r.islemler };
     defterCiz(ad); grafikCiz(ad, true); sayilarCiz(ad); aylikCiz(ad);
   }
-  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, ORNEKLER, menuOrnekleriCiz, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  AG.pages.botlar = { borsadaYokSatiri, _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, ORNEKLER, menuOrnekleriCiz, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);

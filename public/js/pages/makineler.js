@@ -302,7 +302,7 @@
     if (mesgul || telefonMu() || !d.sahiplen) return;
     const n = (d.sahiplen.acik || []).length + (d.sahiplen.kapanmis || []).length;
     const c = await AG.onayla({ baslik: `${d.adGorunen}: borsadaki ${n} emir deftere alınsın mı?`, tehlikeli: true, onay: 'Onayla',
-      metin: 'Listedeki emirler bu botun defterine alınır (kimlik sayacı onların üstüne çıkar — aynı emir kimliği yeniden üretilmez). Sonra botun kendi karşılaştırması yapılır: botun durumunda olmayan açık emirler "sahipsiz" sayılıp iptal edilir, bilinmeyen dolumdan doğan pozisyon farkı ENGEL olarak kalır. Hiç emir gönderilmez. Liste bu arada değişmişse onay geçersiz olur ve yeni liste gösterilir. Acil PIN istenir.',
+      metin: 'Listedeki emirler bu botun defterine alınır (kimlik sayacı onların üstüne çıkar — aynı emir kimliği yeniden üretilmez). Sonra botun kendi karşılaştırması yapılır: botun durumunda olmayan açık emirler "sahipsiz" sayılıp iptal edilir, bilinmeyen dolumdan doğan pozisyon farkı ENGEL olarak kalır. Hiç emir gönderilmez. Liste bu arada değişmişse onay geçersiz olur ve yeni liste gösterilir. Acil PIN bu onay için YENİDEN istenir (Devral\'da girdiğiniz PIN yetmez).',
       alanlar: [{ ad: 'onay', etiket: 'Onaylamak için SAHİPLEN yazın', ipucu: 'SAHİPLEN', dogrula: (x) => x.trim().toLocaleUpperCase('tr-TR') === 'SAHİPLEN' }] });
     if (!c) return;
     mesgul = true;

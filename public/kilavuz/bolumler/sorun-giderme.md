@@ -357,6 +357,8 @@ Eşlenmiş SUNUCULAR birbirinin bot verisini her saatin 20. dakikasında şifrel
 
 **Adımlar:** kartta yazan nedene bakın. *Eşe ulaşılamadı* → eş açık mı, Tailscale bağlı mı; açınca "Şimdi kopya al". *Yedek şifresi yok / farklı* → iki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin (kopya bu şifreyle şifrelenir). *Sürüm uyumsuz / kopyayı bilmiyor* → iki makineyi aynı sürüme güncelleyin.
 
+**Kopya kapsamı 64 MB sınırına yaklaşıyor / AŞIYOR (76.7):** eş kopyasının bir sınırı var (64 MB). Bir makinenin bot kayıtları bunun %80'ine gelince Sağlık'ta "Eş makine kopyası" sarı yanar ve kaç MB olduğunu yazar; sınırı aşarsa o makinenin kopyası alınamaz (eski kopya bozulmaz, olduğu gibi kalır). Bu yalnız haberdir: botları etkilemez, **Telegram'a anında gitmez** (yalnız panelde ve akşam özetinde görünür). Siz bir şey silmeyin — geliştirme sohbetine yazın.
+
 ### Windows yeniden başlatması {#windows-yeniden-baslatma}
 
 Windows güncellemesi yeniden başlatma bekliyor; gece yeniden başlatırsa 03:02 çalışması kaçabilir. Uygun bir gündüz saatinde elle yeniden başlatın; kalıcı çözüm sunucuda yönetici olarak `scripts\windows-etkin-saat.ps1`.

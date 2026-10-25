@@ -74,9 +74,10 @@ Yeni bot formunda **Borsa** seçimi vardır: **Binance** (varsayılan) ya da **O
 
 - **Kâğıtta başlar:** OKX botu kâğıt hesapta **OKX'in pazar kurallarıyla** (miktar adımı, en küçük emir) çalışır; gerçek emir yoktur.
 - **Karar verisi Binance'ten:** mumlar ve coin seçimi Binance'in herkese açık verisinden gelir — Kairos'un gölgesiyle aynı veri, aynı kural. Fark yalnız uygulamayı (OKX'te işlem) ölçer.
-- **Evren = Binance ∩ OKX:** ay başında Binance'in 15 coinlik evreni seçilir; bu coinlerden OKX'te işlem görmeyen olursa onun hedefi **0** olur (o pay nakitte kalır) ve günlükte "OKX'te yok" yazar. Evrenin yarısından çoğu OKX'te görünmüyorsa (liste eksik okunduysa) bot o gün emir vermeden durur.
+- **Evren = Binance ∩ OKX:** ay başında Binance'in 15 coinlik evreni seçilir; bu coinlerden OKX'te işlem görmeyen olursa onun hedefi **0** olur (o pay nakitte kalır) ve günlükte "OKX'te yok" yazar. Botlar sayfasında OKX botunun kartında bu coinler ayrı bir satırda görünür: **OKX'te yok — nakitte** (son karardan; karar yoksa "ilk karardan sonra görünür"). Bunun için **Telegram'a bildirim gitmez** — beklenen bir durumdur, hata değildir. Evrenin yarısından çoğu OKX'te görünmüyorsa (liste eksik okunduysa) bot o gün emir vermeden durur.
 - **Durum: "OKX demo: hazırlık — henüz bağlanamaz".** OKX demo hesabını Anahtarlar'a ekleyebilirsiniz (hesap türü demo, parola alanı zorunlu); ama bu sürümde bota bağlanamaz, OKX botu demo moduna geçemez. Bağlantı, OKX demo hesabında salt okuma ölçümü yapıldıktan sonra ayrı bir sürümle açılacak.
 - **Canlı hesap yok:** OKX botu canlı hesap moduna geçemez; OKX canlı hesap yolu kapalıdır.
+- **Güncellemede kuru deneme:** güncelleyici kâğıttaki OKX botunu da eski ve yeni kodla emir göndermeden dener (OKX pazar kuralları anahtarsız okunur; Binance botları eskisi gibi).
 
 ### Sermaye üst sınırı {#bot-sermaye}
 
