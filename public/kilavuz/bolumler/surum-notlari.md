@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.8 — Ortak borsa arayüzü, OKX hazırlığı (2026-10-25) {#s75-8}
+- Botların borsayla konuşan parçası ortak bir arayüze taşındı; Binance
+davranışı bit bit aynı (75.4'ün çağrı iziyle, kuru denemeyle ve 120 günlük yeniden oynatmayla doğrulandı). OKX için bağdaştırıcı ve
+sahte OKX'le tam hata matrisi yazıldı; OKX henüz **bağlanamaz** (hazır değil) — demo hesap bağlama ve OKX demo botu sonraki sürümde.
+Canlı hesap yolu kapalı. Panelde görünen değişiklik yok. Güncelleme onaylı.
+
 ## 75.7 — Olay akışı ve haftalık karne (2026-10-25) {#s75-7}
 - **Yeni sayfa: Sistem › Olay akışı.** Bütün olaylar tek çizelgede, en yeni üstte: botun emirleri (doldu / reddedildi), başlatma ve durdurma, ENGEL ve güvenli kip, öz denetim sorunları, giden bildirimler, ayar değişiklikleri, güncellemeler, Pusula'nın açılışları, model portföylerin ay sonu kararları. Süzgeç: tür, bot, makine, önem, tarih, arama. Eşlenmiş başka makine varsa onun olayları da aynı çizelgede; geliştirme bilgisayarında sunucunun olayları da görünür. **1 yıl saklanır.** Yalnız okuma; tutarlar yazılmaz.
 - **Yeni: Haftalık karne.** Raporlar sayfasının en üstünde: geçen haftanın (pazartesi–pazar) her bot için getirisi, aynı haftada BTC ve BTC'ye fark, hafta içi en büyük düşüş, işlem sayısı; Portföyüm ve model portföyler; sorunlar; Kairos demo kabulü ve gölge testler (hüküm değil). Haftalar arasında gezilebilir, süren hafta önizlenir.

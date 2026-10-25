@@ -1,5 +1,5 @@
 {
-  "surum": "75.7",
+  "surum": "75.8",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -63,6 +63,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"75.8","tarih":"2026-10-25","yeni":["İç düzenleme: borsa bağlantısı ortak bir arayüze taşındı (Binance davranışı birebir aynı). OKX bağlantısının kodu hazır ama henüz hiçbir bota bağlanamaz; OKX demo bir sonraki adımda.","Sağlamlık: borsadan boş ya da bozuk cevap gelirse artık \"belirsiz\" sayılıyor (pozisyon yok sanılmıyor)."]},
     {"surum":"75.7","tarih":"2026-10-25","yeni":["Yeni: Sistem › Olay akışı — emirler, başlat/durdur, sorunlar, bildirimler, ayar ve güncellemeler tek çizelgede; süzgeçli, 1 yıl saklanır, tutar yazılmaz.","Yeni: Raporlar › Haftalık karne — geçen haftanın bot getirisi, BTC'ye fark, düşüş, işlem sayısı, sorunlar; pazartesi sabahı Telegram'a tek mesaj (yalnız yüzde)."]},
     {"surum":"75.6","tarih":"2026-10-25","yeni":["Yeni: Sağlık › API anahtarı yetkisi — günde bir salt okuma sınaması; para çekme izni açıksa kırmızı + Sorunlar kartı + tek Telegram uyarısı, IP kısıtı yoksa sarı. Botları durdurmaz.","Düzeltme: Ayarlar › Anahtarlar'da Kairos satırlarının son sınaması görünüyor."]},
     {"surum":"75.5","tarih":"2026-10-25","yeni":["Yeni: Ayarlar › Makineler › Botu başka makineye taşı — eşlenmiş iki sunucu arasında bir kâğıt ya da demo botu taşırsınız (yalnız botun bulunduğu bilgisayardan, TAŞI yazıp acil PIN). Bot burada durur (pozisyon ve emirlere dokunulmaz), verisi öteki makineye gider; demo botun hesap anahtarı yedek şifresiyle şifreli gider (iki bilgisayarda aynı yedek şifresi). Hedefte kendiliğinden başlamaz: önce Mutabakat, temizse Başlat.","Gerçek para botu ve Kairos (demo kabulü 2026-12-09'a kadar) taşınmaz.","Nöbet: aynı bot iki makinede aynı anda çalışamaz. Taşınan botun eski kopyası salt okunur (Başlat, Acil … reddedilir). Eşlenmiş sunucu varken açılışta botlar önce eşlere sorulur; eşlere ulaşılamazsa bot kendiliğinden başlamaz ve Telegram'a haber gelir (elle Başlat açık). Tek bilgisayarda hiçbir şey değişmez.","Taşıma yarıda kalırsa (hedef reddetti, bağlantı koptu, bir makine kapandı) yapılanlar geri alınır ya da sonuç kendiliğinden tamamlanır; sonucu belli değilse bot iki makinede de başlamaz ve kartta \"Yeniden denetle\" çıkar.","Botların karar kodu değişmedi; güncelleme sunucuda onaylı kurulur (Ayarlar › Güncelleme › \"Güncellemeyi kur\")."]},
