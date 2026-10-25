@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.7 — Bot kaydı tek kaynak: Kairos ve Tao ayarı yalnız kayda yazılır (2026-10-25) {#s74-7}
+
+- **Kairos ve Tao'nun ayarının tek kaynağı artık [bot kaydı](#/kilavuz/botlar/bot-kaydi).** Mod, küçük sermaye, sermaye üst sınırı ve kâğıt sıfırlamadaki BTC ayağı yalnız kayda yazılır; iki yere ayrı ayrı yazma kalktı. Eski ayar dosyasındaki bölüm kayıttan kendiliğinden kopyalanır (**geri dönüş kopyası**): panelden eski bir sürüme dönülse de botlar aynı ayarla çalışır.
+- Eski sürüme dönüp orada ayar değiştirirseniz ya da ayar dosyasını elle düzenlerseniz, açılışta **ayar dosyası kazanır** (eskisi gibi) ve kayıt düzeltilir.
+- [Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde Kairos/Tao değişikliği artık **bir kez** görünür (Bot kaydı türüyle); aynı değişikliğin ayar dosyası satırı ayrıca yazılmaz.
+- Ayar yaması (POST /api/config) Kairos/Tao alanlarını kayda alan alan yazar; Tao'nun ve modların üstüne yazmaz. Kairos'un demo sermaye sınırı bu yoldan da demo kabulü süresince değişmez.
+- **Kararlar ve davranış aynı** (eski ve yeni kodla kuru deneme birebir; bot kodu değişmedi). Güncelleme sunucuda kendiliğinden kurulur.
+
 ## 74.6 — Model örnekleri: Nova, Lydia, Simurg için ikinci kâğıt hesap (2026-10-25) {#s74-6}
 
 - **Yeni: [Model örnekleri](#/kilavuz/portfoy-botlari/model-ornegi)** — Ayarlar › Botlar › Bot kayıtları › Yeni bot listesinde **Nova örneği** (USD), **Lydia örneği** (TL) ve **Simurg örneği** (USD). Örnek modelin **aynı kararlarını** kullanır, **kâğıt hesabı ayrıdır** (kendi sermayesi, işlemleri, grafiği). Başlangıç: modelin ilk günü (ana kâğıt hesapla aynı dönem) ya da yarından itibaren. PIN istemez, onay ister.

@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.6';
+const APP_VERSION = '74.7';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -223,6 +223,12 @@ function mergeConfig(current, patch) {
 }
 
 function saveConfig(cfg) {
+  // 74.7 TEK KAYNAK (TASARIM-MAKINE-HESAP-BOT §2.5/§2.11): Kairos/Tao'nun config.bindirme.<ad> bölümü bot kaydından (live/botlar/<ad>.json)
+  // TEK YÖNLÜ türetilen GERİ DÖNÜŞ YANSIMASIDIR — her kayıtta kayıttan yeniden kurulur (eski sürüme dönülürse botlar aynı ayarla çalışır).
+  // Yansıma kurulamazsa ayar YAZILMAZ (güvenli taraf: eski sürümün okuyacağı config.bindirme kayıttan geri kalmasın).
+  if (BOT_KAYIT && cfg) {
+    try { BOT_KAYIT.yansit(cfg); } catch (e) { throw new Error(`ayar kaydedilmedi: bot kaydının geri dönüş yansıması kurulamadı (${e.message})`); }
+  }
   // Anahtarlar diske ayrı yazılır; `config.json` her zaman boş alanla kaydedilir.
   const gizli = loadSecrets();
   let degisti = false;
@@ -269,14 +275,13 @@ function saveConfig(cfg) {
   ayarlarLib.yaz(yazilacak);   // 68.0: <veri>/ayarlar.json, yalnız varsayılandan farklar (Y5: atomik + fsync + .yedek)
   // 74.2 ayar geçmişi: diskteki etkin ayar (sırsız) → yazılan; sırlar yalnız "değişti" (lib/ayarGecmisi süzer). Kayıt hatası ayarı durdurmaz.
   try {
-    const farklar = [...(diskOnceki ? ayarGecmisiLib.farkBul(diskOnceki, JSON.parse(JSON.stringify(yazilacak))) : []), ...sirDegisen];
+    // 74.7: Kairos/Tao yansıma satırları (bindirme.hucum|denge.*) config satırı olarak YAZILMAZ — aynı değişiklik bot kaydı satırı (tur 'bot') olarak yazılır.
+    const yansimaMi = (f) => { const m = /^bindirme\.([a-z][a-z0-9]{1,15})\./.exec(String(f.yol)); return !!(m && BOT_KAYIT && BOT_KAYIT.etkinKayit(m[1])); };
+    const farklar = [...(diskOnceki ? ayarGecmisiLib.farkBul(diskOnceki, JSON.parse(JSON.stringify(yazilacak))).filter(f => !yansimaMi(f)) : []), ...sirDegisen];
     if (farklar.length) AYAR_GECMISI.kaydet({ tur: 'config', farklar });
   } catch (e) { console.error('ayar geçmişi:', e.message); }
-  // 74.4 ÇİFT YAZIM (A1 2a): config.bindirme.<ad> yazıldıktan SONRA bot kaydı (live/botlar/<ad>.json) aynı ayara eşitlenir — mod, küçük
-  // sermaye, kâğıt sıfırlama (btcAyak), /api/config, ayar geçmişi geri alma, Telegram: hepsi bu tek noktadan. Hata ayarı durdurmaz.
-  if (BOT_KAYIT) { try { BOT_KAYIT.configtenEsitle(cfg); } catch (e) { console.error('bot kaydı:', e.message); } }
 }
-/** 74.4 bot kaydı deposu (lib/botKayit.js) — bindirme botlarının tanımından önce kurulur; saveConfig ondan önce çağrılırsa eşitleme atlanır. */
+/** 74.4 bot kaydı deposu (lib/botKayit.js) — bindirme botlarının tanımından önce kurulur; saveConfig ondan önce çağrılırsa yansıma atlanır (74.7). */
 let BOT_KAYIT = null;
 
 let config = loadConfig();
@@ -788,8 +793,11 @@ const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn:
 /**
  * 74.4 BOT KAYDI (A1 + 2. faz parça 2a, lib/botKayit.js — TASARIM-MAKINE-HESAP-BOT §2): her bot için <veri>/live/botlar/<ad>.json
  * (sır yok; hesap Anahtarlar kimliğiyle). Açılışta Kairos/Tao config.bindirme'den göç eder (doğrulama tutmazsa göç YOK, eski yol + WARN).
- * Çift yazım: config.bindirme yazılmaya devam eder (saveConfig sonunda kayıt eşitlenir); ikisi ayrışırsa config kazanır.
- * bindirmeAyar = kayıt (config'le eşitse) → botKayit.ayar; değilse eski yol. Dizinler, hesap adı, sağlık adresi, gölge DEĞİŞMEZ.
+ * 74.7 TEK KAYNAK (§2.5/§2.11 — çift yazım kaldırıldı): Kairos/Tao ayarı yalnız KAYDA yazılır (gocBotAyarYaz → BOT_KAYIT.ayarYaz);
+ * config.bindirme.<ad> kayıttan tek yönlü türetilen GERİ DÖNÜŞ YANSIMASIDIR (saveConfig başında BOT_KAYIT.yansit) — eski sürüme
+ * (74.3 / 74.4–74.6) dönülürse botlar aynı ayarla çalışır. Açılışta ikisi ayrışmışsa (eski sürümde/elle değişti) config kazanır (içe alma).
+ * bindirmeAyar = etkin kayıt → botKayit.ayar (+ bellekteki sır); kayıt kullanılamıyorsa eski yol (config.bindirme tek kaynak).
+ * Dizinler, hesap adı, sağlık adresi, gölge DEĞİŞMEZ.
  */
 const botKayitLib = require('./lib/botKayit');
 const botFabrikasi = require('./lib/sunucu/botFabrikasi');
@@ -803,8 +811,22 @@ function bindirmeAyar(ad) {
   // 74.5: kullanıcının oluşturduğu bot — kayıt TEK kaynak (config.bindirme'de tanımı yok).
   if (BOT_KAYIT && BOT_KAYIT.yeniMi && BOT_KAYIT.yeniMi(ad)) { const y = BOT_KAYIT.kayit(ad); if (!y) throw new Error(`bot kaydı yok: ${ad}`); return botKayitLib.ayar(y); }
   const ham = bindirmeAyarEski(ad);
-  const k = BOT_KAYIT ? BOT_KAYIT.esitKayit(ad, ham) : null;
+  const k = BOT_KAYIT ? BOT_KAYIT.etkinKayit(ad) : null;   // 74.7: kayıt tek kaynak (config'le karşılaştırılmaz; config onun yansıması)
   return k ? { ...botKayitLib.ayar(k), ...botKayitLib.sirlar(ham) } : ham;
+}
+/**
+ * 74.7 TEK KAYNAK: Kairos/Tao ayar değişikliği (mod, küçük sermaye, btcAyak, sermaye üst sınırı, /api/config yaması). Etkin kayıt varsa
+ * YALNIZ kayda yazılır; yansıma saveConfig'te kayıttan türer (önce ayarlar.json, sonra kayıt dosyası — lib/botKayit ayarYaz). Kayıt
+ * kullanılamıyorsa (bozuk/geçersiz — eski yol) config.bindirme tek kaynaktır (74.3 yolu). Döndürür true (değişti) | false.
+ */
+function gocBotAyarYaz(ad, alanlar, neden) {
+  if (BOT_KAYIT && BOT_KAYIT.etkinKayit(ad)) {
+    return !!BOT_KAYIT.ayarYaz(ad, { ...botKayitLib.sirsiz(bindirmeAyar(ad)), ...alanlar }, neden, { once: () => saveConfig(config) });
+  }
+  const onceki = (config.bindirme || {})[ad] || {};
+  config.bindirme = { ...(config.bindirme || {}), [ad]: { ...onceki, ...alanlar } };
+  saveConfig(config);
+  return true;
 }
 /**
  * 74.3 VERİ KALİTESİ KAPISI (D4, lib/live/veriKalitesi.js): config.veriKalitesi = { kip ('izleme' varsayılan | 'etkin'), izlemeBas (ISO | null), esikler }.
@@ -849,12 +871,12 @@ const FABRIKA_ORTAM = {
 
 function bindirmeKur(ad, mod) {
   if (!BINDIRME_MODLAR.includes(mod)) throw new Error(`mod kagit | demo | canli olmalı ("${mod}")`);
-  // 74.4: kayıt config'le eşitse kayıttan, değilse eski yoldan (config.bindirme) — ikisi de aynı fabrikadan geçer.
+  // 74.4/74.7: etkin kayıt varsa kayıttan (tek kaynak), yoksa eski yoldan (config.bindirme) — ikisi de aynı fabrikadan geçer.
   const ham = bindirmeAyarEski(ad);
   // 74.5: kullanıcının oluşturduğu bot → yalnız kayıttan (sır yok; canlı fabrikada reddedilir).
   const yeniKayit = yeniBotMu(ad) ? (BOT_KAYIT && BOT_KAYIT.kayit(ad)) : null;
   if (yeniBotMu(ad) && !yeniKayit) throw new Error(`bot kaydı yok: ${ad}`);
-  const kayit = BOT_KAYIT ? BOT_KAYIT.esitKayit(ad, ham) : null;
+  const kayit = BOT_KAYIT ? BOT_KAYIT.etkinKayit(ad) : null;
   const r = yeniKayit ? botFabrikasi.argumanlar(yeniKayit, mod, FABRIKA_ORTAM, {})
     : kayit ? botFabrikasi.argumanlar(kayit, mod, FABRIKA_ORTAM, botKayitLib.sirlar(ham)) : botFabrikasi.argumanlarAyardan(ham, ad, mod, FABRIKA_ORTAM);
   const { dizin, canliMi, ayar: a } = r;
@@ -904,7 +926,7 @@ for (const ad of BINDIRME_ADLAR) {
  * açılışta (göçten sonra) yüklenir, panelden (POST /api/botlar) çalışma zamanında eklenir. Her tüketici listeyi BINDIRME_ADLAR / bindirmeler /
  * saglikBotlar'dan çağrı anında okur. Kurallar: a6 her zaman kâğıtta başlar; a3 yalnız Kairos/Tao kuralı; a4 aynı borsa hesabına ikinci bot
  * yok (kâğıt hariç); a5 sermaye sabit üst sınır (USD, bakiye azsa bakiye — Ecap = min(E, tavan) bot içinde); CANLI YOK (5. faza kadar);
- * demo yalnız Binance demo hesabıyla (A2'ye kadar). Kairos/Tao'nun yolu (config.bindirme + çift yazım) DEĞİŞMEDİ.
+ * demo yalnız Binance demo hesabıyla (A2'ye kadar). Kairos/Tao'nun yolu (74.7: kayıt tek kaynak + config.bindirme geri dönüş yansıması) ayrı.
  */
 const anahtarlarLib = require('./lib/anahtarlar');
 /** Bot nesnesi → şu an kullandığı borsa hesabı kimliği (kâğıtta null). Kairos/Tao her zaman sabit hesaplar (eski anahtar alanları). */
@@ -1317,7 +1339,7 @@ app.post('/api/botlar/:k/hesap', (req, res) => {
 });
 /**
  * POST /api/botlar/:k/sermaye { mod: 'kagit' | 'demo', tutar (USD), pin?, onay: true } — a5 sermaye üst sınırı. Kâğıtta onay; demoda ARTIŞ acil PIN
- * ister (azaltma risk düşürür). Bot durmuşken. Kairos/Tao da (çift yazımla config.bindirme); Kairos demo kabulü süresince Kairos demo sınırı
+ * ister (azaltma risk düşürür). Bot durmuşken. Kairos/Tao da (74.7: kayda — gocBotAyarYaz); Kairos demo kabulü süresince Kairos demo sınırı
  * değişmez. Gerçek para üst sınırı bu uçtan değişmez (canlı kapısı + onaylı üst sınır).
  */
 app.post('/api/botlar/:k/sermaye', (req, res) => {
@@ -1344,10 +1366,7 @@ app.post('/api/botlar/:k/sermaye', (req, res) => {
       const kagitDosyaVar = fs.existsSync(path.join(bindirmeDizin(b.ad, 'kagit'), 'kagit-borsa.json'));
       BOT_KAYIT.guncelle(b.ad, (c) => { c.sermaye = { ...c.sermaye, [mod]: t }; if (mod === 'kagit' && !kagitDosyaVar) c.kagitBakiye = t; }, 'sermaye üst sınırı');
     } else {
-      const alan = mod === 'demo' ? 'demoSermayeTavani' : 'sermayeTavani';
-      const onceki = (config.bindirme || {})[b.ad] || {};
-      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, [alan]: t } };
-      saveConfig(config);
+      gocBotAyarYaz(b.ad, { [mod === 'demo' ? 'demoSermayeTavani' : 'sermayeTavani']: t }, 'sermaye üst sınırı');   // 74.7: kayda (tek kaynak)
     }
     if (b.mod === mod) {
       if (b.y.borsa) b.y.baglantiyiKes();
@@ -2658,11 +2677,7 @@ app.post('/api/bindirme/:ad/mod', async (req, res) => {
     if (b.bot.zamanlayici) b.bot.durdur();
     bindirmeler[b.ad] = yeni;
     if (yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.mod = mod; }, 'mod');   // 74.5: yeni bot — kayıt tek kaynak
-    else {
-      const onceki = (config.bindirme || {})[b.ad] || {};
-      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, mod } };
-      saveConfig(config);
-    }
+    else gocBotAyarYaz(b.ad, { mod }, 'mod');   // 74.7: Kairos/Tao — kayda (tek kaynak); config.bindirme yansıması saveConfig'te
     db.addLog(mod === 'canli' ? 'WARN' : 'INFO', `[${b.ad}] mod: ${mod === 'demo' ? 'DEMO hesap (BTC ayağı perp LONG — demo yaklaşımı)' : mod === 'canli' ? '⚠ GERÇEK PARA (çoklu varlık; kapı açık)' : 'kâğıt'}`);
     if (mod === 'canli') portfoyBildirici.gonder('alarm', `${yeni.bot.adGorunen}: GERÇEK PARA moduna geçildi`, ['Bot henüz başlamadı: emir onayı (CANLI) ve Başlat gerekir. Siz değilseniz hemen moda geri dönün.'], { anahtar: `canli-mod:${Date.now()}` });
     res.json({ success: true, mod });
@@ -2682,11 +2697,7 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
     const v = KUCUK_SECIMLER[anahtar];
     b.bot.ayar.kucukSermaye = v; b.bot.kol.ayar.kucukSermaye = v;
     if (yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.kucukSermaye = v; }, 'küçük sermaye');   // 74.5: yeni bot — kayıt tek kaynak
-    else {
-      const onceki = (config.bindirme || {})[b.ad] || {};
-      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, kucukSermaye: v } };
-      saveConfig(config);
-    }
+    else gocBotAyarYaz(b.ad, { kucukSermaye: v }, 'küçük sermaye');   // 74.7: kayda (tek kaynak)
     db.addLog('INFO', `[${b.ad}] küçük sermaye (Kairos-S): ${anahtar}`);
     res.json({ success: true, secim: anahtar, bot: b.bot.ozet() });
   } catch (err) { borsaHata(res, err); }
@@ -2697,7 +2708,7 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
  * { onay: 'SIFIRLA' }. Botun dizini (data/live/<ad>) SİLİNMEZ: `<ad>-onceki-<UTC zaman>` yedeğine taşınır; bot taze durumla yeniden
  * kurulur (sermaye = kagitBakiye; son gün yok → ilk çalışmada kaçırılan gün telafisi yok). Demo / canlı dizinine dokunmaz.
  * 68.9 (G7, PLAN-GERCEK-PARA-2027 §1): isteğe bağlı { btcAyak: 'spot' | 'coklu' } — BTC ayağı biçimi YALNIZ sıfırlamayla değişir
- * (spot ↔ çoklu varlık durumu birbirine taşınmaz); config.bindirme.<ad>.btcAyak yazılır, bot o biçimle taze kurulur.
+ * (spot ↔ çoklu varlık durumu birbirine taşınmaz); bot kaydına btcAyak yazılır (74.7; config.bindirme yansıması), bot o biçimle taze kurulur.
  */
 const kagitSifirlaLib = require('./lib/live/kagitSifirla');
 app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
@@ -2713,11 +2724,7 @@ app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
     if (b.bot.zamanlayici) b.bot.durdur();
     const r = kagitSifirlaLib.sifirla({ ...durum, simdi: Date.now() });
     if (yeniAyak != null && yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.btcAyak = yeniAyak; }, 'BTC ayağı (kâğıt sıfırlama)');   // 74.5
-    else if (yeniAyak != null) {
-      const onceki = (config.bindirme || {})[b.ad] || {};
-      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, btcAyak: yeniAyak } };
-      saveConfig(config);
-    }
+    else if (yeniAyak != null) gocBotAyarYaz(b.ad, { btcAyak: yeniAyak }, 'BTC ayağı (kâğıt sıfırlama)');   // 74.7: kayda (tek kaynak)
     bindirmeler[b.ad] = bindirmeKur(b.ad, 'kagit');
     const yedekAd = r.yedek ? path.basename(r.yedek) : null;
     db.addLog('WARN', `[${b.ad}] kâğıt hesap sıfırlandı (temiz başlangıç, sermaye ${bindirmeAyar(b.ad).kagitBakiye} USDT · BTC ayağı ${bindirmeler[b.ad].bot.ayar.btcAyak === 'coklu' ? 'çoklu varlık' : 'spot'})${yedekAd ? ` — eski kayıtlar data/live/${yedekAd}` : ''}`);
@@ -3235,8 +3242,40 @@ function configUygula(govde0) {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
   const govde = govde0 && govde0.telegram ? { ...govde0, telegram: guvenlikKur.chatIdYamaTemizle(govde0.telegram) } : govde0;
   const yHata = panelAdresiYama(govde) || telegramJetonHatasi(govde); if (yHata) return { durum: 400, govde: { success: false, error: yHata } };
-  config = mergeConfig(config, guvenlikKur.yamaTemizle(govde, SECRET_KEYS));
+  const temiz = guvenlikKur.yamaTemizle(govde, SECRET_KEYS);
+  // 74.7 TEK KAYNAK: yamanın bindirme bölümü config'e BÜTÜN OLARAK yazılmaz. Etkin kaydı olan Kairos/Tao alanları KAYDA (alan alan;
+  // mod / canliSermayeTavani / sağlık adresi yamaTemizle'de zaten düştü), diğer adlar config.bindirme'ye ad ad birleştirilir
+  // (eskiden bütün bölüm değişiyordu: Tao'nun ve Kairos'un modu kâğıda düşebilirdi). Önce hepsi doğrulanır; biri tutmazsa hiçbir şey yazılmaz.
+  let botYama = [];
+  if (temiz && temiz.bindirme !== undefined) {
+    const bolum = temiz.bindirme;
+    delete temiz.bindirme;
+    if (!isPlainObject(bolum)) return { durum: 400, govde: { success: false, error: 'bindirme bölümü nesne olmalı' } };
+    const kalan = {};
+    for (const [ad, v] of Object.entries(bolum)) {
+      if (!isPlainObject(v)) return { durum: 400, govde: { success: false, error: `bindirme.${ad} nesne olmalı` } };
+      if (BOT_KAYIT && BOT_KAYIT.etkinKayit(ad)) botYama.push([ad, v]); else kalan[ad] = v;
+    }
+    try {
+      for (const [ad, v] of botYama) {
+        const simdiki = bindirmeAyar(ad);
+        // Kairos demo kabulü (2026-12-09'a kadar): Kairos demo sermaye sınırı bu yoldan da değişmez (POST /api/botlar/:k/sermaye ile aynı kural)
+        if (ad === 'hucum' && 'demoSermayeTavani' in v && !botKayitLib.derinEsit(v.demoSermayeTavani, simdiki.demoSermayeTavani) && Date.now() < VeriKalitesi.KORUMA_BITIS) {
+          return { durum: 409, govde: { success: false, error: `Kairos demo kabulü ${new Date(VeriKalitesi.KORUMA_BITIS).toISOString().slice(0, 10)} sonuna kadar sürüyor — Kairos'un demo sermaye sınırı bu süre içinde değişmez.` } };
+        }
+        BOT_KAYIT.ayarHazirla(ad, { ...botKayitLib.sirsiz(simdiki), ...v });   // yalnız doğrulama
+      }
+    } catch (e) { return { durum: e.kod === 409 ? 409 : 400, govde: { success: false, error: e.message } }; }
+    if (Object.keys(kalan).length) {
+      const b0 = isPlainObject(config.bindirme) ? config.bindirme : {};
+      temiz.bindirme = Object.fromEntries([...Object.entries(b0), ...Object.entries(kalan).map(([ad, v]) => [ad, { ...(isPlainObject(b0[ad]) ? b0[ad] : {}), ...v }])]);
+    }
+  }
+  config = mergeConfig(config, temiz);
   botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
+  try {
+    for (const [ad, v] of botYama) BOT_KAYIT.ayarYaz(ad, { ...botKayitLib.sirsiz(bindirmeAyar(ad)), ...v }, 'POST /api/config', { once: () => saveConfig(config) });
+  } catch (e) { return { durum: e.kod === 409 ? 409 : e.kod === 400 ? 400 : 500, govde: { success: false, error: e.message } }; }
   saveConfig(config);
   engine.updateConfig(config);
   db.addLog('INFO', 'Sistem ve strateji parametreleri güncellendi.');

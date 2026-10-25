@@ -284,6 +284,7 @@ Değişmeyenler: dizin kuralı `bindirmeDizin(ad, mod)` (`hucum`, `hucum-demo`, 
 - **2b (M):** şablondan yeni kâğıt bot, hesap bağlama, a4, a5 uçları, Ayarlar formu.
 - **2c (M):** model şablonları (tasarimci örnekleri).
 - Çift yazımın kaldırılması 2c'den sonra ayrı küçük bir sürümde.
+  - **74.7'de uygulandı:** kayıt tek kaynak (yazan uçlar yalnız kayda); `config.bindirme` "dokunulmadan kalır" yerine kayıttan **tek yönlü türetilen geri dönüş yansıması** seçildi — donmuş kopya, 74.4–74.6'nın açılıştaki "ayrışırsa config kazanır" kuralı yüzünden eski sürüme dönüşte kaydı eski değere ezerdi. Ayrıntı CLAUDE.md "Panel 74.7".
 
 **Bağımlılık:** yalnız 73.0 Anahtarlar. D4 bağımsız; D4'ten sonra gelirse `veriKalitesi` kancası yeni botlara da geçirilir.
 
