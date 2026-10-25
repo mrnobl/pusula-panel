@@ -24,13 +24,12 @@ require('./lib/research/adaylar');
 require('./lib/research/donchianPortfoy');
 require('./lib/research/kitapOlcum');
 
-const CONFIG_PATH = path.join(__dirname, 'config.json');   // ESKİ kurulumun ayar dosyası — yalnız ayarlar.json yokken okunur (lib/ayarlar.js)
 /**
  * 68.0 AYARLAR (lib/ayarlar.js, PLAN-TASIMA F1): etkin ayar = config.varsayilan.json (depoda, kişisel değer yok) ⊕
  * <veri>/ayarlar.json (yalnız farklar). ayarlar.json yoksa eski config.json kullanıcı katmanıdır — var olan kurulumda
  * davranış AYNI; ayarlar.json ilk kayıtta oluşur, o andan sonra config.json okunmaz.
  */
-const ayarlarLib = require('./lib/ayarlar');
+require('./lib/ayarlar');   // C1 (75.0): adı kullanan kod lib/sunucu/ayarDeposu.js + kisiselUclar.js'te — yükleme sırası aynı
 // D5 (62.1): mum deposu node:sqlite ister (Node ≥ 22.13). Eski Node'da anlaşılmaz bir hatayla çökme döngüsü yerine açık mesaj.
 {
   const [ana, ara] = process.versions.node.split('.').map(Number);
@@ -50,239 +49,46 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.9';
+const APP_VERSION = '75.0';
 
 /**
- * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
- *
- * `config.json` sürüm kontrolüne girecek (strateji parametreleri, bot tanımları
- * ve ölçüm ayarları orada). API anahtarı aynı dosyada kalırsa ilk dolduruşta
- * geçmişe yazılır ve geçmişten temizlemesi zordur. Bu yüzden anahtarlar
- * `data/secrets.json`'a ayrıldı — `data/` zaten izlenmiyor.
- *
- * Bellekteki `config` nesnesi anahtarları taşımaya devam eder; ayrım yalnızca
- * DİSKTE. Böylece motorun ve borsa katmanının kodu değişmiyor.
+ * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
+ * Her alan bir OKUYUCU: modül değeri kullanım anında okur (`let config` hep güncel; sonra tanımlanan değişkenler sorun değil;
+ * nesneler aynı başvuru). Modül grupları server.js'teki ESKİ YERLERİNDE bağlanır → Express uç/ara katman sırası aynı
+ * (scripts/sunucu-uc-envanteri-selftest.js). Tanımsız alan okunursa hata atar (lib/sunucu/baglam.js).
+ * 75.0 (parça 2): bağlam AYAR DEPOSUNDAN ÖNCE kurulur (ayar deposu config, BOT_KAYIT, ARASTIRMA_MODU, ayar geçmişini kullanım anında okur).
+ * Alanlar modülden modüle verilen server.js nesneleridir; yenileri eklenince BURAYA okuyucu olarak eklenir.
  */
-const SECRETS_PATH = yollar.veri('secrets.json');
-// testnet* : Binance demo trading anahtarları (prod anahtarı demo'da çalışmaz).
-// healthchecks* : healthchecks.io ping URL'leri — URL'yi bilen herkes "bot çalıştı" diyebilir, sırdır.
-//   healthchecksUrl        HÜCUM botunun günlük çalışması (start / başarı / fail) — 68.8'e kadar iki bot bu adresi paylaşıyordu
-//   healthchecksSunucuUrl  isteğe bağlı: sunucu kalp atışı (günde bir; bot çalışmasa da)
-//   bindirme.<ad>.healthchecksUrl  68.8: Denge (ve sonraki botlar) KENDİ check'i; yoksa o bot ping göndermez (ortak adrese düşmez).
-//                          Bellekte config'te; DİSKTE yalnız secrets.json `bindirmeSaglik: { <ad>: url }` (ayarlar.json'a yazılmaz).
-const SECRET_KEYS = ['apiKey', 'apiSecret', 'testnetApiKey', 'testnetApiSecret', 'healthchecksUrl', 'healthchecksSunucuUrl'];
-const SAGLIK_URL_KEYS = ['healthchecksUrl', 'healthchecksSunucuUrl'];
-/** 68.8: secrets.json bindirmeSaglik → config.bindirme.<ad>.healthchecksUrl (Hücum'unki eski healthchecksUrl; burada atlanır). */
-function botSaglikSirlariniYukle(cfg, gizli) {
-  const bs = gizli && gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {};
-  for (const [ad, url] of Object.entries(bs)) {
-    if (ad === 'hucum' || typeof url !== 'string' || !url) continue;
-    cfg.bindirme = { ...(cfg.bindirme || {}), [ad]: { ...((cfg.bindirme || {})[ad] || {}), healthchecksUrl: url } };
-  }
-}
-/** 68.8: config'ten çıkan kopyada bindirme.<ad>.healthchecksUrl silinir (disariConfig, saveConfig); kopya döner. */
-function botSaglikCikar(cfg, topla) {
-  if (!cfg || !cfg.bindirme || typeof cfg.bindirme !== 'object') return cfg;
-  const bindirme = {};
-  for (const [ad, v] of Object.entries(cfg.bindirme)) {
-    if (v && typeof v === 'object' && 'healthchecksUrl' in v) {
-      const { healthchecksUrl, ...kalan } = v;
-      if (topla && healthchecksUrl) topla(ad, healthchecksUrl);
-      bindirme[ad] = kalan;
-    } else bindirme[ad] = v;
-  }
-  return { ...cfg, bindirme };
-}
+const ctx = require('./lib/sunucu/baglam').olustur({
+  kok: () => __dirname, app: () => app, APP_VERSION: () => APP_VERSION, ARASTIRMA_MODU: () => ARASTIRMA_MODU,
+  config: () => config, configYaz: () => (c) => { config = c; }, saveConfig: () => saveConfig, engine: () => engine, broadcast: () => broadcast,
+  ensureEngineRunning: () => ensureEngineRunning, shutdown: () => shutdown,
+  KNOWN_STRATEGIES: () => KNOWN_STRATEGIES, KNOWN_TIMEFRAMES: () => KNOWN_TIMEFRAMES,
+  BINDIRME_ADLAR: () => BINDIRME_ADLAR, bindirmeler: () => bindirmeler, bindirmeAyar: () => bindirmeAyar,
+  isler: () => isler, veriOrk: () => veriOrk, mumGetir: () => ARASTIRMA_UCLARI.mumGetir,
+  // 75.0 (C1 parça 2): ayar deposu ve sağlık / sorun / bildirim / ileri / ayar / kişisel uç modüllerinin okudukları
+  ayar: () => AYAR_DEPOSU, BOT_KAYIT: () => BOT_KAYIT, AYAR_GECMISI: () => AYAR_GECMISI, ayarGecmisiLib: () => ayarGecmisiLib, COMMIT: () => COMMIT, GUNLUK: () => GUNLUK,
+  guvenlik: () => guvenlik, acilPin: () => acilPin, evOkuma: () => evOkuma, evYazma: () => evYazma, EV_BAGLANTI_ETKIN: () => EV_BAGLANTI_ETKIN, disariConfig: () => disariConfig,
+  STRATEJI_ADLAR: () => STRATEJI_ADLAR, botEtiketi: () => botEtiketi, GOLGE_DOSYA: () => GOLGE_DOSYA, ikinciKanal: () => ikinciKanal, portfoyBildirici: () => portfoyBildirici,
+  saglikBotlar: () => saglikBotlar, saglikBot: () => saglikBot, saglikSunucu: () => saglikSunucu, veriKalitesiAyar: () => veriKalitesiAyar, diskDurumu: () => diskDurumu,
+  yeniBotMu: () => yeniBotMu, botHesapId: () => botHesapId, sonKapanisPlanliMi: () => sonKapanisPlanliMi,
+  ozDenetim: () => ozDenetim, ileriIs: () => ileriIs, demoKabulOzet: () => demoKabulOzet, SORUN: () => SORUN, sorunlarHesapla: () => sorunlarHesapla, bilinenSirlar: () => bilinenSirlar,
+  BILDIRIM: () => BILDIRIM, TELEGRAM_GELISTIRME_ENGELI: () => TELEGRAM_GELISTIRME_ENGELI, telegramYoklayici: () => telegramYoklayici,
+  piyasaBaglami: () => piyasaBaglami, yapayZeka: () => yapayZeka, portfoyum: () => portfoyum, islemDefteri: () => islemDefteri, anahtarlar: () => anahtarlar,
+  sirlariUygula: () => sirlariUygula, configUygula: () => configUygula,
+});
+
+/**
+ * C1 (75.0, TASARIM-MAKINE-HESAP-BOT §3 parça 2) AYAR DEPOSU — lib/sunucu/ayarDeposu.js: GİZLİ ANAHTARLAR config.json'da DURMAZ
+ * (data/secrets.json — 69.4 sır kasası; Y5: "yok" ile "var ama bozuk" ayrı, bozuk/kilitliyse yazma reddi + açılış alarmı), etkin ayar
+ * okuma/yazma (loadConfig / saveConfig / mergeConfig — 68.0 ayarlar katmanı, 74.7 bot kaydı yansıması, 74.2 ayar geçmişi), 68.8 bot başına
+ * sağlık sırları, 69.3 sürüm izi (commitOku, ayarIzi). `config` değişkeni BURADA kalır. Sırlar dosyasının durumu AYAR_DEPOSU okuyucularında
+ * (SIRLAR_BOZUK, SIRLAR_KILITLI, SIR_GECIS, KASA_GECIS). Yükleme sırası aynı: lib/guvenlik → lib/live/kaliciDosya → lib/sirKasasi → sır kasası geçişi.
+ */
 const guvenlikKur = require('./lib/guvenlik');
-
-/**
- * Y5 (61.8, DENETIM-CANLI-ALTYAPI): sırlar dosyası "yok" ile "var ama bozuk" AYRI. Bozuksa son iyi kopyadan (.yedek)
- * okunur; o da yoksa SIRLAR_BOZUK — yazma REDDEDİLİR (panelden ilk kayıt anahtarları kalıcı silmesin) ve açılışta alarm.
- * Yazım lib/live/kaliciDosya.js (tmp + fsync + rename + .yedek).
- */
 const kaliciDosya = require('./lib/live/kaliciDosya');
-/**
- * 69.4 SIR KASASI (lib/sirKasasi.js): secrets.json Windows'ta DPAPI ile şifreli (69.6: CurrentUser; eski LocalMachine zarfı
- * açılışta geçirilir). Açılışta düz dosya şifreliye çevrilir ve doğrulanır (tutmazsa düz kalır). Şifre ÇÖZÜLEMEZSE SIRLAR_KILITLI:
- * sırlar boş sayılır ama dosyanın üstüne ASLA yazılmaz (anahtarlar silinmesin) + açılışta alarm.
- * 69.6: telefon-jeton.json, ev-baglanti.json, yedek-sifre.json da kasada (KASA_DOSYALARI) — açılışta hepsi geçirilir.
- */
-const sirKasasi = require('./lib/sirKasasi');
-let SIRLAR_BOZUK = null, SIRLAR_KILITLI = null, SIR_GECIS = null, KASA_GECIS = {};
-try { KASA_GECIS = sirKasasi.hepsiniGecir((ad) => yollar.veri(ad)); SIR_GECIS = KASA_GECIS['secrets.json'] || null; } catch (e) { SIR_GECIS = { yapildi: false, neden: e.message }; }
-function loadSecrets() {
-  if (!fs.existsSync(SECRETS_PATH)) return {};
-  for (const f of [SECRETS_PATH, `${SECRETS_PATH}.yedek`]) {
-    try { const j = sirKasasi.oku(f); if (j && typeof j === 'object') { if (f !== SECRETS_PATH && !SIRLAR_BOZUK) SIRLAR_BOZUK = 'data/secrets.json bozuk — son iyi kopyadan (.yedek) okundu'; return j; } }
-    catch (e) { if (e instanceof sirKasasi.SirKilitliHatasi) { SIRLAR_KILITLI = `${e.message} — dosyaya dokunulmadı; sunucuyu başka bir bilgisayara taşıdıysanız anahtarları panelden yeniden girmeden önce dosyayı yedekleyip silin`; return {}; } }
-  }
-  SIRLAR_BOZUK = 'data/secrets.json bozuk ve son iyi kopya yok — API anahtarları, Telegram jetonu ve sağlık adresleri OKUNAMADI; panelden yeniden girin (dosya önce yedeklendi)';
-  try { fs.copyFileSync(SECRETS_PATH, `${SECRETS_PATH}.bozuk-${Date.now()}.bak`); } catch { /* */ }
-  return {};
-}
-
-function saveSecrets(gizli) {
-  if (SIRLAR_KILITLI) throw new Error(`sırlar yazılmadı: ${SIRLAR_KILITLI}`);
-  if (SIRLAR_BOZUK && !Object.keys(gizli || {}).length) throw new Error(`sırlar yazılmadı: ${SIRLAR_BOZUK}`);
-  sirKasasi.yaz(SECRETS_PATH, gizli, kaliciDosya.yaz);
-}
-
-// Load Configuration
-function loadConfig() {
-  try {
-    // Varsayılan ⊕ kullanıcı (BOM'u lib/ayarlar.js temizler). Eski kurulumda kullanıcı katmanı config.json'un kendisi.
-    const bilgi = ayarlarLib.okuBilgi();
-    const cfg = bilgi.ayar;
-    loadConfig._kaynak = bilgi.kaynak;
-    if (bilgi.bozuk && !loadConfig._yedekten) {
-      loadConfig._yedekten = `ayarlar.json bozuktu (${String(bilgi.bozuk).slice(0, 80)}) — son iyi kopyadan (.yedek) açıldı; son ayar değişikliğiniz kaybolmuş olabilir`;
-      console.error(`⚠️  ${loadConfig._yedekten}`);
-    }
-    const gizli = loadSecrets();
-    for (const k of SECRET_KEYS) {
-      if (gizli[k]) cfg[k] = gizli[k];
-    }
-    /**
-     * TELEGRAM BOT TOKEN'I DA SIRDIR. Önceden config.json'da düz metin
-     * duruyordu; açılışta bir kez secrets.json'a taşınır ve dosyadan silinir.
-     */
-    const tg = cfg.telegram || {};
-    if (tg.botToken && !(gizli.telegram && gizli.telegram.botToken)) {
-      gizli.telegram = { ...(gizli.telegram || {}), botToken: tg.botToken };
-      saveSecrets(gizli);
-      if (bilgi.kaynak === 'eski-config') {
-        const dosyadaki = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8').replace(/^﻿/, ''));
-        dosyadaki.telegram = { ...dosyadaki.telegram, botToken: '' };
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(dosyadaki, null, 2), 'utf8');
-      } else {
-        ayarlarLib.yaz({ ...cfg, telegram: { ...tg, botToken: '' } });
-      }
-      console.log('🔒 Telegram bot token ayar dosyasından secrets.json\'a taşındı.');
-    }
-    if (gizli.telegram && gizli.telegram.botToken) {
-      cfg.telegram = { ...(cfg.telegram || {}), botToken: gizli.telegram.botToken };
-    }
-    // 68.8 bot başına sağlık sinyali: diskte secrets.json bindirmeSaglik → bellekte config.bindirme.<ad>.healthchecksUrl
-    botSaglikSirlariniYukle(cfg, gizli);
-    return cfg;
-  } catch (e) {
-    // Y5: yarım kalmış config.json sonsuz çökme döngüsü yapıyordu — son iyi kopyadan (.yedek) açılır, açılışta alarm.
-    // Denetim 61.8 #7: YALNIZ ayrıştırma hatasında (SyntaxError) — başka hata (ör. sır taşırken EPERM) sağlam ayarı ezmesin.
-    const yedek = `${CONFIG_PATH}.yedek`;
-    if (e instanceof SyntaxError && !loadConfig._yedekten && fs.existsSync(yedek)) {
-      try {
-        JSON.parse(fs.readFileSync(yedek, 'utf8').replace(/^\uFEFF/, ''));
-        try { fs.copyFileSync(CONFIG_PATH, `${CONFIG_PATH}.bozuk-${Date.now()}.bak`); } catch { /* */ }
-        fs.copyFileSync(yedek, CONFIG_PATH);
-        loadConfig._yedekten = `config.json bozuktu (${e.message.slice(0, 80)}) — son iyi kopyadan (.yedek) açıldı; son ayar değişikliğiniz kaybolmuş olabilir`;
-        console.error(`⚠️  ${loadConfig._yedekten}`);
-        return loadConfig();
-      } catch (e2) { console.error('config.json.yedek de okunamadı:', e2.message); }
-    }
-    console.error('Error loading config.json:', e.message);
-    process.exit(1);
-  }
-}
-
-// Sections whose contents must be merged rather than replaced. A client that
-// posts only the strategies its form knows about — or only the two parameters
-// it edits — would otherwise wipe everything it did not send out of config.json.
-const MERGE_SECTIONS = ['strategies', 'risk', 'telegram', 'paperWallet'];
-
-const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
-
-// Bunlar isim alanı değil, tek parça değerdir: gönderilen harita eskisinin
-// yerine geçer. Birleştirilseydi bir kümeyi silmek imkânsız olurdu — panelden
-// kaldırılan küme config.json'da sonsuza kadar kalırdı.
-// `presets` de aynı sebeple burada: panelden silinen bir gösterge ayarı derin
-// birleştirmede config.json'da sonsuza kadar kalırdı.
-const REPLACE_KEYS = new Set(['clusters', 'presets']);
-
-/** Recursive merge for plain objects; arrays and scalars are replaced outright. */
-function deepMerge(current, patch) {
-  if (!isPlainObject(current) || !isPlainObject(patch)) return patch;
-
-  const out = { ...current };
-  for (const [key, value] of Object.entries(patch)) {
-    out[key] = (!REPLACE_KEYS.has(key) && isPlainObject(value) && isPlainObject(current[key]))
-      ? deepMerge(current[key], value)
-      : value;
-  }
-  return out;
-}
-
-function mergeConfig(current, patch) {
-  const next = { ...current, ...patch };
-
-  for (const section of MERGE_SECTIONS) {
-    const incoming = patch ? patch[section] : undefined;
-    if (isPlainObject(incoming)) {
-      next[section] = deepMerge(current[section] || {}, incoming);
-    }
-  }
-
-  return next;
-}
-
-function saveConfig(cfg) {
-  // 74.7 TEK KAYNAK (TASARIM-MAKINE-HESAP-BOT §2.5/§2.11): Kairos/Tao'nun config.bindirme.<ad> bölümü bot kaydından (live/botlar/<ad>.json)
-  // TEK YÖNLÜ türetilen GERİ DÖNÜŞ YANSIMASIDIR — her kayıtta kayıttan yeniden kurulur (eski sürüme dönülürse botlar aynı ayarla çalışır).
-  // Yansıma kurulamazsa ayar YAZILMAZ (güvenli taraf: eski sürümün okuyacağı config.bindirme kayıttan geri kalmasın).
-  if (BOT_KAYIT && cfg) {
-    try { BOT_KAYIT.yansit(cfg); } catch (e) { throw new Error(`ayar kaydedilmedi: bot kaydının geri dönüş yansıması kurulamadı (${e.message})`); }
-  }
-  // Anahtarlar diske ayrı yazılır; `config.json` her zaman boş alanla kaydedilir.
-  const gizli = loadSecrets();
-  let degisti = false;
-  // 68.8: bot başına sağlık adresi ayarlar dosyasına GİRMEZ — secrets.json bindirmeSaglik'e (sır).
-  const temiz = botSaglikCikar({ ...cfg }, (ad, url) => {
-    if (ad === 'hucum') return;
-    const bs = gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {};
-    if (bs[ad] !== url) { gizli.bindirmeSaglik = { ...bs, [ad]: url }; degisti = true; }
-  });
-
-  for (const k of SECRET_KEYS) {
-    if (temiz[k]) {
-      if (gizli[k] !== temiz[k]) { gizli[k] = temiz[k]; degisti = true; }
-    }
-    temiz[k] = '';
-  }
-  if (temiz.telegram && temiz.telegram.botToken) {
-    if (!gizli.telegram || gizli.telegram.botToken !== temiz.telegram.botToken) {
-      gizli.telegram = { ...(gizli.telegram || {}), botToken: temiz.telegram.botToken };
-      degisti = true;
-    }
-  }
-  if (temiz.telegram) temiz.telegram = { ...temiz.telegram, botToken: '' };
-  const sirDegisen = [];   // 74.2 ayar geçmişi: yalnız "değişti" bilgisi (değer yok)
-  if (degisti) {
-    const onceki = loadSecrets();
-    for (const k of SECRET_KEYS) if ((onceki[k] || '') !== (gizli[k] || '')) sirDegisen.push({ yol: k, eski: onceki[k] || '', yeni: gizli[k] || '' });
-    if (((onceki.telegram || {}).botToken || '') !== ((gizli.telegram || {}).botToken || '')) sirDegisen.push({ yol: 'telegram.botToken', eski: (onceki.telegram || {}).botToken || '', yeni: (gizli.telegram || {}).botToken || '' });
-    for (const ad of new Set([...Object.keys(onceki.bindirmeSaglik || {}), ...Object.keys(gizli.bindirmeSaglik || {})])) {
-      if ((onceki.bindirmeSaglik || {})[ad] !== (gizli.bindirmeSaglik || {})[ad]) sirDegisen.push({ yol: `bindirme.${ad}.healthchecksUrl`, eski: (onceki.bindirmeSaglik || {})[ad] || '', yeni: (gizli.bindirmeSaglik || {})[ad] || '' });
-    }
-    saveSecrets(gizli);
-  }
-
-  // ARAŞTIRMA MODU (denetim A-02): bellekte kapatılan Telegram ASLA kalıcı yazılmaz — diskteki açık/kapalı korunur.
-  let yazilacak = temiz;
-  if (ARASTIRMA_MODU) {
-    let diskteki = null;
-    try { diskteki = ayarlarLib.oku(); } catch { /* okunamadı: alan değişmez */ }
-    yazilacak = guvenlikKur.arastirmaKayitDuzelt(temiz, diskteki);
-  }
-  let diskOnceki = null;
-  try { diskOnceki = ayarlarLib.oku(); } catch { diskOnceki = null; }
-  ayarlarLib.yaz(yazilacak);   // 68.0: <veri>/ayarlar.json, yalnız varsayılandan farklar (Y5: atomik + fsync + .yedek)
-  // 74.2 ayar geçmişi: diskteki etkin ayar (sırsız) → yazılan; sırlar yalnız "değişti" (lib/ayarGecmisi süzer). Kayıt hatası ayarı durdurmaz.
-  try {
-    // 74.7: Kairos/Tao yansıma satırları (bindirme.hucum|denge.*) config satırı olarak YAZILMAZ — aynı değişiklik bot kaydı satırı (tur 'bot') olarak yazılır.
-    const yansimaMi = (f) => { const m = /^bindirme\.([a-z][a-z0-9]{1,15})\./.exec(String(f.yol)); return !!(m && BOT_KAYIT && BOT_KAYIT.etkinKayit(m[1])); };
-    const farklar = [...(diskOnceki ? ayarGecmisiLib.farkBul(diskOnceki, JSON.parse(JSON.stringify(yazilacak))).filter(f => !yansimaMi(f)) : []), ...sirDegisen];
-    if (farklar.length) AYAR_GECMISI.kaydet({ tur: 'config', farklar });
-  } catch (e) { console.error('ayar geçmişi:', e.message); }
-}
+const AYAR_DEPOSU = require('./lib/sunucu/ayarDeposu').olustur(ctx);
+const { SECRET_KEYS, botSaglikCikar, loadSecrets, loadConfig, saveConfig, commitOku } = AYAR_DEPOSU;
 /** 74.4 bot kaydı deposu (lib/botKayit.js) — bindirme botlarının tanımından önce kurulur; saveConfig ondan önce çağrılırsa yansıma atlanır (74.7). */
 let BOT_KAYIT = null;
 
@@ -297,45 +103,14 @@ const ARASTIRMA_MODU = process.env.ARASTIRMA_MODU === '1';
 /**
  * 69.3 SÜRÜM İZİ (Knight 2012 dersi: "o an hangi kod çalışıyordu?"): açılıştaki git commit'i + etkin ayarların parmak izi
  * (sırlar hariç, sha256 ilk 12). /api/health, günlük satırları (v), kara kutu ve öz denetim gösterir.
+ * (commitOku, ayarIzi: lib/sunucu/ayarDeposu.js — C1 75.0)
  */
-function commitOku(kok) {
-  try {
-    const head = fs.readFileSync(path.join(kok, '.git', 'HEAD'), 'utf8').trim();
-    if (/^[0-9a-f]{40}$/.test(head)) return head.slice(0, 7);
-    const ref = (/^ref: (.+)$/.exec(head) || [])[1];
-    if (!ref) return null;
-    try { return fs.readFileSync(path.join(kok, '.git', ref), 'utf8').trim().slice(0, 7); } catch { /* packed */ }
-    const p = fs.readFileSync(path.join(kok, '.git', 'packed-refs'), 'utf8').split('\n').find(l => l.endsWith(` ${ref}`));
-    return p ? p.slice(0, 7) : null;
-  } catch { return null; }
-}
 const COMMIT = commitOku(__dirname);
 GUNLUK.surumAyarla(`${APP_VERSION}${COMMIT ? `@${COMMIT}` : ''}`);
-function ayarIzi() {
-  try {
-    const gizli = /key|secret|token|sifre|parola|pin|jeton|url/i;
-    const temiz = JSON.parse(JSON.stringify(config, (k, v) => (k && gizli.test(k) ? undefined : v)));
-    return require('crypto').createHash('sha256').update(JSON.stringify(temiz)).digest('hex').slice(0, 12);
-  } catch { return null; }
-}
 if (ARASTIRMA_MODU && config.telegram) config.telegram = { ...config.telegram, enabled: false };
 const app = express();
 const server = http.createServer(app);
 
-/**
- * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
- * Her alan bir OKUYUCU: modül değeri kullanım anında okur (`let config` hep güncel; sonra tanımlanan değişkenler sorun değil;
- * nesneler aynı başvuru). Modül grupları server.js'teki ESKİ YERLERİNDE bağlanır → Express uç/ara katman sırası aynı
- * (scripts/sunucu-uc-envanteri-selftest.js). Tanımsız alan okunursa hata atar (lib/sunucu/baglam.js).
- */
-const ctx = require('./lib/sunucu/baglam').olustur({
-  kok: () => __dirname, app: () => app, APP_VERSION: () => APP_VERSION, ARASTIRMA_MODU: () => ARASTIRMA_MODU,
-  config: () => config, saveConfig: () => saveConfig, engine: () => engine, broadcast: () => broadcast,
-  ensureEngineRunning: () => ensureEngineRunning, shutdown: () => shutdown,
-  KNOWN_STRATEGIES: () => KNOWN_STRATEGIES, KNOWN_TIMEFRAMES: () => KNOWN_TIMEFRAMES,
-  BINDIRME_ADLAR: () => BINDIRME_ADLAR, bindirmeler: () => bindirmeler, bindirmeAyar: () => bindirmeAyar,
-  isler: () => isler, veriOrk: () => veriOrk, mumGetir: () => ARASTIRMA_UCLARI.mumGetir,
-});
 
 /**
  * GÜVENLİK (lib/guvenlik.js) — canlı moda geçmenin ön koşulu.
@@ -650,22 +425,10 @@ try {
 
 // Initialize Core Trading Engine
 const engine = new TradingEngine(config);
-// Bildirim merkezi (lib/bildirimMerkezi.js, PLAN-PANEL-2): Telegram'a giden her mesaj türüne ayrılır, kapalı tür gönderilmez,
-// her deneme kayda geçer. İlk açılışta eski config bayrakları (notifyTrades/Errors/Lifecycle) varsayılan.
-// 73.5: tür başına kanal (ntfy = 69.4 ikinci kanal, sır kasasındaki konu), şablon, sessiz saat; geliştirme bilgisayarında ntfy da gitmez.
-const BILDIRIM = require('./lib/bildirimMerkezi').olustur({ kok: __dirname,
-  varsayilan: () => ({ islem: engine.telegram.notifyTrades, hata: engine.telegram.notifyErrors, yasam: engine.telegram.notifyLifecycle }),
-  ntfyFn: () => { const k = ikinciKanal(); return k.konu ? { konu: k.konu } : null; },
-  engelFn: () => TELEGRAM_GELISTIRME_ENGELI || (ARASTIRMA_MODU ? 'araştırma modu' : null),
-  // 73.7: alarm / uyarı mesajlarına Sorun merkezi adımları + bağlantı (adres: Ayarlar › Bildirimler › Panel adresi; yoksa 'Panel › Sorunlar').
-  sorunBagi: { panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null },
-  // 74.2 ayar geçmişi (etkin görünümün farkı; geçici sessiz de yazılır, geri alınmaz)
-  degisiklik: (once, sonra) => AYAR_GECMISI.kaydet({ tur: 'bildirim', farklar: ayarGecmisiLib.farkBul(once, sonra) }) });
-engine.telegram.merkezBagla(BILDIRIM);
-// 67.5: geliştirme bilgisayarında (araştırma modu / data/makine.json / sunucu bağlantısı kurulu) Telegram yoklaması ve gönderimi
-// kapalı — sunucudaki yoklamayla 409 çakışması olmasın. TELEGRAM_GELISTIRME=1 açıkça açar. Sunucuda davranış değişmez.
-const TELEGRAM_GELISTIRME_ENGELI = require('./lib/telegram').gelistirmeEngeli({ env: process.env, kok: __dirname, arastirma: ARASTIRMA_MODU });
-engine.telegram.gelistirmeEngeli = TELEGRAM_GELISTIRME_ENGELI;
+/* Bildirim merkezi (lib/bildirimMerkezi.js, PLAN-PANEL-2; 73.5 kanal/şablon/sessiz saat; 74.2 ayar geçmişi) + Telegram geliştirme engeli (67.5) —
+ * lib/sunucu/bildirimKurulum.js; dört grup eski yerlerinde (merkez · uçlar · üreticiler · Telegram komutları). */
+const BILDIRIM_KURULUM = require('./lib/sunucu/bildirimKurulum').olustur(ctx);   // C1 (75.0)
+const { BILDIRIM, TELEGRAM_GELISTIRME_ENGELI } = BILDIRIM_KURULUM.merkez();
 
 // Broadcast state via WebSocket
 function broadcast(type, data) {
@@ -803,7 +566,7 @@ const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ikinciKa
  *   `bindirme.denge.healthchecksUrl`. Önceden iki bot aynı URL'ye ping atıyordu: biri durunca öbürünün başarı ping'i check'i
  *   "up" tutardı. Denge'nin adresi yoksa Denge ping GÖNDERMEZ (Hücum'unkine de). `saglikBot` = Hücum'unki (eski ad).
  */
-const { SaglikSinyali, urlGecerli: saglikUrlGecerli, botUrl: botSaglikUrl } = require('./lib/saglikSinyali');
+const { SaglikSinyali, botUrl: botSaglikUrl } = require('./lib/saglikSinyali');   // C1 (75.0): urlGecerli → lib/sunucu/ayarUclari.js
 const saglikBotlar = Object.fromEntries(BINDIRME_ADLAR.map(ad => [ad, new SaglikSinyali({ ad: `sağlık sinyali (${botEtiketi(ad)})`, urlFn: () => botSaglikUrl(config, ad), kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) })]));
 const saglikBot = saglikBotlar.hucum;
 const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn: () => config.healthchecksSunucuUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
@@ -1136,10 +899,10 @@ async function disIpDenetle() {
 if (!ARASTIRMA_MODU) {
   // Açılış: bozuk ayar/sır dosyası kurtarıldıysa (Y5) alarm (Telegram ayarı bu sırada okunmuş olur).
   setTimeout(() => {
-    if (SIR_GECIS && SIR_GECIS.yapildi) db.addLog('SUCCESS', `[İŞLETİM] sır dosyası şifrelendi (Windows DPAPI, yalnız bu bilgisayardaki bu Windows kullanıcısı çözer)${SIR_GECIS.neden ? ` — ${SIR_GECIS.neden}` : ''}`);
-    for (const [ad, g] of Object.entries(KASA_GECIS || {})) if (ad !== 'secrets.json' && g && g.yapildi) db.addLog('SUCCESS', `[İŞLETİM] ${ad} sır kasasına alındı${g.neden ? ` — ${g.neden}` : ''}`);
-    else if (SIR_GECIS && /doğrulanamadı/.test(SIR_GECIS.neden || '')) db.addLog('ERROR', `[İŞLETİM] ${SIR_GECIS.neden}`);
-    for (const m of [loadConfig._yedekten, SIRLAR_BOZUK, SIRLAR_KILITLI].filter(Boolean)) {
+    if (AYAR_DEPOSU.SIR_GECIS && AYAR_DEPOSU.SIR_GECIS.yapildi) db.addLog('SUCCESS', `[İŞLETİM] sır dosyası şifrelendi (Windows DPAPI, yalnız bu bilgisayardaki bu Windows kullanıcısı çözer)${AYAR_DEPOSU.SIR_GECIS.neden ? ` — ${AYAR_DEPOSU.SIR_GECIS.neden}` : ''}`);
+    for (const [ad, g] of Object.entries(AYAR_DEPOSU.KASA_GECIS || {})) if (ad !== 'secrets.json' && g && g.yapildi) db.addLog('SUCCESS', `[İŞLETİM] ${ad} sır kasasına alındı${g.neden ? ` — ${g.neden}` : ''}`);
+    else if (AYAR_DEPOSU.SIR_GECIS && /doğrulanamadı/.test(AYAR_DEPOSU.SIR_GECIS.neden || '')) db.addLog('ERROR', `[İŞLETİM] ${AYAR_DEPOSU.SIR_GECIS.neden}`);
+    for (const m of [loadConfig._yedekten, AYAR_DEPOSU.SIRLAR_BOZUK, AYAR_DEPOSU.SIRLAR_KILITLI].filter(Boolean)) {
       db.addLog('ERROR', `[İŞLETİM] ${m}`);
       portfoyBildirici.gonder('alarm', 'Ayar dosyası bozuk açıldı', [m], { anahtar: `ayar-bozuk:${m.slice(0, 30)}` });
     }
@@ -1495,458 +1258,18 @@ function ensureEngineRunning() {
 }
 
 /** OTOMATİK GÜNCELLEME (61.3) uçları — ayrıntı ve uç listesi lib/sunucu/guncellemeUclari.js başlığında. */
-const guncelleme = require('./lib/guncelleme');
+require('./lib/guncelleme');   // C1 (75.0): adı kullanan kod (öz denetim, sorun merkezi, Telegram) lib/sunucu/*'te — yükleme sırası aynı
 const GUNCELLEME_UCLARI = require('./lib/sunucu/guncellemeUclari');   // C1 (74.8): /api/guncelleme/*, /api/sistem/* (yeniden başlat, durdur)
 GUNCELLEME_UCLARI.kur(ctx);
 
-// Lightweight liveness probe for supervisors / uptime monitors.
-/**
- * ÖZ DENETİM (69.1, lib/ozDenetim.js, PLAN-OZ-DENETIM.md) — 5 dk'da bir 19 denetim; güvenli onarım, güvenli kip, tam kapanma
- * (= bot ENGEL'i). Panel: Sistem › Sağlık (#/saglik) + ana sayfa "Sistem sağlığı" kartı. Demo kipindeki bota (demo kabul,
- * 2026-12-09'a kadar) hiçbir şey yapmaz — yalnız haber. Araştırma modunda ÇALIŞMAZ (botlar sunucuda; panel sunucunun
- * /api/saglik/oz yanıtını okur — lib/evOkuma.js EV_YOLU).
- *   GET  /api/saglik/oz                         anlık görüntü + son 30 günün olayları
- *   POST /api/saglik/oz/yokla                   şimdi yokla
- *   POST /api/saglik/oz/:ad/guvenli-kip-kaldir  güvenli kipi elle kaldır (tam kapanma: /api/bindirme/:ad/engel-kaldir)
- *   69.2: POST /api/saglik/kara-kutu/:ad (olay raporu şimdi; ad = bot ya da "sistem") · GET /api/saglik/kara-kutu/dosya/:dosya (indir)
- *         bağdaştırıcı + bilgisayar (lib/sunucuBilgisayari.js) + borsaTakvimi (lib/borsaTakvimi.js) + karaKutuVeri.
- */
-const { OzDenetim } = require('./lib/ozDenetim');
-async function ozAgOlc() {
-  const al = async (url, o = {}) => { const bas = Date.now(); const r = await fetch(url, { signal: AbortSignal.timeout(8000), ...o }); return { r, sure: Date.now() - bas }; };
-  const sonuc = { binance: false, github: false, saatFarkMs: null, gecikmeMs: null, fiyat: {} };
-  await Promise.all([
-    (async () => {
-      try {
-        const { r, sure } = await al('https://fapi.binance.com/fapi/v1/time');
-        const j = await r.json();
-        if (Number.isFinite(j.serverTime)) { sonuc.binance = true; sonuc.gecikmeMs = sure; sonuc.saatFarkMs = Date.now() - sure / 2 - j.serverTime; }
-      } catch { /* ulaşılamadı */ }
-      try { const { r } = await al('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT'); const j = await r.json(); const f = +j.markPrice; if (f > 0) { sonuc.fiyat.binance = f; sonuc.binance = true; } } catch { /* */ }
-    })(),
-    (async () => { try { const { r } = await al('https://github.com', { method: 'HEAD' }); sonuc.github = r.status < 500; } catch { /* */ } })(),
-    (async () => {
-      try { const { r } = await al('https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT'); const j = await r.json(); const f = +(j.data && j.data[0] && j.data[0].last); if (f > 0) { sonuc.fiyat.ikinci = f; sonuc.fiyat.ikinciAd = 'OKX'; } } catch { /* */ }
-    })(),
-  ]);
-  return sonuc;
-}
-const KILIT_YOLU = () => yollar.programVeri(__dirname, 'guncelleme.kilit');
-const ozCalistir = (komut, args, o = {}) => new Promise((coz) => {
-  require('child_process').execFile(komut, args, { timeout: o.sure || 20000, windowsHide: true, encoding: 'utf8', maxBuffer: 4 << 20 },
-    (e, out, err) => coz({ kod: e ? (Number.isInteger(e.code) ? e.code : 1) : 0, cikti: `${out || ''}${err || ''}` }));
-});
-/** 69.2 kara kutu: o anın sunucu tarafı (bot ve yürütücü özeti, son 30 dk günlük, güncelleme). Sır yok (özetlerde anahtar bulunmaz). */
-function ozKaraKutuVeri(b, o = {}) {
-  const guvenli = (fn) => { try { return fn(); } catch (e) { return { hata: e.message }; } };
-  const simdi = Date.now(), sinir = simdi - (o.gunlukMs || 30 * 60000);
-  const gunluk = [];
-  for (const g of [...new Set([new Date(sinir).toISOString().slice(0, 10), new Date(simdi).toISOString().slice(0, 10)])]) {
-    let metin = '';
-    try { metin = fs.readFileSync(yollar.veri('gunluk', `${g}.jsonl`), 'utf8'); } catch { continue; }
-    for (const satir of metin.split('\n')) {
-      if (!satir.trim()) continue;
-      let x; try { x = JSON.parse(satir); } catch { continue; }
-      const t = Date.parse(x.t || x.zaman);
-      if (t >= sinir) gunluk.push({ t: x.t || x.zaman, s: x.s || x.seviye, m: String(x.m || x.mesaj || '').slice(0, 600) });
-    }
-  }
-  return {
-    surum: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(), sistem: { bellekMB: Math.round(process.memoryUsage().rss / 1048576), acikSn: Math.round(process.uptime()), disk: diskDurumu() },
-    botOzet: b ? guvenli(() => b.bot.ozet()) : null, yurutucu: b ? guvenli(() => b.y.ozet()) : null,
-    kolEngel: b && b.bot.kol && b.bot.kol.durum ? b.bot.kol.durum.engel || null : null,
-    guncelleme: guvenli(() => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, kurulu: d.kurulu || null, kontrol: d.kontrol || null, neden: d.neden || null, kuruDeneme: d.kuruDeneme || null }; }),
-    gunluk: gunluk.slice(-400),
-  };
-}
-const ozDenetim = new OzDenetim({
-  dizin: yollar.veri('oz-denetim'), bildirici: portfoyBildirici, kaydet: (sv, m) => db.addLog(sv, m),
-  ctx: {
-    botlar: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => ({ ad: b.ad, mod: b.mod, adGorunen: b.bot.adGorunen, dizin: b.dizin,
-      etiket: botEtiketi(b.ad).toLocaleUpperCase('tr-TR') + (b.mod === 'demo' ? '·DEMO' : ''), bot: b.bot, y: b.y })),
-    disk: () => { try { const st = fs.statfsSync(__dirname); return { bosGB: +((st.bavail * st.bsize) / 1e9).toFixed(1), toplamGB: +((st.blocks * st.bsize) / 1e9).toFixed(1) }; } catch (e) { return { hata: e.message }; } },
-    bellekMB: () => Math.round(process.memoryUsage().rss / 1048576),
-    denetleyici: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('denetleyici.json'), 'utf8')); } catch { return null; } },
-    denetleyiciVar: () => !!process.env.PUSULA_KONSOL_GUNLUGU,
-    kilit: () => {
-      let st; try { st = fs.statSync(KILIT_YOLU()); } catch { return null; }
-      let pid = null, yasiyor = false;
-      try { pid = parseInt(fs.readFileSync(KILIT_YOLU(), 'utf8'), 10); if (pid > 0) { process.kill(pid, 0); yasiyor = true; } } catch (e) { yasiyor = !!(e && e.code === 'EPERM'); }
-      return { zaman: st.mtimeMs, pid, yasiyor };
-    },
-    kilitSil: () => { fs.rmSync(KILIT_YOLU(), { force: true }); db.addLog('WARN', '[ÖZ DENETİM] sahipsiz güncelleme kilidi silindi'); return true; },
-    ayarBozuk: () => [loadConfig._yedekten, SIRLAR_BOZUK, SIRLAR_KILITLI],
-    sirKasasi: () => ({ sifreli: sirKasasi.sifreliMi(SECRETS_PATH), etkin: sirKasasi.etkinMi(), kilitli: SIRLAR_KILITLI, var: fs.existsSync(SECRETS_PATH),
-      // 69.6: kapsam (CurrentUser beklenir), düz kip (PUSULA_SIR_DUZ=1) ve diğer kasa dosyaları (düz kalan var mı)
-      kapsam: sirKasasi.kapsamOku(SECRETS_PATH), duzKip: sirKasasi.duzKipMi(),
-      duzKalan: sirKasasi.KASA_DOSYALARI.filter(ad => ad !== 'secrets.json' && fs.existsSync(yollar.veri(ad)) && !sirKasasi.sifreliMi(yollar.veri(ad))) }),
-    yedek: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('yedek-ayar.json'), 'utf8')); } catch { return null; } },
-    guncelleme: () => { const d = guncelleme.durumOku(__dirname); return { durum: d.durum, mesaj: d.neden, calisan: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(), yarida: !!(d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)),
-      // 69.6 imza: son kontrolün sonucu; yoksa imza dosyası var mı
-      imza: (d.imza && d.imza.durum && d.imza.durum !== 'atlandi') ? d.imza.durum : (fs.existsSync(guncelleme.imzaDosyasi(__dirname)) ? 'kurulu' : 'kurulmadi') }; },
-    telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length,
-      komut: (() => { try { return telegramYoklayici.durum(); } catch { return null; } })() }),   // 73.6 (S05) komut yoklaması
-    sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: botEtiketi(ad), ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
-    kalp: (b) => isletim.kalpOku(b.dizin),
-    gunlukDizin: () => yollar.veri('gunluk'),
-    ag: ozAgOlc,
-    // 69.6: güvenlik ölçümü de (antivirüs, güvenlik duvarı, port, RDP, Pusula klasör izinleri)
-    bilgisayar: () => require('./lib/sunucuBilgisayari').olc(ozCalistir, process.platform),
-    borsaTakvimi: () => require('./lib/borsaTakvimi').getir(fetch),
-    // 69.3 funding: tek istek, tüm semboller (anahtarsız) → { oranlar: { ETHUSDT: 0.0001, … } }
-    funding: async () => {
-      const r = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex', { signal: AbortSignal.timeout(12000) });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const l = await r.json();
-      const oranlar = {};
-      for (const x of Array.isArray(l) ? l : []) { const v = +x.lastFundingRate; if (x.symbol && Number.isFinite(v)) oranlar[x.symbol] = v; }
-      return { oranlar };
-    },
-    karaKutuVeri: ozKaraKutuVeri,
-    // 69.4 npm audit (günde bir; ücretsiz kayıt hizmeti) — çalışan Node'un yanındaki npm
-    npmAudit: () => new Promise((coz) => {
-      const cli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
-      if (!fs.existsSync(cli)) return coz({ hata: 'npm bulunamadı' });
-      require('child_process').execFile(process.execPath, [cli, 'audit', '--omit=dev', '--json'], { cwd: __dirname, timeout: 90000, windowsHide: true, maxBuffer: 32 << 20 }, (e, out) => {
-        try { const j = JSON.parse(out); coz({ acik: (j.metadata && j.metadata.vulnerabilities) || {}, paketler: Object.entries(j.vulnerabilities || {}).filter(([, v]) => ['high', 'critical'].includes(v.severity)).map(([k, v]) => `${k} (${v.severity === 'critical' ? 'kritik' : 'yüksek'})`) }); }
-        catch { coz({ hata: e ? e.message : 'çıktı okunamadı' }); }
-      });
-    }),
-    // 69.4 ikinci ölü adam (Better Stack ücretsiz heartbeat ya da başka bir healthchecks hesabı): 5 dk'da bir GET
-    ikinciSinyal: async () => {
-      const u = ikinciKanal().sinyalUrl;
-      if (!u || ARASTIRMA_MODU) return { atlandi: true };
-      const r = await fetch(u, { signal: AbortSignal.timeout(10000) });
-      return { ok: r.ok, hata: r.ok ? null : `HTTP ${r.status}` };
-    },
-    yenidenBaslat: (sebep) => {
-      if (!process.env.PUSULA_KONSOL_GUNLUGU) throw new Error('Pusula denetleyicisiz başlatılmış — kapanırsa geri açılmaz');
-      db.addLog('WARN', `🔄 ${sebep} — Pusula yeniden başlatılıyor (denetleyici birkaç saniye sonra açar)`);
-      setTimeout(() => shutdown(sebep, 75), 1500).unref();
-      return true;
-    },
-  },
-});
-if (!ARASTIRMA_MODU) {
-  const asilAddLog = db.addLog.bind(db);
-  db.addLog = (seviye, mesaj) => { asilAddLog(seviye, mesaj); try { ozDenetim.gunlukGozle(seviye, mesaj); } catch { /* gözlem işi durdurmaz */ } };
-  // 73.6 (S12): önceki süreç TEMİZ kapandıysa (güncelleme / panelden yeniden başlatma / Pusula'yı durdur — kapat() işareti) açılış planlıdır.
-  ozDenetim.acilisKaydet({ planli: sonKapanisPlanliMi() });
-  ozDenetim.baslat();
-}
-app.get('/api/saglik/oz', (req, res) => {
-  res.json({ success: true, calisiyor: !ARASTIRMA_MODU, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30), karaKutular: ozDenetim.karaKutular(30) });
-});
-/** 69.4 İkinci uyarı kanalı: GET durum (maskeli) · POST kaydet { ntfyKonu, sinyalUrl } · POST /dene (ntfy'a deneme iletisi). */
-app.get('/api/saglik/ikinci-kanal', (req, res) => {
-  const k = ikinciKanal();
-  const maske = (s) => (s ? `${String(s).slice(0, 4)}…${String(s).slice(-3)}` : null);
-  res.json({ success: true, ntfy: { ayarli: !!k.konu, maske: maske(k.konu) }, sinyal: { ayarli: !!k.sinyalUrl, maske: k.sinyalUrl ? String(k.sinyalUrl).replace(/^(https?:\/\/[^/]+\/).*$/, '$1…') : null },
-    son: (portfoyBildirici.ikinciGecmis || []).slice(-5) });
-});
-app.post('/api/saglik/ikinci-kanal', (req, res) => {
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'İkinci kanal sunucuda ayarlanır — bu bilgisayar geliştirme kopyası.' });
-  const g = req.body || {};
-  const k = { ...((loadSecrets().ikinciKanal) || {}) };
-  if ('ntfyKonu' in g) {
-    const v = String(g.ntfyKonu || '').trim();
-    if (v && !/^[A-Za-z0-9_-]{12,64}$/.test(v)) return res.status(400).json({ success: false, error: 'ntfy konusu 12–64 harf/rakam/-/_ olmalı (tahmin edilemeyecek uzunlukta seçin; konuyu bilen herkes iletileri görebilir).' });
-    if (v) k.ntfyKonu = v; else delete k.ntfyKonu;
-  }
-  if ('sinyalUrl' in g) {
-    const v = String(g.sinyalUrl || '').trim();
-    if (v && !/^https:\/\/[^\s]{8,300}$/.test(v)) return res.status(400).json({ success: false, error: 'ikinci ölü adam adresi https:// ile başlamalı (Better Stack heartbeat ya da healthchecks ping adresi).' });
-    if (v && [config.healthchecksUrl, config.healthchecksSunucuUrl].includes(v)) return res.status(400).json({ success: false, error: 'ikinci ölü adam, mevcut healthchecks adreslerinden FARKLI olmalı (bağımsız ikinci izleyici).' });
-    if (v) k.sinyalUrl = v; else delete k.sinyalUrl;
-  }
-  try { const s = loadSecrets(); if (Object.keys(k).length) s.ikinciKanal = k; else delete s.ikinciKanal; saveSecrets(s); }
-  catch (e) { return res.status(500).json({ success: false, error: e.message }); }
-  db.addLog('INFO', `[İŞLETİM] ikinci uyarı kanalı güncellendi: ntfy ${k.ntfyKonu ? 'ayarlı' : 'yok'} · ikinci ölü adam ${k.sinyalUrl ? 'ayarlı' : 'yok'}`);
-  res.json({ success: true });
-});
-app.post('/api/saglik/ikinci-kanal/dene', async (req, res) => {
-  const r = await portfoyBildirici._ikinci('uyari', 'deneme iletisi', ['Bu ileti Telegram\'dan bağımsız ikinci kanaldan (ntfy) geldi. Telegram düşerse ACİL uyarılar buradan da gelir.']);
-  if (r.atlandi) return res.status(400).json({ success: false, error: 'ntfy konusu ayarlı değil' });
-  res.status(r.ok ? 200 : 502).json({ success: !!r.ok, error: r.ok ? null : `ntfy'a gönderilemedi: ${r.hata}` });
-});
+/** ÖZ DENETİM (69.1), ikinci uyarı kanalı, kara kutu, 74.3 VERİ KALİTESİ uçları — ayrıntı ve uç listesi lib/sunucu/saglikUclari.js başlığında. */
+const SAGLIK_UCLARI = require('./lib/sunucu/saglikUclari').olustur(ctx);   // C1 (75.0): üç grup, eski yerlerinde (öz denetim · health/status · test/kalp atışı)
+const { ozDenetim } = SAGLIK_UCLARI.ozDenetimUclari();
 
-app.post('/api/saglik/kara-kutu/:ad', (req, res) => {
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Olay raporu sunucuda yazılır — bu bilgisayar geliştirme kopyası.' });
-  const b = req.params.ad === 'sistem' ? null : bindirmeler[req.params.ad];
-  if (req.params.ad !== 'sistem' && !b) return res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad}` });
-  const dosya = ozDenetim.karaKutu(b ? { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, bot: b.bot, y: b.y } : null, 'elle', 'panelden elle istendi');
-  if (!dosya) return res.status(500).json({ success: false, error: 'rapor yazılamadı' });
-  res.json({ success: true, dosya, karaKutular: ozDenetim.karaKutular(30) });
-});
-app.get('/api/saglik/kara-kutu/dosya/:dosya', (req, res) => {
-  const y = ozDenetim.karaKutuYolu(req.params.dosya);
-  if (!y) return res.status(404).json({ success: false, error: 'rapor bulunamadı' });
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(y)}"`);
-  res.send(fs.readFileSync(y, 'utf8'));
-});
-app.post('/api/saglik/oz/yokla', async (req, res) => {
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Öz denetim sunucuda çalışır — bu bilgisayar geliştirme kopyası.' });
-  try { await ozDenetim.yokla({ zorla: true }); res.json({ success: true, ...ozDenetim.goruntu(), olaylar: ozDenetim.olaylar(30) }); }
-  catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-app.post('/api/saglik/oz/:ad/guvenli-kip-kaldir', (req, res) => {
-  const b = bindirmeler[req.params.ad];
-  if (!b) return res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad}` });
-  const g = b.bot.guvenliKipKaldir();
-  if (g) { try { ozDenetim.onayVerildi(b.ad); } catch { /* */ } }   // 73.6 (Y-02): sayaçlar bu andan sonrasını sayar
-  res.json({ success: true, kaldirilan: g, bot: b.bot.ozet() });
-});
+/** 73.7 SORUN MERKEZİ (/api/sorunlar*) + 73.8 SORUN ARAÇLARI (/api/sorun-arac/*) — ayrıntı lib/sunucu/sorunUclari.js başlığında. */
+const { SORUN, sorunlarHesapla, bilinenSirlar } = require('./lib/sunucu/sorunUclari').kur(ctx);   // C1 (75.0)
 
-/**
- * 74.3 VERİ KALİTESİ (D4): GET /api/veri-kalitesi { kip, izleme, esikler, botlar: { <ad>: { kip, etkin, dokunulmaz, son, acik, sayac30, sonBulgular } } }
- * (telefonda da; araştırma kopyasında lib/evOkuma.js sunucudan okur) · POST /api/veri-kalitesi/kip { kip, onay: true } — yalnız bu bilgisayar
- * (telefon / geliştirme 403), sunucuda. Etkin → izleme geçişinde veri kalitesinin koyduğu güvenli kip hemen kalkar.
- */
-function veriKalitesiDurum(simdi = Date.now()) {
-  const a = veriKalitesiAyar();
-  const liste = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(b => b && b.bot && b.bot.ayar.veriKalitesi);
-  const botlar = {};
-  for (const b of liste) {
-    const d = b.bot.ayar.veriKalitesi.durum({ mod: b.mod });
-    const gk = b.bot.durum.guvenliKip;
-    botlar[b.ad] = { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, calisiyor: !!b.bot.durum.calisiyor, ...d, guvenliKip: gk && gk.kaynak === 'veri' ? gk : null };
-  }
-  return { success: true, calisiyor: !ARASTIRMA_MODU, kip: a.kip, esikler: a.esikler, demoKorumaBitis: new Date(VeriKalitesi.KORUMA_BITIS).toISOString(),
-    izleme: VeriKalitesi.izlemeBilgisi({ kip: a.kip, izlemeBas: a.izlemeBas, kapilar: liste.map(b => b.bot.ayar.veriKalitesi), simdi }), botlar };
-}
-app.get('/api/veri-kalitesi', (req, res) => {
-  try { res.json(veriKalitesiDurum()); } catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-app.post('/api/veri-kalitesi/kip', (req, res) => {
-  if ((req.kademe || 'yerel') !== 'yerel') return res.status(403).json({ success: false, error: 'Veri kalitesi kipi yalnız sunucu bilgisayarındaki panelden değiştirilir.' });
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Veri kalitesi kipi sunucuda değiştirilir — bu bilgisayar geliştirme kopyası.' });
-  const g = req.body || {};
-  const kip = String(g.kip || '');
-  if (!VeriKalitesi.KIPLER.includes(kip)) return res.status(400).json({ success: false, error: 'kip "izleme" ya da "etkin" olmalı' });
-  if (g.onay !== true) return res.status(400).json({ success: false, error: 'onay gerekli (panelde onay penceresi)' });
-  const once = veriKalitesiAyar().kip;
-  if (once === kip) return res.json({ ...veriKalitesiDurum(), degismedi: true });
-  config.veriKalitesi = { ...(config.veriKalitesi || {}), kip, ...(kip === 'izleme' ? { izlemeBas: new Date().toISOString() } : {}) };
-  saveConfig(config);
-  for (const ad of BINDIRME_ADLAR) {
-    const b = bindirmeler[ad];
-    if (!b || !b.bot.ayar.veriKalitesi) continue;
-    b.bot.ayar.veriKalitesi.kipKaydet(kip, 'panel');
-    if (kip === 'izleme') b.bot.guvenliKipKaldir('veri');   // izleme kipinde veri kalitesi kararı engellemez
-  }
-  db.addLog(kip === 'etkin' ? 'WARN' : 'INFO', `[VERİ KALİTESİ] kip: ${once} → ${kip}${kip === 'etkin' ? ' — ağır bulguda botlar güvenli kipe girer (demo kabul botu yalnız haber)' : ' — bulgular yalnız kaydedilir'}`);
-  res.json(veriKalitesiDurum());
-});
-
-/**
- * 73.7 SORUN MERKEZİ (lib/sorunlar.js — saf): bütün kaynaklardan o an ETKİN sorunlar tek biçimde. Girdi burada toplanır (salt okuma;
- * botların karar/emir koduna dokunulmaz). 30 sn önbellek (rozet her sayfada 5 dk'da bir sorar). Uçlar (hepsi GET, telefonda açık):
- *   /api/sorunlar            { sorunlar, sayac, sonDenetim, rol } — araştırma kopyasında lib/evOkuma.js sunucudan okur (EV_YOLU)
- *   /api/sorunlar/teshis     { metin } "Sohbete gönder" paketi (sır taraması + uzunluk sınırı); ?kart=<kimlik> o kartı başa alır
- *   /api/sorunlar/yerel      bu bilgisayarın kendi sorunları (araştırma kopyası: sunucu bağlantısı, kuyruk, yerel veri) — iletilmez
- * Telegram /teshis aynı kartlardan (lib/telegramKomut.js ctx.teshis). SORUN_ORNEK=1 iken ?ornek=1 kılavuz görüntüsü için ÖRNEK kartlar.
- */
-const SORUN = require('./lib/sorunlar');
-const sorunOnbellek = { zaman: 0, sonuc: null, gunluk: null, gunlukZaman: 0 };
-const sorunGuvenli = (fn, vars = null) => { try { const x = fn(); return x === undefined ? vars : x; } catch { return vars; } };
-function sorunBotlari(simdi) {
-  return BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => {
-    const o = sorunGuvenli(() => b.bot.ozet(simdi), {}) || {};
-    const y = b.y && b.y.borsa ? (sorunGuvenli(() => b.y.ozet(), {}) || {}) : null;
-    const uy = o.uygulama || null;
-    return { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, calisiyor: !!o.calisiyor, bindirmeEngel: o.bindirmeEngel || null, kolEngel: o.kolEngel || null,
-      guvenliKip: o.guvenliKip || null, akisBekleyen: o.akisBekleyen || null, model: o.model ? { durum: o.model.durum, metin: o.model.metin } : null,
-      uygulama: uy ? { bant: uy.bant } : null, sapmaMetin: uy && Number.isFinite(uy.birikim) ? `Son 30 günde gerçek − simülasyon farkı ${(uy.birikim * 100).toFixed(2).replace('.', ',')} puan (bant: ${uy.bant}).` : null,
-      kalp: o.kalp || null, kalpDurumu: o.kalpDurumu || null, sonKarar: o.sonKarar ? { gun: o.sonKarar.gun, risk: o.sonKarar.risk || null } : null,
-      yurutucu: y ? { durum: y.durum, durmaTuru: y.durmaTuru, durmaSebebi: y.durmaSebebi, geriCekilme: y.geriCekilme ? { bitis: y.geriCekilme.bitis, aktif: y.geriCekilme.aktif } : null, kilitAcik: y.kilitAcik } : { durum: 'BAGLI_DEGIL' },
-      // 73.8 Sorun araçları: K3 mandalı (canlı dosyadan), uyuşmazlık açıklayıcısı (Y-09b), emir freni dökümü (Y-14) — hepsi YEREL kayıttan, borsaya istek yok
-      riskDurum: o.riskDurum || null,
-      uyusmazlikAciklama: o.kolEngel ? sorunGuvenli(() => SORUN_ARAC.uyusmazlikAciklama({
-        farklar: (((b.bot.kol.durum.sonMutabakat || {}).pozisyon || {}).farklar) || [],
-        emirler: Object.fromEntries(((((b.bot.kol.durum.sonMutabakat || {}).pozisyon || {}).farklar) || []).map(f => [f.symbol, b.bot._sembolEmirleri(f.symbol, 10)])),
-        korumaOlaylari: (b.bot.koruma && b.bot.koruma.durum && b.bot.koruma.durum.olaylar) || [],
-        zorla: (sorunGuvenli(() => ozDenetim.olaylar(2), []) || []).filter(x => x.kimlik === 'zorla' && x.bot === b.ad), simdi }), null) : null,
-      frenNeyiSaydi: o.fren || /EMİR FRENİ/.test(o.bindirmeEngel || '') ? sorunGuvenli(() => SORUN_ARAC.frenNeyiSaydi(b.y.frenDokumu(simdi), simdi), null) : null };
-  });
-}
-function sorunGirdisi(simdi = Date.now()) {
-  // Günlük özeti 24 saatin dosyalarını okur — 5 dk önbellek.
-  if (!sorunOnbellek.gunluk || simdi - sorunOnbellek.gunlukZaman > 5 * 60000) {
-    const oz = sorunGuvenli(() => GUNLUK.ozet(), null);
-    sorunOnbellek.gunluk = oz ? { hata: (oz.sayilar && oz.sayilar.hata) || 0, sonHata: oz.sonHata ? String(oz.sonHata.m || '').slice(0, 200) : null } : null;
-    sorunOnbellek.gunlukZaman = simdi;
-  }
-  const gu = sorunGuvenli(() => { const d = guncelleme.durumOku(__dirname); if (d.islem && !d.islem.bitti && !guncelleme.kilitVar(__dirname)) d.islem = { ...d.islem, yarida: true }; return { ...d, gelistirme: ARASTIRMA_MODU }; }, null);
-  const vd = sorunGuvenli(() => veriOrk.durum(), null);
-  return {
-    simdi, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu',
-    oz: { calisiyor: !ARASTIRMA_MODU, goruntu: sorunGuvenli(() => ozDenetim.goruntu(), null), veri: sorunGuvenli(() => ozDenetim.sorunVerisi(simdi), {}) },
-    botlar: ARASTIRMA_MODU ? [] : sorunBotlari(simdi),
-    guncelleme: gu,
-    veri: vd ? { kaynaklar: (vd.kaynaklar || []).map(s => ({ ad: s.ad, kisaAd: s.kisaAd, durum: s.durum, hata: s.hata, sonBasari: s.sonBasari })), binanceBekleme: vd.binanceBekleme || null, kismiEvren: vd.kismiEvren || null } : null,
-    ileri: ARASTIRMA_MODU ? null : { sonHata: ileriIs.sonHata, sonDeneme: ileriIs.sonDeneme, calisiyor: ileriIs.calisiyor },
-    acilPin: sorunGuvenli(() => acilPin.durum(), null),
-    tasimaBekliyor: !!sorunGuvenli(() => tasimaLib.bekleyenOku(), false),
-    donma: sorunGuvenli(() => JSON.parse(fs.readFileSync(yollar.veri('donma.json'), 'utf8')), null),
-    gunluk: ARASTIRMA_MODU ? null : sorunOnbellek.gunluk,
-    saatDilimi: sorunGuvenli(() => Intl.DateTimeFormat().resolvedOptions().timeZone, null),
-    piyasaBaglami: ARASTIRMA_MODU ? null : sorunGuvenli(() => piyasaBaglami.saglik(), null),   // 73.9: uzun süre alınamayan bilgi kaynağı
-    yapayZeka: ARASTIRMA_MODU ? null : sorunGuvenli(() => yapayZeka.durum(), null),   // 74.1: Gemini anahtarı bekliyor / reddedildi / kota / kanarya
-  };
-}
-/** Sunucunun sorunları (önbellekli). Araştırma kopyasında öz denetim yok → yalnız bu bilgisayarın güncelleme / veri durumu değil (o /yerel'de). */
-function sorunlarHesapla({ taze = false } = {}) {
-  const simdi = Date.now();
-  if (!taze && sorunOnbellek.sonuc && simdi - sorunOnbellek.zaman < 30000) return sorunOnbellek.sonuc;
-  let r;
-  if (ARASTIRMA_MODU) r = { sorunlar: [], sayac: SORUN.sayac([]), sonDenetim: null, calisiyor: false };
-  else { try { r = SORUN.uret(sorunGirdisi(simdi)); } catch (e) { r = { sorunlar: [SORUN.kart('taninmayan', { ne: `Sorun merkezi girdisi okunamadı: ${e.message}`, deg: { ad: 'sorun merkezi' } }, simdi)], sayac: { mudahale: 0, dikkat: 1, gecici: 0, bilgi: 0, toplam: 1 }, sonDenetim: null, calisiyor: true }; } }
-  r = { ...r, zaman: simdi, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu', surum: APP_VERSION, commit: COMMIT };
-  sorunOnbellek.sonuc = r; sorunOnbellek.zaman = simdi;
-  return r;
-}
-/** Araştırma kopyasının KENDİ sorunları (sunucu bağlantısı, yazma kuyruğu, bu bilgisayarın verisi) — kaynak 'yerel'. */
-function yerelSorunlar() {
-  const simdi = Date.now();
-  if (!ARASTIRMA_MODU) return { sorunlar: [], sayac: SORUN.sayac([]) };
-  // 73.8: kılavuz görüntüsü üretimi (scripts/kilavuz-ekran.js SORUN_ORNEK=1) — araştırma kopyasına özgü kartlar görüntüye girmez
-  if (process.env.SORUN_ORNEK === '1') return { sorunlar: [], sayac: SORUN.sayac([]) };
-  const kq = sorunGuvenli(() => evYazma.bilgi(), null);
-  const bas = kq ? (kq.ogeler || []).filter(x => x.durum === 'bekliyor').pop() : null;
-  const vd = sorunGuvenli(() => veriOrk.durum(), null);
-  const r = SORUN.uret({ simdi, rol: 'arastirma', veri: vd ? { kaynaklar: (vd.kaynaklar || []).map(s => ({ ad: s.ad, kisaAd: s.kisaAd, durum: s.durum, hata: s.hata, sonBasari: s.sonBasari })), binanceBekleme: vd.binanceBekleme || null, kismiEvren: vd.kismiEvren || null } : null,
-    yerel: { evBaglanti: sorunGuvenli(() => evOkuma.bilgi(), null), evKuyruk: kq ? { bekleyen: kq.bekleyen || 0, sonHata: (kq.kafaReddi && kq.kafaReddi.ayrinti) || (bas && bas.sonHata) || null } : null } });
-  const sorunlar = r.sorunlar.map(k => ({ ...k, kaynak: 'yerel', kimlik: `yerel:${k.kimlik}` }));
-  return { sorunlar, sayac: SORUN.sayac(sorunlar) };
-}
-/** Sır taraması için bu makinenin gerçek sır değerleri (paket ve /teshis metninden birebir silinir). Değerler hiçbir yanıta girmez. */
-function bilinenSirlar() {
-  const l = [];
-  const topla = (x, d = 0) => { if (d > 5 || x == null) return; if (typeof x === 'string') { if (x.trim().length >= 6) l.push(x.trim()); return; } if (typeof x === 'object') for (const v of Object.values(x)) topla(v, d + 1); };
-  sorunGuvenli(() => topla(loadSecrets()));
-  sorunGuvenli(() => { const t = config.telegram || {}; topla([t.botToken, t.chatId ? String(t.chatId) : null, config.healthchecksUrl, config.healthchecksSunucuUrl, config.apiKey, config.apiSecret]); });
-  sorunGuvenli(() => { for (const ad of BINDIRME_ADLAR) topla(((config.bindirme || {})[ad] || {}).healthchecksUrl); });
-  sorunGuvenli(() => { const a = evOkuma.ayar(); if (a) topla([a.jeton, a.yazmaJetonu]); });
-  sorunGuvenli(() => topla(process.env.PANEL_TOKEN));
-  return l;
-}
-function teshisPaketi({ one = null } = {}) {
-  const simdi = Date.now();
-  const r = sorunlarHesapla({ taze: true });
-  const yerel = ARASTIRMA_MODU ? yerelSorunlar().sorunlar : [];
-  const go = sorunGuvenli(() => ozDenetim.goruntu(), null);
-  const ov = sorunGuvenli(() => ozDenetim.sorunVerisi(simdi), {}) || {};
-  let sonRapor = null;
-  const kk = ARASTIRMA_MODU ? null : sorunGuvenli(() => ozDenetim.karaKutular(1)[0], null);
-  if (kk) {
-    sonRapor = { dosya: kk.dosya, bot: kk.bot, kaynak: kk.kaynak, zaman: kk.zaman };
-    sorunGuvenli(() => { const j = JSON.parse(fs.readFileSync(ozDenetim.karaKutuYolu(kk.dosya), 'utf8')); sonRapor = { ...sonRapor, bot: (j.bot && (j.bot.adGorunen || j.bot.ad)) || kk.bot, metin: j.metin, denetimler: j.denetimler || [] }; });
-  }
-  const botSatir = ARASTIRMA_MODU ? [] : sorunBotlari(simdi).map(b => {
-    const kd = b.kalpDurumu || {};
-    return `${b.adGorunen} (${b.mod}): ${b.calisiyor ? 'çalışıyor' : 'durdu'} · ${kd.metin || 'son çalışma —'} · ENGEL: ${b.bindirmeEngel || b.kolEngel ? String(b.bindirmeEngel || b.kolEngel).slice(0, 160) : 'yok'} · güvenli kip: ${b.guvenliKip ? String(b.guvenliKip.metin).slice(0, 120) : 'yok'} · yürütücü: ${b.yurutucu.durum}${b.yurutucu.durmaTuru ? ` [${b.yurutucu.durmaTuru}]` : ''}${b.sonKarar && b.sonKarar.risk && b.sonKarar.risk.kill ? ` · risk kill ${b.sonKarar.risk.kill}` : ''}`;
-  });
-  const say = [];
-  if (!ARASTIRMA_MODU) {
-    for (const [ad, v] of Object.entries(ov.botlar || {})) say.push(`${ad}: emir reddi (30 dk) ${(v.emirRetler || []).length} · tekrarlayan ${(v.tekrarlar || []).length} · stop ardışık ${(v.stopHata && v.stopHata.ardisik) || 0}${v.onay ? ` · son onay ${SORUN.trSaat(v.onay, simdi)}` : ''}${v.dokunulmaz ? ' · demo kabul (öz denetim dokunmaz)' : ''}`);
-    const sc = go && (go.denetimler || []).find(d => d.kimlik === 'surec');
-    if (sc) say.push(`Pusula süreci: ${sc.ayrinti}`);
-  }
-  sorunGuvenli(() => { const d = guncelleme.durumOku(__dirname); say.push(`Güncelleme: ${d.durum || '—'}${d.hedefSurum ? ` → ${d.hedefSurum}` : ''}${d.agHatasi ? ` · GitHub denemesi ${d.agHatasi}` : ''}${d.neden ? ` · ${String(d.neden).slice(0, 160)}` : ''}`); });
-  sorunGuvenli(() => { if (!ARASTIRMA_MODU) say.push(`Telegram: giden kutusu ${portfoyBildirici._kuyrukOku().length} ileti${(() => { const k = telegramYoklayici.durum(); return k && k.sonHata ? ` · komut yoklaması hatası: ${String(k.sonHata.metin || '').slice(0, 100)}` : ''; })()}`); });
-  sorunGuvenli(() => { if (ARASTIRMA_MODU) { const e = evOkuma.bilgi(); say.push(`Sunucu bağlantısı: ${e.kurulu ? 'kurulu' : 'kurulu değil'}${e.sonBasari ? ` · son başarılı okuma ${SORUN.trSaat(e.sonBasari, simdi)}` : ''}${e.sonHata ? ` · son hata: ${String(e.sonHata).slice(0, 140)}` : ''}`); } });
-  const gunluk = ARASTIRMA_MODU ? [] : (sorunGuvenli(() => GUNLUK.oku({ saat: 1, seviye: 'uyari+', limit: 400 }).kayitlar, []) || []).filter(k => Date.parse(k.t) >= simdi - 30 * 60000).reverse().slice(-80);
-  return SORUN.teshisMetni({ simdi, surum: APP_VERSION, commit: COMMIT, ayarIzi: sorunGuvenli(() => ayarIzi(), null), rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu',
-    makine: sorunGuvenli(() => require('os').hostname(), null), sorunlar: r.sorunlar, yerel, oz: ARASTIRMA_MODU ? null : go, sonRapor, botlar: botSatir, sayaclar: say, gunluk, one }, bilinenSirlar());
-}
-app.get('/api/sorunlar', (req, res) => {
-  if (process.env.SORUN_ORNEK === '1' && req.query && req.query.ornek === '1') {
-    const r = SORUN.uret(SORUN.ornekGirdi(Date.now()));
-    return res.json({ success: true, ornek: true, ...r, zaman: Date.now(), rol: 'sunucu', surum: APP_VERSION });
-  }
-  try { res.json({ success: true, ...sorunlarHesapla({ taze: req.query && req.query.taze === '1' }) }); }
-  catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-app.get('/api/sorunlar/teshis', (req, res) => {
-  try { res.json({ success: true, metin: teshisPaketi({ one: req.query && req.query.kart ? String(req.query.kart).slice(0, 120) : null }) }); }
-  catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-app.get('/api/sorunlar/yerel', (req, res) => {
-  try {
-    const r = yerelSorunlar();
-    res.json({ success: true, rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu', ...r, metin: ARASTIRMA_MODU ? SORUN.sirTemizle(r.sorunlar.map(SORUN.kartMetni).join('\n'), bilinenSirlar()) : '' });
-  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-
-/**
- * 73.8 SORUN ARAÇLARI (lib/sorunAraclari.js; Sorun merkezi P3): bugün hiçbir düğmenin çözemediği durumlar — kayıt eşitleme (Y-03/Y-33),
- * zarar sınırı sıfırlama (Y-04), sapma kabulü (Y-05), yatırma kabulü (Y-44). EMİR GÖNDERMEZ; yalnız kayıt / engel / risk durumu.
- *   GET  /api/sorun-arac/:arac/onizle?bot=&sembol=   ne değişecek + parmak izi (telefonda açık; araştırma kopyasında sunucudan — EV_YOLU)
- *   POST /api/sorun-arac/:arac/uygula { bot, sembol?, pin, onay, parmak }   PIN + onay her kademede; durum değiştiyse 409 + yeni önizleme
- * Telefon: lib/acilPin.js SORUN_ARAC_YOLU (beyaz liste + PIN kapısı). Araştırma kopyası: lib/guvenlik.js GELISTIRME_YAZMA ile sunucuya
- * iletilir (kuyruğa girmez); bağlantı yoksa burada 409.
- */
-const SORUN_ARAC = require('./lib/sorunAraclari');
-const sorunArac = SORUN_ARAC.olustur({ botBul: (ad) => bindirmeler[ad] || null, acilPin, log: (lv, msg) => db.addLog(lv, msg), sonra: () => { sorunOnbellek.zaman = 0; } });
-const SORUN_ARAC_ARASTIRMA = 'Araştırma kopyası: bu araç sunucuda çalışır. Sunucu bağlantısı (ve yazma jetonu) kurulu değil — sunucudaki panelden ya da telefondan yapın.';
-app.get('/api/sorun-arac/:arac/onizle', async (req, res) => {
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: SORUN_ARAC_ARASTIRMA });
-  try { res.json({ success: true, onizleme: await sorunArac.onizle(req.params.arac, { bot: req.query.bot, sembol: req.query.sembol }) }); }
-  catch (e) { res.status(e.durum || 500).json({ success: false, error: e.message }); }
-});
-app.post('/api/sorun-arac/:arac/uygula', async (req, res) => {
-  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: SORUN_ARAC_ARASTIRMA });
-  const r = await sorunArac.uygula(req.params.arac, req.body || {}, { kademe: req.kademe || 'yerel' });
-  res.status(r.durum).json(r.govde);
-});
-
-app.get('/api/health', (req, res) => {
-  const bots = engine.getBots();
-  const risk = engine.riskManager.getStatus();
-  const stale = engine.lastState
-    ? (Date.now() - (engine.lastTickAt || 0)) > 60000
-    : true;
-
-  const healthy = engine.isRunning && !risk.killSwitchTriggered && !(bots.length > 0 && stale);
-
-  res.status(healthy ? 200 : 503).json({
-    status: healthy ? 'ok' : 'degraded',
-    appVersion: APP_VERSION, commit: COMMIT, ayarIzi: ayarIzi(),
-    // Panel başlığındaki "Araştırma modu" rozeti ve devre dışı bot/borsa/emir düğmeleri (public/js/pages/kabuk.js).
-    arastirmaModu: ARASTIRMA_MODU,
-    // 68.1 (PLAN-TASIMA F3): araştırma eklentisi yoksa panel Araştırma menüsünü gizler; taşıma sonrası botlar mutabakat bekler.
-    arastirmaEklentisi: tasimaLib.eklentiDurumu().yuklu,
-    tasimaBekliyor: !!tasimaLib.bekleyenOku(),
-    // Y7 (61.8): güncelleyicinin kararlılık penceresi — güncellemeden önce bağlı olan bot sonra da bağlı olmalı.
-    bindirme: BINDIRME_ADLAR.map(ad => { const b = bindirmeler[ad]; return b ? { ad, mod: b.mod, calisiyor: !!b.bot.durum.calisiyor, bagli: !!b.y.borsa } : { ad }; }),
-    // O7 (61.8): boş disk (GB) — 10 GB altında günlük Telegram uyarısı.
-    disk: diskDurumu(),
-    // 61.7: araştırma modunda bot/işlem ekranlarının kaynağı (sunucudaki panel mi, yerel eski kopya mı) — jeton dönmez.
-    evBaglanti: ARASTIRMA_MODU ? evOkuma.bilgi() : null,
-    // Telefon kademesi (60.5): panel yazma düğmelerini kilitler, bot kartında PIN'li "Acil durdur" (js/pages/kabuk.js, botlar.js).
-    kademe: req.kademe || 'yerel',
-    acilPin: (({ tanimli, kilitli, kalanHak }) => ({ tanimli, kilitli, kalanHak }))(acilPin.durum()),
-    // Ayarlar › Bu bilgisayar (denetim A-18): telefon jetonu tanımlı mı (değeri DEĞİL).
-    telefonJeton: !!guvenlik.jetonVar(),
-    uptimeSec: Math.round(process.uptime()),
-    engineRunning: engine.isRunning,
-    bots: bots.length,
-    lastTickAgoSec: engine.lastTickAt ? Math.round((Date.now() - engine.lastTickAt) / 1000) : null,
-    killSwitch: risk.killSwitchTriggered,
-    memoryMB: Math.round(process.memoryUsage().rss / 1048576)
-  });
-});
-
-// Bot State & Status
-app.get('/api/status', (req, res) => {
-  res.json({
-    appVersion: APP_VERSION,
-    isRunning: engine.isRunning,
-    state: engine.getState(),
-    stats: db.getStats()
-  });
-});
+SAGLIK_UCLARI.durumUclari();   // C1 (75.0): GET /api/health, GET /api/status — lib/sunucu/saglikUclari.js
 
 /* C1 (74.8): gösterge havuzu (/api/indicators*), strateji kataloğu (/api/strategies), Pine içe aktarma (/api/pine*) ve backtest/iş/strateji
  * araştırma uçları lib/sunucu/arastirmaUclari.js'te; her grup server.js'teki ESKİ YERİNDE bağlanır (Express uç sırası aynı kalır). */
@@ -2566,273 +1889,11 @@ app.get('/api/bindirme-telegram', (req, res) => {
   res.json({ success: true, telegram: portfoyBildirici.durum(), son: portfoyBildirici.gecmis.slice(-10) });
 });
 
-// ── İLERİ VERİ GÖLGE İZLEYİCİ — Bollinger düşüş azaltıcı (PLAN-ILERI-BOLLINGER.md) ──
-/**
- * Emir YOK. Her gün 00:15 UTC sonrası ilk tikte ve açılışta bir kez `scripts/ileri-izle.js`
- * ALT SÜREÇTE koşar (kol modeli DCA backtest'i olay döngüsünü bloklamasın; çökme sunucuyu
- * etkilemesin). Kayıt yalnız eklenir (lib/ileri/bollingerIzleme.js); betikle aynı anda koşarsa
- * kilit dosyası sıraya sokar. Ağ hatasında 15 dk sonra yeniden dener; seri/gölge eksikse
- * aynı gün 30 dk arayla en çok 3 kez daha.
- */
-const ileriIzleme = require('./lib/ileri/bollingerIzleme');
-const ileriRapor = require('./lib/ileri/bollingerRapor');
-const zamanDilimiGolge = require('./lib/ileri/zamanDilimiGolge');   // 3d gölge (PLAN-GOLGE-3D, 635) — ileri-izle.js içinde yazılır
-const rangeVetoGolge = require('./lib/ileri/rangeVetoGolge');       // D3 range vetosu gölgesi (PLAN-GOLGE-D3, 764) — aynı betikte yazılır
-const ileriIs = { calisiyor: false, sonGun: null, gunDeneme: 0, sonDeneme: 0, sonHata: null, eksikVar: false };
-let ileriRaporOnbellek = null;
-const ileriDakika = (t) => { const d = new Date(t); return d.getUTCHours() * 60 + d.getUTCMinutes(); };
-function ileriCalistir(neden) {
-  if (ileriIs.calisiyor) return;
-  ileriIs.calisiyor = true; ileriIs.sonDeneme = Date.now();
-  const bas = Date.now(), gun = new Date(bas).toISOString().slice(0, 10);
-  const gunlukMu = ileriDakika(bas) >= 15;          // 00:00–00:15 arası açılış koşusu günlük işi saymaz
-  require('child_process').execFile(process.execPath, [path.join(__dirname, 'scripts', 'ileri-izle.js'), '--json'],
-    { cwd: __dirname, timeout: 15 * 60 * 1000, maxBuffer: 16 * 1024 * 1024, windowsHide: true }, (err, stdout, stderr) => {
-      ileriIs.calisiyor = false;
-      if (err) {
-        ileriIs.sonHata = `${err.message.split('\n')[0]}${stderr ? ' · ' + String(stderr).trim().split('\n').slice(-1)[0] : ''}`;
-        db.addLog('WARN', `[İLERİ] izleme çalışmadı (${neden}): ${ileriIs.sonHata} — 15 dk sonra yeniden denenecek`);
-        return;
-      }
-      try {
-        const o = JSON.parse(stdout);
-        ileriIs.sonHata = null;
-        if (gunlukMu) {
-          if (ileriIs.sonGun !== gun) { ileriIs.sonGun = gun; ileriIs.gunDeneme = 0; }
-          ileriIs.gunDeneme++;
-          ileriIs.eksikVar = o.eksik.length > 0 || !!o.golgeHata;
-        }
-        ileriRaporOnbellek = null;
-        db.addLog(o.eksik.length || o.golgeHata ? 'WARN' : 'INFO', `[İLERİ] Bollinger ileri kayıt (${neden}): +${o.yeniSatir} satır${o.gecikmeliSatir ? ` (${o.gecikmeliSatir} gecikmeli)` : ''}, gölge +${o.golgeYeni}, ${o.kaydedilenSeri}/37 seri${o.eksik.length ? ` · indirilemeyen: ${o.eksik.map(e => e.seri).join(', ')}` : ''}${o.golgeHata ? ` · gölge hatası: ${o.golgeHata}` : ''} (${(o.sureMs / 1000).toFixed(0)} sn)`);
-        // PLAN-ILERI-HUCUM-DENGE A: gölge ileri MaxDD > p99 → "DUR" (yalnız gösterge + alarm; kural değişmez).
-        const golge = isletim.golgeOku(GOLGE_DOSYA);
-        for (const ad of STRATEJI_ADLAR) {   // 74.5: model gölgesi strateji başına (yeni botların kendi modeli yok)
-          const md = isletim.golgeModelDurumu(golge, ad);
-          if (md.durum === 'DUR' || md.durum === 'uyari') {
-            db.addLog(md.durum === 'DUR' ? 'ERROR' : 'WARN', `[İLERİ] ${botEtiketi(ad)} gölge: ${md.metin}`);
-            portfoyBildirici.gonder(md.durum === 'DUR' ? 'alarm' : 'uyari', `${botEtiketi(ad)} ileri veri: ${md.durum === 'DUR' ? 'DUR' : 'uyarı'}`, [md.metin], { anahtar: `model:${ad}:${md.durum}`, kisitMs: 24 * 3600e3 });
-            // C1 (PLAN-GERCEK-PARA-2027 §7): gerçek parada ileri test DUR → acil durdurma + ENGEL (yeniden değerlendirme).
-            const bc = bindirmeler[ad];
-            if (md.durum === 'DUR' && bc && bc.mod === 'canli' && !(bc.bot.durum.engel || '').startsWith('ileri test DUR')) {
-              const engelYaz = () => { bc.bot.durum.engel = `ileri test DUR — yeniden değerlendirme gerekli: ${md.metin}`; bc.bot._yaz(); };
-              Promise.resolve(bc.y.borsa ? null : bc.bagla({ mutabakatsiz: true }))
-                .then(() => bc.bot.acilDurdur(`ileri test DUR: ${md.metin}`)).then(engelYaz)
-                .catch(e => { engelYaz(); portfoyBildirici.gonder('alarm', `${bc.bot.adGorunen}: DUR acil durdurması BAŞARISIZ`, [e.message, 'Binance arayüzünden elle kapatın (PLAN-GERCEK-PARA-2027 §7)']); });
-            }
-          }
-        }
-      } catch (e) { ileriIs.sonHata = `çıktı okunamadı: ${e.message}`; }
-    });
-}
-function ileriTik() {
-  if (ileriIs.calisiyor) return;
-  const simdi = Date.now();
-  const gun = new Date(simdi).toISOString().slice(0, 10);
-  if (ileriDakika(simdi) < 15) return;
-  if (ileriIs.sonGun !== gun) {
-    if (ileriIs.sonHata && simdi - ileriIs.sonDeneme < 15 * 60 * 1000) return;
-    return ileriCalistir('günlük');
-  }
-  if (ileriIs.eksikVar && ileriIs.gunDeneme < 4 && simdi - ileriIs.sonDeneme >= 30 * 60 * 1000) ileriCalistir('eksik tamamlama');
-}
-setTimeout(() => ileriCalistir('açılış'), 60 * 1000).unref();
-setInterval(ileriTik, 5 * 60 * 1000).unref();
+// ── İLERİ VERİ GÖLGE İZLEYİCİ (Bollinger, PLAN-ILERI-BOLLINGER) + İLERİ TEST uçları (/api/ileri/kabul, /api/ileri/bollinger) ──
+const { ileriIs, demoKabulOzet } = require('./lib/sunucu/ileriUclari').kur(ctx);   // C1 (75.0): lib/sunucu/ileriUclari.js
 
-/**
- * İLERİ TEST › DEMO KABUL — ara durum (SALT OKUMA, Pusula P4). PLAN-DEMO-KABUL.md ölçütlerinin bugünkü
- * durumu (gün sayacı, aşama tarihleri, betimleyici getiri/MaxDD, 63 g bandı, uygulama bandı); HÜKÜM YAZMAZ.
- * Hücum/Denge gölge kontrol noktaları (90/182/365 g, PLAN-ILERI-HUCUM-DENGE A) da buradan.
- */
-const demoKabulOzet = require('./lib/ileri/demoKabulOzet');
-app.get('/api/ileri/kabul', (req, res) => {
-  try {
-    const HD = require('./lib/ileri/hucumDengeEsikleri');
-    const ilk = '2026-10-07';   // ilk ileri gün (PLAN-ILERI-HUCUM-DENGE; gölge izleyicinin başlangıcı)
-    const kontrol = HD.UFUKLAR.map(g => ({ gun: g, tarih: new Date(Date.parse(ilk + 'T00:00:00Z') + g * 864e5).toISOString().slice(0, 10) }));
-    // Denetim A-17: Hücum-S (1000 $) dondurulmuş MaxDD eşikleri (deneme 861, karar Ö9 / G3b) — ayrı gölge yok, Hücum gölgesine uygulanır.
-    const hucumS = { plan: HD.PLANLAR.hucumS, bantlar: HD.UFUKLAR.map(u => ({ ufuk: u, p95: HD.DAGILIM.hucumS[u].maxdd.p95, p99: HD.DAGILIM.hucumS[u].maxdd.p99 })) };
-    res.json({ success: true, demo: demoKabulOzet.ozet(), hucumDenge: { ilk, kontrol, plan: HD.PLAN, hucumS } });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.get('/api/ileri/bollinger', (req, res) => {
-  try {
-    const F = ileriIzleme.dosyalar();
-    const ZF = zamanDilimiGolge.dosyalar();
-    const RF = rangeVetoGolge.dosyalar();
-    const imza = [F.kayit, F.golge, ZF.kayit, RF.kayit].map(f => (fs.existsSync(f) ? fs.statSync(f).mtimeMs : 0)).join('|') + '|' + new Date().toISOString().slice(0, 10);
-    if (!ileriRaporOnbellek || ileriRaporOnbellek.imza !== imza) {
-      const kayit = ileriIzleme.satirlariOku(F.kayit), golge = ileriIzleme.satirlariOku(F.golge);
-      const h = ileriRapor.hukum(kayit);
-      ileriRaporOnbellek = { imza, rapor: ileriRapor.araRapor(kayit, golge),
-        hukum: { durum: h.durum, mesaj: h.mesaj || null, hukum: h.durum === 'hukum' ? h.hukum : null, tarih: h.tarih || null, sonrakiTarih: h.sonrakiTarih || null } };
-      try { ileriRaporOnbellek.zamanDilimi = zamanDilimiGolge.panelOzet(ileriIzleme.satirlariOku(ZF.kayit), golge); } catch (e) { ileriRaporOnbellek.zamanDilimi = { hata: e.message }; }
-      try { ileriRaporOnbellek.rangeVeto = rangeVetoGolge.panelOzet(ileriIzleme.satirlariOku(RF.kayit), golge); } catch (e) { ileriRaporOnbellek.rangeVeto = { hata: e.message }; }
-    }
-    let son = null;
-    try { son = JSON.parse(fs.readFileSync(F.son, 'utf8')); } catch { /* henüz çalışmadı */ }
-    res.json({ success: true, rapor: ileriRaporOnbellek.rapor, hukum: ileriRaporOnbellek.hukum, zamanDilimi: ileriRaporOnbellek.zamanDilimi || null, rangeVeto: ileriRaporOnbellek.rangeVeto || null,
-      izleyici: { calisiyor: ileriIs.calisiyor, sonHata: ileriIs.sonHata,
-        sonCalisma: son && { zaman: son.zaman, yeniSatir: son.yeniSatir, golgeYeni: son.golgeYeni, golgeHata: son.golgeHata, eksik: son.eksik } } });
-  } catch (err) { res.status(500).json({ success: false, error: err.message }); }
-});
-
-// Config GET & POST
-app.get('/api/config', (req, res) => {
-  res.json(disariConfig());
-});
-
-/**
- * SIRLAR YALNIZ YAZILIR. Okuma ucu yok — panel yalnızca "tanımlı mı"
- * bilgisini görür (`config.sirlar`). Boş değer anahtarı SİLER.
- */
-/**
- * 73.0: /api/secrets çekirdeği — Ayarlar › Anahtarlar (lib/anahtarlar.js) da AYNI yolu kullanır (iki yer tutarlı kalsın).
- * Döndürür { durum, govde } (yanıtta sır yok). Sırlar kilitli/bozuksa yazmaz, 409 döner.
- */
-function sirlariUygula(govde0) {
-  const govde = govde0 && typeof govde0 === 'object' ? govde0 : {};
-  if (SIRLAR_KILITLI) return { durum: 409, govde: { success: false, kilitli: true, error: `Sırlar yazılmadı: ${SIRLAR_KILITLI}` } };
-  const gizli = loadSecrets();
-  const red = (durum, error) => ({ durum, govde: { success: false, error } });
-  // Önce HEPSİ doğrulanır: biri geçersizse hiçbiri yazılmaz (yarım kayıt olmasın).
-  for (const k of SECRET_KEYS) {
-    if (!(k in govde)) continue;
-    const v = typeof govde[k] === 'string' ? govde[k].trim() : '';
-    if (!v) continue;
-    if (SAGLIK_URL_KEYS.includes(k)) {
-      if (!saglikUrlGecerli(v)) return red(400, `${k} geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
-    } else if (!/^[A-Za-z0-9]{16,128}$/.test(v)) {
-      return red(400, `${k} biçimi geçersiz (16–128 harf/rakam)`);
-    }
-  }
-  // 68.8: bot başına sağlık adresi { botSaglik: { denge: url | '' } } — Hücum'unki healthchecksUrl (geri uyum).
-  const botGovde = govde.botSaglik && typeof govde.botSaglik === 'object' && !Array.isArray(govde.botSaglik) ? govde.botSaglik : null;
-  if (botGovde) {
-    for (const [ad, v] of Object.entries(botGovde)) {
-      if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return red(400, `botSaglik.${ad}: bilinmeyen bot (Kairos'un adresi healthchecksUrl alanında)`);
-      const u = typeof v === 'string' ? v.trim() : '';
-      if (u && !saglikUrlGecerli(u)) return red(400, `${botEtiketi(ad)} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
-    }
-  }
-  {
-    // Kayıttan SONRAKİ adresler birbirinden farklı olmalı: her bot ve sunucu kalp atışı AYRI check (aynı URL bir botun durmasını gizler).
-    const yeni = (k, eski) => (k in govde ? (typeof govde[k] === 'string' ? govde[k].trim() : '') : eski);
-    const sonra = [[bindirmeArastirma.STRATEJILER.hucum.ad, yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
-      ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [botEtiketi(a), botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
-    for (let i = 0; i < sonra.length; i++) for (let j = i + 1; j < sonra.length; j++) {
-      if (sonra[i][1] === sonra[j][1]) return red(400, `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.`);
-    }
-  }
-  const degisen = [];
-  const bellek = [];   // 73.0: bellekteki config diske yazıldıktan SONRA değişir (yazılamazsa bellek de eski kalır)
-  for (const k of SECRET_KEYS) {
-    if (!(k in govde)) continue;
-    const v = typeof govde[k] === 'string' ? govde[k].trim() : '';
-    if (v) gizli[k] = v; else delete gizli[k];
-    bellek.push(() => { config[k] = v; });
-    degisen.push(k);
-  }
-  if (botGovde) {
-    for (const [ad, v] of Object.entries(botGovde)) {
-      const u = typeof v === 'string' ? v.trim() : '';
-      const bs = { ...(gizli.bindirmeSaglik && typeof gizli.bindirmeSaglik === 'object' ? gizli.bindirmeSaglik : {}) };
-      if (u) bs[ad] = u; else delete bs[ad];
-      if (Object.keys(bs).length) gizli.bindirmeSaglik = bs; else delete gizli.bindirmeSaglik;
-      bellek.push(() => {
-        const onceki = { ...(((config.bindirme || {})[ad]) || {}) };
-        if (u) onceki.healthchecksUrl = u; else delete onceki.healthchecksUrl;
-        config.bindirme = { ...(config.bindirme || {}), [ad]: onceki };
-      });
-      degisen.push(`botSaglik.${ad}`);
-    }
-  }
-  const sirOnce = loadSecrets();
-  try { saveSecrets(gizli); } catch (e) { return red(409, e.message); }
-  for (const f of bellek) f();
-  // 74.2 ayar geçmişi: yalnız hangi sırrın değiştiği (değer "•••" / boş)
-  try {
-    const farklar = degisen.map(k => { const ad = k.startsWith('botSaglik.') ? k.slice(10) : null;
-      const e = ad ? (sirOnce.bindirmeSaglik || {})[ad] : sirOnce[k], y = ad ? (gizli.bindirmeSaglik || {})[ad] : gizli[k];
-      return { yol: ad ? `bindirme.${ad}.healthchecksUrl` : k, eski: e || '', yeni: y || '' }; }).filter(x => x.eski !== x.yeni);
-    if (farklar.length) AYAR_GECMISI.kaydet({ tur: 'anahtar', farklar });
-  } catch (e) { console.error('ayar geçmişi:', e.message); }
-  engine.updateConfig(config);
-  // Değer DEĞİL yalnız hangi alanın değiştiği loglanır.
-  const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k) || k.startsWith('botSaglik.'));
-  const anahtarDegisti = degisen.some(k => !SAGLIK_URL_KEYS.includes(k) && !k.startsWith('botSaglik.'));
-  if (anahtarDegisti) db.addLog('INFO', 'Borsa API anahtarları güncellendi.');
-  if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: ${BINDIRME_ADLAR.map(a => `${botEtiketi(a)} ${saglikBotlar[a].ayarli() ? 'ayarlı' : 'yok'}`).join(' · ')} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
-  return { durum: 200, govde: { success: true, sirlar: disariConfig().sirlar, degisen } };
-}
-
-app.post('/api/secrets', (req, res) => { const r = sirlariUygula(req.body || {}); res.status(r.durum).json(r.govde); });
-
-/** 73.7: Telegram mesajlarındaki Sorunlar bağlantısının adresi (ör. https://sunucu.ağ.ts.net) — yalnız http(s), boşluksuz; boş = "Panel › Sorunlar". Hata metni | null. */
-/**
- * 2026-10-24: tarayıcının parola doldurması jeton kutusuna başka bir parola yazınca bu değer jeton diye kaydediliyor, Telegram duruyordu.
- * Biçimi tutmayan jeton REDDEDİLİR; kayıtlı jeton değişmez. Boş jeton = "değişmedi".
- */
-function telegramJetonHatasi(govde) {
-  if (!(govde && govde.telegram) || guvenlikKur.telegramJetonGecerli(govde.telegram.botToken)) return null;
-  return 'Telegram bot jetonu biçimi hatalı (BotFather’ın verdiği "123456789:AA…" metni olmalı). Kayıtlı jeton DEĞİŞMEDİ. Jeton kutusunu boş bırakırsanız kayıtlı jeton korunur.';
-}
-
-function panelAdresiYama(govde) {
-  if (!(govde && govde.telegram && 'panelAdresi' in govde.telegram)) return null;
-  const a = String(govde.telegram.panelAdresi == null ? '' : govde.telegram.panelAdresi).trim().replace(/\/+$/, '');
-  if (a && !/^https?:\/\/[^\s<>"'`]{3,200}$/.test(a)) return 'Panel adresi http:// ya da https:// ile başlamalı, boşluk içermemeli (ör. https://sunucu.agadi.ts.net).';
-  govde.telegram = { ...govde.telegram, panelAdresi: a };
-  return null;
-}
-/** /api/config çekirdeği — 74.2: ayar geçmişinin "Geri al"ı da AYNI yoldan (chat id yaması, panel adresi, jeton biçimi, yamaTemizle). */
-function configUygula(govde0) {
-  // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
-  const govde = govde0 && govde0.telegram ? { ...govde0, telegram: guvenlikKur.chatIdYamaTemizle(govde0.telegram) } : govde0;
-  const yHata = panelAdresiYama(govde) || telegramJetonHatasi(govde); if (yHata) return { durum: 400, govde: { success: false, error: yHata } };
-  const temiz = guvenlikKur.yamaTemizle(govde, SECRET_KEYS);
-  // 74.7 TEK KAYNAK: yamanın bindirme bölümü config'e BÜTÜN OLARAK yazılmaz. Etkin kaydı olan Kairos/Tao alanları KAYDA (alan alan;
-  // mod / canliSermayeTavani / sağlık adresi yamaTemizle'de zaten düştü), diğer adlar config.bindirme'ye ad ad birleştirilir
-  // (eskiden bütün bölüm değişiyordu: Tao'nun ve Kairos'un modu kâğıda düşebilirdi). Önce hepsi doğrulanır; biri tutmazsa hiçbir şey yazılmaz.
-  let botYama = [];
-  if (temiz && temiz.bindirme !== undefined) {
-    const bolum = temiz.bindirme;
-    delete temiz.bindirme;
-    if (!isPlainObject(bolum)) return { durum: 400, govde: { success: false, error: 'bindirme bölümü nesne olmalı' } };
-    const kalan = {};
-    for (const [ad, v] of Object.entries(bolum)) {
-      if (!isPlainObject(v)) return { durum: 400, govde: { success: false, error: `bindirme.${ad} nesne olmalı` } };
-      if (BOT_KAYIT && BOT_KAYIT.etkinKayit(ad)) botYama.push([ad, v]); else kalan[ad] = v;
-    }
-    try {
-      for (const [ad, v] of botYama) {
-        const simdiki = bindirmeAyar(ad);
-        // Kairos demo kabulü (2026-12-09'a kadar): Kairos demo sermaye sınırı bu yoldan da değişmez (POST /api/botlar/:k/sermaye ile aynı kural)
-        if (ad === 'hucum' && 'demoSermayeTavani' in v && !botKayitLib.derinEsit(v.demoSermayeTavani, simdiki.demoSermayeTavani) && Date.now() < VeriKalitesi.KORUMA_BITIS) {
-          return { durum: 409, govde: { success: false, error: `Kairos demo kabulü ${new Date(VeriKalitesi.KORUMA_BITIS).toISOString().slice(0, 10)} sonuna kadar sürüyor — Kairos'un demo sermaye sınırı bu süre içinde değişmez.` } };
-        }
-        BOT_KAYIT.ayarHazirla(ad, { ...botKayitLib.sirsiz(simdiki), ...v });   // yalnız doğrulama
-      }
-    } catch (e) { return { durum: e.kod === 409 ? 409 : 400, govde: { success: false, error: e.message } }; }
-    if (Object.keys(kalan).length) {
-      const b0 = isPlainObject(config.bindirme) ? config.bindirme : {};
-      temiz.bindirme = Object.fromEntries([...Object.entries(b0), ...Object.entries(kalan).map(([ad, v]) => [ad, { ...(isPlainObject(b0[ad]) ? b0[ad] : {}), ...v }])]);
-    }
-  }
-  config = mergeConfig(config, temiz);
-  botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
-  try {
-    for (const [ad, v] of botYama) BOT_KAYIT.ayarYaz(ad, { ...botKayitLib.sirsiz(bindirmeAyar(ad)), ...v }, 'POST /api/config', { once: () => saveConfig(config) });
-  } catch (e) { return { durum: e.kod === 409 ? 409 : e.kod === 400 ? 400 : 500, govde: { success: false, error: e.message } }; }
-  saveConfig(config);
-  engine.updateConfig(config);
-  db.addLog('INFO', 'Sistem ve strateji parametreleri güncellendi.');
-  broadcast('CONFIG_UPDATED', disariConfig());
-  return { durum: 200, govde: { success: true, config: disariConfig() } };
-}
-app.post('/api/config', (req, res) => { const r = configUygula(req.body); res.status(r.durum).json(r.govde); });
+/** AYAR UÇLARI — GET /api/config, POST /api/secrets (sirlariUygula), POST /api/config (configUygula); ayrıntı lib/sunucu/ayarUclari.js başlığında. */
+const { sirlariUygula, configUygula } = require('./lib/sunucu/ayarUclari').kur(ctx);   // C1 (75.0)
 
 require('./lib/sunucu/kagitMotorUclari').kur(ctx);   // C1 (74.8): mum, izleme listesi, start/stop, kill-switch, risk, işlemler, cüzdan, sıfırlama, /api/bots/* — lib/sunucu/kagitMotorUclari.js
 
@@ -2852,467 +1913,25 @@ require('./lib/veri/aralik');   // C1 (74.8): kullanan uçlar lib/sunucu/arastir
 const { Isler } = require('./lib/isler');
 const isler = new Isler((tur, veri) => broadcast(tur, veri));
 
-/**
- * PORTFÖY LABORATUVARI (lib/portfoy/api.js, 2026-10-07): katalog, seri, simülasyon / varyasyon (iş parçacığında, aynı iş
- * kuyruğu), uygulama planı, karar günlüğü, kayıtlı portföyler. Araştırma modunda da açık (ARASTIRMA_KAPALI'ya takılmaz).
- * Veri güncellemesi artık VERİ ORKESTRATÖRÜNDE (aşağıda).
- */
-const portfoyLab = require('./lib/portfoy/api');
-app.use(portfoyLab.router({ isler, log: (lv, msg) => db.addLog(lv, msg) }));
+/* PORTFÖY LABORATUVARI, VERİ ORKESTRATÖRÜ, coin tarama, ileriye kayıt, piyasa bağlamı, yapay zekâ notları, araştırma defteri, günlükler —
+ * lib/sunucu/kisiselUclar.js laboratuvarUclari(); diğer iki grup aşağıda eski yerlerinde (Express uç ve zamanlayıcı sırası aynı). */
+const KISISEL_UCLAR = require('./lib/sunucu/kisiselUclar').olustur(ctx);   // C1 (75.0)
+const { veriOrk, piyasaBaglami, yapayZeka } = KISISEL_UCLAR.laboratuvarUclari();
+BILDIRIM_KURULUM.uclar();   // C1 (75.0): /api/bildirim*, GET /api/makine/nabiz, rapor motoru (/api/rapor*) — lib/sunucu/bildirimKurulum.js
 
-/**
- * VERİ ORKESTRATÖRÜ (lib/veri/orkestrator.js, 2026-10-07): tüm veri kaynakları tek kayıt defterinde (Binance günlük +
- * PIT arşivi + TradFi listesi, Yahoo, TEFAS, EVDS, TÜFE, USD/TRY, kol önbelleği, portföy kataloğu). Açılıştan ~2 dk sonra
- * bayat olanlar, her gece 04:30 sonrası (eski portföy zamanlayıcısının YERİNE — tek zamanlayıcı), simülasyon / backtest
- * bayat seriye dokununca arka planda (talep), panelden ya da `npm run veri:guncelle` ile elle. Canlı botun kendi borsa
- * okumalarına dokunmaz. Uçlar GET /api/veri/durum, POST /api/veri/guncelle (araştırma modunda da açık).
- * VERI_ORKESTRATOR=0 (ya da eski PORTFOY_GUNCELLEME=0) zamanlayıcıyı ve talep tetiğini kapatır.
- */
-const veriOrkestrator = require('./lib/veri/orkestrator');
-const veriOrk = veriOrkestrator.varsayilan({ log: (lv, msg) => db.addLog(lv, msg) });
-// O10 (62.0): gece veri güncellemesi günde 3 kez başarısızsa Telegram uyarısı.
-veriOrk.alarm = (baslik, satirlar) => portfoyBildirici.gonder('uyari', baslik, satirlar, { anahtar: 'veri-gece', kisitMs: 20 * 3600e3 });
-veriOrkestrator.hariciBagla('ileri-bollinger', () => ({ calisiyor: ileriIs.calisiyor, sonHata: ileriIs.sonHata }));
-app.use(veriOrk.router());
-veriOrk.zamanlayiciBaslat();
-
-/**
- * COIN TARAMA + LİSTE KAYDI (lib/tarama, sürüm 60.3): ileriye dönük günlük zincir üstü tarama (GoPlus / RugCheck /
- * DexScreener / RDAP / borsa fiyatı → data/tarama, yalnız eklenir) ve arkadaşın coin listelerinin SHA-256 zincirli
- * kaydı (data/tarama/listeler.jsonl + kayitlar/listeler/ dışa aktarımı). ALIM/SATIM YAPMAZ; lib/live ve lib/risk'e
- * dokunmaz. Panel açılınca (POST /api/tarama/otomatik) ve 10 dk'lık zamanlayıcıyla son başarılı tarama `otomatikSaat`ten
- * (varsayılan 20 sa) eskiyse arka planda koşar; aynı anda iki koşu yok (dosya kilidi). Telegram yalnız tarama
- * ayarlarından açılırsa (varsayılan kapalı), Bildirici'nin tekrar kısıtıyla. Binance istekleri orkestratörün kota
- * sayacından ve ortak 418/429 beklemesinden geçer. Uçlar araştırma modunda da açık (bot/borsa/emir değil). TARAMA=0
- * zamanlayıcıyı kapatır.
- */
-const taramaSistemi = require('./lib/tarama').kur({
-  log: (lv, msg) => db.addLog(lv, msg),
-  bildirici: portfoyBildirici,
-  kota: () => new veriOrkestrator.BinanceKota({ bekleme: veriOrk.binanceBeklemeErisimi('coin tarama') }),
-});
-app.use(taramaSistemi.router());
-veriOrkestrator.hariciBagla('coin-tarama', () => taramaSistemi.hariciDurum());
-try { taramaSistemi.zincirTazele(); } catch (e) { db.addLog('WARN', `📋 Liste kayıt zinciri okunamadı: ${e.message}`); }
-taramaSistemi.zamanlayiciBaslat();
-// İLERİYE KAYIT (73.3, lib/ileriKayit): ham piyasa verisi kayıtçıları — karar/emir yok; araştırma kopyasında çalışmaz. GET /api/ileri-kayit/durum.
-require('./lib/ileriKayit').kur({ app, log: (lv, msg) => db.addLog(lv, msg), ozDenetim, binanceBekleme: veriOrk.binanceBeklemeErisimi('ileriye kayıt') });
-// PİYASA BAĞLAMI (73.9, lib/piyasaBaglami): olay takvimi, protokol kartı, makro pano, WinC panosu (opsiyon, pozisyonlanma, akış, duygu) —
-// YALNIZ BİLGİ, hiçbir gösterge bot kararına girmez; toplayıcı yalnız sunucuda, karar penceresinde ağ yok. GET /api/piyasa-baglami(/hafta).
-const piyasaBaglami = require('./lib/piyasaBaglami').kur({ app, log: (lv, msg) => db.addLog(lv, msg), binanceBekleme: veriOrk.binanceBeklemeErisimi('piyasa bağlamı'), mumDeposu: db.candleStore, surum: APP_VERSION });
-// YAPAY ZEKÂ NOTLARI (74.1, lib/yapayZeka — C3 / PLAN-DIKKAT-LISTESI §F3): günde bir kez (~07:00) Google Gemini ÜCRETSİZ katmanıyla kamuya açık
-// haber / KAP / SEC metinlerini okur; şema kısıtlı JSON + birebir alıntı doğrulayıcı + kanarya. Model hiçbir şeye yazamaz; liste / kural / bot
-// DEĞİŞMEZ — yalnız not + "incele" bayrağı (Telegram türü "yapayzeka", günde en çok 1). Anahtar: secrets.json gemini.apiKey (Ayarlar › Anahtarlar);
-// yoksa ağ isteği yok. Zamanlayıcı yalnız sunucuda (araştırma kopyası ve geliştirme bilgisayarı sayfayı sunucudan okur — lib/evOkuma). YAPAY_ZEKA=0 kapatır.
-const yapayZeka = require('./lib/yapayZeka').olustur({
-  // YAPAY_ZEKA_ORNEK=1 yalnız kılavuz görüntüsü (scripts/kilavuz-ekran.js, araştırma kipinde): örnek klasör gösterilir, okuma YOK (zamanlayıcı kurulmaz).
-  dizin: process.env.YAPAY_ZEKA_DIZIN || yollar.veri('yapay-zeka'), arastirma: (ARASTIRMA_MODU || !!TELEGRAM_GELISTIRME_ENGELI) && !(ARASTIRMA_MODU && process.env.YAPAY_ZEKA_ORNEK === '1'), surum: APP_VERSION, log: (lv, msg) => db.addLog(lv, msg),
-  anahtarFn: () => { if (ARASTIRMA_MODU && process.env.YAPAY_ZEKA_ORNEK === '1') return 'ornek-anahtar'; if (SIRLAR_KILITLI) return null; try { return ((loadSecrets() || {}).gemini || {}).apiKey || null; } catch (e) { return null; } },
-  merkez: BILDIRIM,
-  gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
-});
-app.use(yapayZeka.router());
-if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI && process.env.YAPAY_ZEKA !== '0') yapayZeka.baslat();
-
-/**
- * ARAŞTIRMA DEFTERİ (lib/defter.js, sürüm 60.6, PLAN-DIKKAT-LISTESI §5 Ş1): deneme sayacının kanonik kaydı
- * `kayitlar/denemeler.jsonl` (DEFTER_DOSYA ile değişir). GET /api/defter = kayıtlar + özet + denetim hataları;
- * POST /api/defter YALNIZ yeni kayıt ekler (çakışma/boşluk reddi, geçici dosya + rename). Düzeltme/silme ucu yok.
- * Sunucu git çalıştırmaz. Telefon kademesinde POST lib/guvenlik.js'te 403 (beyaz listede değil). Araştırma modunda açık.
- */
-app.use(require('./lib/defter').router({ log: (lv, msg) => db.addLog(lv, msg) }));
-
-/*
- * GÜNLÜKLER (lib/gunluk.js, PLAN-PANEL-2): db.addLog'a düşen her satır ayrıca data/gunluk/<gün>.jsonl'e tek biçimle yazılır
- * (zaman · seviye · kaynak · bot · mesaj; 30 gün). GET /api/gunluk (süz + son 24 s özeti), GET /api/gunluk.csv. Salt okuma.
- */
-app.use(require('./lib/gunluk').router(GUNLUK));
-// Bildirim merkezi uçları: GET /api/bildirim (katalog + son gönderilenler + Telegram durumu), POST /api/bildirim/ayar { tur, acik }.
-// 73.5: + POST /api/bildirim/{tur,sessiz,uretici,onizle}; GET'e üretici durumu (makine nabızları, son KAP/fiyat/anahtar denetimi).
-let bildirimUreticileri = null;
-let piyasaBildirim = null;   // 73.9: piyasa takvimi + olay sonucu (lib/piyasaBaglami/bildirim.js) — yalnız sunucu
-app.use(require('./lib/bildirimMerkezi').router(BILDIRIM, { durum: () => portfoyBildirici.durum(), ek: () => (bildirimUreticileri ? { ...bildirimUreticileri.durum(), takvim: piyasaBildirim ? piyasaBildirim.durum() : null, yapayZeka: yapayZeka.durum() } : { arastirma: ARASTIRMA_MODU }), log: (lv, msg) => db.addLog(lv, msg) }));
-/**
- * 73.5 MAKİNE NABZI: araştırma kopyası (sunucu bağlantısı kurulu) 10 dk'da bir GET /api/makine/nabiz — başlık x-pusula-makine (bilgisayar
- * adı), x-pusula-surum. Yalnız sunucuda ve jetonla gelen istekte (telefon / geliştirme kademesi) kaydedilir; yerel istek ve başlıksız
- * istek kayıt yazmaz. Yanıtta sır yok.
- */
-app.get('/api/makine/nabiz', (req, res) => {
-  const ad = String(req.headers['x-pusula-makine'] || '');
-  const kaydedildi = !!(bildirimUreticileri && ad && req.kademe && req.kademe !== 'yerel' && bildirimUreticileri.nabizKaydet(ad, { surum: req.headers['x-pusula-surum'], tur: 'arastirma' }));
-  res.json({ success: true, kaydedildi, surum: APP_VERSION });
-});
-
-/*
- * RAPOR MOTORU (lib/rapor.js, PLAN-PANEL-2): her gün 09:00'dan sonra dünün günlük raporu; son biten haftanın, ayın ve (ocakta) yılın raporu (67.5)
- * (botlar: değer değişimi, işlemler, ücret · model emirleri · portföy botlarının tercihleri). Girdi sunucunun kendi uçlarından
- * (127.0.0.1); arşiv data/raporlar/; Telegram'a 📋 özeti (bildirim merkezi türü "rapor"). Araştırma kopyasında zamanlayıcı yok.
- * GET /api/rapor/liste · GET /api/rapor?tur=&bas= · POST /api/rapor/olustur { tur, gun, telegram }.
- */
-const RAPOR = require('./lib/rapor').olusturucu({ kok: __dirname, port: process.env.PORT || 3000, log: (lv, msg) => db.addLog(lv, msg),
-  botlar: () => BINDIRME_ADLAR.slice(),   // 74.5: yeni botlar da raporda (çağrı anında okunur)
-  gonder: (metin) => engine.telegram.sendMessageDetailed(metin) });
-app.use(require('./lib/rapor').router(RAPOR));
-if (!ARASTIRMA_MODU && process.env.RAPOR !== '0') RAPOR.baslat();
-
-/**
- * PORTFÖYÜM (lib/portfoyum, sürüm 60.8, PLAN-PORTFOYUM §0): gerçek portföyün ELLE kaydı — kurum/hesap/varlık, açılış
- * bakiyesi, işlem defteri (yalnız eklenir; iptal = ters kayıt), değerleme (kendi para biriminde maliyet/K-Z; toplam USD ve
- * TL), TWR getiri, hedef dağılım, kur çevirici. Veri data/portfoyum/ (git dışı). Harcama'ya dokunmaz, borsa bakiyesi
- * okumaz, emir vermez. GET'ler telefonda da açık; POST/PUT telefon kademesinde lib/guvenlik.js 403 (beyaz listede değil).
- * Günlük anlık görüntü: panel açılınca (GET /api/portfoyum/ozet) + saatlik zamanlayıcı (PORTFOYUM_ANLIK=0 kapatır).
- */
-const portfoyum = require('./lib/portfoyum/api').kur({ log: (lv, msg) => db.addLog(lv, msg) });
-app.use(portfoyum.router);
-if (process.env.PORTFOYUM_ANLIK !== '0') setInterval(() => { try { portfoyum.anlikTazele(); } catch (e) { db.addLog('WARN', `Portföyüm anlık görüntü: ${e.message}`); } }, 60 * 60 * 1000).unref();
-
-/**
- * İŞLEM DEFTERİ (lib/islemDefteri, 64.7): kullanıcının KENDİ kripto/FX işlemleri (OKX, Binance geçmişi, MetaTrader 4/5) —
- * Portföy › İşlem defterim. Botlardan ve Portföyüm'den ayrı. Veri data/islem-defteri/ (git dışı, yalnız eklenir). GET'ler
- * telefonda da açık (ve geliştirme bilgisayarında lib/evOkuma.js ile sunucudan okunur); POST'lar telefonda 403 (lib/guvenlik.js),
- * araştırma modunda 403 (kayıtlar evde). OKX salt okuma anahtarı data/secrets.json `islemDefteri.okx` altında — panele/yanıta
- * hiç dönmez; trade/withdraw izinli anahtar reddedilir. Günlük OKX eşitlemesi yalnız sunucuda (araştırma modunda kapalı;
- * ISLEM_DEFTERI_ESITLE=0 kapatır). Emir yok, Telegram yok (K6).
- * 65.0: Binance salt okuma eşitlemesi (lib/islemDefteri/binanceApi.js) aynı yolla — anahtar `islemDefteri.binance` altında (bot anahtarlarından
- * AYRI; apiRestrictions'ta yalnız okuma açık değilse reddedilir), aynı saatlik zamanlayıcı (gunlukEsitle: OKX + Binance; spot tam tarama
- * bitene kadar her saat kaldığı yerden).
- * 64.8: geliştirme bilgisayarında (sunucu bağlantısı + yazma jetonu) yazmalar sunucuya iletilir/kuyruğa girer (lib/evYazma.js, yukarıda);
- * OKX anahtarı o bilgisayarın kendi secrets.json'unda, "Şimdi eşitle" yalnız elle (otomatik günlük eşitleme yalnız evde).
- */
-const islemDefteri = require('./lib/islemDefteri/api').kur({
-  log: (lv, msg) => db.addLog(lv, msg), arastirma: ARASTIRMA_MODU, mumDeposu: db.candleStore,
-  kurSerileri: () => require('./lib/portfoyum/fiyat').kurSerileri(require('./lib/portfoyum/depo').jsonOku('kurlar.json')),
-  sirlar: { oku: () => loadSecrets().islemDefteri || {}, yaz: (ns) => { const g = loadSecrets(); g.islemDefteri = ns; saveSecrets(g); } },
-  // 64.8: geliştirme bilgisayarında OKX anahtarı burada; hesaplar sunucudaki listeden, eşitleme sonucu sunucuya (ya da kuyruğa)
-  ev: EV_BAGLANTI_ETKIN ? {
-    kurulu: () => !!evOkuma.ayar(),
-    hesap: async (id) => { const r = await evOkuma.jsonGetir('/api/islem-defteri/ozet'); return (r && r.govde && Array.isArray(r.govde.hesaplar) && r.govde.hesaplar.find(h => h.id === id)) || null; },
-    gonder: (yol, govde) => evYazma.yaz('POST', yol, govde)
-  } : null
-});
-app.use(islemDefteri.router);
-
-/**
- * 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar.js, Faz 1 "makine × hesap × bot"): kayıtlı bütün sırlar maskeli tek tabloda; ekle / değiştir /
- * sil ACİL PIN + onay; salt okuma sınama (lib/anahtarSinama.js, emir yok); araştırma kopyasında sunucudaki liste + iletme + GİZLİ bekleyen
- * dosyası; eski şifreli sır dosyasını silmeden kenara alma; acil PIN değiştirme. Botların çalışma şekli değişmez: sabit Binance satırları
- * eski alanlara yazar (sirlariUygula = /api/secrets), İşlem defterim anahtarları islemDefteri.anahtarIslemleri ile.
- */
-const anahtarlar = require('./lib/anahtarlar').olustur({
-  arastirma: ARASTIRMA_MODU,
-  sir: { oku: loadSecrets, yaz: saveSecrets, kilit: () => SIRLAR_KILITLI },
-  acilPin, veri: (ad) => yollar.veri(ad), log: (lv, msg) => db.addLog(lv, msg),
-  bilgi: () => ({
-    // 74.5: hesapId (şu an kullandığı Anahtarlar hesabı) + hesap (yeni botun bağları) — Anahtarlar 'kullanan' sütunu hesap bazında
-    botlar: BINDIRME_ADLAR.map(ad => ({ kimlik: ad, ad: require('./lib/botAdlari').ad(ad) || ad, mod: bindirmeler[ad] ? bindirmeler[ad].mod : null,
-      hesapId: botHesapId(bindirmeler[ad]), hesap: yeniBotMu(ad) && BOT_KAYIT && BOT_KAYIT.kayit(ad) ? { ...BOT_KAYIT.kayit(ad).hesap } : null })),
-    telegramAcik: !!(config.telegram && config.telegram.enabled), panelJetonuEnv: (process.env.PANEL_TOKEN || '').length >= 24,
-    gelistirmeJetonu: fs.existsSync(guvenlikKur.gelistirmeJetonYolu(__dirname))
-  }),
-  sirlariUygula,
-  telegramUygula: (jeton) => {
-    if (SIRLAR_KILITLI) return { durum: 409, govde: { success: false, kilitli: true, error: `Sırlar yazılmadı: ${SIRLAR_KILITLI}` } };
-    const gizli = loadSecrets();
-    const tg = { ...(gizli.telegram || {}) };
-    if (jeton) tg.botToken = jeton; else delete tg.botToken;
-    if (Object.keys(tg).length) gizli.telegram = tg; else delete gizli.telegram;
-    try { saveSecrets(gizli); } catch (e) { return { durum: 409, govde: { success: false, error: e.message } }; }
-    config.telegram = { ...(config.telegram || {}), botToken: jeton || '' };
-    engine.updateConfig(config);
-    broadcast('CONFIG_UPDATED', disariConfig());
-    return { durum: 200, govde: { success: true } };
-  },
-  defter: islemDefteri.anahtarIslemleri,
-  sina: {
-    borsa: (h) => require('./lib/anahtarSinama').borsaSina(h),
-    defter: (borsa, a) => require('./lib/anahtarSinama').defterSina(borsa, a),
-    telegram: (t) => require('./lib/anahtarSinama').telegramSina(t),
-    gemini: (t) => require('./lib/yapayZeka/gemini').olustur({ aralikMs: 0 }).sina(t),   // 74.1: models.list — salt okuma, kota harcamaz
-    saglik: async (alt) => { const s = alt === 'sunucu' ? saglikSunucu : saglikBotlar[alt]; if (!s) return { ok: false, hata: 'bilinmeyen bot' }; const r = await s.ping('basari'); return { ok: !!r.ok, hata: r.ok ? null : (r.hata || 'gönderilemedi') }; }
-  },
-  ev: EV_BAGLANTI_ETKIN ? {
-    kurulu: () => !!evOkuma.ayar(), yazmaKurulu: () => evYazma.yazmaAyari(), adres: () => (evOkuma.ayar() || {}).adres || null,
-    oku: (yol) => evOkuma.jsonGetir(yol), yaz: (yol, govde) => evYazma.yaz('POST', yol, govde, { kuyruk: false })
-  } : null,
-  kasaSonrasi: (ad) => { if (ad === 'secrets.json') { SIRLAR_KILITLI = null; db.addLog('INFO', 'secrets.json kenara alındı — sırlar artık panelden yeniden girilebilir.'); } }
-});
+/* PORTFÖYÜM (lib/portfoyum), İŞLEM DEFTERİ (lib/islemDefteri), 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar) — lib/sunucu/kisiselUclar.js portfoyUclari(). */
+const { portfoyum, islemDefteri, anahtarlar } = KISISEL_UCLAR.portfoyUclari();   // C1 (75.0)
 anahtarYonlendirici = anahtarlar.router;
 
-/*
- * 73.5 BİLDİRİM ÜRETİCİLERİ (lib/bildirimUreticileri.js): bilanço (KAP), makine sessiz, gölge testler haftalık özeti, anahtar sınaması
- * (salt okuma, günde bir), sert fiyat hareketi. YALNIZ SUNUCU — araştırma kopyasında kurulmaz (Telegram yalnız sunucudan). Karar/emir yok.
- */
-function bistKodlari() {
-  const s = new Set();
-  try {   // Lydia (BIST M10) kâğıt hesabının açık pozisyonları
-    const j = JSON.parse(fs.readFileSync(yollar.veri('tasarimci', 'kagit.json'), 'utf8'));
-    for (const p of (((j.modeller || {})['m-bist-m10'] || {}).pozisyonlar || [])) if (p && p.s && Number(p.adet) > 0) s.add(String(p.s));
-  } catch { /* kâğıt hesap yok */ }
-  try {   // Portföyüm: TRY hisse varlıkları (adet > 0)
-    const { D, muh } = require('./lib/portfoyum/depo').yukle();
-    for (const c of muh.ciftler.values()) {
-      if (c.nakit || !(c.ana && c.ana.adet > 1e-9)) continue;
-      const v = D.varliklar.get(c.varlik);
-      if (v && v.sinif === 'hisse' && v.para === 'TRY') s.add(String(v.kod || v.sembol).replace(/\.IS$/i, ''));
-    }
-  } catch { /* Portföyüm yok */ }
-  return [...s];
-}
-// Geliştirme bilgisayarında (TELEGRAM_GELISTIRME_ENGELI: data/makine.json, sunucu bağlantısı) da kurulmaz — öz testlerin açtığı sunucular dahil.
-if (!ARASTIRMA_MODU && !TELEGRAM_GELISTIRME_ENGELI) {
-  bildirimUreticileri = require('./lib/bildirimUreticileri').olustur({
-    durumDosya: yollar.veri('bildirim-uretici.json'), merkez: BILDIRIM,
-    gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
-    log: (lv, msg) => db.addLog(lv, msg),
-    kaynaklar: { bistKodlari, golgeSatirlari: () => require('./lib/golgeOzet').satirlar(), anahtarSina: () => anahtarlar.otoSina() },
-  });
-  piyasaBildirim = require('./lib/piyasaBaglami/bildirim').olustur({
-    pb: piyasaBaglami, durumDosya: yollar.veri('piyasa-bildirim.json'), merkez: BILDIRIM, log: (lv, msg) => db.addLog(lv, msg),
-    gonder: (tur, parcalar, degiskenler) => engine.telegram.sendMessageDetailed(require('./lib/bildirimMetinleri').varsayilanKur({ zaman: require('./lib/bildirimMetinleri').kisaZaman(), ...parcalar }), { tur, parcalar, degiskenler }),
-  });
-}
-/*
- * 73.7 BIST HAFİF FİYAT (lib/bistHafif.js): bilanço bildiriminin BIST 100 evreni sunucuda da kurulsun diye günde bir, aday kümesi
- * (~160 kod) × son ~100 gün, İş Yatırım HisseTekil, istekler arası 4 sn; karar penceresinde (UTC 23:50–01:30) çalışmaz, 429/5xx'te
- * 6 saat bekler. Yalnız sunucu (araştırma kopyasında ve geliştirme bilgisayarında kurulmaz); BIST_HAFIF=0 kapatır. Karar / emir yok.
- */
-if (bildirimUreticileri && process.env.BIST_HAFIF !== '0') {
-  const bistHafif = require('./lib/bistHafif').olustur({ dizin: yollar.veri('bist-hafif'), log: (lv, msg) => db.addLog(lv, msg) });
-  const bistTik = () => { bistHafif.tik().catch(e => db.addLog('WARN', `[BIST] hafif fiyat güncellemesi: ${e.message}`)); };
-  setTimeout(bistTik, 15 * 60 * 1000).unref();
-  setInterval(bistTik, 30 * 60 * 1000).unref();
-}
-if (!ARASTIRMA_MODU && process.env.ISLEM_DEFTERI_ESITLE !== '0') {
-  const idEsitle = () => { islemDefteri.gunlukEsitle().catch(e => db.addLog('WARN', `İşlem defteri OKX/Binance eşitleme: ${e.message}`)); };
-  setTimeout(idEsitle, 3 * 60 * 1000).unref();
-  setInterval(idEsitle, 60 * 60 * 1000).unref();
-}
-
-/**
- * PORTFÖY TASARIMCISI F2 (lib/tasarimci, PLAN-PORTFOY-TASARIMCI.md): model portföy NAV motoru (m-837, m-qqq-m10, m-bist-m10
- * + kıyaslar), yalnız eklenen defter data/tasarimci/{kararlar,dolumlar,gunluk}.jsonl, 30 dk zamanlayıcı (veri talebi
- * süreç içi, ağır hesap ALT SÜREÇTE scripts/tasarimci-tik.js; TASARIMCI=0 kapatır). GET /api/tasarimci/* telefonda da açık
- * ve dosya yazmaz; POST /api/tasarimci/yenile telefon kademesinde lib/guvenlik.js 403. Araştırma modunda da açık (kayıtlar
- * `deneme: true`). Emir vermez, borsaya bağlanmaz, Telegram'a bir şey yollamaz.
- */
-const tasarimciZaman = require('./lib/tasarimci/zamanlayici').kur({ log: (lv, msg) => db.addLog(lv, msg), veriOrk,
-  // O10 (62.0): ardışık tik hatası Telegram'a (araştırma modunda Telegram zaten kapalı).
-  alarm: (baslik, satirlar) => portfoyBildirici.gonder(/yeniden çalışıyor/.test(baslik) ? 'bilgi' : 'uyari', baslik, satirlar, { anahtar: `tasarimci:${baslik}` }) });
-const tasarimciYonlendirici = require('./lib/tasarimci/api').router({ zamanlayici: tasarimciZaman, log: (lv, msg) => db.addLog(lv, msg),
-  // 74.2 ayar geçmişi: model sermayesi ayarları (tutarlar "•••" — kişisel, geri alınmaz)
-  degisiklik: (once, sonra) => AYAR_GECMISI.kaydet({ tur: 'sermaye', farklar: ayarGecmisiLib.farkBul(once || {}, sonra || {}), gizliYol: (y) => /^modeller\./.test(y) }) });
-app.use(tasarimciYonlendirici);
-
-/* ── 74.2 AYAR GEÇMİŞİ uçları (C2; lib/ayarGecmisi.js) ── */
-/** Ayarın bugünkü (etkin, sırsız) değeri: config diskteki etkin ayardan (kayıt da diskten yazılır), bildirim merkezin etkin görünümünden. */
-function ayarSimdikiOkuyucu() {
-  let disk = null, bildirim = null, sermaye = null;   // istek başına bir kez okunur
-  return (tur, yol) => {
-    if (tur === 'config') { if (!disk) disk = ayarlarLib.oku(); return ayarGecmisiLib.yoldanAl(disk, yol); }
-    if (tur === 'bildirim') { if (!bildirim) bildirim = BILDIRIM.etkinAyar(); return ayarGecmisiLib.yoldanAl(bildirim, yol); }
-    if (tur === 'sermaye') { if (!sermaye) sermaye = require('./lib/tasarimci/api').sermayeOku() || {}; return ayarGecmisiLib.yoldanAl(sermaye, yol); }
-    throw new Error('bilinmeyen tür');
-  };
-}
-const ayarGunu = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '');
-app.get('/api/ayar-gecmisi', async (req, res) => {
-  try {
-    const q = req.query || {};
-    const sz = { bas: ayarGunu(q.bas), bit: ayarGunu(q.bit), tur: ayarGecmisiLib.TURLER.includes(q.tur) ? q.tur : '', makine: String(q.makine || '').replace(/[^A-Za-z0-9_.-]/g, '').slice(0, 40), n: q.n };
-    const kademe = req.kademe || 'yerel';
-    const simdiki = ayarSimdikiOkuyucu();
-    const bilgi = (k, d, uzak) => {
-      if (!uzak && k.makine && k.makine.ad !== AYAR_GECMISI.makine.ad) return { uygun: false, neden: 'Bu kayıt başka bir makineye ait — o makinenin panelinden geri alınır.', gevsetme: false };
-      let v, yok = false;
-      try { v = simdiki(k.tur, d.yol); } catch { yok = true; }
-      const u = ayarGecmisiLib.uygunluk(k, d, { kademe, uzak, arastirma: ARASTIRMA_MODU, simdiki: v, simdikiYok: yok });
-      return { uygun: u.uygun, neden: u.neden || null, gevsetme: !!u.gevsetme };
-    };
-    const satirla = (k, uzak) => ({ ...k, uzak: !!uzak, degisiklikler: (k.degisiklikler || []).map(d => ({ ...d, geriAl: bilgi(k, d, uzak) })) });
-    const yerel = AYAR_GECMISI.oku(sz);
-    let kayitlar = yerel.kayitlar.map(k => satirla(k, false));
-    let sunucu = null;
-    if (ARASTIRMA_MODU && q.yerel !== '1') {
-      const p = new URLSearchParams({ yerel: '1', ...(sz.bas ? { bas: sz.bas } : {}), ...(sz.bit ? { bit: sz.bit } : {}), ...(sz.tur ? { tur: sz.tur } : {}), ...(sz.makine ? { makine: sz.makine } : {}), ...(q.n ? { n: String(q.n) } : {}) });
-      const r = evOkuma.ayar() ? await evOkuma.jsonGetir(`/api/ayar-gecmisi?${p}`) : null;
-      if (r && r.govde && r.govde.success && Array.isArray(r.govde.kayitlar)) {
-        kayitlar.push(...r.govde.kayitlar.map(k => satirla(k, true)));
-        kayitlar.sort((a, b) => String(b.z).localeCompare(String(a.z)));
-        sunucu = { durum: r.eski ? 'eski' : 'tamam', zaman: r.zaman || null };
-      } else sunucu = { durum: evOkuma.ayar() ? 'ulasilamadi' : 'kurulu-degil' };
-    }
-    const makineler = [...new Set(kayitlar.map(k => k.makine && k.makine.ad).filter(Boolean))];
-    res.json({ success: true, kayitlar, toplam: yerel.toplam, bozuk: yerel.bozuk, makine: AYAR_GECMISI.makine, makineler, arastirma: ARASTIRMA_MODU, sunucu,
-      yazilabilir: kademe === 'yerel', pin: { tanimli: !!acilPin.durum().tanimli }, onayMetni: ayarGecmisiLib.ONAY_METNI, sonHata: AYAR_GECMISI.durum().sonHata });
-  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-/** Geri al: yalnız bilgisayardan (telefon/geliştirme kademesi 403 — lib/guvenlik beyaz listelerinde YOK), acil PIN, gevşetmede "GERİ AL", aynı doğrulama yolu. */
-app.post('/api/ayar-gecmisi/geri-al', async (req, res) => {
-  try {
-    const r = await AYAR_GECMISI.geriAl(req.body || {}, {
-      kademe: req.kademe || 'yerel', arastirma: ARASTIRMA_MODU, acilPin, simdiki: ayarSimdikiOkuyucu(),
-      uygula: {
-        config: (yol, hedef) => {
-          const p = String(yol).split('.');
-          const ust = p[0];
-          const yama = { [ust]: p.length > 1 ? ayarGecmisiLib.yolaKoy(config[ust], p.slice(1).join('.'), hedef, { tanimsizBirak: true }) : hedef };
-          if (ARASTIRMA_MODU) { const red = guvenlikKur.arastirmaAyarRed('POST', '/api/config', yama); if (red) return { durum: 403, govde: { success: false, arastirma: true, error: red } }; }
-          return configUygula(yama);
-        },
-        bildirim: (yol, hedef) => {
-          try { BILDIRIM.yolAyarla(yol, hedef); return { durum: 200, govde: { success: true } }; }
-          catch (e) { return { durum: e.durum || 500, govde: { success: false, error: e.message } }; }
-        },
-        sermaye: (yol, hedef) => {
-          const p = String(yol).split('.');
-          return tasarimciYonlendirici.sermayeYaz(p[0] === 'hesaplar' ? { hesaplar: { [p[1]]: hedef == null ? '' : hedef } } : { [p[0]]: hedef });
-        }
-      }
-    });
-    res.status(r.durum).json(r.govde);
-  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
-});
-tasarimciZaman.baslat();
+BILDIRIM_KURULUM.ureticiler();   // C1 (75.0): 73.5 bildirim üreticileri, 73.9 piyasa bildirimi, 73.7 BIST hafif fiyat (yalnız sunucu) — lib/sunucu/bildirimKurulum.js
+KISISEL_UCLAR.tasarimciUclari();   // C1 (75.0): işlem defteri eşitlemesi, PORTFÖY TASARIMCISI (lib/tasarimci), 74.2 AYAR GEÇMİŞİ uçları — lib/sunucu/kisiselUclar.js
 
 ARASTIRMA_UCLARI.isUclari();   // C1 (74.8): /api/veri/kapsam·indir, /api/backtest/is, /api/is/*, /api/strateji/*, backtest/scan-watchlist, strategy-scan — lib/sunucu/arastirmaUclari.js
 
-/**
- * SAĞLIK SİNYALİ TESTİ — ayarlı her URL'ye bir başarı ping'i (gövdesiz GET). healthchecks'te check
- * "up" olur; URL yanlışsa (404) burada görünür. Yanıtta URL YOK, yalnız sonuç.
- */
-app.post('/api/saglik/test', async (req, res) => {
-  // 68.8: her botun KENDİ check'i ayrı denenir (sonuc.botlar.<ad>); sonuc.bot = Hücum (eski panel / geri uyum).
-  const tek = async (s) => { if (!s.ayarli()) return { ayarli: false }; const r = await s.ping('basari'); return { ayarli: true, ok: r.ok, hata: r.hata || null, deneme: r.deneme }; };
-  const botlar = {};
-  for (const ad of BINDIRME_ADLAR) botlar[ad] = await tek(saglikBotlar[ad]);
-  const sonuc = { bot: botlar.hucum, botlar, sunucu: await tek(saglikSunucu) };
-  const hepsi = [...BINDIRME_ADLAR.map(a => [botEtiketi(a), botlar[a]]), ['sunucu', sonuc.sunucu]];
-  const herhangi = hepsi.some(([, x]) => x.ayarli);
-  const hepsiOk = hepsi.every(([, x]) => !x.ayarli || x.ok);
-  if (herhangi) db.addLog(hepsiOk ? 'SUCCESS' : 'WARN', `Sağlık sinyali testi: ${hepsi.map(([a, x]) => `${a} ${x.ayarli ? (x.ok ? 'gönderildi' : `başarısız (${x.hata})`) : 'ayarlı değil'}`).join(' · ')}`);
-  res.status(!herhangi ? 400 : 200).json({ success: herhangi && hepsiOk, sonuc,
-    error: !herhangi ? 'Ping URL\'si girilmemiş (Ayarlar → Sağlık sinyali).' : (hepsiOk ? null : 'En az bir ping gönderilemedi — URL\'yi ve internet bağlantısını kontrol edin.') });
-});
+SAGLIK_UCLARI.testUclari();   // C1 (75.0): POST /api/saglik/test, GET /api/saglik/durum, sunucu kalp atışı (healthchecksSunucuUrl) — lib/sunucu/saglikUclari.js
 
-app.get('/api/saglik/durum', (req, res) => {
-  res.json({ success: true, bot: saglikBot.durum(), botlar: Object.fromEntries(BINDIRME_ADLAR.map(a => [a, { ad: botEtiketi(a), ...saglikBotlar[a].durum() }])),
-    sunucu: saglikSunucu.durum(), telegramKomut: telegramYoklayici.durum() });
-});
-
-/**
- * SUNUCU KALP ATIŞI (healthchecksSunucuUrl ayarlıysa): açılıştan 1 dk sonra, sonra her 10 dk'da
- * bakılır — son BAŞARILI ping 1 saatten eskiyse bir ping. Ağ hatası 10 dk sonra yeniden denenir.
- */
-// O9 (61.8): 23 saat → 1 saat — sunucu ölümü bir gün sonra değil ~2 saatte fark edilir (healthchecks period 1 sa, tolerans 1 sa).
-const SUNUCU_PING_ARALIK = 3600e3;
-let sunucuPingMesgul = false;
-async function sunucuKalpAtisi() {
-  // Araştırma modunda ping YOK: başka makinedeki gerçek sunucu çökmüşken buradan giden ping onu "yaşıyor" gösterirdi.
-  if (ARASTIRMA_MODU || sunucuPingMesgul || !saglikSunucu.ayarli()) return;
-  if (saglikSunucu.sonBasari && Date.now() - saglikSunucu.sonBasari < SUNUCU_PING_ARALIK) return;
-  sunucuPingMesgul = true;
-  try { await saglikSunucu.ping('basari'); } finally { sunucuPingMesgul = false; }
-}
-setTimeout(() => { sunucuKalpAtisi(); }, 60 * 1000).unref();
-setInterval(() => { sunucuKalpAtisi(); }, 10 * 60 * 1000).unref();
-
-/**
- * TELEGRAM KOMUTLARI (lib/telegramKomut.js) — YALNIZ OKUMA: /durum /pozisyonlar /ozet /saglik /yardim … + 74.0 /menu (düğmeli).
- * Emir veren / botu başlatan-durduran komut BİLİNÇLİ OLARAK YOK. Yalnız Ayarlar'daki chat id'den gelen
- * mesaja cevap verilir. Telegram kapalıyken yoklama ağ isteği yapmaz (30 sn'de bir ayara bakar).
- */
-const { TelegramYoklayici } = require('./lib/telegram');
-const { komutIsleyici } = require('./lib/telegramKomut');
-const SUNUCU_BASLANGIC = Date.now();
-/** /ileri ve menü "İleri test" (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz. */
-function ileriBilgisi() {
-  const HD = require('./lib/ileri/hucumDengeEsikleri');
-  const ilk = '2026-10-07';
-  return { demo: demoKabulOzet.ozet(), bollingerHukum: '2027-10-07 (düşüş olayı yoksa 2028-10-07)',
-    kontrol: HD.UFUKLAR.map(g => ({ gun: g, tarih: new Date(Date.parse(ilk + 'T00:00:00Z') + g * 864e5).toISOString().slice(0, 10) })) };
-}
-/**
- * 74.0 TELEGRAM MENÜSÜ (lib/telegramMenu.js): /menu tek mesaj + düğmeler (callback_query → aynı mesaj düzenlenir). YALNIZ OKUR;
- * yazma işi için düğme paneli açar (Ayarlar › Bildirimler › Panel adresi + rota), işlem orada acil PIN ile. TEK İSTİSNA: "1 saat
- * sessize al" → BILDIRIM.geciciSessiz (kritik olmayanlar 60 dk bekler). Tutarlar gizli (yalnız yüzde). Sağlayıcılar salt okur.
- */
-let telegramKomutIsle = null;
-const TG_MENU = require('./lib/telegramMenu').olustur({
-  anahtarFn: () => engine.telegram.botToken,
-  panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null,
-  surum: APP_VERSION, baslangic: SUNUCU_BASLANGIC,
-  botlar: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean),
-  golgeHarita: () => isletim.golgeOku(GOLGE_DOSYA),
-  komutMetni: (k) => (telegramKomutIsle ? telegramKomutIsle(k) : Promise.resolve('Komut işleyici hazır değil.')),
-  sorunlar: () => sorunlarHesapla(),
-  bilinenler: () => bilinenSirlar(),
-  portfoy: () => {
-    let pm = null;
-    try { const o = portfoyum.ozetKur(); if (o.seri && o.seri.length) pm = o.getiri.USD; } catch { /* Portföyüm yok */ }
-    const modeller = [];
-    try {
-      const DF = require('./lib/tasarimci/defter'), MD = require('./lib/tasarimci/model'), BA = require('./lib/botAdlari');
-      const gs = DF.oku('gunluk').satirlar;
-      for (const m of MD.sabitleme().modeller) {
-        const st = gs.filter(s => s.model === m.id);
-        const met = MD.metrik(st);
-        if (!met.gun) continue;
-        const tl = m.id === 'm-bist-m10' ? MD.metrik(st, 'endeksTl') : null;
-        modeller.push({ ad: BA.ad(m.id) || m.ad, toplam: met.toplam, para: 'USD', bas: met.bas, toplamTl: tl && tl.gun ? tl.toplam : null });
-      }
-    } catch { /* model defteri yok */ }
-    return { portfoyum: pm, modeller };
-  },
-  golge: () => require('./lib/golgeOzet').satirlar(),
-  ileri: () => ileriBilgisi(),
-  piyasa: () => ({ hafta: piyasaBaglami.hafta(), kartlar: piyasaBaglami.ozet().kartlar }),
-  bilanco: () => { const d = bildirimUreticileri ? bildirimUreticileri.durum() : null; return d && d.bilanco ? d.bilanco.sonOzet : null; },
-  guncelleme: () => guncelleme.durumOku(__dirname),
-  makineler: () => (bildirimUreticileri ? bildirimUreticileri.durum().makine : null),
-  bildirim: () => { const v = BILDIRIM.gorunum(0); return { sessiz: v.sessiz, gecici: v.sessiz.gecici, turler: v.katalog.map(t => ({ ad: t.ad, acik: t.acik })) }; },
-  // TEK YAZMA İSTİSNASI (kullanıcı kararı 2026-10-24): kritik olmayan bildirimler 60 dk bekler; kritikler asla susmaz.
-  sessizAl: (dk) => { const r = AYAR_GECMISI.baglamla({ kaynak: 'telegram', uc: 'Telegram menüsü (1 saat sessize al)' }, () => BILDIRIM.geciciSessiz(dk)); db.addLog('INFO', `🔕 Telegram'dan ${dk} dk sessize alındı — kritik olmayan bildirimler ${new Date(r.bitis).toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' })}'e kadar bekler`); return r; },
-});
-// Alarm / uyarı mesajlarının düğmeleri (Ayrıntı · Panelde çöz ↗ · 1 saat sessize al) — imza anahtarı bot jetonundan türetilir.
-engine.telegram.klavyeFn = (bag) => TG_MENU.bildirimKlavyesi(bag);
-const telegramYoklayici = new TelegramYoklayici({
-  notifierFn: () => engine.telegram,
-  offsetDosya: yollar.veri('telegram-offset.json'),
-  kaydet: (sv, m) => db.addLog(sv, `[TELEGRAM] ${m}`),
-  engel: () => TELEGRAM_GELISTIRME_ENGELI,
-  menu: TG_MENU,
-  isleyici: telegramKomutIsle = komutIsleyici({
-    menu: TG_MENU,
-    surum: APP_VERSION, baslangic: SUNUCU_BASLANGIC,
-    portfoyBotlari: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]),
-    bildirici: portfoyBildirici,
-    get yoklayici() { return telegramYoklayici; },
-    saglik: { bot: saglikBot, botlar: saglikBotlar, sunucu: saglikSunucu },   // 68.8: bot başına check
-    // 73.7 /teshis: Sorun merkezi kartları (lib/sorunlar.js) — etkin sorunlar + ilk 2 adım, sır temizlenmiş.
-    teshis: () => SORUN.telegramTeshis(sorunlarHesapla(), { panelAdresi: (config.telegram && config.telegram.panelAdresi) || null, bilinenler: bilinenSirlar() }),
-    // /ileri (denetim A-20): ileri test ara durumu — /api/ileri/kabul ile aynı kaynaklar, hüküm yazmaz.
-    ileri: () => ileriBilgisi(),
-  }),
-});
-
-// Test Telegram Endpoint
-app.post('/api/telegram/test', async (req, res) => {
-  try {
-    const result = await engine.telegram.sendMessageDetailed(
-      '<b>🔔 Pusula Test Bildirimi</b>\n\nTelegram entegrasyonu başarıyla çalışıyor! 🚀'
-    );
-
-    if (result.ok) {
-      db.addLog('SUCCESS', 'Telegram test mesajı başarıyla gönderildi.');
-      return res.json({ success: true, message: 'Test mesajı gönderildi' });
-    }
-
-    db.addLog('WARN', `Telegram test mesajı gönderilemedi: ${result.error}`);
-    res.status(400).json({ success: false, error: result.error });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+/** TELEGRAM KOMUTLARI + 74.0 MENÜ (YALNIZ OKUMA) ve POST /api/telegram/test — ayrıntı lib/sunucu/bildirimKurulum.js telegram(). */
+const { telegramYoklayici } = BILDIRIM_KURULUM.telegram();   // C1 (75.0)
 
 // Start HTTP Server
 const PORT = process.env.PORT || 3000;
@@ -3338,9 +1957,9 @@ server.listen(PORT, HOST, () => {
   if (ARASTIRMA_MODU) console.log('🔬 ARAŞTIRMA MODU: Telegram kapalı, botlar başlamaz, bot/borsa/emir POST uçları kapalı.');
   else telegramYoklayici.baslat();
   // 73.5: bildirim üreticileri + sessiz saat özeti (dakikada bir; sessiz saat bitince bekleyenler TEK mesaj) — yalnız sunucu.
-  if (bildirimUreticileri) {
-    bildirimUreticileri.baslat();
-    if (piyasaBildirim) piyasaBildirim.baslat();
+  if (BILDIRIM_KURULUM.bildirimUreticileri) {
+    BILDIRIM_KURULUM.bildirimUreticileri.baslat();
+    if (BILDIRIM_KURULUM.piyasaBildirim) BILDIRIM_KURULUM.piyasaBildirim.baslat();
     const sessizT = setInterval(() => { BILDIRIM.sessizBosalt({ telegram: (m) => (engine.telegram.enabled && engine.telegram.botToken && engine.telegram.chatId ? engine.telegram._gonderHam(m) : Promise.resolve({ ok: true })) }).catch(() => null); }, 60 * 1000);
     if (sessizT.unref) sessizT.unref();
   }

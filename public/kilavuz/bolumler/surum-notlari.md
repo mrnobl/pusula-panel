@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.0 — İç düzenleme: sunucu programının bölünmesi sürüyor (2026-10-25) {#s75-0}
+
+- **Görünür değişiklik yok.** Sunucu programının en büyük dosyasının parçalara bölünmesinin ikinci adımı: **ayar ve gizli anahtar saklama**, **Ayarlar** uçları, **Sağlık** (öz denetim, ikinci uyarı kanalı, olay raporu, veri kalitesi, sağlık sinyali), **Sorun merkezi** ve sorun araçları, **bildirimler** ve **Telegram komutları**, **ileri test** ile **Portföyüm**, **İşlem defterim**, **Anahtarlar**, portföy tasarımcısı ve **ayar geçmişi** uçları ayrı dosyalara taşındı.
+- Panelin bütün düğmeleri, yanıtları, yetki kuralları (telefon, geliştirme bilgisayarı, araştırma kopyası) ve sıraları **aynı**; bunu uç listesinin birebir karşılaştırması, eski ve yeni sürümün yan yana yanıt karşılaştırması ve güvenlik testleri doğruluyor. **Botların kodu ve kararları değişmedi.**
+- Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 74.9 — İleri test: Kairos 10× gölge hesabı (2026-10-25) {#s74-9}
 
 - **Yeni: [Kairos 10× gölge hesabı](#/kilavuz/ileri-test/kairos-10x)** (İleri test › Kairos 10× gölge). Kairos demo botunun demo kabul başlangıcından (7 Ekim 2026) bu yana yaptığı **gerçek işlemler** kâğıt üstünde kopyalanır: BTC ayağı aynen, Donchian + DCA kolu **3× yerine 10×** (miktar, ücret ve funding 10/3 büyür), aynı başlangıç sermayesi. **Emir yok, para yok** — gölge Kairos'un dosyalarını yalnız okur; demo kabul testi ve Kairos'un kararları etkilenmez.
