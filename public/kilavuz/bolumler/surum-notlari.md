@@ -2,6 +2,18 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.4 — Para çıkışı "Bu ben değilim" ve giriş hatırlatması (2026-10-25) {#s76-4}
+**"Bu ben değilim".** Onay bekleyen bir para çıkışını siz yapmadıysanız Sorunlar'daki kartta artık ikinci bir araç var: **Bu ben
+değilim — reddet** (acil PIN + **BEN DEĞİLİM**). Bot durmuş kalır, hareket "reddedildi — güvenlik" olarak işaretlenir ve hesaplara
+katılmaz; Telegram'a "Hesabınızdan sizin yapmadığınız para çıkışı var — borsa hesabınızı ve API anahtarlarınızı hemen kontrol edin"
+alarmı gider ve Sorunlar'da kırmızı kart kalır. Hareketin sizin olduğunu sonradan anlarsanız **Hareket benimmiş — onayla** ile bot
+yeniden çalışır.
+
+**Giriş hatırlatması.** Onay bekleyen para girişi için Telegram'a günde bir hatırlatma gelir (tutar yazılmaz).
+
+**Kairos demo.** 2026-12-10'dan sonra para akışı onayı Kairos demo botta da geçerli olur (kabul süresince yalnız haber).
+Bkz. [Para hareketi onayınızı bekliyor](#/kilavuz/sorun-giderme/para-akisi-onay).
+
 ## 76.3 — OKX demo botu hazırlığı (2026-10-25) {#s76-3}
 **OKX botu hazırlığı (kâğıtta).** Ayarlar › Botlar'da yeni bot kurarken artık borsa seçilebiliyor (Binance ya da OKX); listede "Kairos
 tipi — OKX (demo hazırlığı)" şablonu da var. OKX botu kâğıt hesapta OKX'in pazar kurallarıyla çalışır; kararlarını Kairos'la aynı

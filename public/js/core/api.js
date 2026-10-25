@@ -66,7 +66,7 @@
   };
   let kademe = ilkKademe();
   // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları — hepsi PIN'li.
-  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay)\/uygula$)/;
+  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet)\/uygula$)/;
   const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da) — bu işlem sunucudaki panelden yapılır.';
 
   /**

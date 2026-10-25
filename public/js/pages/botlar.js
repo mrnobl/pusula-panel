@@ -465,12 +465,22 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   function paraAkisiBandi(d) {
     const pa = d.bot.paraAkisi;
     const cik = pa.bekleyen.filter(x => x.tutar < 0);
-    const t = pa.bekleyen.map(x => `${x.tutar > 0 ? '+' : ''}${D().para(x.tutar)} USDT`).join(', ');
+    const t = pa.bekleyen.map(x => `${x.tutar > 0 ? '+' : ''}${D().para(x.tutar)} USDT${x.ret ? ' (reddedildi — güvenlik)' : ''}`).join(', ');
+    // 76.4 "Bu ben değilim": reddedilen çıkış → kırmızı bant (bot durmuş kalır; yalnız bilinçli onayla sürer).
+    if (cik.some(x => x.ret)) {
+      return el('div', { class: 'bot-dur-bandi', role: 'alert' }, [
+        el('div', { class: 'bot-dur-metin' }, [
+          el('strong', { text: 'Sizin yapmadığınız para çıkışı — bot durdu (güvenlik)' }),
+          el('div', { text: `Hareket: ${t}. Hesaplara katılmadı. Borsa şifrenizi, iki adımlı doğrulamayı ve API anahtarlarınızı hemen yenileyin.` }),
+          el('div', { class: 'hint hint-sm mb-0' }, [el('span', { text: 'Hareket sonradan sizin çıkarsa bilinçli olarak onaylayın (PIN + ONAY) · ' }), el('a', { href: '#/sorunlar', text: 'Sorunlar' })]),
+        ]),
+      ]);
+    }
     return el('div', { class: 'bot-dur-bandi bot-gk-bandi', role: 'status' }, [
       el('div', { class: 'bot-dur-metin' }, [
         el('strong', { text: cik.length ? 'Onaysız para çıkışı — yeni işlem açmıyor' : 'Para girişi onayınızı bekliyor' }),
         el('div', { text: cik.length ? `Bekleyen hareket: ${t}. Açık pozisyonların stopu yerinde.` : `Bekleyen hareket: ${t}. Bot sürüyor; onaylanana kadar bu para hesaba katılmıyor.` }),
-        el('div', { class: 'hint hint-sm mb-0' }, [el('span', { text: 'Siz yaptıysanız onaylayın (PIN + ONAY) · ' }), el('a', { href: '#/sorunlar', text: 'Sorunlar' })]),
+        el('div', { class: 'hint hint-sm mb-0' }, [el('span', { text: cik.length ? 'Siz yaptıysanız onaylayın (PIN + ONAY); siz değilseniz "Bu ben değilim" (PIN + BEN DEĞİLİM) · ' : 'Siz yaptıysanız onaylayın (PIN + ONAY) · ' }), el('a', { href: '#/sorunlar', text: 'Sorunlar' })]),
       ]),
     ]);
   }
