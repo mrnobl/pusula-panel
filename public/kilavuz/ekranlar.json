@@ -6878,11 +6878,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 53734,
+        "bayt": 53626,
         "olcek": 1,
-        "ozet": "13a5ddff7d889e4830a6907cbbb70983d713c32665a1c338e7a94be70db46011",
-        "genel": "a4fced862d1016f543cef3b5843e7e050ac907bb87f91d8957137da1d6f1cce0",
-        "surum": "74.3",
+        "ozet": "4bbc99c7ed5323299db7a84fea263ff1f16bebc72bb7415cf072d6bca3bc89c2",
+        "genel": "da82cd49a8982914d364c6497fd1ee612e808b2b07976ffbffa669f05adda80a",
+        "surum": "74.4",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -8414,12 +8414,12 @@
         "dosya": "bot-performans-1400.webp",
         "en": 1400,
         "boy": 1150,
-        "bayt": 73912,
+        "bayt": 74998,
         "olcek": 1,
-        "ozet": "5b54e91d3a952a945cd6cb813190dc4a84b80910046c8b4b10d815360952180a",
-        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
-        "surum": "73.0",
-        "tarih": "2026-10-23",
+        "ozet": "25f2cd3443d704f20a1a59666d8786fe8dd33cf9046653d83a220d0674640afc",
+        "genel": "da82cd49a8982914d364c6497fd1ee612e808b2b07976ffbffa669f05adda80a",
+        "surum": "74.4",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#botPerformansKart .bp-ozet",

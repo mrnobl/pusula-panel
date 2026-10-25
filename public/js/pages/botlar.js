@@ -39,10 +39,37 @@
   const doc = global.document;
   const D = () => AG.botDil;
   /** 72.0: görünen ad KİMLİKTEN (js/core/sozluk.js AG.botAd) — sunucunun adGorunen metnine güvenilmez. */
-  const AD = (k) => (AG.botAd && AG.botAd.ad(k)) || (k === 'hucum' ? 'Kairos' : k === 'denge' ? 'Tao' : String(k || ''));
+  const AD = (k) => (AG.botAd && AG.botAd.ad(k)) || (k === 'hucum' ? 'Kairos' : k === 'denge' ? 'Tao' : (BOT_BILGI[k] && BOT_BILGI[k].adGorunen) || String(k || ''));
   const GA = (b) => (AG.botAd ? AG.botAd.gorunen(b) : (b && (GA(b) || b.ad)) || '');
 
+  /**
+   * 74.4 (A1 2a): bot listesi KAYITTAN — GET /api/botlar (live/botlar/<kimlik>.json). Dizi yerinde güncellenir (dışa verilen ADLAR
+   * aynı nesne kalır); liste alınamazsa son bilinen (ilk açılışta Kairos, Tao). Görünen ad kimlikten (AG.botAd), bilinmeyen kimlikte API'nin adGorunen'i.
+   */
   const ADLAR = ['hucum', 'denge'];
+  const BOT_BILGI = {};   // kimlik → /api/botlar satırı (adGorunen, aciklama, sablon, kayit durumu)
+  let listeZamani = 0;
+  /** Saf: /api/botlar yanıtı → geçerli kimlik listesi (boş/bozuk → null). */
+  function listeAyikla(r) {
+    if (!r || !r.success || !Array.isArray(r.botlar)) return null;
+    const l = r.botlar.map(b => String((b && b.kimlik) || '')).filter((k, i, a) => /^[a-z][a-z0-9]{1,15}$/.test(k) && a.indexOf(k) === i);
+    return l.length ? l : null;
+  }
+  async function listeYukle(zorla) {
+    if (!AG.api || typeof AG.api.botlar !== 'function') return ADLAR;
+    if (!zorla && listeZamani && Date.now() - listeZamani < 60000) return ADLAR;
+    try {
+      const r = await AG.api.botlar();
+      const l = listeAyikla(r);
+      if (l) {
+        ADLAR.length = 0; ADLAR.push(...l);
+        for (const b of r.botlar) if (b && l.includes(b.kimlik)) BOT_BILGI[b.kimlik] = b;
+        listeZamani = Date.now();
+        if (!ADLAR.includes(secili)) secili = ADLAR[0];
+      }
+    } catch (e) { /* liste alınamadı — son bilinen liste */ }
+    return ADLAR;
+  }
   /** 68.8: Botlar › Portföy botları (js/pages/portfoyBotlari.js) — Ayarlar › Botlar özetinde salt bağlantı satırı. */
   const PORTFOY_BOTLARI = ['m-qqq-m10', 'm-bist-m10', 'm-837'];
   const GRAFIK_MS = 5 * 60000;
@@ -300,6 +327,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   async function ayarYukle() {
     if (!bul('ayarBotlar') && !bul('ayarBotOzet')) return;
     if (!sonDurumlar) { ayarlarCiz(null); ayarOzetCiz(null); }
+    await listeYukle(false);
     sonDurumlar = await Promise.all(ADLAR.map(a => AG.api.bindirmeDurum(a).catch(e => ({ success: false, error: e.message }))));
     ayarlarCiz(sonDurumlar); ayarOzetCiz(sonDurumlar);
     const ilk = sonDurumlar.find(d => d && d.bot);
@@ -472,7 +500,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const buGece = [ka.metin, rj.acik == null ? null : rj.metin, kr.sorun ? `koruma stopu: ${kr.metin}` : null].filter(Boolean).join(' · ');
     return [
       el('div', { class: `bot-bas bot-r-${ad}` }, [
-        el('div', { class: 'bot-simge', 'aria-hidden': 'true', text: SIMGE[ad] || '?' }),
+        el('div', { class: 'bot-simge', 'aria-hidden': 'true', text: SIMGE[ad] || String(AD(ad) || '?').charAt(0).toLocaleUpperCase('tr-TR') }),
         el('div', { class: 'bot-bas-metin' }, [
           el('div', { class: 'row-inline row-wrap gap-2' }, [
             el('h3', { class: 'card-title m-0', text: AD(ad), title: AG.botAd ? AG.botAd.anlam(ad) : null }),
@@ -481,7 +509,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
             el('span', { class: modAd === 'canlı hesap' ? 'badge badge-danger' : 'badge', text: modAd === 'demo' ? 'Binance demo — canlı hesap değil' : modAd === 'canlı hesap' ? 'CANLI HESAP' : 'kâğıt hesap — canlı hesap değil' }),
             yardim(modAd === 'demo' ? 'demo' : modAd === 'canlı hesap' ? 'gercekPara' : 'kagit')
           ]),
-          el('p', { class: 'hint mb-0', text: KURAL[ad] || '' }),
+          el('p', { class: 'hint mb-0', text: KURAL[ad] || (BOT_BILGI[ad] && BOT_BILGI[ad].aciklama) || '' }),
           el('p', { class: 'mb-0 bot-bu-gece' }, [el('strong', { text: 'Son karar: ' }), el('span', { text: buGece })])
         ]),
         el('div', { class: 'bot-bas-dugme' }, [telefonMu() ? null : baslatDurdur(ad, d), acilFren(ad, d)])
@@ -937,6 +965,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     if (!bul('botKartlari')) return;
     if (!zorla && Date.now() - durumZamani < 15000) return;
     durumZamani = Date.now();
+    await listeYukle(zorla);
     const ds = await Promise.all(ADLAR.map(a => AG.api.bindirmeDurum(a).catch(e => ({ success: false, error: e.message }))));
     ds.forEach((d, i) => kartCiz(ADLAR[i], d));
     sonDurumlar = ds;
@@ -986,5 +1015,5 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye, islemler: r.islemler };
     defterCiz(ad); grafikCiz(ad, true); sayilarCiz(ad); aylikCiz(ad);
   }
-  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  AG.pages.botlar = { _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);

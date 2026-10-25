@@ -271,6 +271,8 @@
     stratejiOlc: (anahtar, semboller) => gonder('/api/strateji/olc', { anahtar, semboller }),
 
     /* ── Hücum / Denge (bindirme; yalnız kâğıt borsa) ─────────────────── */
+    /** 74.4: bot listesi kayıttan (live/botlar) — Botlar sayfası sekmeleri ve Ayarlar › Botlar bu sırayla. */
+    botlar: () => al('/api/botlar'),
     bindirmeDurum: (ad) => al(`/api/bindirme/${q(ad)}/durum`),
     bindirmeEylem: (ad, eylem) => tetikle(`/api/bindirme/${q(ad)}/${q(eylem)}`),
     /** Telefondan acil durdurma (60.5): gövdede acil PIN + onay "DURDUR" (sunucu lib/acilPin.js denetler). */

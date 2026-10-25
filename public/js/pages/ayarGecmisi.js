@@ -16,7 +16,10 @@
   const doldur = (...a) => AG.dom.doldur(...a);
   const bul = (id) => (doc && doc.getElementById ? doc.getElementById(id) : null);
 
-  const TUR_AD = { config: 'Ayar', bildirim: 'Bildirim', sermaye: 'Model sermayesi', anahtar: 'Anahtar' };
+  const TUR_AD = { config: 'Ayar', bildirim: 'Bildirim', sermaye: 'Model sermayesi', anahtar: 'Anahtar', bot: 'Bot kaydı' };
+  /** 74.4: bot kaydı alanları (live/botlar/<kimlik>.json; yol "hucum.mod"). */
+  const BOT_ALAN = { mod: 'mod', sermayeTavani: 'kâğıt sermaye üst sınırı', demoSermayeTavani: 'demo sermaye üst sınırı', canliSermayeTavani: 'canlı hesap sermaye üst sınırı',
+    kagitBakiye: 'kâğıt başlangıç bakiyesi', k: 'coin sepeti (k)', kucukSermaye: 'küçük sermaye (Kairos-S)', btcAyak: 'BTC ayağı', tavanAkis: 'tavan para akışını izler' };
   const KAYNAK_AD = { panel: 'Panel', telefon: 'Telefon', telegram: 'Telegram', arac: 'Araç', sistem: 'Sistem' };
   /** Sık alanların okunur adları (bilinmeyen alan yolu olduğu gibi). */
   const ALAN_AD = {
@@ -43,6 +46,8 @@
     const m = /^turler\.([a-z]+)\.(acik|kanal|sessiz|metin)$/.exec(String(yol || ''));
     if (tur === 'bildirim' && m) return `Bildirim "${m[1]}": ${{ acik: 'açık', kanal: 'kanal', sessiz: 'sessiz saat davranışı', metin: 'metin şablonu' }[m[2]]}`;
     if (/^anahtar\./.test(yol)) return `Anahtar: ${String(yol).slice(8)}`;
+    const mb = tur === 'bot' ? /^([a-z][a-z0-9]{1,15})\.(.+)$/.exec(String(yol || '')) : null;
+    if (mb) return `${(AG.botAd && AG.botAd.ad(mb[1])) || mb[1]}: ${BOT_ALAN[mb[2]] || mb[2]}`;
     const mm = /^modeller\.([^.]+)\.(tutar|para|baslangicGunu)$/.exec(String(yol || ''));
     if (mm) return `Model sermayesi ${mm[1]}: ${{ tutar: 'tutar', para: 'para birimi', baslangicGunu: 'başlangıç günü' }[mm[2]]}`;
     return String(yol || '');

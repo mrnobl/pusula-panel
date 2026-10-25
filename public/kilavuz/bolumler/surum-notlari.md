@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.4 — Bot kaydı: her bot için ayrı dosya (2026-10-25) {#s74-4}
+
+- **Yeni: [Bot kaydı](#/kilavuz/botlar/bot-kaydi).** Kairos ve Tao'nun tanımı artık kendi dosyalarında (`live/botlar/hucum.json`, `live/botlar/denge.json`): kural, mod, mod başına sermaye üst sınırı, kâğıt bakiyesi, coin sepeti, küçük sermaye, BTC ayağı ve bağlı borsa hesabı (Anahtarlar'daki hesap adıyla). **Kayıtta sır yok** — anahtarlar ve sağlık adresi yerinde.
+- **İlk açılışta kendiliğinden geçiş:** ayarlar eski yerinden kayda geçirilir; kayıttan üretilen ayar eskisiyle birebir aynı değilse geçirilmez, botlar eski yoldan çalışır ve uyarı yazılır.
+- **Botlar sayfasındaki bot listesi** artık kayıtlardan geliyor (görünüm aynı). Değişiklikler hem kayda hem eski ayar dosyasına yazılır — eski sürüme dönmek güvenli. [Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde yeni tür: **Bot kaydı**.
+- **Davranış aynı:** iç adlar, bot klasörleri, demo hesabı, sağlık adresi, gölge karşılaştırması ve kararlar değişmedi; eski ve yeni kodla kuru deneme ve 120 günlük geçmiş yeniden oynatma birebir aynı çıktı. Kairos'un demo kabulü (2026-12-09) sürüyor.
+- Panelden yeni bot kurmak sonraki sürümde. Bot kodu değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.3 — Veri kalitesi kapısı (2026-10-25) {#s74-3}
 
 - **Yeni: [Sistem › Sağlık › Veri kalitesi](#/kilavuz/saglik/veri-kalitesi).** Botun günlük kararından önce girdileri tek kapıdan geçer: **vadeli ↔ spot BTC günlük kapanışı** (iki kaynak, ikisi de Binance; fark %1,5 hafif, %3 ağır), mark fiyatı, hesap bakiyesi; karardan sonra coin evreni, kol coinlerinin mumları ve funding. Her günlük çalışma bot klasöründe `veri-kalitesi.jsonl` dosyasına bir satır yazar (yalnız eklenir, yedeğe girer).

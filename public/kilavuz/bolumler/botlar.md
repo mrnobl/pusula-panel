@@ -34,6 +34,18 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 
 **Yalnız görünen ad değişti.** Botların kuralları, adresleri (`#/botlar/hucum`, `#/botlar/denge`, `#/botlar/m-qqq-m10`, `#/botlar/m-bist-m10`, `#/botlar/m-837`), kayıtları, kâğıt/demo hesapları ve geçmişi aynıdır. Araştırma kayıtlarında geçen deneme numaraları (ör. **deneme 837**) da aynı kalır; eski sürüm notlarında ve eski kayıtlarda botlar eski adlarıyla geçer.
 
+## Bot kaydı (her bot için ayrı dosya) {#bot-kaydi}
+
+74.4'ten beri her botun tanımı kendi dosyasında durur: sunucunun veri klasöründe `live/botlar/hucum.json` (Kairos) ve `live/botlar/denge.json` (Tao). Botlar sayfasındaki bot listesi ve sekmeler bu kayıtlardan gelir.
+
+- **Kayıtta neler var:** botun iç adı, hangi kuralla çalıştığı (Kairos ya da Tao kuralı), modu (kâğıt / demo / canlı), her mod için sermaye üst sınırı, kâğıt başlangıç bakiyesi, coin sepeti büyüklüğü, küçük sermaye seçimi, BTC ayağı ve hangi borsa hesabına bağlı olduğu (Ayarlar › Anahtarlar'daki hesabın **adıyla**: "Binance demo", "Binance canlı").
+- **Kayıtta sır yok:** API anahtarı ve sağlık ping adresi kayda yazılmaz; ikisi de eskisi gibi şifreli anahtar dosyasında durur.
+- **İlk açılışta kendiliğinden:** Pusula 74.4 ilk açıldığında Kairos ve Tao'nun ayarlarını eski yerinden (ayar dosyası) okuyup kayda geçirir. Geçirmeden önce kayıttan üretilen ayarın eskisiyle **birebir aynı** olduğunu denetler; tutmazsa kayda geçirmez, botlar eski yoldan çalışmaya devam eder ve günlüğe uyarı yazılır.
+- **Botlar aynı:** iç adlar, bot klasörleri (`hucum`, `hucum-demo`, `denge` …), demo hesabı, sağlık ping adresi, gölge karşılaştırması ve botların kararları değişmedi. Kairos'un demo kabulü (2026-12-09) aynen sürüyor.
+- **İki yere birden yazılır:** mod, küçük sermaye, kâğıt sıfırlama gibi değişiklikler hem kayda hem eski ayar dosyasına yazılır; eski sürüme dönülse de ayarlar kaybolmaz. İkisi bir gün farklı olursa (ör. ayar dosyası elle düzenlendiyse) **ayar dosyası kazanır** ve kayıt ona göre düzeltilir.
+- Kayıt değişiklikleri [Ayarlar › Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde **Bot kaydı** türüyle görünür (geri alma botun kendi ekranından). Kayıtlar yedeğe ve taşıma dosyasına girer.
+- Panelden yeni bot kurmak sonraki sürümde gelecek; bu sürüm yalnız mevcut iki botu kayda geçirir.
+
 ## Ne zaman kullanılır {#ne-zaman}
 
 - Sabah: bot gece ne yaptı, ne kadar kazandı, bir sorun var mı.

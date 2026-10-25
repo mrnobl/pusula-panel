@@ -5,7 +5,7 @@
  * karşılaştırır. Botun veri dizininin KOPYASIYLA çalışır — gerçek bot dosyalarına, gerçek hesaba dokunmaz.
  *
  *   node scripts/kuru-deneme.js --kok <kod kökü> --dizin <bot verisi kopyası> --ad denge --mod kagit --btcAyak coklu
- *        --tavan 10000 --k 15 --bakiye 10000 [--kucuk oto]
+ *        --tavan 10000 --k 15 --bakiye 10000 [--kucuk oto] [--strateji denge]
  *
  * Kip: mod 'kagit' → "karar": kâğıt borsa kopyası + anahtarsız piyasa verisi (ccxt, yalnız okuma) → mutabakat + calistir({kuru}).
  *      mod 'demo' / 'canli' → "yükleme": bot yalnız kurulur ve özeti alınır; hesaba bağlanılmaz (demo kabul: demo hesaba başka
@@ -44,13 +44,16 @@ async function main() {
   const ad = deger('ad'), mod = deger('mod', 'kagit'), btcAyak = deger('btcAyak', 'spot');
   const tavan = +deger('tavan', 10000), k = +deger('k', 15), bakiye = +deger('bakiye', 10000);
   const kucukHam = deger('kucuk', 'oto');
+  // 74.4 (A1 2a): strateji (STRATEJILER anahtarı) — yoksa ad. Kairos/Tao'da ad ile aynı → bot ayarına hiç yazılmaz (eski lib kopyası zaten yok sayar).
+  const strateji = deger('strateji', null);
+  const stratejiAyar = strateji && strateji !== ad ? { strateji } : {};
   const kucukSermaye = kucukHam === 'true' ? true : kucukHam === 'false' ? false : 'oto';
   const L = (p) => require(path.join(kok, 'lib', ...p.split('/')));
   const { BindirmeBot } = L('live/bindirmeBot');
   const { CanliYurutucu } = L('live/yurutucu');
   const sessiz = () => {};
   const y = new CanliYurutucu({ dizin, maxEmirNominal: 3 * tavan, maxPozisyonNominal: 3 * tavan, cokluVarlik: btcAyak === 'coklu', kaydet: sessiz });
-  const bot = new BindirmeBot(y, { ad, dizin, sermayeTavani: tavan, evren: { k }, kaydet: sessiz, mod, btcAyak, bildirici: null, golgeDosya: null, saglik: null, kucukSermaye, hesapKesicisi: null, kapiFn: null });
+  const bot = new BindirmeBot(y, { ad, ...stratejiAyar, dizin, sermayeTavani: tavan, evren: { k }, kaydet: sessiz, mod, btcAyak, bildirici: null, golgeDosya: null, saglik: null, kucukSermaye, hesapKesicisi: null, kapiFn: null });
   if (mod !== 'kagit') {
     let o = null;
     try { o = bot.ozet(); } catch (e) { return yaz({ ok: false, kip: 'yukleme', hata: `özet alınamadı: ${e.message}` }); }
