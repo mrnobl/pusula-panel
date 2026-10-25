@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 31 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 33 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -36,6 +36,7 @@ Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun**
 | Son yoklama | Son yoklamanın saati ve sonrakinin. **Şimdi yokla** hemen yoklar |
 | Bot kartı | Yalnız güvenli kipteki ya da kapalı bot için çıkar: sebep, **Sebebi okudum ve düzelttim** kutusu ve **Botu yeniden aç** / **Güvenli kipi kaldır** düğmesi. Kutu işaretlenmeden düğme çalışmaz |
 | Denetim satırı | Nokta (yeşil tamam · sarı uyarı · kırmızı hata · gri ölçülemedi), denetimin adı, kademesi, son sonuç ve varsa son onarım. Sorunlu satırlar grubun üstünde durur. 73.7: her satırın altında **Sorun olursa / Ne yapmalı** satırı (Pusula ne yapar, siz ne yaparsınız) ve [Sorun giderme](#/kilavuz/sorun-giderme) bağlantısı; sorunlu satırda [Sorunlar](#/kilavuz/sorunlar) sayfasındaki adımlara bağlantı |
+| Veri kalitesi | 74.3: kip rozeti (**İzleme kipi** / **Etkin kip**), izleme başlangıcı ve bulgu sayıları, bot başına son günlük çalışmanın sonucu, 30 günlük sayaç ve son bulgular; **Etkin kipe geç** / **İzleme kipine dön** düğmesi (yalnız sunucu bilgisayarında). Ayrıntı aşağıda: [Veri kalitesi](#/kilavuz/saglik/veri-kalitesi) |
 | Olay raporları | Bot güvenli kipe girince ya da kapanınca yazılan "kara kutu" dosyaları; adına tıklayınca iner. **Şimdi rapor al** o anın raporunu elle yazar |
 | Onarım ve olay kaydı | Son 30 gün: **ONARILDI**, **ONARILAMADI**, **GÜVENLİ KİP**, **TAMAMEN KAPANDI**, **UYARI**, **HATA**, **DÜZELDİ** |
 | Bot ne zaman tamamen kapanır | Tam kapanma ve güvenli kip sebeplerinin listesi (aşağıda) |
@@ -51,6 +52,26 @@ Sebep belirsiz ya da geçici olabilir; devam etmek risk büyütmesin diye bot **
 - Kısa internet kesintilerinin ağ hataları (zaman aşımı, bağlantı koptu, 429 / 418 geri çekilme) tekrar sayılmaz; onları **Borsa bağlantısı** ve **İnternet** denetimleri izler.
 - **Güvenli kipteyken alarm yağmuru yok (73.6):** günlük çalışma **ertelenir** ve size **tek bir bilgi iletisi** gelir ("günlük çalışma güvenli kip yüzünden ertelendi"); güvenli kip kalkınca bir de **"geçti"** iletisi. Eskiden 15 dakikada bir kırmızı "günlük çalışma yapılamadı" alarmı ve healthchecks "DOWN" e-postası geliyordu. Healthchecks'e güvenli kipte hiç sinyal gitmez; güvenli kip bir günden uzun sürerse healthchecks kendi süresinde haber verir. Ana sayfadaki "26 saattir çalışmadı" satırı güvenli kipte geçen süreyi **saymaz**.
 - **Borsa verisi şüpheliyse (veri kapısı):** mum bayat ya da anlamsız sıçrama varsa bot o gün karar vermez ve 15 dakika sonra yeniden dener. Bu bir **uyarıdır** (alarm değil); 2 saatten uzun sürerse geliştirme sohbetine yazın.
+
+## Veri kalitesi {#veri-kalitesi}
+
+74.3'ten beri botun günlük kararının **girdileri** karar anından önce tek kapıdan geçer (yukarıdaki veri kapısı aynen önce çalışır):
+
+| Denetim | Ne zaman | Hafif | Ağır |
+|---|---|---|---|
+| İki kaynak | Karardan önce | Binance vadeli ile Binance **spot** BTC günlük kapanışı %1,5'ten fazla farklı · spot okunamadı | %3'ten fazla farklı |
+| Mark fiyatı | Karardan önce | Son kapanıştan %20'den fazla uzak | Sıfır ya da geçersiz |
+| Hesap | Karardan önce | Özsermaye önceki çalışmaya göre ±%30 değişti, para yatırma/çekme kaydı yok | Bakiye geçersiz (sayı değil / negatif) |
+| Coin evreni | Karardan sonra | Bu ay güncellenemedi (eski evren) | Boş ya da beklenenin yarısından az |
+| Kol mumları | Karardan sonra | Evrenin %30'undan fazlası veri kapısından geçemedi (o coinler zaten atlanır) | — |
+| Funding | Karardan sonra (demo) | Okunamadı | — (hiçbir zaman ağır değil) |
+
+- **İzleme kipi (varsayılan):** her şey yalnız **kaydedilir** (bot klasöründe `veri-kalitesi.jsonl`, yalnız eklenir, yedeğe girer); kararlar **değişmez**. Kart izleme başlangıcını ve bulgu sayılarını gösterir; 7 gün dolunca "etkin kipe geçmek ister misiniz" der. **Kendiliğinden geçmez** — karar sizin.
+- **Etkin kip:** karardan önceki bir denetimde **ağır** bulgu olursa bot o günkü kararı erteler ve **güvenli kipe** girer (yeni işlem yok, stoplar borsada, tek bilgi iletisi). 15 dakikada bir yeniden denetler; veri temizlenince kendiliğinden çıkar ve "geçti" iletisi gelir. Karardan sonraki denetimler yalnız kayıttır.
+- **Demo kabul botu (Kairos)** 2026-12-09 sonuna kadar kip ne olursa olsun yalnız haber alır.
+- İkinci kaynak (Binance spot) okunamazsa bu yalnız **hafif** bulgudur; karar hiçbir zaman bu yüzden engellenmez. Binance hız sınırı beklemesi varsa istek atılmaz.
+- **Kip değiştirmek:** Sağlık › Veri kalitesi › **Etkin kipe geç** / **İzleme kipine dön** → onay. Yalnız sunucu bilgisayarındaki panelden; telefonda ve geliştirme bilgisayarında yalnız görüntüleme. İzleme kipine dönünce veri kalitesinin koyduğu güvenli kip hemen kalkar. Değişiklik Ayar geçmişine de yazılır.
+- Bulgu çıkınca ne yapılır: [Sorun giderme › Veri kalitesi bulgusu](#/kilavuz/sorun-giderme/veri-kalitesi).
 
 ## Sunucu bilgisayarı {#sunucu-bilgisayari}
 

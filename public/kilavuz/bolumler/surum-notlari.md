@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.3 — Veri kalitesi kapısı (2026-10-25) {#s74-3}
+
+- **Yeni: [Sistem › Sağlık › Veri kalitesi](#/kilavuz/saglik/veri-kalitesi).** Botun günlük kararından önce girdileri tek kapıdan geçer: **vadeli ↔ spot BTC günlük kapanışı** (iki kaynak, ikisi de Binance; fark %1,5 hafif, %3 ağır), mark fiyatı, hesap bakiyesi; karardan sonra coin evreni, kol coinlerinin mumları ve funding. Her günlük çalışma bot klasöründe `veri-kalitesi.jsonl` dosyasına bir satır yazar (yalnız eklenir, yedeğe girer).
+- **İlk kip İZLEME (7 gün gözlem):** bulgular yalnız kaydedilir, botların kararı **değişmez**. Kart izleme başlangıcını ve şimdiye kadarki bulgu sayılarını gösterir; 7 gün dolunca "etkin kipe geçmek ister misiniz" der — **Pusula kendiliğinden geçmez**. **Etkin kipte** ağır bulguda bot o günkü kararı erteler ve güvenli kipe girer (yeni işlem yok, stoplar borsada); bot 15 dakikada bir yeniden denetler, veri temizlenince kendiliğinden çıkar.
+- **Demo kabul botu (Kairos)** 2026-12-09 sonuna kadar her kipte **yalnız haber** alır. İkinci kaynak okunamazsa yalnız hafif bulgu — karar asla engellenmez. Funding hiçbir zaman ağır değildir.
+- Sağlık'ta yeni denetim satırı **Veri kalitesi** (sarı: hafif bulgu, tek bilgi iletisi; kırmızı: ağır bulgu ya da veri güvenli kipi); Sorunlar'da [bulgu kartı ve adımlar](#/kilavuz/sorun-giderme/veri-kalitesi). Kip değişikliği yalnız sunucu bilgisayarındaki panelden, onayla; telefonda yalnız görüntüleme. Araştırma kopyası sunucunun durumunu gösterir.
+- Mevcut veri kapısı (bayat mum, boşluk, anlamsız sıçrama) aynen çalışıyor. Bot kodu değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.2 — Ayar geçmişi ve geri alma (2026-10-25) {#s74-2}
 
 - **Yeni alt sayfa: [Ayarlar › Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi).** Panelin yazdığı her ayar değişikliği tek listede: ne zaman, hangi makinede, nereden (panel, Telegram, araç, sistem), hangi ayar, **eski → yeni**. Süzgeç: makine, tür, tarih.

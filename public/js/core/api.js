@@ -203,6 +203,11 @@
       bekleyenGonder: (pin, secimler) => gonder('/api/anahtarlar/bekleyen/gonder', { pin, onay: true, ...(secimler ? { secimler } : {}) }),
       bekleyenVazgec: (id) => gonder('/api/anahtarlar/bekleyen/vazgec', { id, onay: true })
     },
+    /* 74.3 Veri kalitesi (lib/live/veriKalitesi.js; panel Sistem › Sağlık) — durum telefonda da; kip değişimi yalnız sunucu bilgisayarından + onay */
+    veriKalitesi: {
+      durum: () => al('/api/veri-kalitesi'),
+      kip: (kip) => gonder('/api/veri-kalitesi/kip', { kip, onay: true })
+    },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {
       liste: (sorgu) => al(`/api/ayar-gecmisi${sorgu || ''}`),

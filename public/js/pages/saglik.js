@@ -27,7 +27,7 @@
   const SIRA = { tamam: 0, kapali: 0, bilinmiyor: 1, uyari: 2, hata: 3 };
   /** 73.7 (S13): denetim → Kılavuz › Sorun giderme başlığı (her satırın "ne yapmalı" bağlantısı). */
   const KILAVUZ = { surec: 'acilis-sayaci', donma: 'donma', bellek: 'bellek', disk: 'disk', paket: 'paket-guvenligi', node: 'node', saat: 'saat-farki', sir: 'sir-dosyasi', kilit: 'kilit',
-    dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', bakim: 'guvenli-kip',
+    dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', veri: 'veri-kalitesi', bakim: 'guvenli-kip',
     delist: 'delist', kayitci: 'ileriye-kayit', internet: 'internet', mutabakat: 'pozisyon-uyusmazligi', stop: 'stop-kurulamadi', marj: 'marj', zorla: 'adl-likidasyon', funding: 'funding',
     sapma: 'golge-kaymasi', maliyet: 'islem-maliyeti', tekrar: 'guvenli-kip-tekrar', kacan: 'kacan-calisma', telegram: 'telegram-gonderim', sinyal: 'saglik-sinyali' };
   /** Saf (73.7, S13): denetim satırının "ne yapmalı" modeli → { metin, kilavuz, sorunlar } (sorunlu satırda Sorunlar bağlantısı). */
@@ -187,6 +187,65 @@
     ]);
   }
 
+  /**
+   * 74.3 VERİ KALİTESİ (D4, GET /api/veri-kalitesi). Saf model (test edilir): kip, izleme bilgisi (7 gün doldu mu — OTOMATİK GEÇİŞ YOK),
+   * bot başına son çalışma, 30 gün sayacı, son bulgular.
+   */
+  let vkVeri = null;
+  const AGIRLIK_AD = { temiz: 'temiz', hafif: 'hafif', agir: 'AĞIR' };
+  function veriKalitesiModeli(v, simdi = Date.now()) {
+    if (!v || !v.success) return null;
+    const etkin = v.kip === 'etkin';
+    const iz = v.izleme || {};
+    const botlar = Object.values(v.botlar || {}).map(b => {
+      const s = b.sayac30 || {};
+      const son = b.son;
+      const durum = b.guvenliKip ? `güvenli kipte — ${String(b.guvenliKip.metin || '').replace(/^veri kalitesi: /, '')}`
+        : b.acik ? `son çalışma: ${AGIRLIK_AD[b.acik.agirlik] || b.acik.agirlik} bulgu — ${b.acik.metin}`
+          : son ? `son çalışma temiz (${saat(son.zaman, simdi)})` : 'henüz günlük çalışma kaydı yok';
+      const ton = b.guvenliKip || (b.acik && b.acik.agirlik === 'agir') ? 'p-rozet-neg' : b.acik ? 'p-rozet-warn' : 'p-rozet-pos';
+      return { ad: b.ad, adGorunen: b.adGorunen || b.ad, mod: b.mod, durum, ton,
+        kipMetin: b.dokunulmaz ? 'demo kabul — yalnız haber' : b.etkin ? 'etkin' : 'izleme',
+        sayac: `30 gün: ${s.calisma || 0} çalışma · ${s.temiz || 0} temiz · ${s.hafif || 0} hafif · ${s.agir || 0} ağır${s.guvenliKip ? ` · ${s.guvenliKip} güvenli kip` : ''}`,
+        bulgular: (b.sonBulgular || []).slice(0, 3).map(x => `${saat(x.zaman, simdi)} · ${AGIRLIK_AD[x.agirlik] || x.agirlik}: ${(x.bulgular || []).map(y => y.metin).join(' · ')}`) };
+    });
+    return { kip: v.kip, etkin, kipAd: etkin ? 'Etkin kip' : 'İzleme kipi', rozet: etkin ? 'p-rozet-warn' : 'p-rozet-pos',
+      aciklama: etkin ? 'Ağır bulguda bot güvenli kipe girer (karar ertelenir, stoplar borsada); veri temizlenince kendiliğinden çıkar. Demo kabul botu yalnız haber alır.'
+        : 'Bulgular yalnız kaydedilir; botların kararı DEĞİŞMEZ. İlk 7 gün gözlem için.',
+      izleme: iz.mesaj || null, doldu: !!iz.doldu, botlar,
+      dugme: etkin ? { kip: 'izleme', metin: 'İzleme kipine dön' } : { kip: 'etkin', metin: iz.doldu ? 'Etkin kipe geç (7 gün doldu)' : 'Etkin kipe geç' },
+      yazilabilir: v.calisiyor !== false && !(AG.api && typeof AG.api.kademe === 'function' && AG.api.kademe() === 'telefon') };
+  }
+  function veriKalitesiKarti(v, simdi) {
+    const m = veriKalitesiModeli(v, simdi);
+    if (!m) return null;
+    const dugme = el('button', { type: 'button', class: 'btn btn-secondary btn-sm', id: 'btnVkKip', disabled: m.yazilabilir ? null : 'disabled' }, [el('span', { text: m.dugme.metin })]);
+    dugme.addEventListener('click', async () => {
+      const etkine = m.dugme.kip === 'etkin';
+      const tamam = await AG.onayla({ baslik: etkine ? 'Etkin kipe geçilsin mi?' : 'İzleme kipine dönülsün mü?', tehlikeli: false,
+        metin: etkine ? 'Etkin kipte ağır bir veri bulgusunda bot o günkü kararı erteler ve güvenli kipe girer (yeni işlem yok, stoplar borsada); veri temizlenince kendiliğinden çıkar. Demo kabul botu (Kairos) 2026-12-09 sonuna kadar yine yalnız haber alır.'
+          : 'İzleme kipinde bulgular yalnız kaydedilir, karar engellenmez. Veri kalitesinin koyduğu güvenli kip varsa hemen kalkar.',
+        onay: etkine ? 'Etkin kipe geç' : 'İzleme kipine dön', iptal: 'Vazgeç' });
+      if (!tamam) return;
+      eylem(dugme, () => AG.api.veriKalitesi.kip(m.dugme.kip), etkine ? 'Veri kalitesi: etkin kip açıldı' : 'Veri kalitesi: izleme kipine dönüldü');
+    });
+    return el('section', { class: 'p-kart mt-4', id: 'saglikVeriKalitesi' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Veri kalitesi' }), el('span', { class: `p-rozet ${m.rozet}`, text: m.kipAd })]),
+      el('p', { class: 'hint hint-sm', text: `Günlük karardan önce botun girdileri denetlenir: vadeli ↔ spot BTC kapanışı (iki kaynak), mark fiyatı, hesap; karardan sonra coin evreni, kol mumları ve funding. ${m.aciklama}` }),
+      m.izleme ? el('p', { class: `oz-sebep${m.doldu ? ' p-warn' : ''}`, id: 'vkIzleme' }, [el('strong', { text: m.etkin ? 'Kip: ' : 'İzleme: ' }), el('span', { text: m.izleme })]) : null,
+      m.botlar.length ? el('ul', { class: 'oz-liste', id: 'vkBotlar' }, m.botlar.map(b => el('li', { class: 'oz-satir', 'data-bot': b.ad }, [
+        el('div', { class: 'oz-govde' }, [
+          el('div', { class: 'oz-ad-satir' }, [el('span', { class: 'oz-ad', text: GA(b) }), el('span', { class: `p-rozet ${b.ton}`, text: b.kipMetin })]),
+          el('div', { class: 'oz-ayrinti', text: b.durum }),
+          el('div', { class: 'oz-nasil', text: b.sayac }),
+          ...b.bulgular.map(x => el('div', { class: 'oz-ayrinti df-soluk', text: x })),
+        ]),
+      ]))) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Veri kalitesi kapısı bağlı bot yok.' })]),
+      el('div', { class: 'oz-bot-dugmeler' }, [dugme, el('a', { class: 'btn btn-secondary btn-sm no-underline', href: '#/kilavuz/sorun-giderme/veri-kalitesi' }, [el('span', { text: 'Kılavuz' })])]),
+      m.yazilabilir ? null : el('p', { class: 'hint hint-sm mb-0', text: 'Kip yalnız sunucu bilgisayarındaki panelden değiştirilir.' }),
+    ]);
+  }
+
   /** 69.4 İkinci uyarı kanalı: Telegram düşerse ACİL uyarı ntfy ile telefona; ikinci ölü adam sunucu susarsa ayrı bir hizmetten uyarır. */
   let kanal = null;
   function kanalKarti(v) {
@@ -237,6 +296,7 @@
           el('span', { class: `p-rozet${gr.hata ? ' p-rozet-neg' : gr.uyari ? ' p-rozet-warn' : ' p-rozet-pos'}`, text: gr.hata ? `${gr.hata} hata` : gr.uyari ? `${gr.uyari} uyarı` : `${gr.denetimler.length} denetim tamam` })]),
         el('ul', { class: 'oz-liste' }, gr.denetimler.map(d => denetimSatiri(d, simdi))),
       ]))),
+      vkVeri ? veriKalitesiKarti(vkVeri, simdi) : null,
       el('section', { class: 'p-kart mt-4', id: 'saglikKayit' }, [
         el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Onarım ve olay kaydı · 30 gün' }), el('span', { class: 'df-soluk', text: `${olaylar.length} kayıt` })]),
         olaylar.length ? el('ul', { class: 'oz-olaylar' }, olaylar.slice(0, 60).map(x => {
@@ -281,6 +341,7 @@
     veri = r;
     rozetGuncelle(r);
     try { const kk = AG.api.saglikOz.ikinciKanal ? await AG.api.saglikOz.ikinciKanal() : null; kanal = kk && kk.success ? kk : null; } catch (e) { kanal = null; }
+    try { const vv = AG.api.veriKalitesi ? await AG.api.veriKalitesi.durum() : null; vkVeri = vv && vv.success ? vv : null; } catch (e) { vkVeri = null; }   // 74.3
     ciz();
     return r;
   }
@@ -297,6 +358,7 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, nasilModeli, KILAVUZ, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.saglik = { yukle, ozetModeli, gruplaModeli, raporModeli, rozetTonu, rozetGuncelle, saat, nasilModeli, veriKalitesiModeli, KILAVUZ,
+    _durum: { veriAyarla: (v) => { veri = v; }, vkAyarla: (v) => { vkVeri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.saglik;
 })(typeof window !== 'undefined' ? window : globalThis);

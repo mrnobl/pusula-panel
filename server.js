@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.2';
+const APP_VERSION = '74.3';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -767,6 +767,25 @@ const saglikBotlar = Object.fromEntries(BINDIRME_ADLAR.map(ad => [ad, new Saglik
 const saglikBot = saglikBotlar.hucum;
 const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn: () => config.healthchecksSunucuUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
 const bindirmeAyar = (ad) => ({ mod: 'kagit', sermayeTavani: 10000, kagitBakiye: 10000, k: 15, demoSermayeTavani: 1000, kucukSermaye: 'oto', ...(((config.bindirme || {})[ad]) || {}) });
+/**
+ * 74.3 VERİ KALİTESİ KAPISI (D4, lib/live/veriKalitesi.js): config.veriKalitesi = { kip ('izleme' varsayılan | 'etkin'), izlemeBas (ISO | null), esikler }.
+ * İkinci kaynak Binance SPOT günlük kapanış (anahtarsız; 418/429 beklemesi veri orkestratörüyle ORTAK — veriOrk aşağıda tanımlı, yalnız
+ * çağrı anında okunur). Kip yalnız POST /api/veri-kalitesi/kip ile (bu bilgisayar + onay) değişir; kendiliğinden geçiş YOK.
+ */
+const VeriKalitesi = require('./lib/live/veriKalitesi');
+function veriKalitesiAyar() {
+  const v = (config && config.veriKalitesi) || {};
+  const bas = v.izlemeBas == null ? NaN : (typeof v.izlemeBas === 'number' ? v.izlemeBas : Date.parse(v.izlemeBas));
+  return { kip: VeriKalitesi.KIPLER.includes(v.kip) ? v.kip : 'izleme', izlemeBas: Number.isFinite(bas) && bas > 0 ? bas : null, esikler: VeriKalitesi.esikBirlestir(v.esikler) };
+}
+const veriKalitesiSpot = VeriKalitesi.spotOkuyucu({
+  fetchFn: (...a) => fetch(...a),
+  bekleme: {
+    oku: () => { try { return veriOrk.binanceBekleme(); } catch { return null; } },
+    yaz: (x) => { try { veriOrk.binanceBeklemeErisimi('veri kalitesi').yaz(x); } catch { /* orkestratör yoksa bekleme yalnız bu istekte */ } },
+  },
+  zamanAsimiMs: VeriKalitesi.ESIKLER.zamanAsimiMs,
+});
 const KUCUK_SECIMLER = { oto: 'oto', acik: true, kapali: false };
 const KAGIT_AYAKLAR = ['spot', 'coklu'];   // 68.9: kâğıt hesapta BTC ayağı (sıfırlamayla seçilir; demo her zaman perp, canlı her zaman çoklu)
 const bindirmeDizin = (ad, mod) => path.join(CANLI_DIZIN, mod === 'demo' ? `${ad}-demo` : mod === 'canli' ? `${ad}-canli` : ad);
@@ -800,6 +819,8 @@ function bindirmeKur(ad, mod) {
     kucukSermaye: a.kucukSermaye === true || a.kucukSermaye === false ? a.kucukSermaye : 'oto',
     tavanAkis: a.tavanAkis !== false,   // 69.3: yatırma/çekme sermaye tavanını izler (canlıda onaylı üst sınırla)
     hesapKesicisi: canliMi ? { uyari: 0.30, acil: 0.40 } : null,   // Ö6: yalnız gerçek parada
+    // 74.3 D4: veri kalitesi kapısı (kayıt bot dizininde veri-kalitesi.jsonl); kip ayardan her çalışmada okunur
+    veriKalitesi: new VeriKalitesi.VeriKapisi({ dizin, kipFn: () => veriKalitesiAyar().kip, esikFn: () => veriKalitesiAyar().esikler, ikinciKaynak: veriKalitesiSpot, varlik: 'BTC', kaydet }),
     kapiFn: canliMi ? () => canliKapiDurum(ad) : null });            // denetim #2: kapı çalışırken de denetlenir
   /** @param o.mutabakatsiz Y4 (61.7): acil durdurma için yalnız bağlan — kol mutabakatı (ve hatası) acili engellemez. */
   const bagla = async (o = {}) => {
@@ -1270,6 +1291,47 @@ app.post('/api/saglik/oz/:ad/guvenli-kip-kaldir', (req, res) => {
   const g = b.bot.guvenliKipKaldir();
   if (g) { try { ozDenetim.onayVerildi(b.ad); } catch { /* */ } }   // 73.6 (Y-02): sayaçlar bu andan sonrasını sayar
   res.json({ success: true, kaldirilan: g, bot: b.bot.ozet() });
+});
+
+/**
+ * 74.3 VERİ KALİTESİ (D4): GET /api/veri-kalitesi { kip, izleme, esikler, botlar: { <ad>: { kip, etkin, dokunulmaz, son, acik, sayac30, sonBulgular } } }
+ * (telefonda da; araştırma kopyasında lib/evOkuma.js sunucudan okur) · POST /api/veri-kalitesi/kip { kip, onay: true } — yalnız bu bilgisayar
+ * (telefon / geliştirme 403), sunucuda. Etkin → izleme geçişinde veri kalitesinin koyduğu güvenli kip hemen kalkar.
+ */
+function veriKalitesiDurum(simdi = Date.now()) {
+  const a = veriKalitesiAyar();
+  const liste = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(b => b && b.bot && b.bot.ayar.veriKalitesi);
+  const botlar = {};
+  for (const b of liste) {
+    const d = b.bot.ayar.veriKalitesi.durum({ mod: b.mod });
+    const gk = b.bot.durum.guvenliKip;
+    botlar[b.ad] = { ad: b.ad, adGorunen: b.bot.adGorunen, mod: b.mod, calisiyor: !!b.bot.durum.calisiyor, ...d, guvenliKip: gk && gk.kaynak === 'veri' ? gk : null };
+  }
+  return { success: true, calisiyor: !ARASTIRMA_MODU, kip: a.kip, esikler: a.esikler, demoKorumaBitis: new Date(VeriKalitesi.KORUMA_BITIS).toISOString(),
+    izleme: VeriKalitesi.izlemeBilgisi({ kip: a.kip, izlemeBas: a.izlemeBas, kapilar: liste.map(b => b.bot.ayar.veriKalitesi), simdi }), botlar };
+}
+app.get('/api/veri-kalitesi', (req, res) => {
+  try { res.json(veriKalitesiDurum()); } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+app.post('/api/veri-kalitesi/kip', (req, res) => {
+  if ((req.kademe || 'yerel') !== 'yerel') return res.status(403).json({ success: false, error: 'Veri kalitesi kipi yalnız sunucu bilgisayarındaki panelden değiştirilir.' });
+  if (ARASTIRMA_MODU) return res.status(409).json({ success: false, error: 'Veri kalitesi kipi sunucuda değiştirilir — bu bilgisayar geliştirme kopyası.' });
+  const g = req.body || {};
+  const kip = String(g.kip || '');
+  if (!VeriKalitesi.KIPLER.includes(kip)) return res.status(400).json({ success: false, error: 'kip "izleme" ya da "etkin" olmalı' });
+  if (g.onay !== true) return res.status(400).json({ success: false, error: 'onay gerekli (panelde onay penceresi)' });
+  const once = veriKalitesiAyar().kip;
+  if (once === kip) return res.json({ ...veriKalitesiDurum(), degismedi: true });
+  config.veriKalitesi = { ...(config.veriKalitesi || {}), kip, ...(kip === 'izleme' ? { izlemeBas: new Date().toISOString() } : {}) };
+  saveConfig(config);
+  for (const ad of BINDIRME_ADLAR) {
+    const b = bindirmeler[ad];
+    if (!b || !b.bot.ayar.veriKalitesi) continue;
+    b.bot.ayar.veriKalitesi.kipKaydet(kip, 'panel');
+    if (kip === 'izleme') b.bot.guvenliKipKaldir('veri');   // izleme kipinde veri kalitesi kararı engellemez
+  }
+  db.addLog(kip === 'etkin' ? 'WARN' : 'INFO', `[VERİ KALİTESİ] kip: ${once} → ${kip}${kip === 'etkin' ? ' — ağır bulguda botlar güvenli kipe girer (demo kabul botu yalnız haber)' : ' — bulgular yalnız kaydedilir'}`);
+  res.json(veriKalitesiDurum());
 });
 
 /**

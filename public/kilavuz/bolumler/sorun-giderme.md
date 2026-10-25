@@ -126,6 +126,19 @@ Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da ri
 
 **Belirti:** "günlük çalışma ertelendi — borsa verisi şüpheli". **Anlamı:** zararsız. **Adımlar:** dokunmayın; 15 dakikada bir kendisi dener. 2 saatten uzun sürerse sohbete yazın.
 
+### Veri kalitesi bulgusu (74.3) {#veri-kalitesi}
+
+**Belirti:** Sorunlar'da "veri kalitesi bulgusu" kartı, Sağlık'ta **Veri kalitesi** satırı sarı / kırmızı ya da (yalnız etkin kipte) "güvenli kipte: karar verisi şüpheli". **Anlamı:** günlük kararın girdilerinden birinde tutarsızlık kaydedildi — vadeli ile spot BTC kapanışı arasında fark (%1,5 hafif, %3 ağır), mark fiyatı son kapanıştan çok uzak, hesap bakiyesi geçersiz ya da para yatırma/çekme yokken ±%30 değişmiş, coin evreni boş / çok az, kol coinlerinin %30'undan fazlası veri kapısından geçememiş, funding okunamamış (funding hiçbir zaman ağır değildir). İkinci kaynak okunamazsa yalnız hafif bulgudur, karar engellenmez.
+
+**İzleme kipinde (varsayılan):** bot kararını **değiştirmez**, bulgu yalnız kaydedilir. **Etkin kipte:** ağır bulguda bot güvenli kipe girer (yeni işlem yok, stoplar borsada), 15 dakikada bir yeniden denetler, veri temizlenince kendiliğinden çıkar ve "geçti" iletisi gelir. **Demo kabul botu (Kairos) 2026-12-09 sonuna kadar her kipte yalnız haber alır.**
+
+**Adımlar:**
+1. Kartın "Ne oldu" satırını okuyun: hangi denetim ne buldu.
+2. Hafif bulgu (ör. ikinci kaynak okunamadı) çoğu zaman bir sonraki günlük çalışmada kaybolur — dokunmayın.
+3. Ağır bulgu birkaç gün üst üste geliyorsa ya da Binance'te fiyatlar normal görünüyorsa **Sohbete gönder** ile geliştirme sohbetine yazın — yanlış alarm olabilir, eşik ayarlanır.
+4. Etkin kipte güvenli kip 2 saatten uzun sürer ve Binance'te her şey normal görünürse Sağlık › Veri kalitesi › **İzleme kipine dön** (güvenli kip hemen kalkar).
+5. İzleme 7 günü doldurduğunda Sağlık › Veri kalitesi kartı bulgu sayılarını gösterir; etkin kipe geçmeye **siz** karar verirsiniz — Pusula kendiliğinden geçmez.
+
 ### Borsa beklemesi (hız sınırı / geçici IP yasağı) {#borsa-beklemesi}
 
 **Belirti:** "yürütücü durdu [GERI_CEKILME]". **Anlamı:** zararsız — süre bitene kadar bot borsaya istek atmıyor; stoplar borsada. **Kendiliğinden geçer mi:** evet, kartta bitiş saati yazar. **Adımlar:** paneli yenilemeyin, düğmelere tekrar tekrar basmayın — 418 yasağını uzatır.

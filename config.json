@@ -277,5 +277,19 @@
     }
   },
   "testnetApiKey": "",
-  "testnetApiSecret": ""
+  "testnetApiSecret": "",
+  "veriKalitesi": {
+    "kip": "izleme",
+    "izlemeBas": null,
+    "esikler": {
+      "ikiKaynakHafif": 0.015,
+      "ikiKaynakAgir": 0.03,
+      "fiyatSapmaHafif": 0.2,
+      "kolAtlananHafif": 0.3,
+      "evrenAzOran": 0.5,
+      "hesapSicramaHafif": 0.3,
+      "fundingHafif": 0.01,
+      "zamanAsimiMs": 8000
+    }
+  }
 }
