@@ -228,7 +228,12 @@
       tasi: (bot, hedef) => gonder('/api/makine/tasi', { bot, hedef, onay: 'TAŞI' }),
       tasimaCozumle: (bot) => gonder('/api/makine/tasima/cozumle', { bot }),
       // 4. faz (4a): eşlenmiş sunuculardan şimdi kopya çek (yalnız bilgisayardan; kopya şifreli, botlara dokunmaz)
-      kopyaSimdi: () => gonder('/api/makine/kopya/simdi', {})
+      kopyaSimdi: () => gonder('/api/makine/kopya/simdi', {}),
+      // 4. faz (4b): devralma — liste salt okur; devral ve sahiplen yalnız bilgisayardan + yerel PIN + onay metni; liste yenile (borsadan salt okuma)
+      devralmaListe: () => al('/api/makine/devralma'),
+      devral: (es, bot) => gonder('/api/makine/devral', { es, bot, onay: 'DEVRAL' }),
+      devralSahiplenListe: (bot) => gonder('/api/makine/devral/sahiplen-liste', { bot }),
+      devralSahiplen: (bot, ozet) => gonder('/api/makine/devral/sahiplen', { bot, ozet, onay: 'SAHİPLEN' })
     },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {

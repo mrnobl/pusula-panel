@@ -2,6 +2,9 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.5 — Bozulan makinenin botlarını devralmak (2026-10-25) {#s76-5}
+Bir sunucu kalıcı olarak giderse öbür sunucu onun botunu son eş kopyasından devralabilir (Ayarlar › Makineler › Devral — 30 dakikadan uzun sessiz makineden, PIN ve DEVRAL ile; bot kendiliğinden başlamaz). Demo botta borsadaki bilinmeyen emirleri görüp onaylarsınız. Eski makine geri gelirse botu başlatmaz; çalışır hâlde gelirse ilk nabızda durdurur. Canlı hesap botu ve Kairos demo kabulü devralınamaz. Eşleme kaldırılınca o makinenin kopyası silinir.
+
 ## 76.4 — Para çıkışı "Bu ben değilim" ve giriş hatırlatması (2026-10-25) {#s76-4}
 **"Bu ben değilim".** Onay bekleyen bir para çıkışını siz yapmadıysanız Sorunlar'daki kartta artık ikinci bir araç var: **Bu ben
 değilim — reddet** (acil PIN + **BEN DEĞİLİM**). Bot durmuş kalır, hareket "reddedildi — güvenlik" olarak işaretlenir ve hesaplara

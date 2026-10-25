@@ -149,6 +149,7 @@ Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucun
 **Pano botlara dokunmaz.** Buradan eşleme, yönetici makine seçimi ve (75.5) **bot taşıma** yapılır. Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir**, **nabız** gönderebilir ve sizin onu hedef seçtiğiniz bir taşımada **bot paketini teslim edebilir**: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, yönetici seçemez, taşımayı kendisi başlatamaz, Portföyüm ve İşlem defterim'i okuyamaz.
 
 - **Eş kopyaları (saat başı)** kartı (yalnız eş varken): her eşlenmiş sunucudan alınan son kopyanın yaşı, dosya sayısı, boyutu, şifreli anahtarın doğrulanıp doğrulanmadığı ve o eşin bu bilgisayarın kopyasını en son ne zaman aldığı; **Şimdi kopya al**. Ayrıntı: [Eş kopyaları](#/kilavuz/ayarlar/makine-kopya).
+- **Bozulan makinenin botlarını devral** kartı (yalnız sunucu eşi varken): kalıcı olarak giden sunucunun botunu son kopyasından bu bilgisayara alma (30 dakikadan uzun sessiz makineden, **DEVRAL** + acil PIN; bot kendiliğinden başlamaz). Ayrıntı: [Devralma](#/kilavuz/ayarlar/makine-devralma).
 - **Botu başka makineye taşı** kartı (yalnız eş varken): bu bilgisayardaki her bot için *taşınabilir mi* (değilse nedeni — canlı hesap, Kairos demo kabulü …), taşıma durumu (*taşınıyor*, *… makinesinde çalışır*, *… makinesinden geldi*, *son taşıma yapılamadı*) ve **hedef makine + Taşı** (onay penceresinde **TAŞI** yazılır, acil PIN). Sonucu belli olmayan taşımada **Yeniden denetle**. Ayrıntı ve adım adım: [Botu başka makineye taşımak](#/kilavuz/botlar/bot-tasima). Aynı bot iki makinede aynı anda çalışamaz: [nöbet kuralı](#/kilavuz/botlar/bot-nobet).
 
 ### Önce: Tailscale {#makine-tailscale}
@@ -201,6 +202,36 @@ Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda
 - **Bütünlük:** her dosya SHA-256 ile denetlenir; yarıda kalan kopya eskisini **bozmaz** (yeni kopya ayrı klasörde tamamlanıp doğrulanınca yer değiştirir).
 - **Botlara dokunmaz:** kopya bot başlatmaz, durdurmaz, emir vermez, ayar değiştirmez. Kopyanın kendisi bu bilgisayarın yedeğine ve taşıma dosyasına girmez (başka makinenin verisi).
 - **Öz denetim:** bir eşin son kopyası **2 saatten eskiyse** Sistem › Sağlık'ta *Eş makine kopyası* sarı yanar (yalnız haber). Yeni eşlenen makine için ilk 2 saat "ilk kopya bekleniyor" sayılır.
+- **Eşlemeyi kaldırınca** o makinenin bu bilgisayardaki kopyası da **silinir** (şifreli anahtarı dahil). Makine bozulduysa önce botlarını **devralın**, sonra kaldırın.
+
+### Bozulan makinenin botlarını devralmak {#makine-devralma}
+
+Bir sunucu **kalıcı olarak** giderse (bozuldu, çalındı, yandı) öbür sunucu onun botunu **son eş kopyasından** kendi kaydına alabilir. Buna **devralma** denir. Makine çalışıyorsa devralma değil [taşıma](#/kilavuz/botlar/bot-tasima) kullanılır.
+
+**Ne zaman açılır:** Ayarlar › Makineler › **Bozulan makinenin botlarını devral** kartında her eşlenmiş sunucu için son temas zamanı, son kopyanın yaşı ve kopyadaki botlar görünür. **Devral** düğmesi yalnız şu durumda çıkar:
+
+- o makine **30 dakikadan uzun** sessiz (ne nabız ne kopya) ve şu an da **ulaşılamıyor**;
+- bu bilgisayarda o makinenin **son kopyası** var ve bozulmamış (her dosya SHA-256 ile denetlenir);
+- bot devralınabilir: **canlı hesap botu devralınamaz** (bu sürümde), **Kairos demo kabulü 2026-12-09'a kadar devralınamaz**, model örnekleri devralınmaz — satırda nedeni yazar;
+- bu bilgisayarda çakışma yok (aynı kimlikli bot burada çalışmıyor, aynı emir öneki ya da aynı borsa hesabını kullanan başka bot yok);
+- başka bir eşlenmiş sunucu o makineyi son 30 dakikada **görmemiş** (görmüşse makine açık ama bu bilgisayardan kopuk olabilir — devralma yapılmaz).
+
+**Kendiliğinden asla:** devralmayı yalnız siz başlatırsınız — bu bilgisayardaki panelden, onay penceresinde **DEVRAL** yazıp acil PIN'le. Telefondan ve başka makineden yapılamaz.
+
+**Adım adım:**
+
+1. **Önce eski makinenin gerçekten kapalı olduğundan emin olun** (fişini çekin ya da Tailscale'den çıkarın). Makine açık ama yalnız ağı kopuksa, ağ gelene kadar iki makine aynı hesaba emir gönderebilir — bunu yalnız siz kesin bilebilirsiniz.
+2. Kartta botun satırında **Devral** → onay penceresi (kopyanın yaşı yazar) → **DEVRAL** → acil PIN.
+3. Bot bu bilgisayara yerleşir: kopyadaki verisi gelir, demo botun hesap anahtarı kopyada **yedek şifresiyle** şifreli olduğu için yalnız burada çözülüp Anahtarlar'a eklenir (iki bilgisayarda yedek şifresi **aynı** olmalı), bu bilgisayardaki aynı kimlikli eski bot verisi silinmez — `onceki-bot-…` klasörüne kaldırılır. Botun **nöbeti** bir artar; ulaşılabilen öteki sunuculara "bu bot artık burada" bildirilir; Telegram'a *"… devralındı"* gider.
+4. **Bot kendiliğinden BAŞLAMAZ.** Kâğıt botta borsayla karşılaştırma kendiliğinden yapılır; temizse Botlar sayfasında **Başlat**.
+5. **Demo botta** son kopya ile borsa arasında en çok bir saatlik fark olabilir (eski makine o arada emir vermiş, dolum olmuş olabilir). Kartta borsadaki, bu botun defterinin **bilmediği** bizim emirlerimizin listesi çıkar (açık ve kapanmış; her satırda *ne olur* yazar). Listeye bakın → **Listeyi onayla** → **SAHİPLEN** → acil PIN. Listedeki emirler deftere alınır — emir kimliği sayacı onların üstüne çıkar, böylece bu bilgisayar eski makinenin kullandığı bir emir kimliğini **yeniden üretmez**. Sonra botun kendi karşılaştırması yapılır: botun bilmediği açık emir *sahipsiz* sayılıp iptal edilir (bot kendi emrini sonra yeniden koyar), bilinmeyen bir dolumdan doğan pozisyon farkı **ENGEL** olarak kalır (Botlar sayfasındaki fark listesi). Hiç emir gönderilmez. Liste siz bakarken değiştiyse onay geçersiz olur ve yeni liste gösterilir. Onaydan önce bu botta Mutabakat, Kuru deneme ve Başlat kapalıdır; **acil durdurma serbesttir**.
+6. Temizse Botlar sayfasında **Başlat**.
+
+**Eski makine geri gelirse:** açılışta öteki sunuculara sorar, botun **daha yeni nöbetini** görür ve o botu **başlatmaz** (kaydını yeni makineye devreder; Botlar sayfasında "bu bot artık … makinesinde" bandı). Eski makine bot **çalışır hâlde** geri gelirse (ör. yalnız ağı kopmuştu) ilk nabızda yeni nöbeti görür ve botu **hemen durdurur** (açık pozisyona ve emirlere dokunmaz), Telegram'a *"… bu makinede durduruldu — başka makinede devralınmış"* gider. İki makine aynı botu ayrı ayrı aynı nöbetle devralmışsa biri kalır, öbürü durur ve Telegram'a *"iki makine aynı botun sahibi"* gider.
+
+**Botu geri götürmek:** eski makine onarılınca botu yeni makineden ona [taşıyın](#/kilavuz/botlar/bot-tasima) (nöbet yine bir artar).
+
+**Sırların sınırı:** kopyadaki şifreli anahtar yalnız devralmada, yalnız yedek şifresiyle açılır. Yedek şifresi aynı bilgisayarda bir dosyada durduğu için bu koruma kopyanın **dışarı** (USB, bulut) sızmasına karşıdır.
 
 ### Ne yapmalı {#makine-sorun}
 
@@ -218,6 +249,10 @@ Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda
 | Eş kopyaları: **yedek şifresi yok / farklı** | kopya yedek şifresiyle şifrelendiği için alınamıyor | İki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin, sonra **Şimdi kopya al** |
 | Eş kopyaları: **son kopya … önce** sarı | eşten 2 saatten uzun süredir kopya alınamadı | Eş açık mı, Tailscale bağlı mı bakın; satırdaki nedeni okuyun — [sorun giderme](#/kilavuz/sorun-giderme/es-kopya) |
 | Güncelleme **sırada bekliyor** | kademeli güncelleme: önce başka makine kurmalı | Bekleyin; bot kodu değiştiyse önce bot çalıştırmayan makinede **Güncellemeyi kur** |
+| Devralma kartında **Devral** yok, "sessiz değil" | o makine son 30 dakikada görüldü | Makine çalışıyorsa botu **Taşı** ile alın; bozulduysa 30 dakika bekleyin — [devralma](#/kilavuz/ayarlar/makine-devralma) |
+| Devral: **ağ bölünmesi şüphesi** | başka bir sunucu o makineyi az önce gördü | Makine açık ama bu bilgisayardan kopuk olabilir; Tailscale'e bakın, makineyi kapatın, sonra yeniden deneyin |
+| Devralınan demo bot: **Mutabakat / Başlat kapalı** | borsadaki emir listesi henüz onaylanmadı | Devralma kartında listeye bakıp **Listeyi onayla** |
+| Telegram: **… bu makinede durduruldu — başka makinede devralınmış** | bu bilgisayar botun eski kopyasını çalıştırıyordu | Bot yeni makinede sürer; burada bir şey yapmayın. Geri getirmek için yeni makineden buraya taşıyın |
 
 Telefondan bu sekme **yalnız görüntülenir** (eşleme, kaldırma ve bot taşıma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.
 

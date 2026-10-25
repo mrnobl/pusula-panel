@@ -11,6 +11,10 @@
  * belirsiz taşımada "Yeniden denetle"). Canlı hesap ve Kairos demo kabulü (2026-12-09'a kadar) taşınmaz — satırda nedeni yazar.
  * 4. faz (4a, B4): EŞ KOPYALARI kartı (pano `kopya` + satırda `kopyaYasi` / `kopya`): eş başına son kopya yaşı, dosya, boyut, şifreli
  * anahtarın doğrulanması, eşin bu bilgisayardan son alışı; "Şimdi kopya al" (POST /api/makine/kopya/simdi — yalnız bilgisayardan).
+ * 4. faz (4b): DEVRALMA kartı (GET /api/makine/devralma): 30 dk'dan uzun sessiz (ve şu an ulaşılamayan) sunucunun botunu son eş kopyasından
+ * bu bilgisayara al — "Devral" (yalnız bilgisayardan + yerel PIN + "DEVRAL"); bot kendiliğinden başlamaz. Demo botta borsadaki bilinmeyen
+ * emirler listelenir, "Listeyi onayla" (yerel PIN + "SAHİPLEN") deftere alır; sonra Botlar sayfasında Başlat. Canlı hesap ve Kairos demo
+ * kabulü devralınamaz — satırda nedeni yazar.
  * DOM AG.dom ile (HTML dizgesi yok), stil p- / an- aileleri, istek AG.api.makine.
  */
 (function (global) {
@@ -29,7 +33,7 @@
   const KIP = { tek: 'Tek makine — komutları bu bilgisayar dinliyor', yonetici: 'Yönetici — komutları bu bilgisayar dinliyor', gecici: 'Geçici devralma — yönetici ulaşılamadığı için komutları bu bilgisayar dinliyor',
     bekle: 'Komutları yönetici makine dinliyor', cekisme: 'Bekliyor — Telegram\'ı başka bir makine dinliyor (409)', 'uygun-degil': 'Bu bilgisayar komut dinlemez (geliştirme / araştırma kopyası ya da Telegram kurulu değil)' };
 
-  let veri = null, mesgul = false, sonKod = null, tasimaVeri = null, tasimaHata = null;
+  let veri = null, mesgul = false, sonKod = null, tasimaVeri = null, tasimaHata = null, devralmaVeri = null, devralmaHata = null;
   const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon') || !!(veri && veri.yazilabilir === false);
   const zaman = (iso) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? String(iso) : d.toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); };
 
@@ -86,6 +90,9 @@
     const hedef = (t && (t.hedefAd || t.hedef)) || (b && (b.makineAd || b.makine)) || 'öteki makine';
     if (t && t.asama === 'tasiniyor') return { metin: t.belirsiz ? `${hedef} makinesine taşınıyor — sonuç belli değil (hedefe ulaşılamadı). Bot iki makinede de başlamaz.` : `${hedef} makinesine taşınıyor…`, ton: 'uyari', eylem: 'denetle' };
     if (b && b.makine && b.makineAd) return { metin: `${b.makineAd} makinesinde çalışır (nöbet ${b.nobet}) — buradaki kopya salt okunur.`, ton: '', eylem: null };
+    if (t && t.asama === 'geldi' && t.tur === 'devralma') {
+      return { metin: `${(t.kaynakAd || t.kaynak || 'öteki makine')} makinesinden DEVRALINDI (nöbet ${t.nobet}) — ayrıntı ve sıradaki adım aşağıdaki Devralma kartında.`, ton: t.mutabakat === 'temiz' ? 'iyi' : 'uyari', eylem: null };
+    }
     if (t && t.asama === 'geldi') {
       const m = t.mutabakat === 'temiz' ? 'borsayla karşılaştırma TEMİZ — Botlar sayfasında Başlat' : t.mutabakat === 'engel' ? 'borsayla karşılaştırma TEMİZ DEĞİL — Botlar sayfasındaki farklara bakın' : 'Botlar sayfasında önce Mutabakat, temizse Başlat';
       return { metin: `${(t.kaynakAd || t.kaynak || 'öteki makine')} makinesinden geldi (nöbet ${t.nobet}) — ${m}.`, ton: t.mutabakat === 'engel' ? 'uyari' : 'iyi', eylem: b.tasinabilir ? 'tasi' : null };
@@ -114,6 +121,42 @@
     }
     const alt = [gizli, k && k.verilen && (k.verilen.paket || k.verilen.manifest) ? `bu bilgisayarın kopyasını ${onceMetni(k.verilen.paket || k.verilen.manifest, simdi)} aldı` : null].filter(Boolean).join(' · ');
     return { metin, alt, ton };
+  }
+  /** Saf (4b): devralma ekranında bir eşin özeti → { metin, ton }. es = GET /api/makine/devralma esler[] satırı. */
+  function devralmaEsMetni(es, simdi = Date.now()) {
+    if (!es) return { metin: '—', ton: '' };
+    const temas = es.sonTemas ? `son temas ${onceMetni(es.sonTemas, simdi)}` : 'hiç temas yok';
+    const k = es.kopya || {};
+    const kop = k.var ? `son kopya ${k.kaynakZaman ? onceMetni(k.kaynakZaman, simdi) : '?'} (${k.dosya || 0} dosya${k.gizli === 'var' ? ', şifreli anahtar var' : ''})${k.eski ? ' — ESKİ kopya: devralınan bot bu andan sonrasını bilmez' : ''}` : 'kopya yok — devralınamaz';
+    if (!k.var) return { metin: `${temas} · ${kop}`, ton: 'uyari' };
+    if (!es.sessiz) return { metin: `${temas} · ${kop}. ${es.sessizNeden || 'Eş sessiz değil.'}`, ton: '' };
+    return { metin: `${temas} — ${es.sessizDk != null ? `${es.sessizDk} dakikadır` : 'uzun süredir'} sessiz · ${kop}`, ton: 'uyari' };
+  }
+  /** Saf (4b): kopyadaki bot satırı → { metin, ton, eylem: 'devral' | null }. */
+  function devralmaBotMetni(b, es) {
+    if (!b) return { metin: '—', ton: '', eylem: null };
+    if (!b.devralinabilir) return { metin: `Devralınamaz: ${b.neden || '—'}`, ton: '', eylem: null };
+    const notlar = [];
+    if (b.burada && b.burada.var && b.burada.sahipBen) notlar.push(`bu bilgisayarda aynı kimlikli bir bot var (${MOD[b.burada.mod] || b.burada.mod}${b.burada.calisiyor ? ', çalışıyor' : ''}) — devralmada onceki-bot klasörüne kaldırılır`);
+    const not = notlar.length ? ` Not: ${notlar.join(' · ')}` : '';
+    if (!es || !es.sessiz) return { metin: `Devralınabilir — ama ${(es && es.ad) || 'eş'} sessiz değil (yalnız 30 dakikadan uzun sessiz makineden).${not}`, ton: '', eylem: null };
+    return { metin: `Devralınabilir${b.mod === 'demo' ? ' — demo hesabının anahtarı kopyada şifreli; devralmadan sonra borsadaki emir listesini onaylarsınız' : ''}.${not}`, ton: 'iyi', eylem: 'devral' };
+  }
+  /** Saf (4b): bu bilgisayarda devralınmış botun durumu → { metin, ton, eylem: 'sahiplen' | 'liste' | null }. */
+  function devralinanMetni(d) {
+    if (!d) return { metin: '—', ton: '', eylem: null };
+    const bas = `${d.kaynakAd || d.kaynak || 'öteki makine'} makinesinden devralındı (nöbet ${d.nobet})`;
+    if (d.asama === 'yerlesiyor') return { metin: `${bas} — yerleşiyor…`, ton: 'uyari', eylem: null };
+    const m = d.mutabakat || 'bekliyor';
+    if (m === 'temiz') return { metin: `${bas} — borsayla karşılaştırma TEMİZ. Botlar sayfasında Başlat'a basabilirsiniz (kendiliğinden başlamaz).`, ton: 'iyi', eylem: null };
+    if (m === 'engel') return { metin: `${bas} — karşılaştırma TEMİZ DEĞİL: ${d.mutabakatNeden || '—'}. Başlat kapalı; Botlar sayfasındaki farklara bakın.`, ton: 'uyari', eylem: null };
+    if (d.mod !== 'demo') return { metin: `${bas} — ${m === 'elle' ? `karşılaştırma yapılamadı (${d.mutabakatNeden || '—'}); Botlar sayfasında Mutabakat` : 'kâğıt borsayla karşılaştırılıyor…'}`, ton: m === 'elle' ? 'uyari' : '', eylem: null };
+    if (m === 'sahiplen-bekliyor' && d.sahiplen) {
+      const a = (d.sahiplen.acik || []).length, k = (d.sahiplen.kapanmis || []).length;
+      return { metin: `${bas} — borsada bu defterin bilmediği ${a} açık + ${k} kapanmış bizim emrimiz var${d.sahiplen.destek === false ? ' (kapanmış emir listesi bu borsada okunamıyor)' : ''}. Listeye bakıp onaylayın; onaydan önce Mutabakat ve Başlat kapalı.`, ton: 'uyari', eylem: 'sahiplen' };
+    }
+    if (m === 'elle') return { metin: `${bas} — borsadaki emir listesi alınamadı: ${d.mutabakatNeden || '—'}. "Listeyi yenile".`, ton: 'uyari', eylem: 'liste' };
+    return { metin: `${bas} — borsadaki emir listesi alınıyor…`, ton: '', eylem: 'liste' };
   }
   /** Saf: sekme ışığı — reddeden / uyumsuz eş varsa tehlike, sessiz varsa uyarı, hepsi bağlıysa iyi, eş yoksa gizli. */
   function sekmeIsigi(v) {
@@ -187,7 +230,7 @@
   }
   async function kaldir(m) {
     if (mesgul || telefonMu()) return;
-    const c = await AG.onayla({ baslik: `"${m.ad}" eşlemesi kaldırılsın mı?`, metin: 'Bu bilgisayar o makinenin jetonunu siler; o makine artık buraya nabız gönderemez ve bot durumunu okuyamaz. Karşı makineye haber verilmez — orada da Ayarlar › Makineler\'den kaldırın. Yeniden eşlemek için yeni kod gerekir.', onay: 'Kaldır', tehlikeli: true });
+    const c = await AG.onayla({ baslik: `"${m.ad}" eşlemesi kaldırılsın mı?`, metin: 'Bu bilgisayar o makinenin jetonunu siler; o makine artık buraya nabız gönderemez ve bot durumunu okuyamaz. O makinenin bu bilgisayardaki EŞ KOPYASI da silinir (şifreli anahtarı dahil) — makine bozulduysa önce botlarını Devralma kartından alın, sonra kaldırın. Karşı makineye haber verilmez — orada da Ayarlar › Makineler\'den kaldırın. Yeniden eşlemek için yeni kod gerekir.', onay: 'Kaldır', tehlikeli: true });
     if (!c) return;
     mesgul = true;
     try {
@@ -226,6 +269,49 @@
       if (r && r.success) AG.bildir(r.metin || 'Denetlendi.', r.asama === 'tasindi' ? 'ok' : 'uyari', { sure: 12000 });
       else AG.bildir(`Denetlenemedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata');
     } catch (e) { AG.bildir(`Denetlenemedi: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+
+  /** 4b: devral — onay penceresinde uyarı + "DEVRAL", sonra acil PIN (api.js pin-gerekli akışı). */
+  async function devral(es, b) {
+    if (mesgul || telefonMu()) return;
+    const kz = es.kopya && es.kopya.kaynakZaman ? onceMetni(es.kopya.kaynakZaman) : '?';
+    const c = await AG.onayla({ baslik: `${b.adGorunen} — ${es.ad} makinesinden devralınsın mı?`, tehlikeli: true, onay: 'Devral',
+      metin: `ÖNCE ${es.ad} makinesinin gerçekten kapalı olduğundan emin olun (fişini çekin ya da Tailscale'den çıkarın): o makine açık ama yalnız ağı kopuksa, ağ gelene kadar iki makine aynı hesaba emir gönderebilir. Bot ${es.ad} makinesinin son kopyasından (${kz}) bu bilgisayara alınır${b.mod === 'demo' ? ', demo hesabının anahtarı yedek şifresiyle çözülüp buraya eklenir' : ''}. Bot burada kendiliğinden BAŞLAMAZ${b.mod === 'demo' ? '; önce borsadaki emir listesini görüp onaylarsınız' : ''}, sonra Botlar sayfasından Başlat. ${es.ad} geri gelirse bu botu başlatmaz; çalışır hâlde gelirse ilk nabızda durdurur. Acil PIN istenir.`,
+      alanlar: [{ ad: 'onay', etiket: 'Onaylamak için DEVRAL yazın', ipucu: 'DEVRAL', dogrula: (x) => x.trim().toLocaleUpperCase('tr-TR') === 'DEVRAL' }] });
+    if (!c) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.devral(es.kimlik, b.kimlik);
+      if (r && r.success) AG.bildir(`${r.adGorunen || b.adGorunen} bu bilgisayara devralındı (nöbet ${r.nobet}). ${r.sonraki === 'sahiplen' ? 'Borsadaki emir listesi birazdan Devralma kartında — onaylayın.' : 'Kâğıt borsayla karşılaştırma yapılıyor; temizse Botlar sayfasında Başlat.'}${(r.uyarilar || []).length ? ` Not: ${r.uyarilar.join(' · ')}` : ''}`, 'ok', { sure: 16000 });
+      else AG.bildir(`Devralınamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 16000 });
+    } catch (e) { AG.bildir(`Devralınamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+  async function sahiplenListeYenile(d) {
+    if (mesgul || telefonMu()) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.devralSahiplenListe(d.kimlik);
+      if (r && r.success) AG.bildir('Borsadaki emir listesi yenilendi.', 'ok');
+      else AG.bildir(`Liste alınamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 12000 });
+    } catch (e) { AG.bildir(`Liste alınamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+  async function sahiplenOnay(d) {
+    if (mesgul || telefonMu() || !d.sahiplen) return;
+    const n = (d.sahiplen.acik || []).length + (d.sahiplen.kapanmis || []).length;
+    const c = await AG.onayla({ baslik: `${d.adGorunen}: borsadaki ${n} emir deftere alınsın mı?`, tehlikeli: true, onay: 'Onayla',
+      metin: 'Listedeki emirler bu botun defterine alınır (kimlik sayacı onların üstüne çıkar — aynı emir kimliği yeniden üretilmez). Sonra botun kendi karşılaştırması yapılır: botun durumunda olmayan açık emirler "sahipsiz" sayılıp iptal edilir, bilinmeyen dolumdan doğan pozisyon farkı ENGEL olarak kalır. Hiç emir gönderilmez. Liste bu arada değişmişse onay geçersiz olur ve yeni liste gösterilir. Acil PIN istenir.',
+      alanlar: [{ ad: 'onay', etiket: 'Onaylamak için SAHİPLEN yazın', ipucu: 'SAHİPLEN', dogrula: (x) => x.trim().toLocaleUpperCase('tr-TR') === 'SAHİPLEN' }] });
+    if (!c) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.devralSahiplen(d.kimlik, d.sahiplen.ozet);
+      if (r && r.success) AG.bildir(r.temiz ? `${d.adGorunen}: karşılaştırma TEMİZ — Botlar sayfasında Başlat'a basabilirsiniz.` : `${d.adGorunen}: emirler deftere alındı ama karşılaştırma TEMİZ DEĞİL: ${r.neden || '—'}`, r.temiz ? 'ok' : 'uyari', { sure: 16000 });
+      else if (r && r.kod === 'liste-degisti') AG.bildir('Borsadaki liste onayladığınızdan farklı — güncel listeye bakıp yeniden onaylayın.', 'uyari', { sure: 14000 });
+      else AG.bildir(`Onaylanamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 14000 });
+    } catch (e) { AG.bildir(`Onaylanamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
     await yukle();
   }
 
@@ -340,6 +426,50 @@
     return el('section', { class: 'p-kart', id: 'mkTasima' }, [ust, alt, ...notlar,
       satirlar.length ? AG.tablo.kutulu({ id: 'mkTasimaTablo', sinif: 'an-tablo', basliklar: ['Bot', 'Durum', 'Taşı'], satirlar }) : el('p', { class: 'an-alt', text: 'Bu bilgisayarda bot yok.' })]);
   }
+  /** 4. faz (4b): devralma kartı — eşlenmiş SUNUCU yokken çizilmez. */
+  function devralmaKarti() {
+    if (!(veri.makineler || []).some(m => m.rol === 'sunucu')) return null;
+    const dv = devralmaVeri;
+    const ust = el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Bozulan makinenin botlarını devral' }), el('a', { href: '#/kilavuz/ayarlar/makine-devralma', text: 'Kılavuz: Devralma →' })]);
+    const alt = el('p', { class: 'p-kart-alt', text: `Bir sunucu kalıcı olarak giderse (bozuldu, çalındı) bu bilgisayar onun botunu son eş kopyasından kendi kaydına alabilir. Yalnız o makine ${(dv && dv.esikDk) || 30} dakikadan uzun sessiz ve şu an ulaşılamıyorken; PIN ve "DEVRAL" ile — kendiliğinden asla. Bot burada kendiliğinden başlamaz. Canlı hesap botu ve Kairos demo kabulü (2026-12-09'a kadar) devralınamaz. Eski makine geri gelirse o botu başlatmaz; çalışır hâlde gelirse ilk nabızda durdurur.` });
+    if (!dv) return el('section', { class: 'p-kart', id: 'mkDevralma' }, [ust, alt, el('p', { class: 'an-alt', text: devralmaHata ? `Devralma bilgisi okunamadı: ${devralmaHata}` : 'yükleniyor…' })]);
+    const yaz = !telefonMu() && dv.yazilabilir !== false && dv.rol === 'sunucu';
+    const govde = [ust, alt];
+    if (dv.rol !== 'sunucu') govde.push(el('p', { class: 'an-alt', text: 'Bu bilgisayar geliştirme / araştırma kopyası — devralma bot çalıştıracak sunucuda yapılır.' }));
+    for (const d of dv.devralinanlar || []) {
+      const x = devralinanMetni(d);
+      const parca = [el('p', { class: x.ton === 'uyari' ? 'p-neg' : x.ton === 'iyi' ? 'p-pos' : '', text: `${d.adGorunen || d.kimlik}: ${x.metin}` })];
+      if (d.sahiplen && x.eylem === 'sahiplen') {
+        const satir = (e, tur) => el('tr', { 'data-sahiplen': e.id }, [el('td', { text: tur }), el('td', { text: e.id }), el('td', { text: `${e.symbol || '—'} · ${e.side || '—'} · ${e.type || '—'}` }),
+          el('td', { text: `${e.amount}${e.dolan ? ` (dolan ${e.dolan})` : ''} · ${e.durum}` }), el('td', { text: e.etki || '' })]);
+        const satirlar = [...(d.sahiplen.acik || []).map(e => satir(e, 'açık')), ...(d.sahiplen.kapanmis || []).map(e => satir(e, 'kapanmış'))];
+        parca.push(satirlar.length ? AG.tablo.kutulu({ id: `mkSahiplenTablo-${d.kimlik}`, sinif: 'an-tablo', basliklar: ['Tür', 'Emir kimliği', 'Sembol · yön · tür', 'Miktar · durum', 'Ne olur'], satirlar })
+          : el('p', { class: 'an-alt', text: 'Borsada bu defterin bilmediği bizim emrimiz yok — onaylayınca kimlik sayacı korunur, botun karşılaştırması yapılır.' }));
+      }
+      const dugmeler = [];
+      if (yaz && x.eylem === 'sahiplen') dugmeler.push(dugme(`mkSahiplen-${d.kimlik}`, 'Listeyi onayla', () => sahiplenOnay(d), 'p-dugme-ana'));
+      if (yaz && (x.eylem === 'sahiplen' || x.eylem === 'liste')) dugmeler.push(dugme(`mkSahiplenYenile-${d.kimlik}`, 'Listeyi yenile', () => sahiplenListeYenile(d), 'p-dugme-sessiz'));
+      if (dugmeler.length) parca.push(el('div', { class: 'an-dugmeler' }, dugmeler));
+      govde.push(el('div', { class: 'an-form', 'data-devralinan': d.kimlik }, parca));
+    }
+    for (const es of dv.esler || []) {
+      const m = devralmaEsMetni(es);
+      govde.push(el('h4', { class: 'an-form-baslik', text: es.ad }), el('p', { class: m.ton === 'uyari' ? 'an-alt p-neg' : 'an-alt', text: m.metin }));
+      const satirlar = (es.botlar || []).map(b => {
+        const d = devralmaBotMetni(b, es);
+        return el('tr', { 'data-devral': `${es.kimlik}:${b.kimlik}` }, [
+          el('td', null, [el('strong', { text: b.adGorunen || b.kimlik }), el('span', { class: 'an-alt', text: `${b.kimlik} · ${MOD[b.mod] || b.mod || '—'} · nöbet ${b.nobet || 0}` })]),
+          el('td', null, [el('span', { class: d.ton === 'iyi' ? 'p-pos' : '', text: d.metin })]),
+          el('td', null, [el('div', { class: 'an-dugmeler' }, yaz && d.eylem === 'devral' ? [dugme(`mkDevral-${es.kimlik}-${b.kimlik}`, 'Devral', () => devral(es, b))] : [])])
+        ]);
+      });
+      if (satirlar.length) govde.push(AG.tablo.kutulu({ id: `mkDevralTablo-${es.kimlik}`, sinif: 'an-tablo', basliklar: ['Bot (kopyada)', 'Durum', 'Devral'], satirlar }));
+      else if (es.kopya && es.kopya.var) govde.push(el('p', { class: 'an-alt', text: 'Kopyada bot kaydı yok.' }));
+    }
+    if (!(dv.esler || []).length) govde.push(el('p', { class: 'an-alt', text: 'Eşlenmiş sunucu yok.' }));
+    if (dv.rol === 'sunucu' && !dv.yedekSifre) govde.push(el('p', { class: 'an-alt p-neg', text: 'Bu bilgisayarda yedek şifresi yok — demo botların anahtarı kopyada yedek şifresiyle şifreli; devralma için AYNI yedek şifresini girin (Ayarlar › Yedek & taşıma).' }));
+    return el('section', { class: 'p-kart', id: 'mkDevralma' }, govde);
+  }
   /** 4. faz (4a, B4): eş kopyaları kartı — eş yokken çizilmez. */
   function kopyaKarti() {
     const l = veri.makineler || [];
@@ -410,6 +540,7 @@
       ]),
       kopyaKarti(),
       tasimaKarti(),
+      devralmaKarti(),
       telefonMu() ? null : eslemeKarti()
     ]);
     isikYaz();
@@ -427,6 +558,12 @@
       try { const t = await AG.api.makine.tasimaListe(); if (t && t.success) tasimaVeri = t; else { tasimaVeri = null; tasimaHata = (t && t.error) || 'yanıt yok'; } }
       catch (e) { tasimaVeri = null; tasimaHata = e.message; }
     } else tasimaVeri = null;
+    // 4b: devralma bilgisi (sunucu eşi varken) — okunamazsa kart hatayı yazar
+    devralmaHata = null;
+    if ((r.makineler || []).some(m => m.rol === 'sunucu') && AG.api.makine.devralmaListe) {
+      try { const d = await AG.api.makine.devralmaListe(); if (d && d.success) devralmaVeri = d; else { devralmaVeri = null; devralmaHata = (d && d.error) || 'yanıt yok'; } }
+      catch (e) { devralmaVeri = null; devralmaHata = e.message; }
+    } else devralmaVeri = null;
     ciz();
   }
 
@@ -436,6 +573,7 @@
 
   AG.pages = AG.pages || {};
   AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, tasimaDurumMetni, kopyaSatirMetni,
-    _veriAyarla: (v, kod, tasima) => { veri = v; sonKod = kod || null; tasimaVeri = tasima || null; tasimaHata = null; ciz(); } };
+    devralmaEsMetni, devralmaBotMetni, devralinanMetni,
+    _veriAyarla: (v, kod, tasima, devralma) => { veri = v; sonKod = kod || null; tasimaVeri = tasima || null; tasimaHata = null; devralmaVeri = devralma || null; devralmaHata = null; ciz(); } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.makineler;
 })(typeof window !== 'undefined' ? window : globalThis);
