@@ -2,7 +2,7 @@
  * SİSTEM › TATBİKATLAR — D3 (TASARIM-MAKINE-HESAP-BOT §8.4; PLAN-MAKINE-HESAP-BOT D3 "Claude ihtiyacı kalmasın") `AG.pages.tatbikat`
  * ═══════════════════════════════════════════════════════════════════════════
  * GET /api/tatbikat (lib/tatbikat): prova listesi + her bot için önkoşullar, süren tatbikat (adımlar, Pusula'nın doğrulamaları, önerilen
- * hüküm), Kairos demo kabul provalarının durumu, aylık otomatik denetim, geçmiş. Yazma: POST /api/tatbikat/{baslat,adim,kaydet,iptal,otomatik}
+ * hüküm), Kairos demo kabul provalarının durumu, 4c geri dönüş tatbikatı, aylık otomatik denetim, geçmiş. Yazma: POST /api/tatbikat/{baslat,adim,kaydet,iptal,otomatik,geri-donus}
  * (yalnız bu bilgisayardan; kaydet yerel PIN — api katmanı sorar). Sihirbaz emir vermez, botu başlatmaz/durdurmaz, programı kapatmaz:
  * adımları kullanıcı yapar, Pusula kayıtlardan doğrular. Süren tatbikat varken sayfa 30 sn'de bir yenilenir.
  * 76.7: geliştirme bilgisayarında GET sunucudan okunur (yanıtta evKaynak) → sunucunun tatbikat durumu salt okuma gösterilir.
@@ -171,14 +171,38 @@
     ]);
   }
 
+  /** Saf: geri dönüş tatbikatının son özeti → satırlar [{ metin, ton }] (anahtar / yol yok — yalnız sayılar ve sorun metinleri). */
+  function geriDonusOzeti(g) {
+    if (!g) return [];
+    if (g.suruyor) return [{ metin: `Sürüyor (${zaman(g.suruyor.bas)}'dan beri): ${g.suruyor.adim || 'başlıyor'}`, ton: 'warn' }];
+    const o = g.son;
+    if (!o) return [{ metin: 'Henüz çalışmadı.', ton: '' }];
+    const s = o.sayilar || {};
+    const l = [{ metin: `Son çalışma ${zaman(o.son)}: ${o.hukum} — ${s.gecti || 0} geçti · ${s.uyari || 0} uyarı · ${s.kaldi || 0} kaldı · süre ${o.sure || '—'} · ${o.botSayisi || 0} bot${o.esSayisi ? ` · ${o.esSayisi} eş kopyası` : ''}`, ton: o.hukum === 'geçmedi' ? 'neg' : s.uyari ? 'warn' : 'pos' }];
+    for (const x of o.sorunlar || []) l.push({ metin: `✗ ${x}`, ton: 'neg' });
+    return l;
+  }
+
+  function geriDonusKart(g) {
+    if (!g) return null;
+    const satir = geriDonusOzeti(g);
+    return el('section', { class: 'p-kart mb-4', id: 'tbGeriDonus' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Geri dönüş tatbikatı' }),
+        el('span', { class: 'df-soluk', text: g.kapali ? 'kapalı' : `sonraki: ${zaman(g.sonraki)}` })]),
+      el('p', { class: 'hint', text: 'Ayın ilk pazarı 11:00: "bu makine bozulsa bot geri gelir mi?" Pusula son günlük yedeği ve eş makinelerin kopyasını SHA-256 ile doğrular, şifreli anahtar dosyasının yedek şifresiyle açılabildiğini yalnız bellekte sınar, her botu geçici bir klasöre geri yükleyip emir göndermeden kuru çalıştırır, sonra klasörü siler. Hiçbir bot başlatılmaz, gerçek bot dosyalarına dokunulmaz. Kairos demo kabulü bitene kadar ve canlı hesap kapsam dışı.' }),
+      el('ul', { class: 'tb-liste' }, satir.map(x => el('li', null, [rozet(x.ton === 'pos' ? 'geçti' : x.ton === 'neg' ? 'sorun' : x.ton === 'warn' ? 'dikkat' : 'bilgi', x.ton), el('span', { text: ` ${x.metin}` })]))),
+      el('button', { type: 'button', class: 'btn btn-secondary', id: 'btnTbGeriDonus', disabled: veri.arastirma || g.suruyor || null, onclick: () => islem(() => AG.api.tatbikat.geriDonus(), 'Geri dönüş tatbikatı başladı — birkaç dakika sürer') }, [el('span', { text: 'Şimdi çalıştır' })]),
+    ]);
+  }
+
   function gecmisKart(l) {
     return el('section', { class: 'p-kart mb-4', id: 'tbGecmis' }, [
       el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Geçmiş' })]),
       l && l.length ? AG.tablo.kutulu({ id: 'tblTbGecmis', sinif: 'p-tablo', basliklar: ['Zaman', 'Tatbikat', 'Bot', 'Sonuç', 'Ayrıntı'],
         satirlar: l.map(x => {
-          const oto = x.tur === 'otomatik';
+          const oto = x.tur === 'otomatik' || x.tur === 'geri-donus';
           const h = oto ? x.hukum : x.iptal ? 'iptal' : x.hukum;
-          return el('tr', null, [el('td', { class: 'sayi', text: zaman(x.z) }), el('td', { text: oto ? 'Aylık otomatik denetim' : x.ad }),
+          return el('tr', null, [el('td', { class: 'sayi', text: zaman(x.z) }), el('td', { text: x.tur === 'geri-donus' ? 'Geri dönüş tatbikatı' : oto ? 'Aylık otomatik denetim' : x.ad }),
             el('td', { class: 'df-soluk', text: oto ? '—' : (AG.botAd && AG.botAd.ad ? AG.botAd.ad(x.bot) : x.bot) || x.bot || '—' }),
             el('td', null, [rozet(h || '—', h === 'geçti' ? 'pos' : h === 'geçmedi' ? 'neg' : '')]),
             el('td', { class: 'df-soluk', text: oto ? `${(x.sayilar || {}).gecti || 0} geçti · ${(x.sayilar || {}).uyari || 0} uyarı · ${(x.sayilar || {}).kaldi || 0} kaldı` : [x.sure ? `süre ${x.sure}` : null, x.provaGunlugu ? 'prova günlüğüne yazıldı' : null, x.not || null].filter(Boolean).join(' · ') })]);
@@ -195,6 +219,7 @@
       veri.etkin ? etkinKart(veri.etkin) : null,
       demoKart(veri.demoKabul),
       ...(veri.provalar || []).map(provaKart),
+      geriDonusKart(veri.geriDonus),
       otomatikKart(veri.otomatik),
       gecmisKart(veri.gecmis),
     ]);
@@ -212,12 +237,12 @@
     if (r.evKaynak) { veri.sunucudan = r.evKaynak; veri.arastirma = true; }
     ciz();
     if (zamanlayici) { global.clearTimeout(zamanlayici); zamanlayici = null; }
-    if (veri.etkin) zamanlayici = global.setTimeout(() => { if (bul('tatbikatKok') && doc && doc.querySelector && doc.querySelector('#tab-tatbikat.active')) yukle(); }, 30000);
+    if (veri.etkin || (veri.geriDonus && veri.geriDonus.suruyor)) zamanlayici = global.setTimeout(() => { if (bul('tatbikatKok') && doc && doc.querySelector && doc.querySelector('#tab-tatbikat.active')) yukle(); }, 30000);
   }
 
   if (doc && doc.addEventListener) doc.addEventListener('ag:rota', (e) => { if (e.detail && e.detail.bolum === 'tab-tatbikat') yukle(); });
 
   AG.pages = AG.pages || {};
-  AG.pages.tatbikat = { yukle, durumRozet, zaman, kalanMetni, aciklamaGerekli, uygunluk, uyanBotlar, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.tatbikat = { yukle, durumRozet, zaman, kalanMetni, aciklamaGerekli, uygunluk, uyanBotlar, geriDonusOzeti, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.tatbikat;
 })(typeof window !== 'undefined' ? window : globalThis);

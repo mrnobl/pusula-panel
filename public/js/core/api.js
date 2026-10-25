@@ -578,7 +578,8 @@
       adim: (id, sembol) => gonder('/api/tatbikat/adim', sembol ? { id, sembol } : { id }),
       kaydet: (hukum, not) => gonder('/api/tatbikat/kaydet', { hukum, not: not || '' }),
       iptal: (neden) => gonder('/api/tatbikat/iptal', { neden: neden || '' }),
-      otomatik: () => gonder('/api/tatbikat/otomatik', {})
+      otomatik: () => gonder('/api/tatbikat/otomatik', {}),
+      geriDonus: () => gonder('/api/tatbikat/geri-donus', {})   // 4c D1: arka planda başlar; sonuç durum().geriDonus
     },
     /* ── D2 Haftalık karne (lib/karne.js; panel: js/pages/karne.js, Raporlar sayfasının üstünde) — salt okuma; bas: pazartesi | 'bu' ── */
     karne: {

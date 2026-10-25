@@ -2,6 +2,9 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.8 — Geri dönüş tatbikatı (2026-10-26) {#s76-8}
+> **Geri dönüş tatbikatı (Sistem › Tatbikatlar):** Pusula ayda bir (ayın ilk pazarı 11:00) "bu bilgisayar bozulsa bot geri gelir mi?" diye kendini sınar: son günlük yedeği ve eşlenmiş sunucunun kopyasını dosya dosya doğrular, şifreli anahtar dosyasının yedek şifresiyle açılabildiğini yalnız bellekte dener, her botu geçici bir klasöre geri yükleyip emir göndermeden kuru çalıştırır, sonra klasörü siler. Hiçbir bot başlatılmaz, gerçek dosyalara dokunulmaz. Sonuç sayfada, Telegram'da ve Sağlık'ta (yeni denetim "Geri dönüş tatbikatı", yalnız haber). "Şimdi çalıştır" ile hemen de yapılabilir. Kairos demo kabulü bitene kadar ve canlı hesap kapsam dışı.
+
 ## 76.7 — Tatbikat ekleri, SAHİPLEN'de ikinci PIN, OKX'te yok satırı, kopya boyutu uyarısı (2026-10-25) {#s76-7}
 **Tatbikatlar.** Yeni **prova 8 — karar saatinde internet kesintisi**: gece 02:55'te interneti kesip 03:45'te açarsınız; Pusula kesintinin
 botun 03:02 çalışmasını kapsadığını, botun durmadığını, bağlantı dönünce günlük çalışmayı bir kez yaptığını, çift emir olmadığını ve

@@ -359,6 +359,12 @@ Eşlenmiş SUNUCULAR birbirinin bot verisini her saatin 20. dakikasında şifrel
 
 **Kopya kapsamı 64 MB sınırına yaklaşıyor / AŞIYOR (76.7):** eş kopyasının bir sınırı var (64 MB). Bir makinenin bot kayıtları bunun %80'ine gelince Sağlık'ta "Eş makine kopyası" sarı yanar ve kaç MB olduğunu yazar; sınırı aşarsa o makinenin kopyası alınamaz (eski kopya bozulmaz, olduğu gibi kalır). Bu yalnız haberdir: botları etkilemez, **Telegram'a anında gitmez** (yalnız panelde ve akşam özetinde görünür). Siz bir şey silmeyin — geliştirme sohbetine yazın.
 
+### Geri dönüş tatbikatı geçmedi {#geri-donus}
+
+Pusula ayda bir (ayın ilk pazarı 11:00) "bu makine bozulsa bot geri gelir mi?" diye sınar: son günlük yedeği ve eş makinelerin kopyasını doğrular, her botu geçici bir klasöre geri yükleyip emir göndermeden kuru çalıştırır (Sistem › Tatbikatlar › Geri dönüş tatbikatı). Öz denetim son tatbikat **geçmediyse** ya da **40 günden uzun** süredir yapılmadıysa sarı yanar — **botları etkilemez**, yalnız haber verir.
+
+**Adımlar:** Tatbikatlar sayfasındaki kartta hangi botun hangi adımda kaldığını okuyun. *Günlük yedek bulunamadı / bütünlük tutmuyor* → yedek diski takılı mı, son 05:30 yedeği alındı mı (Ayarlar › Yedek ve taşıma). *Yedek şifresiyle çözülemedi / anahtar yok* → iki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin; eşte bir sonraki saat başı kopyayı bekleyin. *Kuru deneme: fark* → yedek saatler önce alındı, o arada bot işlem yaptı (yalnız uyarı). *Kuru deneme çalışmadı* → geliştirme sohbetinde inceleyin. Düzeltince **Şimdi çalıştır**.
+
 ### Windows yeniden başlatması {#windows-yeniden-baslatma}
 
 Windows güncellemesi yeniden başlatma bekliyor; gece yeniden başlatırsa 03:02 çalışması kaçabilir. Uygun bir gündüz saatinde elle yeniden başlatın; kalıcı çözüm sunucuda yönetici olarak `scripts\windows-etkin-saat.ps1`.

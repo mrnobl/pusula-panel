@@ -27,7 +27,7 @@
   const SIRA = { tamam: 0, kapali: 0, bilinmiyor: 1, uyari: 2, hata: 3 };
   /** 73.7 (S13): denetim → Kılavuz › Sorun giderme başlığı (her satırın "ne yapmalı" bağlantısı). */
   const KILAVUZ = { surec: 'acilis-sayaci', donma: 'donma', bellek: 'bellek', disk: 'disk', paket: 'paket-guvenligi', node: 'node', saat: 'saat-farki', sir: 'sir-dosyasi', kilit: 'kilit',
-    dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', kopya: 'es-kopya', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', veri: 'veri-kalitesi', bakim: 'guvenli-kip',
+    dosya: 'ayar-bozuk', yedek: 'yedek', uzak: 'yedek', kopya: 'es-kopya', geriDonus: 'geri-donus', guncel: 'guncelleme-elle', wyb: 'windows-yeniden-baslatma', uyku: 'uyku', baglanti: 'yurutucu-durdu', fiyat: 'guvenli-kip', veri: 'veri-kalitesi', bakim: 'guvenli-kip',
     delist: 'delist', kayitci: 'ileriye-kayit', internet: 'internet', mutabakat: 'pozisyon-uyusmazligi', stop: 'stop-kurulamadi', marj: 'marj', zorla: 'adl-likidasyon', funding: 'funding',
     sapma: 'golge-kaymasi', maliyet: 'islem-maliyeti', toplamRisk: 'toplam-risk', tekrar: 'guvenli-kip-tekrar', kacan: 'kacan-calisma', telegram: 'telegram-gonderim', sinyal: 'saglik-sinyali', yetki: 'anahtar-yetkisi' };
   /** Saf (73.7, S13): denetim satırının "ne yapmalı" modeli → { metin, kilavuz, sorunlar } (sorunlu satırda Sorunlar bağlantısı). */
