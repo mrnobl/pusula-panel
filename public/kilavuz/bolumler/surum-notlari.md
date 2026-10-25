@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.8 — İç düzenleme: sunucu programı parçalara bölünmeye başladı (2026-10-25) {#s74-8}
+
+- **Görünür değişiklik yok.** Sunucu programının en büyük dosyası, bakımı kolaylaşsın diye birkaç sürümde parçalara bölünüyor. Bu sürümde **güncelleme** uçları, **araştırma** uçları (gösterge, strateji listesi, Pine içe aktarma, backtest, tarama, veri indirme) ve eski **kâğıt motor** uçları ayrı dosyalara taşındı.
+- Panelin bütün düğmeleri, yanıtları, yetki kuralları (telefon, geliştirme bilgisayarı, araştırma kopyası) ve sıraları **aynı**; bunu uç listesinin birebir karşılaştırması ve güvenlik testleri doğruluyor. **Botların kodu ve kararları değişmedi.**
+- Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 74.7 — Bot kaydı tek kaynak: Kairos ve Tao ayarı yalnız kayda yazılır (2026-10-25) {#s74-7}
 
 - **Kairos ve Tao'nun ayarının tek kaynağı artık [bot kaydı](#/kilavuz/botlar/bot-kaydi).** Mod, küçük sermaye, sermaye üst sınırı ve kâğıt sıfırlamadaki BTC ayağı yalnız kayda yazılır; iki yere ayrı ayrı yazma kalktı. Eski ayar dosyasındaki bölüm kayıttan kendiliğinden kopyalanır (**geri dönüş kopyası**): panelden eski bir sürüme dönülse de botlar aynı ayarla çalışır.

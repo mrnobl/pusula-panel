@@ -363,6 +363,7 @@ En sonunda server.js ~400 satır kalır: require'lar, `config`, `app`, ara katma
 
 **Bağımlılık:** A1 (2a) bitmiş olmalı. Böylece bot blokları bir kez taşınır. Plan sırası da bu.
 **Büyüklük:** toplam XL (taşınan ~3700 satır + test altyapısı), 3 sürüm.
+- **74.8'de uygulandı: adım 0 + parça 1.** Yardımcının adı `scripts/lib/sunucuKaynak.js` (43 test çevrildi). Envanter testi server.js'i açmak yerine ön yüklemeyle (`node -r scripts/lib/ucDokumu.js`) Express çağrılarını kaydeder ve `server.listen` anında dinlemeden çıkar (port açılmaz). ctx: getter'lı nesne (`ctx.config`, tanımsız alan hata). Sıra kuralı: modül grupları server.js'te ESKİ YERLERİNDE çağrılır ve doğrudan `app.*` bağlar (Router değil) — araştırma uçları üç ayrı yerde olduğu için `arastirmaUclari.olustur(ctx)` üç bağlama işlevi döndürür. Kalan dilimler ve 74.8 satır numaraları CLAUDE.md "Panel 74.8".
 **Açık karar:** yok.
 
 ---
