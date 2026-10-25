@@ -2,6 +2,12 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.9 — Başka makinelerdeki botlar, Telegram'da yönetici, karnede eşler (2026-10-25) {#s75-9}
+- **Yeni: [Botlar › Özet › Başka makinelerdeki botlar](#/kilavuz/botlar/baska-makine).** Eşlenmiş sunucu varsa o makinelerde çalışan botlar (taşıdıklarınız dahil) ayrı bir kartta: makine, hesap türü, durum, son nabız ve **o makinede aç ↗**. Yalnız okuma — Başlat / Durdur botun çalıştığı makinenin panelinde. Başka makineye taşınan botun bu bilgisayardaki eski kopyasının kartında "Bu bot artık … makinesinde çalışıyor" bandı çıkar.
+- **[Telegram › Makineler](#/kilavuz/telegram-menu):** hangi makinenin yönetici olduğu, komutları **şu an kimin dinlediği** (geçici devralma dahil, başladığı saatle) ve eşlerin son nabzı. Telegram'dan yazma yine yok.
+- **[Haftalık karne](#/kilavuz/raporlar/karne)** artık eşlenmiş sunucuların botlarını da sayar — makine başına ayrı bölüm; o an ulaşılamayan makine "okunamadı" diye yazılır. Eşten yalnız yüzdeler gelir.
+- Eşlenmiş makine yoksa hiçbir şey değişmez. Botların karar kodu değişmedi. Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur"); karnede eşin botlarını görmek için iki sunucu da 75.9'da olmalı.
+
 ## 75.8 — Ortak borsa arayüzü, OKX hazırlığı (2026-10-25) {#s75-8}
 - Botların borsayla konuşan parçası ortak bir arayüze taşındı; Binance
 davranışı bit bit aynı (75.4'ün çağrı iziyle, kuru denemeyle ve 120 günlük yeniden oynatmayla doğrulandı). OKX için bağdaştırıcı ve

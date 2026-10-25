@@ -93,7 +93,7 @@ Yeni bot, hesap bağlama, sermaye ve arşiv değişiklikleri [Ayar geçmişi](#/
 5. Hedef her dosyayı doğrular, eski kopyasını silmeden kenara alır (`onceki-bot-…` klasörü), botu yerleştirir. **Bot hedefte kendiliğinden başlamaz:** hedefin Botlar sayfasında önce **Mutabakat** (borsayla karşılaştırma), temiz çıkınca **Başlat** — bunu siz yaparsınız.
 6. İki tarafa da Telegram mesajı gider: "… artık … makinesinde" ve hedefte karşılaştırmanın sonucu.
 
-**Taşındıktan sonra eski bilgisayarda** bot listede durur ama **salt okunurdur**: Başlat, Çalıştır, Mutabakat, Acil, hesap türü değişikliği … hepsi "bu bot … makinesine taşındı" diye reddedilir; yalnız Durdur serbesttir. Eski bilgisayardaki dosyalar silinmez. **Geri getirmek** için aynı kartı yeni makinede kullanıp botu eski bilgisayara taşıyın (nöbet numarası bir artar).
+**Taşındıktan sonra eski bilgisayarda** bot listede durur ama **salt okunurdur**: Başlat, Çalıştır, Mutabakat, Acil, hesap türü değişikliği … hepsi "bu bot … makinesine taşındı" diye reddedilir; yalnız Durdur serbesttir. Botun kartının üstünde sarı bir bant "Bu bot artık … makinesinde çalışıyor" der (yanında **o makinede aç ↗**). Botun yeni yerdeki durumu [Botlar › Özet › Başka makinelerdeki botlar](#/kilavuz/botlar/baska-makine) kartında görünür. Eski bilgisayardaki dosyalar silinmez. **Geri getirmek** için aynı kartı yeni makinede kullanıp botu eski bilgisayara taşıyın (nöbet numarası bir artar).
 
 ### Nöbet: aynı bot iki makinede aynı anda çalışmaz {#bot-nobet}
 
@@ -171,6 +171,22 @@ Taşıma günlük karar penceresinde (UTC 23:50–01:30, TR 02:50–04:30) yapı
 Kripto botları günlük ölçümle (~03:00), portföy botları kâğıt hesabın günlük değeriyle karşılaştırılır. Kısa kayıtta sayılar şansa çok bağlıdır; geçmiş sonuç geleceği göstermez.
 
 ![Botlar › Özet](ekran:botlar-ozet-1400)
+
+### Başka makinelerdeki botlar (75.9) {#baska-makine}
+
+[Ayarlar › Makineler](#/kilavuz/ayarlar/makineler)'de başka bir **sunucu** eşlenmişse, Botlar › Özet'in altında **Başka makinelerdeki botlar** kartı çıkar: o makinelerde çalışan botlar — [taşıdığınız](#/kilavuz/botlar/bot-tasima) botlar dahil. Eşlenmiş sunucu yoksa kart hiç görünmez.
+
+| Sütun | Anlamı |
+|---|---|
+| Bot | Botun adı |
+| Makine | Botun şu an bulunduğu (sahibi olan) makine |
+| Hesap | kâğıt · demo · canlı hesap |
+| Durum | çalışıyor · durmuş · yerleşiyor (taşıma sürüyor) · taşınıyor · taşındı — mutabakat ve Başlat bekliyor |
+| Son nabız | O makineden son haber ne zaman geldi (5 dakikada bir). 15 dakikadan eskiyse "bilgi eski olabilir" |
+| o makinede aç ↗ | Botun o makinedeki sayfasını yeni sekmede açar (makinenin adresi kayıtlıysa) |
+
+- Kart **yalnız okur**: Başlat, Durdur, ayar düğmesi yoktur — işlemi botun çalıştığı makinenin panelinde yapın (bağlantı oraya götürür). Bilgi makinelerin birbirine yolladığı nabızdan gelir; ek bir bağlantı açılmaz.
+- Bir bot yalnız **sahibi olan** makinenin satırında görünür; taşınmış botun eski kopyası listelenmez. Geliştirme / araştırma bilgisayarının botları listelenmez (orada bot çalışmaz).
 
 ## Botlarımızın gerçekleşmiş sonuçları {#bot-performansi}
 

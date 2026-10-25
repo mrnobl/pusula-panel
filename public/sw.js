@@ -13,7 +13,7 @@
  *   · Yalnız 200 yanıtlar önbelleğe girer: giriş sayfası (401) ve reddedilen istek (403) girmez.
  */
 'use strict';
-const SURUM = '75.8';
+const SURUM = '75.9';
 const ONBELLEK = `pusula-kabuk-${SURUM}`;
 
 self.addEventListener('install', () => { self.skipWaiting(); });

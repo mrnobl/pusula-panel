@@ -928,6 +928,8 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     if (b) b.classList.toggle('bozet-acik', !!acik);
     if (k) k.classList.toggle('is-hidden', !acik);
     if (acik && AG.pages.botGetiri) AG.pages.botGetiri.ozetYukle(false);
+    // 75.9 (3c-2): başka makinedeki botlar kartı (#botEsKap, js/pages/esBotlari.js — salt okuma) yalnız Özet'te
+    if (AG.pages.esBotlari) { if (acik) AG.pages.esBotlari.yukle(false).catch(() => null); else AG.pages.esBotlari.ciz(); }
   }
   /** Yeni panel F2/F5: seçili bot + görünüm adreste (#/botlar/hucum/hesap) — yan menüde Botlar › Hücum işaretlenir, yenileme aynısını açar. */
   const GORUNUMLER = ['genel', 'hesap', 'islemler', 'yonetim'];
@@ -1017,6 +1019,8 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     const ds = await Promise.all(ADLAR.map(a => AG.api.bindirmeDurum(a).catch(e => ({ success: false, error: e.message }))));
     ds.forEach((d, i) => kartCiz(ADLAR[i], d));
     sonDurumlar = ds;
+    // 75.9 (3c-2): bot başka makineye taşındıysa buradaki eski kopyanın kartına bant (pano — salt okuma; eş yoksa bant yok)
+    if (AG.pages.esBotlari) AG.pages.esBotlari.yukle(false).then(() => AG.pages.esBotlari.yerelBantlar(ADLAR)).catch(() => null);
     sekmelerCiz();
     const bas = bul('txtBotCoinBaslik'); if (bas) bas.textContent = `Coin grafiği — ${AD(secili)}`;
     const ilk = ds.find(d => d && d.bot);

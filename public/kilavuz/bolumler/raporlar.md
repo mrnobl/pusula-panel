@@ -42,7 +42,8 @@ Sayfanın en üstündeki kart: **geçen haftanın** (pazartesi–pazar) tek bak�
 | Kairos demo kabulü · Gölge testler | İleri testin ara durumu — **hüküm değildir**; gölge satırları İleri test sayfasıyla aynı kaynaktan |
 | Telegram'a giden metin | Telefona giden mesajın aynısı (tutar yok, yalnız yüzde) |
 
-- Karne bu makinenin botlarını sayar. Telegram'a yalnız Telegram'ı dinleyen makine gönderir (eşlenmiş makine yoksa sunucu); öbür makine karnesini kaydeder ama mesaj atmaz.
+- Karne bu makinenin botlarını **ve eşlenmiş sunucuların botlarını** sayar (75.9): eş makinenin botları kendi başlığı altında ayrı tabloda ("SUNUCU-2 makinesi" gibi), Telegram mesajında "🖧 … makinesi" satırlarıyla. Her makine kendi botlarını kendi kaydıyla hesaplar; eşten yalnız yüzdeler gelir. Eşe o an ulaşılamazsa (kapalı, Tailscale bağlı değil ya da eski sürüm) o makine **"okunamadı"** diye yazılır, bildiği bot adlarıyla. Taşınmış bir botun eski kopyası sayılmaz (bot yeni makinesinin satırındadır). Geliştirme bilgisayarı sayılmaz.
+- Telegram'a yalnız Telegram'ı dinleyen makine gönderir (eşlenmiş makine yoksa sunucu); öbür makine karnesini kaydeder ama mesaj atmaz.
 - Bir bot o hafta hiç değer kaydı yazmadıysa satırında "veri yok" yazar (bot durmuştu ya da yeni kuruldu).
 - Karneler `veri/karne/<pazartesi>.json` dosyalarıdır (yedeğe ve taşıma dosyasına girer).
 

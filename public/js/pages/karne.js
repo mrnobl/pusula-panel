@@ -4,6 +4,7 @@
  * GET /api/karne (lib/karne.js): geçen haftanın (pazartesi–pazar) karnesi — her bot için getiri, aynı haftada BTC, BTC'ye fark, en büyük
  * düşüş, tepeden düşüş, işlem sayısı, durum; portföy; sorunlar; ileri test (Kairos demo kabulü + gölge satırları, hüküm yok).
  * Haftalar arasında ‹ ›; "Bu hafta (sürüyor)" o ana kadarki önizleme. Pazartesi 09:00'dan sonra aynı karne Telegram'a TEK mesaj (yalnız yüzde).
+ * 75.9 (3c-2): eşlenmiş SUNUCULARIN botları makine başına ayrı bölümde (`karne.esler`; okunamayan eş "okunamadı").
  * SALT OKUMA. Geliştirme bilgisayarında sunucunun karnesi gelir (lib/evOkuma EV_YOLU).
  */
 (function (global) {
@@ -43,8 +44,12 @@
     return d.toISOString().slice(0, 10);
   }
   /** Saf: karne → dört gösterge. */
+  /** Saf (75.9): bu makinenin + okunabilen eşlerin bütün bot satırları (gösterge şeridi hepsini sayar). */
+  function tumBotlar(k) {
+    return [...((k && k.botlar) || []), ...((k && k.esler) || []).filter(e => e && e.durum === 'tamam').flatMap(e => e.botlar || [])];
+  }
   function gostergeler(k) {
-    const b = (k && k.botlar) || [];
+    const b = tumBotlar(k);
     const getirili = b.filter(x => sayiMi(x.getiri));
     const enIyi = getirili.slice().sort((x, y) => y.getiri - x.getiri)[0] || null;
     const s = (k && k.sorunlar && k.sorunlar.sayac) || null;
@@ -57,6 +62,32 @@
     ];
   }
 
+  function botTablo(id, botlar) {
+    return AG.tablo.kutulu({ id, sinif: 'p-tablo', basliklar: ['Bot', 'Hesap', 'Durum', 'Bu hafta', 'BTC', "BTC'ye fark", 'En büyük düşüş', 'Tepeden', 'İşlem'],
+      satirlar: botlar.map(b => el('tr', null, [
+        el('td', { text: botAdi(b) }),
+        el('td', { class: 'df-soluk', text: MOD[b.mod] || b.mod || '—' }),
+        el('td', null, [el('span', { class: `p-rozet p-rozet-${(DURUM[b.durum] || ['', ''])[1] || 'info'}`, text: (DURUM[b.durum] || [b.durum || '—'])[0] })]),
+        el('td', { class: `sayi ${ton(b.getiri)}`, text: b.getiri == null ? 'veri yok' : yuzde(b.getiri) }),
+        el('td', { class: 'sayi', text: yuzde(b.btc) }),
+        el('td', { class: `sayi ${ton(b.fark)}`, text: puan(b.fark) }),
+        el('td', { class: 'sayi', text: sayiMi(b.dusus) ? yuzde(-b.dusus) : '—' }),
+        el('td', { class: 'sayi df-soluk', text: sayiMi(b.tepedenDusus) ? yuzde(-b.tepedenDusus) : '—' }),
+        el('td', { class: 'sayi', text: String(b.islem || 0) }),
+      ])) }, 'p-tablo-kap');
+  }
+  /** 75.9 (3c-2): eş makinelerin botları — makine başına ayrı bölüm; okunamayan eş "okunamadı" (son nabızdaki bot adlarıyla). */
+  function esBolumleri(kr) {
+    const l = [];
+    (kr.esler || []).forEach((e, i) => {
+      l.push(el('h4', { class: 'pf-bolum-baslik', id: `karneEs-${i}`, text: `${e.makine} makinesi` }));
+      if (e.durum !== 'tamam') l.push(el('p', { class: 'hint tone-warning', text: `Okunamadı: ${e.hata || 'eşe ulaşılamadı'}${(e.bilinen || []).length ? ` — bu makinedeki botlar: ${e.bilinen.join(', ')}` : ''}. Karne yine de kaydedildi; eş geri gelince sonraki karnede sayılır.` }));
+      else if (!(e.botlar || []).length) l.push(el('p', { class: 'hint', text: 'Bu makinede bot yok.' }));
+      else l.push(botTablo(`tblKarneEs-${i}`, e.botlar));
+    });
+    return l;
+  }
+
   function ciz() {
     const k = bul('karneKok');
     if (!k || !veri || !veri.karne) return;
@@ -67,6 +98,7 @@
     const pf = kr.portfoy || {};
     const pfParca = [pf.portfoyum != null ? `Portföyüm ${yuzde(pf.portfoyum)}` : null, ...((pf.modeller || []).map(m => `${(AG.botAd && AG.botAd.ad(m.id)) || m.ad} ${yuzde(m.getiri)}${m.para === 'TRY' ? ' (TL)' : ''}`))].filter(Boolean);
     const d = kr.ileri && kr.ileri.demo;
+    const esVar = Array.isArray(kr.esler) && kr.esler.length > 0;
     doldur(k, [
       el('section', { class: 'p-kart mb-4', id: 'karneKart' }, [
         el('div', { class: 'p-kart-bas' }, [
@@ -83,18 +115,9 @@
           el('p', { class: `p-gosterge-deger${g.ton ? ' ' + g.ton : ''}`, text: g.deger }),
           el('p', { class: 'p-gosterge-alt', text: g.alt }),
         ]))),
-        (kr.botlar || []).length ? AG.tablo.kutulu({ id: 'tblKarneBot', sinif: 'p-tablo', basliklar: ['Bot', 'Hesap', 'Durum', 'Bu hafta', 'BTC', "BTC'ye fark", 'En büyük düşüş', 'Tepeden', 'İşlem'],
-          satirlar: kr.botlar.map(b => el('tr', null, [
-            el('td', { text: botAdi(b) }),
-            el('td', { class: 'df-soluk', text: MOD[b.mod] || b.mod || '—' }),
-            el('td', null, [el('span', { class: `p-rozet p-rozet-${(DURUM[b.durum] || ['', ''])[1] || 'info'}`, text: (DURUM[b.durum] || [b.durum || '—'])[0] })]),
-            el('td', { class: `sayi ${ton(b.getiri)}`, text: b.getiri == null ? 'veri yok' : yuzde(b.getiri) }),
-            el('td', { class: 'sayi', text: yuzde(b.btc) }),
-            el('td', { class: `sayi ${ton(b.fark)}`, text: puan(b.fark) }),
-            el('td', { class: 'sayi', text: sayiMi(b.dusus) ? yuzde(-b.dusus) : '—' }),
-            el('td', { class: 'sayi df-soluk', text: sayiMi(b.tepedenDusus) ? yuzde(-b.tepedenDusus) : '—' }),
-            el('td', { class: 'sayi', text: String(b.islem || 0) }),
-          ])) }, 'p-tablo-kap') : el('p', { class: 'hint', text: 'Bu makinede bot yok.' }),
+        esVar && kr.makine ? el('h4', { class: 'pf-bolum-baslik', text: `${kr.makine} makinesi (bu bilgisayar)` }) : null,
+        (kr.botlar || []).length ? botTablo('tblKarneBot', kr.botlar) : el('p', { class: 'hint', text: 'Bu makinede bot yok.' }),
+        ...esBolumleri(kr),
         el('ul', { class: 'mt-3', id: 'karneSatirlar' }, [
           pfParca.length ? el('li', { text: `Portföy: ${pfParca.join(' · ')}` }) : null,
           kr.sorunlar ? el('li', { text: (kr.sorunlar.basliklar || []).length ? `Sorunlar (şu an): ${kr.sorunlar.basliklar.slice(0, 3).join(' · ')}` : 'Şu an etkin sorun yok.' }) : null,
@@ -126,6 +149,6 @@
   if (doc && doc.addEventListener) doc.addEventListener('ag:rota', (e) => { if (e.detail && e.detail.bolum === 'tab-raporlar') yukle(); });
 
   AG.pages = AG.pages || {};
-  AG.pages.karne = { yukle, yuzde, puan, komsu, gostergeler, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.karne = { yukle, yuzde, puan, komsu, gostergeler, tumBotlar, _durum: { veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.karne;
 })(typeof window !== 'undefined' ? window : globalThis);

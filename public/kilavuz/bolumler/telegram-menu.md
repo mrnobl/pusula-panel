@@ -15,7 +15,7 @@ Telegram'ın kendi komut listesi de dolu: sohbette **/** yazınca ya da sol altt
 | 🌍 **Piyasa** | [Piyasa bağlamı](#/kilavuz/piyasa-baglami)'ndan bu haftanın olayları ve kısa makro satırı (faiz, USD/TRY, enflasyon, korku-açgözlülük). Yalnız bilgi. |
 | 🏛️ **Bilanço** | Son bilanço özetinin kısa hâli: elinizdekiler 📌 ile, çeyrek net kâr değişimi yüzde olarak. |
 | 🔄 **Güncelleme** | Çalışan sürüm, GitHub'da bekleyen sürüm ve durumu (güncel / onay bekliyor / elle bakılmalı …). |
-| 🖥️ **Makineler** | Sunucu (sürüm, çalışma süresi, botlar) ve araştırma kopyasının son görülmesi. |
+| 🖥️ **Makineler** | Sunucu (sürüm, çalışma süresi, botlar) ve araştırma kopyasının son görülmesi. Eşlenmiş makine varsa (75.9) **🧭 Yönetici makine** bölümü: hangi makine yönetici (seçildi / varsayılan), Telegram komutlarını **şu an kim dinliyor** (yönetici ulaşılamadığı için başka sunucu geçici devraldıysa "geçici devralma — 14:20'den beri"), her eşin rolü, sürümü, **son nabzı** ve bot sayısı. Yalnız okuma; yöneticiyi değiştirmek panelde ([Ayarlar › Makineler](#/kilavuz/ayarlar/makineler)). |
 | ⚙️ **Bildirim ayarları** | Sessiz saat, varsa geçici sessiz, açık / kapalı bildirim türleri; **🔕 1 saat sessize al** düğmesi. |
 | ❓ **Komutlar** | Bütün komutlar. |
 
