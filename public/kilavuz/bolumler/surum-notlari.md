@@ -2,6 +2,17 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.9 — Yeni hisse alımı: kasadan düşer; izleme listesi (2026-10-26) {#s76-9}
+> **Kullanıcı geri bildirimi:** "Varlık ekle" ile girilen yeni alım kasadan düşmüyor, hesap "ekstra para koymuşum gibi" görünüyordu; kasa bir denemede 100'e inmişti. Akış baştan kuruldu (taslak onaylı).
+
+**Hesap kartı.** Üstte **Hesap toplamı** ve **Kasa (nakit)**; düğmeler **Al · Sat · Para yatır · Para çek · Temettü**. Her biri kartın içinde tek bir **işlem kartı** açar: **1 Hangi hisse** (ara) → **2 Ne kadar** (**Adet** ya da **Tutar** — son seçtiğin hatırlanır; gerçekleşen fiyat, komisyon (yoksa 0), tarih; canlı özet: adet × fiyat, komisyon, kasadan düşecek, kasa şimdi → sonra) → **3 Kontrol et** → **Kaydet** → makbuz (✓ ve **Geri al**).
+
+**Alış her zaman kasadan düşer.** Kasa yetmezse sarı bant: *"Kasada X var, bu alım Y. Z eksik."* ve **Bu alım için kasaya önce para yatırdım** kutusu (tutarı düzenlenebilir). İşaretlemezsen alım kaydedilmez — kasa eksiye düşemez; işaretlersen para yatırma + alış birlikte yazılır. Satışta elde olandan fazlası satılamaz. Eski "Olmadan kaydet" (kasayı sessizce eksiye düşüren) seçeneği kaldırıldı.
+
+**İzleme listesi** (Hesaplar): **Hisse ara ve listeye ekle** → **+ Ekle**; satırda son fiyat, günlük değişim, **Al**, **Çıkar**. Kasaya ve hesap toplamına etkisi yoktur.
+
+**Bu hesapta zaten olanlar (Pusula'yı ilk kurarken bir kez).** Eski "Varlık ekle" yalnız ilk kurulum içindir; nakit bakiyesi ikinci kez girilemez (para yatırma / çekme girin). Hesap kartındaki **İşlemler** listesi her satırın kasa etkisini gösterir; kasadan düşmemiş hisse kaydında **kasadan düşmedi — yeni alımsa düzeltin** rozeti ve **Bunu alışa çevir** (yanlış kayıt ters kayıtla iptal, aynı adet ve fiyatla alış yazılır, tutar kasadan düşer). Örnek: 677 $ kasa + yanlışlıkla "zaten vardı" diye girilen 49 × 2,03 $ MRT → toplam ~776 $ görünüyordu; **Bunu alışa çevir** sonrası kasa ~577,53 $, toplam ~677 $. "Açılış bakiyesi" terimi panelden kalktı.
+
 ## 76.8 — Geri dönüş tatbikatı (2026-10-26) {#s76-8}
 > **Geri dönüş tatbikatı (Sistem › Tatbikatlar):** Pusula ayda bir (ayın ilk pazarı 11:00) "bu bilgisayar bozulsa bot geri gelir mi?" diye kendini sınar: son günlük yedeği ve eşlenmiş sunucunun kopyasını dosya dosya doğrular, şifreli anahtar dosyasının yedek şifresiyle açılabildiğini yalnız bellekte dener, her botu geçici bir klasöre geri yükleyip emir göndermeden kuru çalıştırır, sonra klasörü siler. Hiçbir bot başlatılmaz, gerçek dosyalara dokunulmaz. Sonuç sayfada, Telegram'da ve Sağlık'ta (yeni denetim "Geri dönüş tatbikatı", yalnız haber). "Şimdi çalıştır" ile hemen de yapılabilir. Kairos demo kabulü bitene kadar ve canlı hesap kapsam dışı.
 

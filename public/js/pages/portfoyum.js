@@ -41,7 +41,7 @@
 
   const GORUNUM_ANAHTAR = 'pusula.portfoy.gorunum';   // F6: üst çubuk $ / ₺ / Gizli (pano.js yazar)
   const PARA_SIMGE = { USD: '$', TRY: '₺', EUR: '€', GBP: '£' };
-  const ISLEM_AD = { acilis: 'Açılış bakiyesi', al: 'Alış', sat: 'Satış', temettu: 'Temettü / kupon', faiz: 'Faiz', yatir: 'Para yatırma', cek: 'Para çekme',
+  const ISLEM_AD = { acilis: 'İlk kurulum kaydı', al: 'Alış', sat: 'Satış', temettu: 'Temettü / kupon', faiz: 'Faiz', yatir: 'Para yatırma', cek: 'Para çekme',
     transfer: 'Transfer', bolunme: 'Bölünme', ucret: 'Ücret / gider' };
   const KAYNAK_AD = { yahoo: 'Yahoo', tefas: 'TEFAS', binance: 'Binance', altin: 'Gram altın', elle: 'Elle', islem: 'İşlem fiyatı', canli: 'Canlı' };
 
@@ -261,7 +261,7 @@
       kutu('QQQ · aynı dönem', el('span', { class: ton(qGet), text: isaretliYuzde(qGet) }), 'kıyas: hiçbir şey yapmasaydın', '', 'Aynı ilk günden bugüne QQQ al-tut, aynı para biriminde'),
       kutu('En derin düşüş', el('span', { class: ton(u.ddEnBuyuk), text: yuzde(u.ddEnBuyuk) }), `şu an zirveden ${yuzde(u.dd)}`, '', 'Getiri endeksinin zirvesinden en büyük düşüş'),
       kutu('Gerçekleşen K/Z + gelir', tutar(paraBicim(gerc, pb, 0)), 'satışlar (FIFO) + temettü/faiz', '', 'Kapatılmış işlemlerin kâr/zararı ve alınan gelir'),
-      kutu('Net yatırılan', tutar(paraBicim(net, pb, 0)), el('span', null, [el('span', { text: 'kâr ' }), tutar(paraBicim(toplam - net, pb, 0))]), '', 'Açılış bakiyeleri + para yatırma − çekme (bugünkü kurla değil, o günün kuruyla)')
+      kutu('Net yatırılan', tutar(paraBicim(net, pb, 0)), el('span', null, [el('span', { text: 'kâr ' }), tutar(paraBicim(toplam - net, pb, 0))]), '', 'İlk kurulumda girilen bakiyeler + para yatırma − çekme (bugünkü kurla değil, o günün kuruyla)')
     ]);
   }
 
@@ -303,7 +303,7 @@
     if (!k) return;
     const l = veri.degerleme.hesaplar || [];
     const bas = baslik('landmark', 'Hesaplarım');
-    if (!l.length) { doldur(k, [bas, el('p', { class: 'hint mb-0', text: 'Hesap yok — Portföy › Hesaplar\'daki "Yeni hesap" kartından aç, sonra "Varlık ekle".' })]); return; }
+    if (!l.length) { doldur(k, [bas, el('p', { class: 'hint mb-0', text: 'Hesap yok — Portföy › Hesaplar\'daki "Yeni hesap" kartından aç, sonra hesapta zaten olanları bir kez gir.' })]); return; }
     const tur = (veri.sabitler && veri.sabitler.hesapTurleri) || {};
     doldur(k, [bas, AG.tablo.kutulu({ id: 'tblPmHesaplar', sinif: 'table-dense pf-tablo', basliklar: ['Hesap', 'Kurum', 'Tür', 'Değer USD', 'Değer TL', 'Nakit', 'Son kayıt', 'Durum'],
       satirlar: l.map(h => el('tr', { class: h.bayat ? 'pm-satir-uyari' : null }, [
@@ -377,7 +377,7 @@
     const V = varlikHaritasi();
     const sayac = bul('pmDefterSayi');
     if (sayac) sayac.textContent = ` · ${defter ? defter.toplam : 0} kayıt${l.some(x => x._iptal) ? ` · ${l.filter(x => x._iptal).length} iptal` : ''}`;
-    if (!l.length) { doldur(k, [el('p', { class: 'hint mb-0', text: veri && veri.islemSayisi ? 'Süzgece uyan işlem yok.' : 'Henüz işlem yok. İlk iş: her hesap için "Açılış bakiyesi" girin.' })]); return; }
+    if (!l.length) { doldur(k, [el('p', { class: 'hint mb-0', text: veri && veri.islemSayisi ? 'Süzgece uyan işlem yok.' : 'Henüz işlem yok. İlk iş: her hesapta zaten olanları bir kez girin ("Bu hesapta zaten olanlar").' })]); return; }
     // Tasarımcı paketleri (Portföy › Bu ay "Uyguladım"): bir satırlık özet; tamamı geri alınmış paket tabloda tek satıra iner (B-16).
     const paketler = tasarimciPaketleri(l);
     const gosterilen = [];
@@ -490,7 +490,7 @@
     if (!k || !veri) return;
     const o = hizli.alan || (hizli.alan = {});
     const hesaplar = hesapSecenekleri(true);
-    const bas = baslik('plus-circle', 'Varlık ekle');
+    const bas = baslik('plus-circle', 'Bu hesapta zaten olanlar (Pusula\'yı ilk kurarken bir kez)');
     if (!hesaplar.length) {
       doldur(k, [bas, el('p', { class: 'hint mb-0', id: 'pmHHesapYok', text: 'Önce bir hesap aç: varlık her zaman bir hesabın içinde durur. "Yeni hesap" kartında kurumu ve hesap adını yaz, sonra buraya dön.' }),
         el('div', { class: 'pf-dugmeler mt-2' }, [dugme('Yeni hesap aç', () => katAc('pmYeniHesapKat'), 'btn-primary', { id: 'btnPmHYeniHesapAc' })])]);
@@ -506,14 +506,14 @@
       onclick: () => { hizliOku(); hizli.sekme = kk; hizli.hata = ''; const h = sekmeHesabi(kk); if (h) o.hesap = h; hizliCiz(); }
     }, [el('span', { text: ad })])));
     const tarihAlani = alan(s === 'nakit' ? 'Bakiye tarihi' : 'Alış tarihi', girdi({ id: hizliAlanlar.tarih, type: 'date', max: bugun() }, o.tarih || dun()),
-      s === 'nakit' ? 'Bu günün SONUNDAKİ bakiye (varsayılan dün); sonraki para giriş/çıkışı hesap kartındaki "+ işlem"den.' : 'Getiri bu günden ölçülür. Birkaç kez aldıysan ilk alış günü (varsayılan dün).');
+      s === 'nakit' ? 'Bu günün SONUNDAKİ bakiye (varsayılan dün); sonraki para giriş/çıkışı hesap kartındaki "Para yatır" / "Para çek"ten.' : 'Getiri bu günden ölçülür. Birkaç kez aldıysan ilk alış günü (varsayılan dün).');
     const adet = (etiket) => alan(etiket, girdi({ id: hizliAlanlar.adet, type: 'text', inputmode: 'decimal', placeholder: '0' }, o.adet));
     const maliyet = (para, etiket) => alan(`${etiket || 'Ortalama alış fiyatı'}${para ? ` (${para})` : ''}`, girdi({ id: hizliAlanlar.maliyet, type: 'text', inputmode: 'decimal', placeholder: 'boş bırakılabilir' }, o.maliyet),
       'Girersen kâr/zarar hesaplanır. Sonra da ekleyebilirsin.');
     const kodAlani = (etiket, ph, ipucu) => alan(etiket, girdi({ id: hizliAlanlar.kod, type: 'text', maxlength: '15', autocomplete: 'off', placeholder: ph }, o.kod), ipucu);
     const paraAlani = () => alan('Para birimi', secici({ id: hizliAlanlar.para }, paraSecenekleri(), o.para || hesapHam.para || 'USD'));
     // 68.4: açılış kaydına isteğe bağlı not (67.4'te eski "Açılış bakiyesi" formuyla kaybolmuştu); İşlem defterinin Not sütununda görünür.
-    const notAlani = alan('Not (isteğe bağlı)', girdi({ id: hizliAlanlar.not, type: 'text', maxlength: '500', autocomplete: 'off', placeholder: 'ör. eski hesaptan aktarıldı' }, o.not), 'Açılış kaydında saklanır; İşlem defterinde görünür.');
+    const notAlani = alan('Not (isteğe bağlı)', girdi({ id: hizliAlanlar.not, type: 'text', maxlength: '500', autocomplete: 'off', placeholder: 'ör. eski hesaptan aktarıldı' }, o.not), 'Bu kayıtta saklanır; İşlem defterinde görünür.');
     let ust = [], alanlar = [], not = null;
     if (s === 'hisse') {
       const adayKutusu = hizli.bulunuyor ? el('p', { class: 'hint hint-sm mb-0', text: 'Aranıyor…' })
@@ -552,15 +552,16 @@
     }
     doldur(k, [
       bas,
-      el('p', { class: 'hint hint-sm', text: 'Elinde ZATEN olan varlığı ve nakdi buraya gir (açılış bakiyesi). Bundan sonraki alış, satış, temettü ve para giriş/çıkışı hesap kartındaki "+ işlem" satırından.' }),
+      // 76.9 (kullanıcı: "ne olduğunu bile anlamadım"): yeni alım burada GİRİLMEZ — alış parayı nakitten düşer.
+      el('p', { class: 'hint hint-sm', id: 'pmHizliAciklama', text: 'Pusula\'yı ilk kurarken hesabınızda ZATEN olan varlıkları ve nakdi bir kez girmek için. Yeni bir alım için burayı kullanmayın — hesap kartındaki "Al" düğmesini kullanın; alış parayı nakitten düşer. Nakit bakiyesi bir kez girilir; sonra değiştirmek için para yatırma / çekme işlemi girin.' }),
       sekmeler,
       ...ust,
       el('div', { class: 'pf-form-izgara mt-2' }, alanlar.concat([notAlani])),
       not ? el('p', { class: 'hint hint-sm mt-2 mb-0', text: not }) : null,
       s !== 'hisse' && hizli.hata ? el('p', { class: 'tone-danger hint-sm mt-2 mb-0', role: 'alert', text: hizli.hata }) : null,
       el('div', { class: 'pf-dugmeler mt-3' }, [yazmaDugme('Ekle', (e) => hizliEkle(e.currentTarget), 'btn-primary', { id: 'btnPmHEkle' })]),
-      el('details', { class: 'hs-kat-mini mt-3', id: 'pmKuralKat' }, [el('summary', { text: 'Bu kayıt nasıl sayılır? (açılış kuralı)' }),
-        el('div', { class: 'pf-uyari pf-uyari-bilgi mt-1', id: 'pmKuralKutusu' }, [el('strong', { text: 'Açılış kuralı:' }), el('span', { text: ' ' + (veri.kural || '') })])])
+      el('details', { class: 'hs-kat-mini mt-3', id: 'pmKuralKat' }, [el('summary', { text: 'Bu kayıt nasıl sayılır?' }),
+        el('div', { class: 'pf-uyari pf-uyari-bilgi mt-1', id: 'pmKuralKutusu' }, [el('strong', { text: 'Kural:' }), el('span', { text: ' ' + (veri.kural || '') })])])
     ]);
   }
 
@@ -699,7 +700,7 @@
       const h = (r.eklenen || []).find(x => x.tur === 'hesap');
       yeniHesap = {};
       if (h) { hizli.sonHesap = h.id; hizli.alan = { ...(hizli.alan || {}), hesap: h.id }; }
-      AG.bildir(`${h ? h.ad : 'Hesap'} açıldı${(r.eklenen || []).some(x => x.tur === 'kurum') ? ' (kurum da eklendi)' : ''}${g.faiz ? ' — vadeli mevduat ayarıyla' : ''}. Sıradaki adım: "Varlık ekle" ile içindekileri gir.`, 'ok', { sure: 9000 });
+      AG.bildir(`${h ? h.ad : 'Hesap'} açıldı${(r.eklenen || []).some(x => x.tur === 'kurum') ? ' (kurum da eklendi)' : ''}${g.faiz ? ' — vadeli mevduat ayarıyla' : ''}. Sıradaki adım: hesapta şu an olanları "Bu hesapta zaten olanlar" bölümüne bir kez gir; yeni alımlar hesap kartındaki "Al" düğmesinden.`, 'ok', { sure: 9000 });
       await yukle(true);
       const yk = bul('pmYeniHesapKat'); if (yk) yk.open = false;
       katAc('pmHizliKat');
@@ -738,9 +739,9 @@
       if (a === 'not') return girdi({ id, type: 'text', maxlength: '500', placeholder: 'isteğe bağlı' });
       return girdi({ id, type: 'text', inputmode: 'decimal', placeholder: a === 'birimMaliyet' ? 'boş = bilinmiyor' : '0' });
     };
-    const ipucu = { tarih: null, birimMaliyet: 'Girilmezse ve açılış öncesi işlemler adedi tam açıklamıyorsa maliyet "bilinmiyor" olur.', fiyat: 'Varlığın kendi para biriminde.', tutar: formTur === 'transfer' ? 'Gönderilen tutar (kaynak hesaptan çıkan).' : 'Seçili para biriminde (temettüde varlığın biriminde).', ulasanTutar: 'Hedef hesaba ulaşan (masraf/kur farkı düşülmüş). Boş = gönderilenle aynı; fark portföyden masraf olarak düşer.', oran: '0,5 = 2 pay 1 pay olur (birleşme).' };
+    const ipucu = { tarih: null, birimMaliyet: 'Girilmezse ve önceki işlemler adedi tam açıklamıyorsa maliyet "bilinmiyor" olur.', fiyat: 'Varlığın kendi para biriminde.', tutar: formTur === 'transfer' ? 'Gönderilen tutar (kaynak hesaptan çıkan).' : 'Seçili para biriminde (temettüde varlığın biriminde).', ulasanTutar: 'Hedef hesaba ulaşan (masraf/kur farkı düşülmüş). Boş = gönderilenle aynı; fark portföyden masraf olarak düşer.', oran: '0,5 = 2 pay 1 pay olur (birleşme).' };
     doldur(k, [
-      el('p', { class: 'hint hint-sm', text: 'Alış, satış, temettü, para yatırma ve çekme hesap kartındaki "+ işlem" satırında; elinde zaten olan varlık "Varlık ekle"de. Burada kalan hareketler: hesaplar arası transfer, faiz, ücret / gider, bölünme (ve gerekirse alış, satış, temettü, para giriş/çıkışı).' }),
+      el('p', { class: 'hint hint-sm', text: 'Alış, satış, temettü, para yatırma ve çekme hesap kartındaki Al · Sat · Para yatır · Para çek · Temettü düğmelerinde; ilk kurulumda elinde zaten olan varlık "Bu hesapta zaten olanlar"da. Burada kalan hareketler: hesaplar arası transfer, faiz, ücret / gider, bölünme (ve gerekirse alış, satış, temettü, para giriş/çıkışı).' }),
       el('div', { class: 'pf-form-izgara' }, [alan('İşlem türü', secici({ id: 'selPmFTur', onchange: (e) => { formTur = e.target.value; formCiz(); } }, FORM_TURLERI(), formTur))]
         .concat(alanlar.filter(a => !gizle(a)).map(a => alan(ALAN_ETIKET[a] || a, kontrol(a), ipucu[a])))),
       el('details', { class: 'pm-gun-sira-kat mt-3', id: 'pmGunSiraKat' }, [
@@ -772,22 +773,22 @@
     let r = await gonderF(govde);
     for (let tur = 0; tur < 3 && r && r.soru; tur++) {
       if (r.soru === 'acilis-gunu') {
-        const c = await AG.onayla({ baslik: 'Açılış günündeki işlem', metin: gizliMetin(r.error), iptal: 'Vazgeç (kaydetme)',
-          secenekler: [{ deger: 'sonra', metin: 'Açılıştan SONRA yapıldı', birincil: true }, { deger: 'dahil', metin: 'Açılışa DAHİL (bakiye değişmez)' }] });
+        const c = await AG.onayla({ baslik: 'Bakiyeyi girdiğiniz gün', metin: gizliMetin(r.error), iptal: 'Vazgeç (kaydetme)',
+          secenekler: [{ deger: 'sonra', metin: 'Sonra yaptım (bakiyeye ekle)', birincil: true }, { deger: 'dahil', metin: 'Dahildi (bakiye değişmez)' }] });
         if (c !== 'sonra' && c !== 'dahil') return null;
         govde = { ...govde, acilisSonrasi: c === 'sonra' };
       } else if (r.soru === 'acilis-tasarimci') {
         const c = await AG.onayla({ baslik: 'Bu günün Tasarımcı kayıtları', metin: gizliMetin(r.error), iptal: 'Vazgeç (kaydetme)',
-          secenekler: [{ deger: 'sonra', metin: 'Açılıştan SONRA yapıldı', birincil: true }, { deger: 'dahil', metin: 'Açılışa DAHİL (bakiye değişmez)' }] });
+          secenekler: [{ deger: 'sonra', metin: 'Sonra yaptım (bakiyeye ekle)', birincil: true }, { deger: 'dahil', metin: 'Dahildi (bakiye değişmez)' }] });
         if (c !== 'sonra' && c !== 'dahil') return null;
         govde = { ...govde, tasarimciKayitlari: c };
       } else if (r.soru === 'nakit-acilisi') {
         const oneri = r.oneri || {};
-        const c = await AG.onayla({ baslik: 'Nakit açılışı eksik', iptal: 'Vazgeç (kaydetme)',
-          metin: gizliMetin(r.error) + `. "Ekle ve kaydet": ${oneri.tarih} tarihli 0 ${oneri.para} nakit açılışı da eklenir (tutarı sonra düzeltebilirsiniz). "Olmadan kaydet": nakit bacağı bakiyeye yazılır (nakit eksiye düşebilir).`,
-          secenekler: [{ deger: 'ekle', metin: 'Nakit açılışı ekle ve kaydet', birincil: true }, { deger: 'olmadan', metin: 'Nakit açılışı olmadan kaydet' }] });
+        // 76.9: nakdin eksiye düşmesine yol açan sessiz "Olmadan kaydet" seçeneği KALDIRILDI — ya hesabın nakdi (0) birlikte girilir ya hiçbir şey.
+        const c = await AG.onayla({ baslik: 'Hesabın nakdi girilmemiş', iptal: 'Vazgeç (kaydetme)',
+          metin: gizliMetin(r.error) + `. "Kaydet": bu hesabın ${oneri.tarih} günkü ${oneri.para} nakdi 0 olarak da girilir (sonra para yatırma / çekme ile değiştirirsiniz).`,
+          secenekler: [{ deger: 'ekle', metin: 'Nakdi 0 gir ve kaydet', birincil: true }] });
         if (c === 'ekle') govde = { ...govde, nakitAcilisiEkle: oneri };
-        else if (c === 'olmadan') govde = { ...govde, onay: true };
         else return null;
       } else break;
       r = await gonderF(govde);
@@ -796,15 +797,46 @@
   }
   /** POST /islem (form, hesap kartı "+ işlem"); 67.4: aynı soru döngüsü POST /hizli-ekle (Varlık ekle) için de kullanılır. */
   const islemGonder = (g) => soruluGonder((x) => api().islemEkle(x), g);
+  /**
+   * 76.9 ALIŞ = tek doğru yol: POST /alis her zaman nakitten düşer. Nakit yetmezse sunucu 409 'nakit-yetmez' ile TEK CÜMLE sorar
+   * ("Hesapta X var, bu alım Y. Eksik Z — önce kasaya para yatırıldı olarak kaydedilsin mi?"): Evet → eksik kadar para yatırma + alış
+   * birlikte; Hayır / Esc → hiçbir şey yazılmaz (null). Nakdi sessizce eksiye düşüren yol yok. "Alışa çevir" de aynı soruyu kullanır.
+   */
+  async function nakitSorulu(gonderF, g) {
+    let r = await gonderF(g);
+    if (r && r.soru === 'nakit-yetmez') {
+      const c = await AG.onayla({ baslik: 'Hesaptaki nakit bu alıma yetmiyor', metin: gizliMetin(r.error), onay: 'Evet, para yatırmayı da kaydet', iptal: 'Hayır (kaydetme)' });
+      if (!c) return null;
+      r = await gonderF({ ...g, nakitEkle: true });
+    }
+    return r;
+  }
+  const alisGonder = (g) => nakitSorulu((x) => api().alis(x), g);
+  /** 76.9 "Bunu alışa çevir": yanlışlıkla "zaten olanlar" (ilk kurulum) olarak girilmiş alımı alışa çevirir — parası nakitten düşer. */
+  async function alisaCevir(p, acilisId) {
+    const a = p;   // { sembol, para, hesapAd, adet, birimMaliyet }
+    const fiyatVar = a.birimMaliyet != null;
+    const sonuc = await AG.onayla({ baslik: `${p.sembol} alışa çevrilsin mi?`,
+      metin: gizliMetin(`Bu kayıt "zaten olanlar" olarak girilmiş: parası nakitten düşmedi. Alışa çevrilirse ${adetBicim(a.adet)} adet ${p.sembol}${fiyatVar ? ` × ${paraBicim(a.birimMaliyet, p.para, a.birimMaliyet < 10 ? 4 : 2)}` : ''} alış olur ve tutarı ${p.hesapAd} nakdinden düşer (nakit yetmezse sorulur). Eski kayıt silinmez; İşlem defterinde "iptal" görünür.`),
+      onay: 'Alışa çevir', alanlar: fiyatVar ? undefined : [{ ad: 'fiyat', etiket: `Alış fiyatı (${p.para})`, ipucu: 'ör. 2,03' }] });
+    if (!sonuc) return;
+    const g = { acilis: acilisId };
+    if (!fiyatVar && sonuc && sonuc.fiyat) g.fiyat = sonuc.fiyat;
+    const r = await nakitSorulu((x) => api().alisaCevir(x), g);
+    if (r === null) return;
+    if (!r || !r.success) { AG.bildir(gizliMetin(`Alışa çevrilmedi: ${(r && r.error) || 'bilinmeyen hata'}`), 'hata', { sure: 12000 }); return; }
+    AG.bildir(gizliMetin(r.metin || `${p.sembol} alışa çevrildi.`), 'ok', { sure: 9000 });
+    yukle(true);
+  }
 
   async function islemKaydet(d) {
     const g = formOku();
     AG.dom.mesgul(d, 'Kaydediliyor…');
     try {
-      const r = await islemGonder(g);
+      const r = await (g.islem === 'al' ? alisGonder(g) : islemGonder(g));   // 76.9: alış nakitten düşer (POST /alis)
       if (r === null) return;
       if (!r || !r.success) { AG.bildir(gizliMetin(`Kaydedilmedi: ${(r && r.error) || 'bilinmeyen hata'}`), 'hata', { sure: 12000 }); return; }
-      AG.bildir(gizliMetin(`${ISLEM_AD[g.islem]} kaydedildi (${r.eklenen[r.eklenen.length - 1].id}).${r.uyarilar && r.uyarilar.length ? ' Uyarı: ' + r.uyarilar.map(u => u.mesaj).join(' · ') : ''}`), r.uyarilar && r.uyarilar.length ? 'uyari' : 'ok', { sure: 9000 });
+      AG.bildir(gizliMetin(`${r.metin || ISLEM_AD[g.islem] + ' kaydedildi'} (${r.eklenen[r.eklenen.length - 1].id}).${r.uyarilar && r.uyarilar.length ? ' Uyarı: ' + r.uyarilar.map(u => u.mesaj).join(' · ') : ''}`), r.uyarilar && r.uyarilar.length ? 'uyari' : 'ok', { sure: 9000 });
       for (const a of ['adet', 'fiyat', 'tutar', 'ulasanTutar', 'ucret', 'vergi', 'birimMaliyet', 'oran', 'not', 'gunIciSira']) { const x = bul('inpPmF-' + a); if (x) x.value = ''; }
       await yukle(true);
     } catch (e) { AG.bildir(`Kaydedilmedi: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
@@ -904,7 +936,7 @@
     const s = veri.sabitler || {};
     const kurumlar = veri.kurumlar || [], hesaplar = veri.hesaplar || [], varliklar = veri.varliklar || [];
     doldur(k, [
-      el('p', { class: 'hint hint-sm', text: 'Yeni hesap (kurumuyla) "Yeni hesap" kartında, varlık "Varlık ekle"de açılır; vadeli mevduat faizi ve elle fiyat hesap kartında. Burada adlar ve Yahoo fiyat kodu değişir, hesap kapatılır.' }),
+      el('p', { class: 'hint hint-sm', text: 'Yeni hesap (kurumuyla) "Yeni hesap" kartında, varlık "Bu hesapta zaten olanlar"da ya da alışta açılır; vadeli mevduat faizi ve elle fiyat hesap kartında. Burada adlar ve Yahoo fiyat kodu değişir, hesap kapatılır.' }),
       el('h4', { class: 'pf-bolum-baslik', text: 'Kurumlar' }),
       kurumlar.length ? AG.tablo.kutulu({ id: 'tblPmKurumlar', sinif: 'table-dense pf-tablo', basliklar: ['Kurum', 'Kimlik', ''], satirlar: kurumlar.map(x => el('tr', null, [
         el('td', { class: 'pf-sola', text: x.ad }), el('td', { class: 'pf-kucuk', text: x.id }),
@@ -1109,7 +1141,6 @@
   const hesapGecmis = new Map();   // hesap id → /gecmis?hesap yanıtı (null = yükleniyor)
   const kiyasVeri = new Map();     // `${bas}|${birim}` → /kiyas yanıtı (null = yükleniyor)
   let modelListe = null;           // { N10: Set, B10: Set } — tasarımcı son kararları
-  const hf = {};                   // hesap id → satır içi işlem formu durumu
   let sonYukleme = 0;
 
   const PM_SIMGE = { USD: '$', TL: '₺' };
@@ -1229,7 +1260,7 @@
     doldur(k, [
       el('div', { class: 'row-between row-wrap gap-2 mb-2' }, [el('h4', { class: 'pf-bolum-baslik m-0', text: `${hAd} — ${grafikKip === 'getiri' ? 'getiri ve kıyaslar' : 'değer'}` }), kip]),
       dugmeler, cipler, kap,
-      el('p', { class: 'hint hint-sm mt-2 mb-0', text: !s.length ? (kaynak === null ? 'Yükleniyor…' : 'Henüz seri yok (en az bir açılış ya da işlem gerekir).')
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: !s.length ? (kaynak === null ? 'Yükleniyor…' : 'Henüz seri yok (en az bir kayıt ya da işlem gerekir).')
         : grafikKip === 'getiri' ? `${s[0].tarih} → ${s[s.length - 1].tarih}. Getiri zaman ağırlıklıdır: para yatırma/çekme${grafikHesap ? ' ve hesaplar arası aktarım' : ''} getiriyi değiştirmez. Kıyaslar aynı günden 100 tabanlı, ${birim} cinsinden.`
           : `${s[0].tarih} → ${s[s.length - 1].tarih}. Para yatırma/çekme değer çizgisinde görünür.` })
     ]);
@@ -1331,7 +1362,7 @@
     if (!k || !veri) return;
     const d = veri.degerleme, ham = new Map((veri.hesaplar || []).map(h => [h.id, h]));
     const hepsi = d.hesaplar || [];
-    if (!hepsi.length) { doldur(k, [el('p', { class: 'hint mb-0', text: 'Henüz hesap yok. Üstteki "Yeni hesap" ile ilk hesabını aç, sonra "Varlık ekle" ile içindekileri gir.' })]); return; }
+    if (!hepsi.length) { doldur(k, [el('p', { class: 'hint mb-0', text: 'Henüz hesap yok. Üstteki "Yeni hesap" ile ilk hesabını aç, sonra hesapta zaten olanları bir kez gir.' })]); return; }
     const kume = kisiHesaplari();
     const l = kume ? hepsi.filter(h => kume.has(h.id)) : hepsi;
     const kisiAd = ((veri.portfoyler || []).find(p => p.id === gorunumPortfoy()) || {}).ad || 'Ben';
@@ -1348,9 +1379,13 @@
         const eylem = duz
           ? el('div', { class: 'pf-dugmeler' }, [yazmaDugme('Kaydet', (e) => hizliDuzenleKaydet(e.currentTarget, a.id), 'btn-primary btn-xs', { id: 'btnPmDuzKaydet' }), dugme('Vazgeç', () => { duzenlenen = null; hesapKartlariCiz(); }, 'btn-secondary btn-xs')])
           : el('div', { class: 'pf-dugmeler' }, [
-            yazmaDugme('Sat', () => { hf[h.id] = { ...(hf[h.id] || {}), tur: 'sat', varlik: p.varlik, adet: String(p.adet).replace('.', ','), fiyat: p.fiyat != null ? String(p.fiyat).replace('.', ',') : '' }; hesapFormCiz(h.id); const x = bul(`inpPmH-${h.id}-adet`); if (x && x.focus) x.focus(); }, 'btn-secondary btn-xs'),
+            // 76.9: Al / Sat işlem kartını (bilet) bu hisseyle açar.
+            yazmaDugme('Al', () => biletAc(h.id, 'al', { varlik: p.varlik }), 'btn-secondary btn-xs', { id: `btnPmSatirAl-${p.hesap}-${p.varlik}` }),
+            yazmaDugme('Sat', () => biletAc(h.id, 'sat', { varlik: p.varlik }), 'btn-secondary btn-xs', { id: `btnPmSatirSat-${p.hesap}-${p.varlik}` }),
             yalniz ? yazmaDugme('Düzenle', () => { duzenlenen = p.anahtar; hesapKartlariCiz(); }, 'btn-secondary btn-xs') : null,
             yalniz ? yazmaDugme('Kaldır', () => hizliKaldir(p, a.id), 'btn-secondary btn-xs') : null,
+            // 76.9: yanlışlıkla "zaten olanlar" olarak girilmiş YENİ alım tek tıkla alışa çevrilir (parası nakitten düşer).
+            yalniz ? yazmaDugme('Alışa çevir', () => alisaCevir({ sembol: p.sembol, para: p.para, hesapAd: p.hesapAd, adet: p.acilis && p.acilis.adet, birimMaliyet: p.acilis && p.acilis.birimMaliyet }, a.id), 'btn-secondary btn-xs', { id: `btnPmAlisaCevir-${p.hesap}-${p.varlik}`, title: 'Bu yeni bir alımdıysa: alış olarak yeniden yaz (parası nakitten düşer)' }) : null,
             // 67.4: elle fiyat satırda — gerekiyorsa "Fiyat gir" görünür; değilse "⋯" içinde "Fiyatı düzelt".
             elleFiyatGerek(p, V.get(p.varlik)) ? yazmaDugme('Fiyat gir', () => { fiyatAcik = p.anahtar; hesapKartlariCiz(); }, 'btn-primary btn-xs', { id: `btnPmFiyatGir-${p.hesap}-${p.varlik}`, title: 'Bu varlığın fiyatını elle gir (fiyat kaynağı yok ya da fiyat bayat)' })
               : el('details', { class: 'pm-satir-menu pm-yazma' }, [el('summary', { 'aria-label': `${p.sembol}: diğer eylemler`, title: 'Diğer', text: '⋯' }),
@@ -1361,7 +1396,7 @@
             duz ? girdi({ id: 'inpPmDuzTarih', type: 'date', max: bugun(), class: 'form-control control-sm mt-1', 'aria-label': `${p.sembol} alış tarihi` }, p.acilis && p.acilis.tarih)
               : yalniz && p.acilis ? el('div', { class: 'pf-kucuk', text: `alış ${p.acilis.tarih}` }) : null,
             // 68.4: açılış notu — düzenlemede değişir (boş = silinir), değilse satırda soluk görünür.
-            duz ? girdi({ id: 'inpPmDuzNot', type: 'text', maxlength: '500', class: 'form-control control-sm mt-1', placeholder: 'not (isteğe bağlı)', 'aria-label': `${p.sembol} açılış notu` }, p.acilis && p.acilis.not)
+            duz ? girdi({ id: 'inpPmDuzNot', type: 'text', maxlength: '500', class: 'form-control control-sm mt-1', placeholder: 'not (isteğe bağlı)', 'aria-label': `${p.sembol} not` }, p.acilis && p.acilis.not)
               : p.acilis && p.acilis.not ? el('div', { class: 'pf-kucuk tone-muted pm-acilis-not', text: p.acilis.not }) : null]),
           el('td', { class: 'pf-sola' }, [etiketCip(modelEtiketi(p.sembol, modelListe))]),
           el('td', { class: 'sayi' }, [duz ? hucreGirdi('inpPmDuzAdet', String(p.adet).replace('.', ','), `${p.sembol} adet`) : tutar(adetBicim(p.adet))]),
@@ -1375,72 +1410,454 @@
       const nakitSatir = (x) => el('tr', null, [el('td', { class: 'pf-sola fw-semibold', text: `${x.para} nakit` }), el('td', null), el('td', null), el('td', null), el('td', null),
         el('td', { class: `sayi${x.tutar < 0 ? ' tone-danger' : ''}` }, [tutar(paraBicim(x.tutar, x.para))]), el('td', null), el('td', null)]);
       const hh = ham.get(h.id) || {};
+      // 76.9 (onaylı taslak): üstte "Hesap toplamı" + "Kasa (nakit)"; düğmeler Al · Sat · Para yatır · Para çek (+ Temettü).
+      const kasalar = (d.nakitler || []).filter(x => x.hesap === h.id);
+      const kasaMetni = kasalar.length ? kasalar.map(x => el('div', { class: `pm-kasa-deger${x.tutar < -1e-9 ? ' tone-danger' : ''}` }, [tutar(paraBicim(x.tutar, x.para))])) : [el('div', { class: 'pm-kasa-deger' }, [tutar(paraBicim(0, hh.para || 'USD'))])];
+      const acik = h.durum !== 'kapali';
       return el('section', { class: `glass-panel panel-pad pm-hesap-kart${h.bayat ? ' pm-hesap-bayat' : ''}`, id: `pmHesap-${h.id}`, 'data-hesap': h.id }, [
         el('div', { class: 'row-between row-wrap gap-2' }, [
-          el('div', null, [el('h4', { class: 'card-title m-0', text: h.ad }), el('span', { class: 'pf-kucuk', text: `${h.kurumAd || ''}${h.kurumAd ? ' · ' : ''}${tur[h.hesapTuru] || h.hesapTuru || ''}${hh.para ? ' · ' + hh.para : ''}` })]),
-          el('div', { class: 'sayi fw-semibold' }, [tutar(tutarB(h.degerUSD, h.degerTL)), el('span', { class: 'pf-kucuk' }, [el('span', { text: ' · son kayıt ' }), el('span', { class: h.bayat ? 'tone-warning' : '', text: h.sonKayit ? String(h.sonKayit).slice(0, 10) : '—' })]),
-            h.durum === 'kapali' ? el('span', { class: 'badge', text: ` kapalı ${h.kapanis || ''}` }) : null])
+          el('div', null, [el('h4', { class: 'card-title m-0', text: h.ad }), el('span', { class: 'pf-kucuk', text: `${h.kurumAd || ''}${h.kurumAd ? ' · ' : ''}${tur[h.hesapTuru] || h.hesapTuru || ''}${hh.para ? ' · ' + hh.para : ''}` }),
+            el('div', { class: 'pf-kucuk' }, [el('span', { text: 'son kayıt ' }), el('span', { class: h.bayat ? 'tone-warning' : '', text: h.sonKayit ? String(h.sonKayit).slice(0, 10) : '—' }),
+              h.durum === 'kapali' ? el('span', { class: 'badge', text: ` kapalı ${h.kapanis || ''}` }) : null])]),
+          el('div', { class: 'pm-hesap-sayilar' }, [
+            el('div', { class: 'pm-hesap-sayi', id: `pmHesapToplam-${h.id}` }, [el('div', { class: 'pf-kucuk', text: 'Hesap toplamı' }), el('div', { class: 'pm-kasa-deger' }, [tutar(tutarB(h.degerUSD, h.degerTL))])]),
+            el('div', { class: 'pm-hesap-sayi', id: `pmKasa-${h.id}` }, [el('div', { class: 'pf-kucuk', text: 'Kasa (nakit)' }), ...kasaMetni])
+          ])
         ]),
+        acik ? el('div', { class: 'pf-dugmeler pm-yazma pm-hesap-dugmeler' }, [
+          yazmaDugme('Al', () => biletAc(h.id, 'al'), 'btn-success', { id: `btnPmAl-${h.id}` }),
+          yazmaDugme('Sat', () => biletAc(h.id, 'sat'), 'btn-danger', { id: `btnPmSat-${h.id}` }),
+          yazmaDugme('Para yatır', () => biletAc(h.id, 'yatir'), 'btn-secondary', { id: `btnPmYatir-${h.id}` }),
+          yazmaDugme('Para çek', () => biletAc(h.id, 'cek'), 'btn-secondary', { id: `btnPmCek-${h.id}` }),
+          yazmaDugme('Temettü', () => biletAc(h.id, 'temettu'), 'btn-secondary', { id: `btnPmTemettu-${h.id}` })
+        ]) : null,
+        acik && bilet.hesap === h.id ? el('div', { id: `pmBilet-${h.id}`, class: 'pm-bilet pm-yazma', 'aria-live': 'polite' }) : null,
         poz.length || nakit.length ? AG.tablo.kutulu({ id: `tblPmHesap-${h.id}`, sinif: 'table-dense pf-tablo', basliklar: ['Varlık', 'Model', 'Adet', 'Ort. alış', 'Son fiyat', 'Değer', 'Kâr / zarar', ''], satirlar: poz.map(satir).concat(nakit.map(nakitSatir)) })
-          : el('p', { class: 'hint hint-sm mb-0', text: 'Bu hesapta varlık yok — "Varlık ekle" ile gir.' }),
+          : el('p', { class: 'hint hint-sm mb-0', text: 'Bu hesapta varlık yok — yeni alım için "Al"; Pusula\'yı ilk kuruyorsan hesapta zaten olanları "Bu hesapta zaten olanlar"a gir.' }),
         fiyatAcik && poz.some(p => p.anahtar === fiyatAcik) ? fiyatFormu(poz.find(p => p.anahtar === fiyatAcik)) : null,
         mevduatBolumu(h, hh),
-        h.durum === 'kapali' ? null : el('div', { id: `pmHf-${h.id}`, class: 'pm-hf pm-yazma' })
+        // 76.9: hesabın işlemleri — her satırın KASA ETKİSİ; şüpheli (kasadan düşmemiş) kayıtta rozet + "Bunu alışa çevir".
+        el('details', { class: 'hs-kat-mini', id: `pmHIslemKat-${h.id}`, open: '' }, [el('summary', { text: 'İşlemler (kasa etkisiyle)' }), el('div', { id: `pmHIslem-${h.id}`, class: 'mt-2' })]),
+        acik ? el('details', { class: 'hs-kat-mini pm-yazma', id: `pmZatenKat-${h.id}` }, [
+          el('summary', { text: 'Bu hesapta zaten olanlar (Pusula\'yı ilk kurarken bir kez)' }),
+          el('p', { class: 'hint hint-sm mt-2', text: 'Pusula\'yı kurduğunuz gün bu hesapta ZATEN olan hisseleri ve nakdi bir kez girmek içindir. Yeni bir alım için burayı kullanmayın — yeni alım "Al" ile girilir ve kasadan düşer. Nakit bir kez girilir; sonra değiştirmek için para yatırma / çekme girin.' }),
+          yazmaDugme('Zaten olanları gir…', () => { hizli.sonHesap = h.id; hizli.alan = { ...(hizli.alan || {}), hesap: h.id }; hizliCiz(); katAc('pmHizliKat'); }, 'btn-secondary btn-xs', { id: `btnPmZaten-${h.id}` })
+        ]) : null
       ]);
     };
     doldur(k, kume ? l.map(kart) : hesapGruplari(l, veri.hesaplar, veri.portfoyler).flatMap(g => [
       el('h3', { class: 'pm-kisi-baslik', 'data-portfoy': g.id }, [el('span', { text: g.ad }), el('span', { class: 'pf-kucuk', text: ` · ${g.hesaplar.length} hesap` })]),
       ...g.hesaplar.map(kart)
     ]));
-    for (const h of l) if (h.durum !== 'kapali') hesapFormCiz(h.id);
+    if (bilet.hesap && !l.some(h => h.id === bilet.hesap && h.durum !== 'kapali')) bilet.hesap = null;
+    if (bilet.hesap) biletCiz();
+    for (const h of l) hesapIslemCiz(h.id);
   }
 
-  /** Satır içi "+ işlem" formu (hesap kartının altında): al · sat · temettü · para yatırma · para çekme. */
-  const HF_TUR = [['al', 'Alış'], ['sat', 'Satış'], ['temettu', 'Temettü'], ['yatir', 'Para yatırma'], ['cek', 'Para çekme']];
-  function hesapFormCiz(hid) {
-    const k = bul(`pmHf-${hid}`);
+  /* ── 76.9 İŞLEM KARTI (bilet) — kullanıcı onaylı taslak: Al · Sat · Para yatır · Para çek (+ Temettü) ─────────────────────
+   *   Al / Sat: 1 "Hangi hisse" (arama) → 2 "Ne kadar" (Adet | Tutar geçişi — son seçilen hatırlanır; gerçekleşen fiyat,
+   *   komisyon (yoksa 0), tarih; canlı özet: adet × fiyat, komisyon, kasadan düşecek, kasa şimdi → sonra) → 3 "Kontrol et" → Kaydet
+   *   → makbuz (✓ + "Geri al"). Alış POST /alis: HER ZAMAN kasadan düşer. Kasa yetmezse sarı bant + "Bu alım için kasaya önce para
+   *   yatırdım" (tutar düzenlenebilir, varsayılan eksik); işaretlenmezse "Kontrol et" kapalı — kasa eksiye düşemez; işaretliyse iki
+   *   kayıt (para yatırma + alış, sunucuda tek pakette). Satış elde olandan fazla olamaz. Tek bilet açık olur (bilet.hesap). ── */
+  const MOD_ANAHTAR = 'pusula.portfoyum.alisMod';
+  const bilet = { hesap: null };
+  const biletModu = () => (oku(MOD_ANAHTAR) === 'tutar' ? 'tutar' : 'adet');
+  /** Kullanıcı sayısı: "2,03", "2.03", "1.250,50" (saf; boş/geçersiz NaN). */
+  function sayiGir(x) {
+    let s = String(x == null ? '' : x).replace(/\s/g, '');
+    if (!s) return NaN;
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
+  }
+  const yuvar2 = (x) => Math.round(x * 100) / 100;
+  const virgullu = (x) => (sayiMi(x) ? String(x).replace('.', ',') : '');
+  /** Hesabın o para birimindeki kasası (bugün). */
+  const kasaOf = (hid, para) => { const x = (((veri && veri.degerleme) || {}).nakitler || []).find(n => n.hesap === hid && n.para === para); return x ? x.tutar : 0; };
+  const eldeOf = (hid, vid) => { const p = (((veri && veri.degerleme) || {}).pozisyonlar || []).find(z => z.hesap === hid && z.varlik === vid); return p ? p.adet : 0; };
+  /** Varlığın bilet seçimi: { varlik, sembol, ad, para, fiyat } (son fiyat: pozisyon → izleme listesi). */
+  function varlikSecimi(vid) {
+    const v = ((veri && veri.varliklar) || []).find(z => z.id === vid);
+    if (!v) return null;
+    const p = (((veri && veri.degerleme) || {}).pozisyonlar || []).find(z => z.varlik === vid && z.fiyat != null);
+    const iz = ((veri && veri.izleme) || []).find(z => z.varlik === vid);
+    return { varlik: v.id, sembol: v.sembol, ad: v.ad, para: v.para, fiyat: p ? p.fiyat : iz ? iz.fiyat : null };
+  }
+  function biletAc(hid, tur, o = {}) {
+    for (const a of Object.keys(bilet)) delete bilet[a];
+    Object.assign(bilet, { hesap: hid, tur, adim: ['al', 'sat'].includes(tur) ? 1 : 2, sec: null, ara: '', adaylar: [], araniyor: false, araHata: '',
+      mod: biletModu(), adet: '', tutar: '', fiyat: '', komisyon: '', vergi: '', tarih: bugun(), yatirAc: false, yatirTutar: '', sonuc: null, hata: '' });
+    if (tur === 'temettu') { const p = (((veri && veri.degerleme) || {}).pozisyonlar || []).find(z => z.hesap === hid && Math.abs(z.adet) > 1e-12); if (p) bilet.sec = varlikSecimi(p.varlik); }
+    if (o.varlik) biletSec(varlikSecimi(o.varlik));
+    hesapKartlariCiz();
+    const k = bul(`pmBilet-${hid}`); if (k && k.scrollIntoView) k.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const ilk = bul(bilet.adim === 1 ? 'inpPmBAra' : bilet.tur === 'al' && bilet.mod === 'tutar' ? 'inpPmBTutar' : bilet.tur === 'yatir' || bilet.tur === 'cek' || bilet.tur === 'temettu' ? 'inpPmBTutar' : 'inpPmBAdet');
+    if (ilk && ilk.focus) ilk.focus();
+  }
+  function biletKapat() { bilet.hesap = null; hesapKartlariCiz(); }
+  /** Seçim yap (var olan varlık ya da Yahoo adayı) → 2. adım; gerçekleşen fiyat son fiyatla dolar (değiştirilebilir). */
+  function biletSec(x) {
+    if (!x) return;
+    bilet.sec = x; bilet.adim = 2; bilet.hata = '';
+    if (!bilet.fiyat && sayiMi(x.fiyat)) bilet.fiyat = virgullu(Math.abs(x.fiyat) < 10 ? Math.round(x.fiyat * 1e4) / 1e4 : Math.round(x.fiyat * 100) / 100);   // son fiyat yuvarlanır (gerçekleşen fiyat değiştirilebilir)
+  }
+  /** Saf (test edilir): bilet sayıları → { f, k, adet, brut, toplam, para, kasa, elde, eksik, yatir, hata }. */
+  function biletHesabi(b, kasa, elde) {
+    const al = b.tur === 'al';
+    const f = sayiGir(b.fiyat);
+    const kom = String(b.komisyon == null ? '' : b.komisyon).trim() === '' ? 0 : sayiGir(b.komisyon);
+    let adet = !al || b.mod !== 'tutar' ? sayiGir(b.adet) : (sayiGir(b.tutar) > 0 && f > 0 ? Math.floor(sayiGir(b.tutar) / f * 1e6) / 1e6 : NaN);
+    if (!(adet > 0)) adet = NaN;
+    const brut = adet > 0 && f > 0 ? yuvar2(adet * f) : NaN;
+    const toplam = sayiMi(brut) && sayiMi(kom) ? yuvar2(al ? brut + kom : brut - kom) : NaN;
+    const eksik = al && sayiMi(toplam) ? Math.max(0, yuvar2(toplam - kasa)) : 0;
+    const yatir = al && eksik > 0 && b.yatirAc ? (String(b.yatirTutar || '').trim() ? sayiGir(b.yatirTutar) : eksik) : 0;
+    let hata = null;
+    if (!(f > 0)) hata = 'Gerçekleşen fiyatı girin.';
+    else if (!(adet > 0)) hata = al && b.mod === 'tutar' ? 'Tutar girin.' : 'Adet girin.';
+    else if (!al && adet > elde + 1e-9) hata = `Elinizde ${adetBicim(elde)} adet var; daha fazlası satılamaz.`;
+    else if (!sayiMi(kom) || kom < 0) hata = 'Komisyon boş ya da 0 olabilir, eksi olamaz.';
+    else if (al && eksik > 0 && b.yatirAc && !(yatir + 0.005 >= eksik)) hata = 'Yatırdığınız tutar eksiği karşılamıyor — kasa eksiye düşemez.';
+    return { f, k: kom, adet, brut, toplam, kasa, elde, eksik, yatir: sayiMi(yatir) ? yatir : 0, hata };
+  }
+  const biletPara = () => (bilet.sec && bilet.sec.para) || ((veri.hesaplar || []).find(h => h.id === bilet.hesap) || {}).para || 'USD';
+  const biletSayilari = () => biletHesabi(bilet, kasaOf(bilet.hesap, biletPara()), bilet.sec && bilet.sec.varlik ? eldeOf(bilet.hesap, bilet.sec.varlik) : 0);
+  const ozSatir = (a, b, kalin, id) => el('div', { class: `pm-ozet-satir${kalin ? ' pm-ozet-toplam' : ''}`, id: id || null }, [el('span', { text: a }), tutar(b)]);
+  const adimSerit = (aktif) => el('div', { class: 'pm-bilet-adimlar', 'aria-label': 'Adımlar' }, ['Hangi hisse', 'Ne kadar', 'Kontrol et'].map((a, i) => el('span', { class: i + 1 === aktif ? 'is-aktif' : null, text: `${i + 1} · ${a}` })));
+  const fiyatB = (x, para) => paraBicim(x, para, sayiMi(x) && Math.abs(x) < 10 ? 4 : 2);
+
+  function biletCiz() {
+    const k = bul(`pmBilet-${bilet.hesap}`);
     if (!k || !veri) return;
-    const s = hf[hid] = { tur: 'al', tarih: bugun(), ...(hf[hid] || {}) };
-    const id = (a) => `inpPmH-${hid}-${a}`;
-    const yazS = (a) => (e) => { s[a] = e.target.value; };
-    const hh = (veri.hesaplar || []).find(h => h.id === hid) || {};
-    const hesapVarlik = new Set(((veri.degerleme && veri.degerleme.pozisyonlar) || []).filter(p => p.hesap === hid).map(p => p.varlik));
-    const varliklar = (veri.varliklar || []).slice().sort((a, b) => (hesapVarlik.has(b.id) - hesapVarlik.has(a.id)) || String(a.sembol).localeCompare(String(b.sembol)));
-    const varlikMi = ['al', 'sat', 'temettu'].includes(s.tur);
-    if (varlikMi && !s.varlik && varliklar.length) s.varlik = varliklar[0].id;
-    const alanlar = [
-      alan('İşlem', secici({ id: id('tur'), onchange: (e) => { s.tur = e.target.value; hesapFormCiz(hid); } }, HF_TUR, s.tur)),
-      varlikMi ? alan('Varlık', secici({ id: id('varlik'), onchange: yazS('varlik') }, varliklar.map(v => [v.id, `${v.sembol}${hesapVarlik.has(v.id) ? '' : ' (bu hesapta yok)'}`]), s.varlik)) : null,
-      s.tur === 'al' || s.tur === 'sat' ? alan('Adet', girdi({ id: id('adet'), inputmode: 'decimal', onchange: yazS('adet') }, s.adet || '')) : null,
-      s.tur === 'al' || s.tur === 'sat' ? alan('Birim fiyat', girdi({ id: id('fiyat'), inputmode: 'decimal', onchange: yazS('fiyat') }, s.fiyat || '')) : null,
-      s.tur === 'al' || s.tur === 'sat' ? alan('Ücret', girdi({ id: id('ucret'), inputmode: 'decimal', placeholder: '0', onchange: yazS('ucret') }, s.ucret || '')) : null,
-      s.tur === 'temettu' || s.tur === 'yatir' || s.tur === 'cek' ? alan('Tutar', girdi({ id: id('tutar'), inputmode: 'decimal', onchange: yazS('tutar') }, s.tutar || '')) : null,
-      s.tur === 'temettu' ? alan('Vergi / stopaj', girdi({ id: id('vergi'), inputmode: 'decimal', placeholder: '0', onchange: yazS('vergi') }, s.vergi || '')) : null,
-      s.tur === 'yatir' || s.tur === 'cek' ? alan('Para birimi', secici({ id: id('para'), onchange: yazS('para') }, paraSecenekleri(), s.para || hh.para || 'USD')) : null,
-      alan('Tarih', girdi({ id: id('tarih'), type: 'date', onchange: yazS('tarih') }, s.tarih))
-    ];
-    doldur(k, [
-      el('div', { class: 'pm-hf-satir' }, [el('strong', { class: 'pm-hf-baslik', text: '+ işlem' }), ...alanlar,
-        yazmaDugme('Ekle', (e) => hesapIslemKaydet(hid, e.currentTarget), 'btn-primary', { id: `btnPmH-${hid}` })]),
-      varlikMi && !varliklar.length ? el('p', { class: 'hint hint-sm mb-0', text: 'Henüz varlık yok: elindekileri üstteki "Varlık ekle" ile gir.' }) : null,
+    const b = bilet, al = b.tur === 'al';
+    const hesaplar = hesapSecenekleri(true);
+    const hesapSec = hesaplar.length > 1 && b.adim !== 'tamam' ? alan('Hesap', secici({ id: 'selPmBHesap', onchange: (e) => { bilet.hesap = e.target.value; hesapKartlariCiz(); } }, hesaplar, b.hesap)) : null;
+    const BASLIK = { al: 'Hisse aldım', sat: 'Hisse sattım', yatir: 'Kasaya para yatırdım', cek: 'Kasadan para çektim', temettu: 'Temettü aldım' };
+    const ust = el('div', { class: 'row-between row-wrap gap-2' }, [el('h4', { class: 'card-title m-0', text: BASLIK[b.tur] + (b.sec && b.adim !== 1 && (al || b.tur === 'sat') ? ' · ' + b.sec.sembol : '') }),
+      dugme('Vazgeç', biletKapat, 'btn-secondary btn-xs', { id: 'btnPmBVazgec' })]);
+    if (b.adim === 'tamam') return doldur(k, makbuzCiz());
+    const para = biletPara();
+    if (b.tur === 'yatir' || b.tur === 'cek' || b.tur === 'temettu') {
+      const t = sayiGir(b.tutar), kasa = kasaOf(b.hesap, para), yatir = b.tur !== 'cek';
+      const v = b.tur === 'temettu' ? sayiGir(b.vergi || '0') : 0;
+      const net = b.tur === 'temettu' ? t - (sayiMi(v) ? v : 0) : t;
+      const pozlar = (((veri.degerleme || {}).pozisyonlar) || []).filter(z => z.hesap === b.hesap && Math.abs(z.adet) > 1e-12);
+      const hata = b.tur === 'temettu' && !b.sec ? 'Bu hesapta hisse yok.' : !(t > 0) ? 'Tutar girin.' : b.tur === 'cek' && t > kasa + 1e-9 ? `Kasada ${paraBicim(kasa, para)} var; daha fazlası çekilemez.` : b.tur === 'temettu' && (!sayiMi(v) || v < 0 || v > t) ? 'Vergi 0 ile tutar arasında olmalı.' : null;
+      const ozet = el('div', { class: 'pm-ozet', id: 'pmBOzet' });
+      const ozetCiz = () => {
+        const tt = sayiGir(b.tutar), vv = b.tur === 'temettu' ? sayiGir(b.vergi || '0') : 0, nn = b.tur === 'temettu' ? tt - (sayiMi(vv) ? vv : 0) : tt;
+        doldur(ozet, [ozSatir('Kasa şimdi', paraBicim(kasa, para)), ozSatir(yatir ? 'Kasaya girecek' : 'Kasadan çıkacak', sayiMi(nn) ? paraBicim(yatir ? nn : -nn, para) : '—'),
+          ozSatir('Sonra kasa', sayiMi(nn) ? paraBicim(yatir ? kasa + nn : kasa - nn, para) : '—', true)]);
+        const kd = bul('btnPmBKaydet'); if (kd) kd.disabled = !(tt > 0);
+      };
+      const gir = (a) => (e) => { b[a] = e.target.value; ozetCiz(); };
+      doldur(k, [ust, hesapSec,
+        el('p', { class: 'hint hint-sm', text: b.tur === 'yatir' ? 'Borsadaki hesabınıza para gönderdiyseniz buraya yazın.' : b.tur === 'cek' ? 'Borsadan bankanıza para çektiyseniz buraya yazın.' : 'Hisseden gelen temettü kasaya girer.' }),
+        el('div', { class: 'pf-form-izgara' }, [
+          b.tur === 'temettu' ? alan('Hisse', secici({ id: 'selPmBVarlik', onchange: (e) => { bilet.sec = varlikSecimi(e.target.value); } }, pozlar.map(z => [z.varlik, z.sembol]), b.sec && b.sec.varlik)) : null,
+          alan(`Tutar (${para})`, girdi({ id: 'inpPmBTutar', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: gir('tutar') }, b.tutar)),
+          b.tur === 'temettu' ? alan(`Vergi / stopaj (${para}, yoksa 0)`, girdi({ id: 'inpPmBVergi', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: gir('vergi') }, b.vergi)) : null,
+          alan('Tarih', girdi({ id: 'inpPmBTarih', type: 'date', max: bugun(), onchange: (e) => { b.tarih = e.target.value; } }, b.tarih))
+        ]),
+        ozet,
+        b.hata ? el('div', { class: 'pf-uyari pf-uyari-kritik', role: 'alert', text: b.hata }) : null,
+        el('div', { class: 'pf-dugmeler mt-2' }, [yazmaDugme('Kaydet', (e) => biletKaydet(e.currentTarget), 'btn-primary', { id: 'btnPmBKaydet' })])
+      ]);
+      ozetCiz();
+      if (hata && b.tutar) { const kd = bul('btnPmBKaydet'); if (kd) kd.disabled = true; }
+      void net;
+      return;
+    }
+    // ── Al / Sat ──
+    if (b.adim === 1) {
+      const q = String(b.ara || '').trim().toLocaleUpperCase('tr-TR');
+      const uyar = (s, ad) => !q || String(s || '').toLocaleUpperCase('tr-TR').includes(q) || String(ad || '').toLocaleUpperCase('tr-TR').includes(q);
+      const pozlar = (((veri.degerleme || {}).pozisyonlar) || []).filter(z => z.hesap === b.hesap && Math.abs(z.adet) > 1e-12);
+      const yerel = al ? ((veri.varliklar || []).filter(v => v.kaynak !== 'elle' && uyar(v.sembol, v.ad)).slice(0, 8).map(v => varlikSecimi(v.id)))
+        : pozlar.filter(z => uyar(z.sembol, z.ad)).map(z => varlikSecimi(z.varlik));
+      const kodlar = new Set(((veri.varliklar || []).filter(v => v.kaynak === 'yahoo')).map(v => String(v.kod || v.sembol).toUpperCase()));
+      const uzak = al ? (b.adaylar || []).filter(x => !x.destek && !kodlar.has(String(x.kod).toUpperCase())).map(x => ({ aday: x, sembol: x.sembol, ad: x.ad, para: x.para, fiyat: x.fiyat, borsa: x.borsa })) : [];
+      const sonucDugme = (x) => el('button', { type: 'button', class: 'pm-ara-sonuc-satir', onclick: () => { biletSec(x); hesapKartlariCiz(); const a = bul(bilet.mod === 'tutar' ? 'inpPmBTutar' : 'inpPmBAdet'); if (a && a.focus) a.focus(); } },
+        [el('span', null, [el('strong', { text: x.sembol }), el('span', { class: 'pf-kucuk', text: ` ${x.ad || ''}${x.borsa ? ' · ' + x.borsa : ''}` })]), tutar(sayiMi(x.fiyat) ? fiyatB(x.fiyat, x.para) : '')]);
+      const liste = yerel.concat(uzak);
+      doldur(k, [ust, hesapSec, adimSerit(1),
+        el('div', { class: 'pm-hizli-sembol' }, [
+          alan(al ? 'Hisse ara (sembol ya da ad)' : 'Hangi hisseyi sattınız?', girdi({ id: 'inpPmBAra', type: 'search', maxlength: '40', autocomplete: 'off', placeholder: al ? 'ör. TSLA, Apple, THYAO' : 'sembol',
+            oninput: (e) => { b.ara = e.target.value; }, onkeydown: (e) => { if (e.key === 'Enter') { e.preventDefault(); b.ara = e.target.value; biletAra(); } } }, b.ara)),
+          yazmaDugme(al ? 'Bul' : 'Süz', () => { const x = bul('inpPmBAra'); if (x) b.ara = x.value; if (al) biletAra(); else biletCiz(); }, 'btn-secondary', { id: 'btnPmBBul' })
+        ]),
+        b.araniyor ? el('p', { class: 'hint hint-sm mb-0', text: 'Aranıyor…' }) : b.araHata ? el('p', { class: 'tone-danger hint-sm mb-0', role: 'alert', text: b.araHata }) : null,
+        liste.length ? el('div', { class: 'pm-ara-sonuc', id: 'pmBSonuc' }, liste.map(sonucDugme))
+          : el('p', { class: 'hint hint-sm mb-0', text: al ? 'Sembolü ya da şirket adını yazıp "Bul"a basın.' : 'Bu hesapta satılacak hisse yok.' })
+      ]);
+      return;
+    }
+    const r = biletSayilari();
+    if (b.adim === 2) {
+      const ozet = el('div', { id: 'pmBOzet' });
+      const ozetCiz = () => doldur(ozet, ozetParcalari(biletSayilari(), para, al));
+      const gir = (a) => (e) => { b[a] = e.target.value; ozetCiz(); };
+      const modDugme = (m, ad) => el('button', { type: 'button', class: `btn btn-xs ${b.mod === m ? 'btn-primary' : 'btn-secondary'}`, 'aria-pressed': b.mod === m ? 'true' : 'false', id: `btnPmBMod-${m}`,
+        onclick: () => { b.mod = m; yaz(MOD_ANAHTAR, m); biletCiz(); const a = bul(m === 'tutar' ? 'inpPmBTutar' : 'inpPmBAdet'); if (a && a.focus) a.focus(); } }, [el('span', { text: ad })]);
+      doldur(k, [ust, hesapSec, adimSerit(2),
+        el('div', { class: 'row-between row-wrap gap-2 mb-2' }, [
+          el('span', { class: 'pf-kucuk', text: `Son fiyat ${b.sec && sayiMi(b.sec.fiyat) ? fiyatB(b.sec.fiyat, para) : '—'}${al ? '' : ` · elinizde ${adetBicim(r.elde)} adet`}` }),
+          al ? el('div', { class: 'pm-sekmeler mb-0', role: 'group', 'aria-label': 'Miktar türü' }, [modDugme('adet', 'Adet'), modDugme('tutar', `Tutar (${PARA_SIMGE[para] || para})`)]) : null]),
+        el('div', { class: 'pf-form-izgara' }, [
+          al && b.mod === 'tutar' ? alan(`Tutar (${para})`, girdi({ id: 'inpPmBTutar', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: gir('tutar') }, b.tutar))
+            : alan('Adet', girdi({ id: 'inpPmBAdet', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: gir('adet') }, b.adet)),
+          alan(`Gerçekleşen fiyat (${para})`, girdi({ id: 'inpPmBFiyat', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: gir('fiyat') }, b.fiyat), 'Borsada işlemin gerçekleştiği fiyat.'),
+          alan(`Komisyon (${para}, yoksa 0)`, girdi({ id: 'inpPmBKomisyon', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: '0', oninput: gir('komisyon') }, b.komisyon)),
+          alan('Tarih', girdi({ id: 'inpPmBTarih', type: 'date', max: bugun(), onchange: (e) => { b.tarih = e.target.value; } }, b.tarih))
+        ]),
+        ozet,
+        el('div', { class: 'pf-dugmeler mt-2' }, [
+          dugme('Kontrol et →', () => { if (biletSayilari().hata) { ozetCiz(); return; } b.adim = 3; biletCiz(); }, al ? 'btn-success' : 'btn-danger', { id: 'btnPmBKontrol' }),
+          dugme('← Hisse değiştir', () => { b.adim = 1; b.sec = null; b.fiyat = ''; biletCiz(); }, 'btn-secondary', { id: 'btnPmBGeri' })
+        ])
+      ]);
+      ozetCiz();
+      return;
+    }
+    // Adım 3: kontrol et
+    const sonraKasa = al ? yuvar2(r.kasa + r.yatir - r.toplam) : yuvar2(r.kasa + r.toplam);
+    const yeniAdet = al ? r.elde + r.adet : r.elde - r.adet;
+    doldur(k, [ust, adimSerit(3),
+      el('div', { class: 'pm-ozet', id: 'pmBKontrol' }, [
+        ozSatir('İşlem', `${al ? 'Alış' : 'Satış'} · ${b.sec.sembol} · ${b.tarih}`),
+        ozSatir('Miktar', `${adetBicim(r.adet)} adet × ${fiyatB(r.f, para)}`),
+        ozSatir('Komisyon', paraBicim(r.k, para)),
+        r.yatir ? ozSatir('Önce kasaya yatırıldı', paraBicim(r.yatir, para), false, 'pmBYatirSatir') : null,
+        ozSatir('Kasa', `${paraBicim(r.kasa, para)} → ${paraBicim(sonraKasa, para)}`, true),
+        ozSatir(`${b.sec.sembol} adedi`, `${adetBicim(r.elde)} → ${adetBicim(yeniAdet)}`)
+      ]),
+      el('p', { class: 'hint hint-sm', text: r.yatir ? `Kaydedilince iki satır yazılır: ${paraBicim(r.yatir, para)} para yatırma, sonra alış. Hesap toplamı yalnız yatırdığınız para kadar artar.`
+        : al ? 'Kaydedilince hesap toplamı değişmez: para kasadan hisseye geçer (komisyon kadar azalır).' : 'Kaydedilince satış tutarı kasaya girer.' }),
+      b.hata ? el('div', { class: 'pf-uyari pf-uyari-kritik', role: 'alert', text: b.hata }) : null,
+      el('div', { class: 'pf-dugmeler' }, [
+        yazmaDugme(al ? 'Alışı kaydet' : 'Satışı kaydet', (e) => biletKaydet(e.currentTarget), al ? 'btn-success' : 'btn-danger', { id: 'btnPmBKaydet' }),
+        dugme('← Düzelt', () => { b.adim = 2; b.hata = ''; biletCiz(); }, 'btn-secondary', { id: 'btnPmBDuzelt' })
+      ])
     ]);
   }
-
-  async function hesapIslemKaydet(hid, d) {
-    const s = hf[hid] || {};
-    const oku2 = (a) => { const x = bul(`inpPmH-${hid}-${a}`); return x ? x.value : (s[a] || ''); };
-    for (const a of ['varlik', 'adet', 'fiyat', 'ucret', 'tutar', 'vergi', 'para', 'tarih']) s[a] = oku2(a);
-    const g = formGovdesi(s.tur, { hesap: hid, tarih: s.tarih, varlik: s.varlik, adet: s.adet, fiyat: s.fiyat, ucret: s.ucret, tutar: s.tutar, vergi: s.vergi, para: s.para }, 'varlik');
+  /** 2. adımın canlı özeti + kasa bandı + "Kontrol et" kilidi (saf parçalar; girişte yalnız bu bölüm yeniden çizilir). */
+  function ozetParcalari(r, para, al) {
+    const kd = bul('btnPmBKontrol');
+    if (kd) kd.disabled = !!r.hata || (al && r.eksik > 0 && !bilet.yatirAc);
+    const yazili = String(bilet.adet || bilet.tutar || '').trim() !== '';
+    return [
+      el('div', { class: 'pm-ozet' }, [
+        ozSatir(al && bilet.mod === 'tutar' ? 'Alınacak adet' : 'Adet × fiyat', sayiMi(r.brut) ? `${al && bilet.mod === 'tutar' ? adetBicim(r.adet) + ' adet · ' : ''}${paraBicim(r.brut, para)}` : '—'),
+        ozSatir('Komisyon', sayiMi(r.k) ? paraBicim(r.k, para) : '—'),
+        ozSatir(al ? 'Kasadan düşecek' : 'Kasaya girecek', sayiMi(r.toplam) ? paraBicim(r.toplam, para) : '—', true, 'pmBDusecek'),
+        ozSatir('Kasa şimdi → sonra', sayiMi(r.toplam) ? `${paraBicim(r.kasa, para)} → ${al && r.eksik > 0 && !bilet.yatirAc ? 'yetmiyor' : paraBicim(al ? r.kasa + r.yatir - r.toplam : r.kasa + r.toplam, para)}` : paraBicim(r.kasa, para), false, 'pmBKasaSonra')
+      ]),
+      r.hata && yazili ? el('div', { class: 'pf-uyari pf-uyari-kritik', role: 'alert', id: 'pmBHata', text: r.hata }) : null,
+      !r.hata && al && r.eksik > 0 ? el('div', { class: 'pf-uyari pf-uyari-uyari', id: 'pmBEksik' }, [
+        el('div', { text: `Kasada ${paraBicim(r.kasa, para)} var, bu alım ${paraBicim(r.toplam, para)}. ${paraBicim(r.eksik, para)} eksik.` }),
+        el('label', { class: 'pm-onay-kutu mt-2' }, [
+          el('input', { type: 'checkbox', id: 'chkPmBYatir', checked: bilet.yatirAc ? '' : null, onchange: (e) => { bilet.yatirAc = !!e.target.checked; if (bilet.yatirAc && !bilet.yatirTutar) bilet.yatirTutar = virgullu(r.eksik); biletCiz(); } }),
+          el('span', { text: 'Bu alım için kasaya önce para yatırdım' })
+        ]),
+        bilet.yatirAc ? alan(`Yatırdığım tutar (${para})`, girdi({ id: 'inpPmBYatir', type: 'text', inputmode: 'decimal', autocomplete: 'off', oninput: (e) => { bilet.yatirTutar = e.target.value; }, onchange: () => biletCiz() }, bilet.yatirTutar || virgullu(r.eksik)))
+          : el('div', { class: 'pf-kucuk mt-1', id: 'pmBEksikNot', text: 'İşaretlemezseniz alım kaydedilmez — kasa eksiye düşemez.' })
+      ]) : null
+    ];
+  }
+  async function biletAra() {
+    const q = String(bilet.ara || '').trim();
+    if (!q) { bilet.araHata = 'Önce sembolü ya da adı yazın.'; biletCiz(); return; }
+    bilet.araniyor = true; bilet.araHata = ''; biletCiz();
+    try {
+      const r = await api().sembolBul(q);
+      if (!r || !r.success) throw new Error((r && r.error) || 'yanıt yok');
+      bilet.adaylar = r.adaylar || [];
+      if (!bilet.adaylar.length) bilet.araHata = `"${q}" bulunamadı. Kodu kontrol edin (ör. PayPal = PYPL) ya da şirket adını yazın.`;
+    } catch (e) { bilet.araHata = `Aranamadı: ${e.message}`; } finally { bilet.araniyor = false; biletCiz(); }
+  }
+  /** Kaydet: alış POST /alis (kasa sorusu nakitSorulu ile), diğerleri POST /islem. Başarıda makbuz. */
+  async function biletKaydet(d) {
+    const b = bilet, para = biletPara();
+    let r;
     AG.dom.mesgul(d, 'Kaydediliyor…');
     try {
-      const r = await islemGonder(g);
+      if (b.tur === 'al' || b.tur === 'sat') {
+        const s = biletSayilari();
+        if (s.hata) { b.hata = s.hata; b.adim = 2; biletCiz(); return; }
+        if (b.tur === 'al') {
+          const g = { hesap: b.hesap, adet: s.adet, fiyat: s.f, ucret: s.k, tarih: b.tarih, ...(b.sec.varlik ? { varlik: b.sec.varlik } : { aday: b.sec.aday }) };
+          if (s.eksik > 0 && b.yatirAc) { g.nakitEkle = true; g.yatirTutar = s.yatir; }
+          r = await nakitSorulu((x) => api().alis(x), g);
+        } else r = await islemGonder({ islem: 'sat', hesap: b.hesap, varlik: b.sec.varlik, adet: s.adet, fiyat: s.f, ucret: s.k || undefined, tarih: b.tarih });
+      } else {
+        const t = sayiGir(b.tutar);
+        if (!(t > 0)) { b.hata = 'Tutar girin.'; biletCiz(); return; }
+        if (b.tur === 'cek' && t > kasaOf(b.hesap, para) + 1e-9) { b.hata = `Kasada ${paraBicim(kasaOf(b.hesap, para), para)} var; daha fazlası çekilemez.`; biletCiz(); return; }
+        if (b.tur === 'temettu') {
+          if (!b.sec) { b.hata = 'Bu hesapta hisse yok.'; biletCiz(); return; }
+          r = await islemGonder({ islem: 'temettu', hesap: b.hesap, varlik: b.sec.varlik, tutar: t, vergi: String(b.vergi || '').trim() ? sayiGir(b.vergi) : undefined, tarih: b.tarih });
+        } else r = await islemGonder({ islem: b.tur, hesap: b.hesap, para, tutar: t, tarih: b.tarih });
+      }
       if (r === null) return;
-      if (!r || !r.success) { AG.bildir(gizliMetin(`Kaydedilmedi: ${(r && r.error) || 'bilinmeyen hata'}`), 'hata', { sure: 12000 }); return; }
-      AG.bildir(gizliMetin(`${ISLEM_AD[g.islem]} kaydedildi.${r.uyarilar && r.uyarilar.length ? ' Uyarı: ' + r.uyarilar.map(u => u.mesaj).join(' · ') : ''}`), r.uyarilar && r.uyarilar.length ? 'uyari' : 'ok', { sure: 9000 });
-      hf[hid] = { tur: s.tur, tarih: s.tarih, varlik: s.varlik, para: s.para };
+      if (!r || !r.success) { b.hata = gizliMetin(r && r.error ? r.error : 'bilinmeyen hata'); if (b.adim === 3) b.adim = 3; biletCiz(); return; }
+      const ids = (r.eklenen || []).filter(x => x.tur === 'islem').map(x => x.id);
+      const AD = { al: 'Alış kaydedildi', sat: 'Satış kaydedildi', yatir: 'Para yatırma kaydedildi', cek: 'Para çekme kaydedildi', temettu: 'Temettü kaydedildi' };
+      b.sonuc = { ids, baslik: AD[b.tur], metin: r.metin || '', uyari: r.uyarilar && r.uyarilar.length ? r.uyarilar.map(u => u.mesaj).join(' · ') : '', fiyatHatasi: r.fiyatHatasi || null };
+      b.adim = 'tamam'; b.hata = '';
       hesapGecmis.clear();
       await yukle(true);
-    } catch (e) { AG.bildir(`Kaydedilmedi: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
+    } catch (e) { b.hata = `Kaydedilmedi: ${e.message}`; biletCiz(); } finally { AG.dom.hazir(d); }
+  }
+  function makbuzCiz() {
+    const s = bilet.sonuc || {};
+    const para = biletPara();
+    return [
+      el('div', { class: 'pm-makbuz', id: 'pmBMakbuz' }, [el('div', { class: 'pm-makbuz-isaret tone-success', 'aria-hidden': 'true', text: '✓' }),
+        el('h4', { class: 'card-title m-0', text: s.baslik || 'Kaydedildi' }),
+        el('p', { class: 'hint hint-sm mb-0', text: gizliMetin(s.metin || `Kasa şimdi ${paraBicim(kasaOf(bilet.hesap, para), para)}.`) }),
+        s.uyari ? el('p', { class: 'tone-warning hint-sm mb-0', text: gizliMetin('Uyarı: ' + s.uyari) }) : null,
+        s.fiyatHatasi ? el('p', { class: 'tone-warning hint-sm mb-0', text: `Fiyat indirilemedi (${s.fiyatHatasi}); "Fiyatları yenile" ile tekrar deneyin.` }) : null]),
+      el('div', { class: 'pf-dugmeler' }, [
+        dugme('Tamam', biletKapat, 'btn-primary', { id: 'btnPmBTamam' }),
+        (s.ids || []).length ? yazmaDugme('Geri al', (e) => biletGeriAl(e.currentTarget), 'btn-secondary', { id: 'btnPmBGeriAl', title: 'Az önce yazılan kayıtları ters kayıtla iptal eder' }) : null
+      ])
+    ];
+  }
+  /** Makbuzdaki "Geri al": az önce yazılan işlem kayıtları (alış + varsa para yatırma) sondan başa ters kayıtla iptal edilir. */
+  async function biletGeriAl(d) {
+    const ids = ((bilet.sonuc && bilet.sonuc.ids) || []).slice().reverse();
+    AG.dom.mesgul(d, 'Geri alınıyor…');
+    try {
+      for (const id of ids) {
+        const r = await api().iptal(id, 'geri al');
+        if (!r || !r.success) { AG.bildir(`Geri alınamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 12000 }); return; }
+      }
+      AG.bildir('Geri alındı: kayıtlar iptal edildi (İşlem defterinde "iptal" görünür).', 'ok');
+      bilet.hesap = null;
+      hesapGecmis.clear();
+      await yukle(true);
+    } finally { AG.dom.hazir(d); }
+  }
+
+  /* ── 76.9 Hesabın işlemleri: her satırın kasa etkisi ──────────────────────────────────────────────────────────────── */
+  let tumIslemler = null;   // GET /islemler?portfoy=tumu (iptaller dahil değil); hesap kartları süzer
+  async function tumIslemYukle() {
+    try { const r = await api().islemler({ portfoy: 'tumu' }); if (r && r.success) tumIslemler = r.islemler || []; } catch (e) { /* kart "yüklenemedi" der */ }
+    for (const h of ((veri && veri.hesaplar) || [])) hesapIslemCiz(h.id);
+  }
+  /** Saf: işlemin bu hesabın kasasına etkisi (kendi para biriminde) → { tutar, para } | null (kasaya etkisi yok). */
+  function kasaEtkisi(x, hid, V) {
+    const v = x.varlik && V ? V.get(x.varlik) : null;
+    const para = x.para || (v && v.para);
+    const n = (a) => (sayiMi(a) ? a : 0);
+    switch (x.islem) {
+      case 'al': return x.hesap === hid ? { tutar: -(x.adet * x.fiyat + n(x.ucret)), para } : null;
+      case 'sat': return x.hesap === hid ? { tutar: x.adet * x.fiyat - n(x.ucret), para } : null;
+      case 'temettu': case 'faiz': return { tutar: x.tutar - n(x.vergi), para };
+      case 'yatir': return { tutar: x.tutar, para };
+      case 'cek': case 'ucret': return { tutar: -x.tutar, para };
+      case 'acilis': return x.varlik ? null : { tutar: x.tutar, para };
+      case 'transfer': return x.varlik ? null : x.hesap === hid ? { tutar: -x.tutar, para } : { tutar: sayiMi(x.ulasanTutar) ? x.ulasanTutar : x.tutar, para };
+      default: return null;
+    }
+  }
+  function hesapIslemCiz(hid) {
+    const k = bul(`pmHIslem-${hid}`);
+    if (!k) return;
+    if (tumIslemler == null) { doldur(k, [el('p', { class: 'hint hint-sm mb-0', text: 'Yükleniyor…' })]); return; }
+    const V = varlikHaritasi();
+    const acilislar = (veri && veri.acilislar) || {};
+    const yalnizlar = new Set(Object.values(acilislar).filter(a => a.yalniz).map(a => a.id));
+    const l = tumIslemler.filter(x => !x._iptal && (x.hesap === hid || x.hedefHesap === hid))
+      .sort((a, b) => (a.tarih < b.tarih ? 1 : a.tarih > b.tarih ? -1 : (b.sira || 0) - (a.sira || 0))).slice(0, 10);
+    if (!l.length) { doldur(k, [el('p', { class: 'hint hint-sm mb-0', text: 'Bu hesapta henüz işlem yok.' })]); return; }
+    const hesapAd = ((veri.hesaplar || []).find(h => h.id === hid) || {}).ad || hid;
+    doldur(k, [AG.tablo.kutulu({ id: `tblPmHIslem-${hid}`, sinif: 'table-dense pf-tablo', basliklar: ['Tarih · işlem', 'Ayrıntı', 'Kasa etkisi', ''],
+      satirlar: l.map(x => {
+        const e = kasaEtkisi(x, hid, V);
+        const v = x.varlik ? V.get(x.varlik) : null;
+        const supheli = x.islem === 'acilis' && x.varlik && yalnizlar.has(x.id);
+        return el('tr', { class: supheli ? 'pm-satir-uyari' : null }, [
+          el('td', { class: 'pf-sola' }, [el('div', { text: `${x.tarih} · ${ISLEM_AD[x.islem] || x.islem}` }),
+            supheli ? el('span', { class: 'badge pm-rozet-supheli', text: 'kasadan düşmedi — yeni alımsa düzeltin' }) : null]),
+          el('td', { class: 'pf-sola' }, [tutar(islemOzeti(x, V))]),
+          el('td', { class: `sayi ${e ? ton(e.tutar) : 'tone-muted'}` }, [e ? tutar(paraBicim(e.tutar, e.para)) : el('span', { class: 'pf-kucuk', text: 'kasaya etkisi yok' })]),
+          el('td', { class: 'pm-eylem' }, [supheli ? yazmaDugme('Bunu alışa çevir', () => alisaCevir({ sembol: v ? v.sembol : x.varlik, para: v ? v.para : x.para, hesapAd, adet: x.adet, birimMaliyet: x.birimMaliyet }, x.id), 'btn-success btn-xs', { id: `btnPmIslemAlisaCevir-${x.id}` }) : null])
+        ]);
+      }) }),
+      el('p', { class: 'hint hint-sm mt-1 mb-0', text: 'Son 10 işlem. Hepsi ve düzeltme: İşlem defteri.' })]);
+  }
+
+  /* ── 76.9 İzleme listesi: TEK liste — arama kutusu "Hisse ara ve listeye ekle", sonuçlar hemen altında "+ Ekle"; satırda son
+   *    fiyat, günlük değişim, "Al" (bileti o hisseyle açar), "Çıkar". Kasaya ve hesap toplamına etkisi yok (POST /izle, /izle/cikar). ── */
+  const izle = { ara: '', adaylar: [], araniyor: false, hata: '' };
+  /** "Al" için hesap: aynı para birimli ve uygun türde açık hesap (seçili kişide) → yoksa ilk açık hesap. */
+  function izleHesabi(x) {
+    const kume = kisiHesaplari();
+    const acik = acikHesaplar().filter(h => !kume || kume.has(h.id));
+    const tur = /\.IS$/.test(String(x.kod || '')) || x.para === 'TRY' ? 'bist-araci' : x.kaynak === 'binance' ? 'binance' : 'abd-araci';
+    const h = acik.find(z => z.para === x.para && z.hesapTuru === tur) || acik.find(z => z.para === x.para) || acik[0];
+    return h ? h.id : null;
+  }
+  function izlemeCiz() {
+    const k = bul('pmIzleme');
+    if (!k || !veri) return;
+    const liste = veri.izleme || [];
+    const listede = new Set(liste.map(x => { const v = (veri.varliklar || []).find(z => z.id === x.varlik); return v ? String(v.kod || v.sembol).toUpperCase() : x.sembol; }));
+    const sonuc = (izle.adaylar || []).filter(x => !x.destek);
+    doldur(k, [
+      el('div', { class: 'row-between row-wrap gap-2' }, [baslik('eye', 'İzleme listesi'), el('span', { class: 'pf-kucuk', text: 'yalnız fiyat izlenir · kasaya ve hesap toplamına etkisi yok' })]),
+      el('div', { class: 'pm-hizli-sembol pm-yazma' }, [
+        alan('Hisse ara ve listeye ekle', girdi({ id: 'inpPmIzleAra', type: 'search', maxlength: '40', autocomplete: 'off', placeholder: 'Sembol ya da ad yazın (ör. TSLA, Apple)',
+          oninput: (e) => { izle.ara = e.target.value; }, onkeydown: (e) => { if (e.key === 'Enter') { e.preventDefault(); izle.ara = e.target.value; izleAra(); } } }, izle.ara)),
+        yazmaDugme('Bul', () => { const x = bul('inpPmIzleAra'); if (x) izle.ara = x.value; izleAra(); }, 'btn-secondary', { id: 'btnPmIzleBul' })
+      ]),
+      izle.araniyor ? el('p', { class: 'hint hint-sm mb-0', text: 'Aranıyor…' }) : izle.hata ? el('p', { class: 'tone-danger hint-sm mb-0', role: 'alert', text: izle.hata }) : null,
+      sonuc.length ? el('div', { class: 'pm-ara-sonuc pm-yazma mb-2', id: 'pmIzleSonuc' }, sonuc.map(x => {
+        const var_ = listede.has(String(x.kod).toUpperCase());
+        return el('button', { type: 'button', class: 'pm-ara-sonuc-satir', disabled: var_ ? '' : null, 'data-kilit': 'telefon', onclick: var_ ? null : (e) => izleEkle(x, e.currentTarget) },
+          [el('span', null, [el('strong', { text: x.sembol }), el('span', { class: 'pf-kucuk', text: ` ${x.ad || ''}${x.borsa ? ' · ' + x.borsa : ''}` })]),
+            el('span', { class: 'pf-kucuk', text: var_ ? 'listede' : `${sayiMi(x.fiyat) ? fiyatB(x.fiyat, x.para) + '  ' : ''}+ Ekle` })]);
+      })) : null,
+      liste.length ? AG.tablo.kutulu({ id: 'tblPmIzleme', sinif: 'table-dense pf-tablo', basliklar: ['Hisse', 'Son fiyat', 'Gün', ''], satirlar: liste.map(x => el('tr', null, [
+        el('td', { class: 'pf-sola' }, [el('strong', { text: x.sembol }), el('span', { class: 'pf-kucuk', text: ` ${x.ad || ''}` }), x.elde ? el('span', { class: 'badge ms-1', text: 'elde var' }) : null]),
+        el('td', { class: 'sayi' }, [el('div', { text: fiyatB(x.fiyat, x.para) }), el('div', { class: `pf-kucuk${x.fiyatBayat ? ' tone-warning' : ''}`, text: x.fiyatTarih || 'fiyat yok' })]),
+        el('td', { class: `sayi ${ton(x.gunlukDegisim)}`, text: sayiMi(x.gunlukDegisim) ? isaretliYuzde(x.gunlukDegisim, 2) : '—' }),
+        el('td', { class: 'pm-eylem' }, [el('div', { class: 'pf-dugmeler' }, [
+          yazmaDugme('Al', () => { const h = izleHesabi({ ...x, kod: ((veri.varliklar || []).find(z => z.id === x.varlik) || {}).kod }); if (!h) { AG.bildir('Önce bir hesap açın ("Yeni hesap").', 'uyari'); return; } biletAc(h, 'al', { varlik: x.varlik }); }, 'btn-success btn-xs', { id: `btnPmIzleAl-${x.varlik}` }),
+          yazmaDugme('Çıkar', (e) => izleCikar(x, e.currentTarget), 'btn-secondary btn-xs', { id: `btnPmIzleCikar-${x.varlik}`, title: 'Listeden çıkar' })])])
+      ])) }) : el('p', { class: 'hint hint-sm mb-0', id: 'pmIzleBos', text: 'İzleme listesi boş. Yukarıdan bir hisse arayıp "+ Ekle"ye basın.' })
+    ]);
+  }
+  async function izleAra() {
+    const q = String(izle.ara || '').trim();
+    if (!q) { izle.hata = 'Önce sembolü ya da adı yazın.'; izlemeCiz(); return; }
+    izle.araniyor = true; izle.hata = ''; izle.adaylar = []; izlemeCiz();
+    try {
+      const r = await api().sembolBul(q);
+      if (!r || !r.success) throw new Error((r && r.error) || 'yanıt yok');
+      izle.adaylar = r.adaylar || [];
+      if (!izle.adaylar.length) izle.hata = `"${q}" bulunamadı.`;
+    } catch (e) { izle.hata = `Aranamadı: ${e.message}`; } finally { izle.araniyor = false; izlemeCiz(); }
+  }
+  async function izleEkle(x, d) {
+    AG.dom.mesgul(d, 'Ekleniyor…');
+    try {
+      const r = await api().izle({ kaynak: 'yahoo', aday: x });
+      if (!r || !r.success) { AG.bildir(`Eklenmedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 10000 }); return; }
+      AG.bildir(`${x.sembol} izleme listesine eklendi${r.fiyatHatasi ? ` — fiyat indirilemedi (${r.fiyatHatasi})` : ''}.`, r.fiyatHatasi ? 'uyari' : 'ok');
+      izle.ara = ''; izle.adaylar = []; izle.hata = '';
+      await yukle(true);
+    } catch (e) { AG.bildir(`Eklenmedi: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
+  }
+  async function izleCikar(x, d) {
+    AG.dom.mesgul(d, 'Çıkarılıyor…');
+    try {
+      const r = await api().izleCikar(x.varlik);
+      if (!r || !r.success) { AG.bildir(`Çıkarılamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata'); return; }
+      AG.bildir(`${x.sembol} izleme listesinden çıkarıldı.`, 'ok');
+      await yukle(true);
+    } catch (e) { AG.bildir(`Çıkarılamadı: ${e.message}`, 'hata'); } finally { AG.dom.hazir(d); }
   }
 
   /** Hesaplarım üst satırı: düğmeler katlı bölümleri açıp oraya kaydırır. */
@@ -1453,7 +1870,7 @@
         el('h3', { class: 'card-title m-0' }, [ikon('landmark'), el('span', { text: ' Hesaplar' })]),
         el('div', { class: 'pf-dugmeler' }, [
           // 67.4: "Varlık ekle" yalnız var olan hesaba; yeni hesap ayrı kartta.
-          yazmaDugme('+ Varlık ekle', ac('pmHizliKat'), 'btn-primary', { id: 'btnPmVarlikEkleAc' }),
+          yazmaDugme('+ Zaten olanları gir (ilk kurulum)', ac('pmHizliKat'), 'btn-secondary', { id: 'btnPmVarlikEkleAc' }),
           yazmaDugme('+ Yeni hesap', ac('pmYeniHesapKat'), 'btn-secondary', { id: 'btnPmYeniHesapAc' }),
           yazmaDugme('Geçmiş işlemleri içe aktar (CSV)', ac('pmCsvKat'), 'btn-secondary', { id: 'btnPmCsvAc' }),
           // F6: Portföyüm defteri İşlem defteri › Yatırım'da (pano.js defterAc).
@@ -1463,7 +1880,7 @@
           yazmaDugme('Fiyatları yenile', (e) => fiyatYenile(e.currentTarget), 'btn-secondary', { id: 'btnPmFiyatYenile', title: 'Yahoo / TEFAS / Binance fiyatlarını ve kurları ağdan tazeler (ücretsiz kaynaklar)' })
         ])
       ]),
-      el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Buraya girdiğin her şey (geçmiş tarihli işlemler dahil) Pano, Varlıklar ve Rapor\'daki sayıları ve grafikleri kendiliğinden günceller. Elinde zaten olan hisse, fon, kripto, altın ve nakit "Varlık ekle"de; sonraki alış, satış, temettü, para giriş/çıkışı hesap kartındaki "+ işlem" satırında (geçmiş tarih için tarihi geriye al); transfer, faiz, ücret, bölünme "Diğer işlemler"de. Vadeli mevduat faizi ve elle fiyat hesap kartında. Hiçbir bakiye otomatik dolmaz. Model portföylerin emirlerini uyguladıysan modelin sekmesindeki "Uyguladım" bunları buraya kendisi yazar.' })
+      el('p', { class: 'hint hint-sm mt-2 mb-0', text: 'Buraya girdiğin her şey (geçmiş tarihli işlemler dahil) Pano, Varlıklar ve Rapor\'daki sayıları ve grafikleri kendiliğinden günceller. Pusula\'yı ilk kurarken elinde zaten olan hisse, fon, kripto, altın ve nakit "Bu hesapta zaten olanlar"da (bir kez); yeni alım (parası nakitten düşer), satış, temettü, para giriş/çıkışı hesap kartındaki Al · Sat · Para yatır · Para çek · Temettü düğmelerinde (geçmiş tarih için tarihi geriye al); transfer, faiz, ücret, bölünme "Diğer işlemler"de. Vadeli mevduat faizi ve elle fiyat hesap kartında. Hiçbir bakiye otomatik dolmaz. Model portföylerin emirlerini uyguladıysan modelin sekmesindeki "Uyguladım" bunları buraya kendisi yazar.' })
     ]);
   }
 
@@ -1496,8 +1913,10 @@
       el('div', { id: 'pmKayitUst', class: 'glass-panel panel-pad mb-4' }),
       // 67.4: yeni hesap ayrı kart; "Varlık ekle" (açılış bakiyesi) yalnız var olan hesaba.
       kat('pmYeniHesapKat', 'Yeni hesap — kurum, hesap adı, tür (vadeli mevduat isteğe bağlı)', 'landmark', [el('div', { id: 'pmYeniHesap', class: 'pm-yazma' })], false, 'pm-yazma'),
-      kat('pmHizliKat', 'Varlık ekle — elinde olan hisse, fon, kripto, altın, nakit', 'circle-plus', [el('div', { id: 'pmHizli', class: 'pm-yazma' })], false, 'pm-yazma'),
+      kat('pmHizliKat', 'Bu hesapta zaten olanlar — Pusula\'yı ilk kurarken bir kez (yeni alım için değil)', 'circle-plus', [el('div', { id: 'pmHizli', class: 'pm-yazma' })], false, 'pm-yazma'),
       el('div', { id: 'pmHesapKartlari', class: 'pm-hesap-kartlari mt-4' }),
+      // 76.9: TEK izleme listesi (arama + "+ Ekle" aynı kartta; kasaya etkisi yok)
+      el('div', { id: 'pmIzleme', class: 'glass-panel panel-pad mt-4' }),
       kat('pmFormKat', 'Diğer işlemler: transfer, faiz, ücret, bölünme', 'file-plus', [el('div', { id: 'pmForm' })], false, 'pm-yazma'),
       // 67.4: işlem defteri katlı, varsayılan KAPALI (özet satırında kayıt sayısı); "İşlem defteri" bağlantıları açıp kaydırır (pano.js defterAc).
       el('details', { id: 'pmDefter', class: 'glass-panel hs-kat mt-4' }, [
@@ -1525,9 +1944,9 @@
       baslik('compass', 'Portföyüm — ilk kurulum'),
       el('ol', { class: 'pm-adimlar' }, [
         el('li', { text: 'Portföy › Hesaplar\'ı aç. "Yeni hesap" kartında kurum adını (ör. Midas, Enpara), hesap adını, türünü ve para birimini yaz; vadeli mevduatsa faiz bilgisini de.' }),
-        el('li', { text: '"Varlık ekle" kartında türü seç (Hisse / ETF · Fon · Kripto · Altın · Nakit · Diğer). Hissede sembolü yazıp "Bul"a bas: panel adını, borsasını ve para birimini kendisi bulur.' }),
+        el('li', { text: '"Bu hesapta zaten olanlar" bölümünde türü seç (Hisse / ETF · Fon · Kripto · Altın · Nakit · Diğer). Hissede sembolü yazıp "Bul"a bas: panel adını, borsasını ve para birimini kendisi bulur.' }),
         el('li', { text: 'Adedi (istersen ortalama alış fiyatını ve alış tarihini de) yaz, "Ekle"ye bas. Varlık, hesabının altında listede görünür.' }),
-        el('li', { text: 'Sonraki alış, satış, temettü ve para giriş/çıkışını hesap kartındaki "+ işlem" satırından girersin; transfer, faiz, ücret ve bölünme "Diğer işlemler"de.' })
+        el('li', { text: 'Sonraki her alış (kasadan düşer), satış, temettü ve para giriş/çıkışını hesap kartındaki Al · Sat · Para yatır · Para çek · Temettü düğmeleriyle girersin; transfer, faiz, ücret ve bölünme "Diğer işlemler"de.' })
       ]),
       el('div', { class: 'pf-dugmeler mt-2 mb-2' }, [dugme('Hesaplar\'a git', () => kayitAc(), 'btn-primary', { id: 'btnPmBosKayit' })]),
       el('p', { class: 'hint hint-sm mb-0', text: veri && veri.yazma && veri.yazma.ev ? 'Hiçbir bakiye otomatik dolmaz; veriler sunucuda tutulur (bu bilgisayar sunucudakini gösterir, girdiklerin sunucuya gider). Telefondan yalnız görüntülenir.' : 'Hiçbir bakiye otomatik dolmaz; veriler yalnız bu bilgisayarda tutulur. Telefondan yalnız görüntülenir.' })
@@ -1536,7 +1955,7 @@
 
   function ciz() {
     if (!veri) return;
-    ustCiz(); bantCiz(); bosDurumCiz(); portfoyumCiz(); kayitUstCiz(); yeniHesapCiz(); hizliCiz(); hesapKartlariCiz(); defterSuzgecCiz(); formCiz(); csvCiz(); hedefBagCiz(); yonetimCiz();
+    ustCiz(); bantCiz(); bosDurumCiz(); portfoyumCiz(); kayitUstCiz(); yeniHesapCiz(); hizliCiz(); hesapKartlariCiz(); izlemeCiz(); defterSuzgecCiz(); formCiz(); csvCiz(); hedefBagCiz(); yonetimCiz();
     // 67.4: hiç hesap yoksa ilk adım "Yeni hesap" (Varlık ekle de "önce hesap aç" der).
     const yk = bul('pmYeniHesapKat'); if (yk && !(veri.hesaplar || []).some(h => h.durum === 'acik')) yk.open = true;
     gizliUygula();
@@ -1564,7 +1983,7 @@
       ciz();
       // 64.8: geliştirme bilgisayarında bir kezlik "sunucuya taşı" kartı (yalnız taşınmamış yerel kayıt varsa görünür)
       if (veri.yazma && veri.yazma.ev && veri.yazma.acik && AG.evKuyruk) AG.evKuyruk.tasimaKarti(bul('pmTasima'), { onDegisti: () => yukle(true) });
-      await Promise.all([defterYukle(), grafikYukle()]);
+      await Promise.all([defterYukle(), grafikYukle(), tumIslemYukle()]);
       sonIslemlerCiz(); grafikCiz();
       if (zorla) analizTazele(true);   // 68.7: yazmadan sonra İşlem defteri › Yatırım grafikleri de yeniden okunur
     } catch (e) {
@@ -1575,9 +1994,9 @@
 
   AG.pages = AG.pages || {};
   AG.pages.portfoyum = {
-    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, kodDegistir, yahooKodGecerli, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, halkaDilimleri, kisiHesapKumesi, hesapGruplari, kisiDegisti, defterSuzgec: defterSorgu, FORM_ALANLARI, ISLEM_AD,
-    _ciz: { ustCiz, bantCiz, ozetCiz, ozetSeritCiz, portfoyumCiz, hesapKartlariCiz, hesapFormCiz, kayitUstCiz, hizliCiz, yeniHesapCiz, dagilimCiz, varliklarCiz, hesaplarCiz, defterTabloCiz, formCiz, csvSonucCiz, hedefBagCiz, yonetimCiz, bosDurumCiz, ciz },
-    _durum: { veriAyarla: (v) => { veri = v; }, defterAyarla: (d) => { defter = d; }, csvAyarla: (c) => { csvSonuc = c; }, gizli: () => gizli, formTurAyarla: (t, k) => { formTur = t; formKalem = k || 'varlik'; }, hizli: () => hizli, duzenleAyarla: (a) => { duzenlenen = a; }, faizAcAyarla: (h) => { faizAcik = h; }, fiyatAcAyarla: (a) => { fiyatAcik = a; } }
+    yukle, iskelet, kayitAc, gizliUygula, islemGonder, soruluGonder, alisGonder, nakitSorulu, alisaCevir, biletAc, biletHesabi, sayiGir, kasaEtkisi, bilet, izle, varlikGovdesi, yeniHesapGovdesi, elleFiyatGerek, kodDegistir, yahooKodGecerli, mevduatHesabiMi, modelEtiketi, aylikGetiri, gizliMetin, paraBicim, sayiBicim, yuzde, isaretliYuzde, formGovdesi, islemOzeti, halkaDilimleri, kisiHesapKumesi, hesapGruplari, kisiDegisti, defterSuzgec: defterSorgu, FORM_ALANLARI, ISLEM_AD,
+    _ciz: { ustCiz, bantCiz, ozetCiz, ozetSeritCiz, portfoyumCiz, hesapKartlariCiz, biletCiz, hesapIslemCiz, izlemeCiz, kayitUstCiz, hizliCiz, yeniHesapCiz, dagilimCiz, varliklarCiz, hesaplarCiz, defterTabloCiz, formCiz, csvSonucCiz, hedefBagCiz, yonetimCiz, bosDurumCiz, ciz },
+    _durum: { veriAyarla: (v) => { veri = v; }, defterAyarla: (d) => { defter = d; }, csvAyarla: (c) => { csvSonuc = c; }, gizli: () => gizli, formTurAyarla: (t, k) => { formTur = t; formKalem = k || 'varlik'; }, tumIslemAyarla: (l) => { tumIslemler = l; }, hizli: () => hizli, duzenleAyarla: (a) => { duzenlenen = a; }, faizAcAyarla: (h) => { faizAcik = h; }, fiyatAcAyarla: (a) => { fiyatAcik = a; } }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.portfoyum;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -418,6 +418,11 @@
       /* 61.2 hızlı ekleme: sembol ara (Yahoo) · tek adımda hesap + varlık + açılış · açılışı düzenle (ters kayıt + yenisi) */
       sembolBul: (q) => gonder('/api/portfoyum/sembol-bul', { q }),
       hizliEkle: (g) => gonder('/api/portfoyum/hizli-ekle', g),
+      /* 76.9: alış (her zaman nakitten düşer; nakit yetmezse 409 'nakit-yetmez' → nakitEkle: true) · ilk kurulum kaydını alışa çevir · izleme listesi */
+      alis: (g) => gonder('/api/portfoyum/alis', g),
+      alisaCevir: (g) => gonder('/api/portfoyum/alisa-cevir', g),
+      izle: (g) => gonder('/api/portfoyum/izle', g),
+      izleCikar: (varlik) => gonder('/api/portfoyum/izle/cikar', { varlik }),
       hizliDuzenle: (g) => gonder('/api/portfoyum/hizli-duzenle', g),
       /* 67.3 Hedefim › Para ekle planı: yatırma + satışlar + alışlar tek pakette (atomik; nakit eksiye düşerse 409 soru 'nakit-eksi') */
       planKaydet: (g) => gonder('/api/portfoyum/plan-kaydet', g)

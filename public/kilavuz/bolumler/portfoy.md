@@ -7,7 +7,7 @@ Portföy, **kendi paranın** (aracı kurum, banka, kripto borsası) tek yeridir.
 | Sayfa | Ne görürsün |
 |---|---|
 | **Pano** | Toplam değer, getiri, risk göstergeleri, portföy sağlığı, dağılım, kıyaslı grafik, aylık ısı haritası, düşüş — ve bu portföy için **yapman gerekenler** ([Pano](#/kilavuz/portfoy/pano)) |
-| **Hesaplar** | Bilgi **girilir**: hangi hesap hangi portföyün, hesap kartları ve "+ işlem", hisse/hesap ekle, CSV içe aktarma, varlık düzeyinde hedef, gelişmiş ([Hesaplar](#/kilavuz/portfoyum/kayit)) |
+| **Hesaplar** | Bilgi **girilir**: hangi hesap hangi portföyün, hesap kartları ve işlem kartı (Al · Sat · Para yatır · Para çek), izleme listesi, ilk kurulumda "Bu hesapta zaten olanlar", CSV içe aktarma, varlık düzeyinde hedef, gelişmiş ([Hesaplar](#/kilavuz/portfoyum/kayit)) |
 | **Varlıklar** | Elindeki her şey tek tabloda: adet, maliyet, fiyat, değer, kâr/zarar, gerçekleşen, pay; nakit; kapanan pozisyonlar ([Varlıklar](#/kilavuz/portfoy/varliklar)) |
 | **İşlem defteri** | Kaynak seçici: **Kripto / FX** (OKX, Binance, MetaTrader) · **Yatırım** (Hesaplar'a girdiğin işlemler) · **Bot** (botların işlem dökümü, CSV) ([İşlem defteri](#/kilavuz/islem-defterim)) |
 | **Hedefim** | Paranın nasıl bölünmesini istediğin; olması gereken ↔ şu an; hangi hesapta ne alınıp satılacağı ([Hedefim](#/kilavuz/portfoy/hedefim)) |
@@ -31,7 +31,7 @@ Bir Portföy sayfası açıkken üst çubukta iki seçici durur; seçim bütün 
 ## Ne zaman kullanılır {#ne-zaman}
 
 - Günlük / haftalık: **Pano**'ya bakmak — "ne kadar param var, bu yıl nasıl gitti, yapmam gereken bir şey var mı?"
-- Bir işlem yaptığında (alış, satış, temettü, para yatırma): **Hesaplar** › ilgili hesabın "+ işlem" satırı.
+- Bir işlem yaptığında (alış, satış, temettü, para yatırma): **Hesaplar** › ilgili hesap kartındaki **Al · Sat · Para yatır · Para çek · Temettü** (alış kasadan düşer).
 - Ay sonunda: **Hedefim**'de sapmaya bakmak; modellerin emirlerini **Modeller** › Bu ay kartından uygulamak.
 - Ay sonu karnesi ve "kötü bir günde ne olur?" için **Rapor**.
 

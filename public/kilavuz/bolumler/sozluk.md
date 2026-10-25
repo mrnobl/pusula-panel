@@ -79,7 +79,7 @@ Panelde ve kılavuzda geçen terimlerin sade açıklaması. Panelin kendi **?** 
 |---|---|
 | TWR (zaman ağırlıklı getiri) | Para yatırma/çekmenin etkisini ayıklayan getiri: "yatırımlar ne yaptı" |
 | FIFO | Satışta önce en eski alımın satıldığı varsayımı; gerçekleşen K/Z böyle hesaplanır |
-| Açılış bakiyesi | Bir hesaptaki mevcut adet ve nakdi geçmiş işlemleri yazmadan tek kayıtla girmek |
+| Bu hesapta zaten olanlar (ilk kurulum kaydı) | Pusula'yı ilk kurarken bir hesapta zaten olan adedi ve nakdi geçmiş işlemleri yazmadan bir kez girmek; yeni alım için kullanılmaz (alış kasadan düşer) |
 | Gerçekleşen K/Z | Satılarak kesinleşmiş kâr ya da zarar |
 | Bölünme (split) | Hisse sayısı artar, fiyat aynı oranda düşer; değer değişmez |
 | Aynı gün sırası | Aynı gün birden çok işlem varsa hangisinin önce sayılacağı (önce satış, sonra alış) |

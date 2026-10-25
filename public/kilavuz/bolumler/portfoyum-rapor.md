@@ -64,7 +64,7 @@ Seri kısaysa ölçüt "—" yazar ve kartın altında nedeni yazar (ör. Sharpe
 | Alan | Ne demek |
 |---|---|
 | **Ay başı → ay sonu** | Önceki ayın son günü kapanıştaki toplam değer → bu ayın son günü (devam eden ayda bugün). Altında fark. Hepsi dolar; o günün fiyatı ve kuruyla. |
-| **Para girişi / çıkışı** | Ay içinde dışarıdan koyduğun (+) ya da çektiğin (−) para; o ay girilen açılış bakiyesi de giriş sayılır. Alış, satış, temettü, faiz giriş değildir (para portföyün içinde yer değiştirir). |
+| **Para girişi / çıkışı** | Ay içinde dışarıdan koyduğun (+) ya da çektiğin (−) para; o ay ilk kurulumda girilen bakiye ("Bu hesapta zaten olanlar") de giriş sayılır. Alış, satış, temettü, faiz giriş değildir (para portföyün içinde yer değiştirir). |
 | **Piyasa etkisi** | Fark − para girişi/çıkışı. Fiyat ve kur hareketi, temettü, faiz, ücretlerin toplamı. Ay başı + giriş + piyasa etkisi her zaman ay sonuna eşittir. |
 | **Zaman ağırlıklı getiri** | Para yatırıp çekmenden etkilenmeyen getiri — "yatırımlarım ne kadar iyi gitti?". Fon yöneticileri bununla ölçülür; Pano'daki getiri sayıları da budur. |
 | **Para ağırlıklı getiri** | Senin paranın getirisi (iç verim oranı): ne zaman ne kadar para koyduğun da hesaba girer. Düşüşten hemen önce büyük para koyduysan bu sayı zaman ağırlıklıdan kötü çıkar, dipte koyduysan iyi. Ay için **yıllığa çevrilmez** (o ayın kendi getirisidir). |

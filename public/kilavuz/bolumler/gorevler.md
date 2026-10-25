@@ -52,7 +52,7 @@ Ayrıntı: [Telefondan açmak](#/kilavuz/telefon).
 
 ## Portföy tutarlarını girmek {#tutarlar}
 
-1. **Portföy › Hesaplar** → yeni hesapsa **Yeni hesap**; elinde zaten olan hisse, fon, kripto, altın ve nakit için **Varlık ekle**; sonraki alış, satış, temettü ve para giriş/çıkışı için hesap kartında **+ işlem** (geçmiş tarihli kayıt da olur).
+1. **Portföy › Hesaplar** → yeni hesapsa **Yeni hesap**; Pusula'yı ilk kurarken elinde zaten olan hisse, fon, kripto, altın ve nakit için bir kez **Bu hesapta zaten olanlar**; sonraki her alım, satım, para yatırma / çekme ve temettü için hesap kartında **Al · Sat · Para yatır · Para çek · Temettü** (alış kasadan düşer; geçmiş tarihli kayıt da olur).
 2. Kaydedince Pano, Varlıklar ve Hedefim kendiliğinden güncellenir; Binance/OKX bakiyesi salt okuma anahtarıyla kendiliğinden gelir.
 3. Model portföyün bu ayki emirlerini uyguladıysanız **Portföy › Modeller › Bu ay › Uyguladım…** hepsini tek seferde yazar.
 

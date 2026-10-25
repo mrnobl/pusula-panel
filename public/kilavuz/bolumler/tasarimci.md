@@ -8,7 +8,7 @@
 
 ![Bu ay kartı — Modeller, Nova seçili](ekran:buay-1400)
 
-**Portföy › Modeller** sayfasında seçili modelin (Nova, Lydia, Simurg) sayılarının hemen altında **Bu ay** kartı durur: modelin bu ayki kararını **kendi hesabına** uygulamak için girmen gereken emirler. Gerçek portföye emir listesi ve **Uyguladım** yalnız buradadır (Laboratuvar yalnız araştırmadır); istersen aynı işlemleri Hesaplar'daki "+ işlem" ile tek tek de girebilirsin. Sekmenin adında açık iş sayısı yazar (ör. "10 iş"). **Telefondan** emir listesi görülür ama **Uyguladım** yapılamaz (telefon yalnız izler ve acil durdurur — bilinçli): Midas'ta emirleri telefondan girebilirsiniz, Uyguladım'ı sunucunun başına dönünce işaretleyin.
+**Portföy › Modeller** sayfasında seçili modelin (Nova, Lydia, Simurg) sayılarının hemen altında **Bu ay** kartı durur: modelin bu ayki kararını **kendi hesabına** uygulamak için girmen gereken emirler. Gerçek portföye emir listesi ve **Uyguladım** yalnız buradadır (Laboratuvar yalnız araştırmadır); istersen aynı işlemleri Hesaplar'daki hesap kartında Al · Sat ile tek tek de girebilirsin. Sekmenin adında açık iş sayısı yazar (ör. "10 iş"). **Telefondan** emir listesi görülür ama **Uyguladım** yapılamaz (telefon yalnız izler ve acil durdurur — bilinçli): Midas'ta emirleri telefondan girebilirsiniz, Uyguladım'ı sunucunun başına dönünce işaretleyin.
 
 Kartta: başlıkta ay, durum rozeti ve **bu ay yapılacak iş** ("yapılacak: 3 emir — aracı kurumda girin, sonra Uyguladım", "yapılacak: model sermayesini girin", "bu ay tamam", "bu ay işlem gerekmiyor"); karar günü, model sermayesi, hesap; uyarılar (turuncu); emir tablosu; **Uyguladım…** / **Bu ay atla…**. Kararın künyesi (doğrulama, üyelik, hedef liste, Simurg bant bilgisi) ve bilgi notları kartın içinde katlı **"Ayrıntı"**dadır.
 
@@ -76,7 +76,7 @@ Bu bölüm Bu ay ekranındaki katlı **Ayarlar** başlığının içindedir.
 
 ### Portföyüm boşsa {#acilis-rehberi}
 
-Portföyüm'de hiç hesap yoksa emir listesi yerine **açılış rehberi** çıkar: kurumlar (Midas, Binance) → hesaplar (ABD aracı kurum USD, BIST aracı kurum TRY, Binance USD) → açılış bakiyeleri → model sermayesi → Uyguladım. Her adımın yanındaki düğme ilgili yere götürür (**Kurum ekle**, **Hesap aç**, **Açılış bakiyesi gir** → Portföyüm; **Sermaye gir** → Ayarlar'daki sermaye formu). Bir hesap türü eksikse o modelin satırları "hesabı yok" uyarısıyla **uygulanamaz** görünür.
+Portföyüm'de hiç hesap yoksa emir listesi yerine **açılış rehberi** çıkar: kurumlar (Midas, Binance) → hesaplar (ABD aracı kurum USD, BIST aracı kurum TRY, Binance USD) → her hesapta zaten olanlar → model sermayesi → Uyguladım. Her adımın yanındaki düğme ilgili yere götürür (**Kurum ekle**, **Hesap aç**, **Zaten olanları gir** → Portföyüm; **Sermaye gir** → Ayarlar'daki sermaye formu). Bir hesap türü eksikse o modelin satırları "hesabı yok" uyarısıyla **uygulanamaz** görünür.
 
 Bütün yazma düğmeleri (Uyguladım, atla, geri al, sermaye, hedef) **yalnız bu bilgisayardaki panelde** görünür; telefonda gizlidir ve sunucu da reddeder. Telefonda liste okunur; tutarlar Portföyüm'le aynı kuralla görünür ("tutarları telefonda gizle" işaretliyse gizlenir).
 

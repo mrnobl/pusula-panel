@@ -853,7 +853,7 @@
     const adimlar = [
       ['Portföy › Kayıt › Gelişmiş: aracı kurumunuzu (Midas) ve Binance\'i ekleyin.', 'Kurum ekle', git('kayit')],
       ['Hesaplar: "ABD aracı kurum" (USD), "BIST aracı kurum" (TRY), "Binance / kripto borsası" (USD) hesaplarını açın.', 'Hesap aç', git('kayit')],
-      ['Her hesaba bugünkü açılış bakiyesini girin (nakit + elinizdeki hisseler).', 'Açılış bakiyesi gir', git('kayit')],
+      ['Her hesaba bugün ZATEN olanları bir kez girin (nakit + elinizdeki hisseler; hesap kartında "Bu hesapta zaten olanlar").', 'Zaten olanları gir', git('kayit')],
       ['Bu sayfadaki "Model sermayesi" kutusuna her modele ayıracağınız gerçek tutarı yazın.', 'Sermaye gir', () => { ayarAcik = true; buAyEmirCiz(); git(null, 'tsSermayeKap')(); }],
       ['Listeyi aracı kurumda uygulayın, sonra "Uyguladım" ile Portföyüm\'e kaydedin.', null, null]
     ];

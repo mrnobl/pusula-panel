@@ -143,8 +143,8 @@
       el('div', { class: 'ana-sayilar', id: 'prAySayilar' }, [
         kutu('Ay başı → ay sonu', el('span', null, [tutar(usd(a.V0)), el('span', { text: ' → ' }), tutar(usd(a.V1))]),
           el('span', null, [el('span', { text: 'fark ' }), tutar(isaretliUsd(a.fark), ton(a.fark))]), `${a.t0Gun} gün sonu → ${a.bit} gün sonu (USD)`),
-        kutu('Para girişi / çıkışı', tutar(isaretliUsd(a.akis), ton(a.akis)), a.akisAdet ? `${a.akisAdet} işlem (yatırma, çekme, açılış)` : 'bu ay para girişi/çıkışı yok',
-          'Dışarıdan konan (+) ya da çekilen (−) para; açılış bakiyesi de giriş sayılır'),
+        kutu('Para girişi / çıkışı', tutar(isaretliUsd(a.akis), ton(a.akis)), a.akisAdet ? `${a.akisAdet} işlem (yatırma, çekme, ilk kurulum)` : 'bu ay para girişi/çıkışı yok',
+          'Dışarıdan konan (+) ya da çekilen (−) para; ilk kurulumda girilen bakiye de giriş sayılır'),
         kutu('Piyasa etkisi', tutar(isaretliUsd(a.piyasa), ton(a.piyasa)), 'fark − para girişi/çıkışı', 'Fiyat ve kur hareketi, temettü, faiz ve ücretlerin toplam etkisi'),
         kutu('Zaman ağırlıklı getiri', el('span', { class: ton(a.twrUSD), text: isaretliYuzde(a.twrUSD) }), 'USD · para yatırıp çekmenden etkilenmez', 'Yatırımların ne kadar iyi gitti (fon yöneticisi ölçüsü)'),
         kutu('Para ağırlıklı getiri', el('span', { class: ton(a.mwr && a.mwr.donem), text: a.mwr ? isaretliYuzde(a.mwr.donem) : '—' }),
