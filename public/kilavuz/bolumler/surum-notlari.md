@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.4 — Planlı kapanış doğru tanınıyor (2026-10-25) {#s75-4}
+
+- **Düzeltme:** planlı kapanış (Pusula'yı durdur, güncelleme sonrası yeniden başlatma, düzgün kapatma) artık doğru tanınıyor. [Sağlık](#/kilavuz/saglik)'taki beklenmedik kapanış (günlük açılış) sayacı bundan sonra doğru sayar: planlı açılışlar ayrı gösterilir, "günde 5'ten çok" uyarısına girmez.
+- Botların kodu ve kararları değişmedi (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı). Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 75.3 — Yönetici makine, geçici devralma, kademeli güncelleme (2026-10-25) {#s75-3}
 
 - **Yeni: [yönetici makine](#/kilavuz/ayarlar/makine-yonetici).** Telegram komutlarını (`/durum`, `/menu` …) tek bir makine dinler; iki makine aynı anda dinlerse Telegram çakışır. **Ayarlar › Makineler › Yönetici yap** (acil PIN) ile hangisinin dinleyeceğini siz seçersiniz; seçim öteki makinelere kendiliğinden iletilir. Seçim yapılmazsa dinleyebilen sunucular arasından biri kendiliğinden seçilir. Bildirimleri her makine kendi botları için göndermeye devam eder.
