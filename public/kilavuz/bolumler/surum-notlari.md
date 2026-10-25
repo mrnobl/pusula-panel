@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.6 — Tatbikatlar: provaları Pusula yönetir (2026-10-25) {#s76-6}
+**Tatbikatlar (yeni):** Sistem › Tatbikatlar. Provaları artık Pusula kendisi yönetiyor: felaket stopu kaybolması, Pusula çökmesi, 30 dakikalık
+internet kesintisi, 26 saatlik kapanış, acil durdurma denemesi, mutabakat ve botu başka makineye taşıma. Pusula önce hazır olup olmadığını denetler,
+size adım adım ne yapacağınızı söyler, sonra kayıtlardan kendisi bakar (uyarı geldi mi, Telegram'a gitti mi, ne kadar sürdü, mutabakat temiz mi) ve
+geçti / geçmedi" önerir. Kairos demo kabulünün bekleyen provaları (1–4) hazır; sonuç demo kabul prova günlüğüne kendiliğinden eklenir.
+Pusula burada hiçbir emir vermez, botu durdurmaz, programı kapatmaz — adımları siz yaparsınız. Ayın ilk pazarı 11:30'da ayrıca kısa bir
+otomatik denetim (yalnız okuma) yapılır ve sonucu Telegram'a gelir.
+
 ## 76.5 — Bozulan makinenin botlarını devralmak (2026-10-25) {#s76-5}
 Bir sunucu kalıcı olarak giderse öbür sunucu onun botunu son eş kopyasından devralabilir (Ayarlar › Makineler › Devral — 30 dakikadan uzun sessiz makineden, PIN ve DEVRAL ile; bot kendiliğinden başlamaz). Demo botta borsadaki bilinmeyen emirleri görüp onaylarsınız. Eski makine geri gelirse botu başlatmaz; çalışır hâlde gelirse ilk nabızda durdurur. Canlı hesap botu ve Kairos demo kabulü devralınamaz. Eşleme kaldırılınca o makinenin kopyası silinir.
 

@@ -36,6 +36,7 @@ Telegram bağlantısının kendisi (bot token, chat id, etkinleştirme) [Ayarlar
 | **Olay sonucu** (73.9) | Olay açıklanınca sonuç: FOMC kararı, açıklanan TÜFE (yalnız rakam) |
 | Coin tarama / Dikkat listesi | Kaçın / izle listesine yeni coin girdiğinde |
 | İleri test | Bir ileri test uyarı ya da alarm eşiğini aştığında, uygulama sapması, demo kabul notları |
+| **Tatbikat** (yeni) | [Sistem › Tatbikatlar](#/kilavuz/tatbikat)'da bir prova bitince sonucu (geçti / geçmedi, süre, kalan doğrulamalar) ve ayın ilk pazarı 11:30 aylık otomatik denetimin özeti (salt okuma, emir yok). Tutar yazılmaz |
 | **Haftalık karne** (yeni) | Pazartesi sabahı TEK mesaj, yalnız yüzde: botların haftalık getirisi, BTC'ye fark, düşüş, işlem sayısı, portföy, sorunlar, Kairos demo kabulü ve gölge testler ([Raporlar › Haftalık karne](#/kilavuz/raporlar/karne)). Eski "Gölge testler haftalık özeti" bu mesajın içine taşındı; onun aç/kapa, kanal ve sessiz saat ayarı karneye kopyalandı |
 | **Anahtar sınaması başarısız** (yeni) | Günlük salt okuma sınamasında bir anahtar bağlanamadıysa ya da para çekme izni açıksa |
 | **Makine sessiz** (yeni) | Sunucu uzun süre kapalı kaldıysa (açılışta) ya da araştırma kopyası uzun süre görünmediyse |

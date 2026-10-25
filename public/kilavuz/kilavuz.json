@@ -1,5 +1,5 @@
 {
-  "surum": "76.5",
+  "surum": "76.6",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -45,6 +45,7 @@
     { "id": "saglik", "baslik": "Sağlık (öz denetim)", "grup": "Diğer ekranlar", "rota": "saglik", "dosya": "bolumler/saglik.md", "dosyalar": ["js/pages/saglik.js"] },
     { "id": "gunluk", "baslik": "Günlükler", "grup": "Diğer ekranlar", "rota": "gunluk", "dosya": "bolumler/gunluk.md", "dosyalar": ["js/pages/gunluk.js"] },
     { "id": "olay-akisi", "baslik": "Olay akışı", "grup": "Diğer ekranlar", "rota": "olaylar", "dosya": "bolumler/olay-akisi.md", "dosyalar": ["js/pages/olaylar.js"] },
+    { "id": "tatbikat", "baslik": "Tatbikatlar", "grup": "Diğer ekranlar", "rota": "tatbikat", "dosya": "bolumler/tatbikat.md", "dosyalar": ["js/pages/tatbikat.js"] },
     { "id": "bildirimler", "baslik": "Bildirimler", "grup": "Diğer ekranlar", "rota": "bildirimler", "dosya": "bolumler/bildirimler.md", "dosyalar": ["js/pages/bildirimMerkezi.js"] },
     { "id": "kurulum-denetimi", "baslik": "Kurulum denetimi", "grup": "Diğer ekranlar", "rota": "kurulum-denetimi", "dosya": "bolumler/kurulum-denetimi.md", "dosyalar": ["js/pages/kurulumDenetimi.js"] },
     { "id": "ayarlar", "baslik": "Ayarlar", "grup": "Diğer ekranlar", "rota": "ayarlar", "dosya": "bolumler/ayarlar.md", "dosyalar": [] },
@@ -63,6 +64,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"76.6","tarih":"2026-10-25","yeni":["Yeni: Sistem › Tatbikatlar — felaket stopu, çökme, internet kesintisi, 26 saat kapanış, acil durdurma, mutabakat ve makine devri provalarını Pusula adım adım yönetir; önkoşulları denetler, sonucu kayıtlardan doğrular, Kairos demo prova günlüğüne yazar. Pusula emir vermez, süreç kapatmaz; adımları siz yaparsınız.","Ayın ilk pazarı yalnız okuyan otomatik denetim."]},
     {"surum":"76.5","tarih":"2026-10-25","yeni":["Yeni: Ayarlar › Makineler › Bozulan makinenin botlarını devral — eşe 30 dk ulaşılamıyorsa ve başka makine de görmüyorsa, en son kopyadan (PIN + DEVRAL). Bot kendiliğinden başlamaz; demo botta borsadaki bilinmeyen emirler gösterilir, SAHİPLEN ile onaylarsınız. Eski makine geri gelirse ilk nabızda durur.","Eşlemesi kaldırılan makinenin kopyası artık silinir."]},
     {"surum":"76.4","tarih":"2026-10-25","yeni":["Yeni: onay bekleyen para çıkışını siz yapmadıysanız Sorunlar'da \"Bu ben değilim — reddet\" (PIN + BEN DEĞİLİM): bot durmuş kalır, hareket hesaplara katılmaz, Telegram'a güvenlik alarmı gider, kırmızı kart kalır. Sonradan sizinse \"Hareket benimmiş — onayla\".","Onay bekleyen para girişi için Telegram'a günde bir hatırlatma (tutar yazılmaz). 2026-12-10'dan sonra kural Kairos demo botta da geçerli."]},
     {"surum":"76.3","tarih":"2026-10-25","yeni":["Yeni: Ayarlar › Botlar › yeni bot formunda borsa seçimi ve OKX demo şablonu (Kairos kuralı). OKX botu şimdilik kâğıtta çalışır; OKX hesabı henüz bağlanamaz (\"OKX demo: hazırlık\").","OKX'te olmayan coinde bot pozisyon açmaz, o payı nakitte tutar."]},

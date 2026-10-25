@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '76.5';
+const APP_VERSION = '76.6';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -567,6 +567,9 @@ anahtarYonlendirici = anahtarlar.router;
 /* B2 OLAY AKIŞI (GET /api/olaylar — eşler + sunucu birleşik, GET /api/makine/olaylar) + D2 HAFTALIK KARNE (GET /api/karne) — lib/sunucu/olayUclari.js;
  * kaynaklara yazma kancası YOK (toplayıcı mevcut kayıtları okur), bot kodu değişmez. */
 const OLAY_UCLARI = require('./lib/sunucu/olayUclari').kur(ctx);
+/* D3 TATBİKAT SİHİRBAZI (Sistem › Tatbikatlar; GET /api/tatbikat, POST /api/tatbikat/{baslat,adim,kaydet,iptal,otomatik}) — lib/sunucu/tatbikatUclari.js;
+ * sihirbaz emir vermez, bot ayarı değiştirmez, süreç kapatmaz — kullanıcının yaptığını kayıtlardan doğrular. */
+require('./lib/sunucu/tatbikatUclari').kur(ctx);
 
 BILDIRIM_KURULUM.ureticiler();   // C1 (75.0): 73.5 bildirim üreticileri, 73.9 piyasa bildirimi, 73.7 BIST hafif fiyat (yalnız sunucu) — lib/sunucu/bildirimKurulum.js
 KISISEL_UCLAR.tasarimciUclari();   // C1 (75.0): işlem defteri eşitlemesi, PORTFÖY TASARIMCISI (lib/tasarimci), 74.2 AYAR GEÇMİŞİ uçları — lib/sunucu/kisiselUclar.js

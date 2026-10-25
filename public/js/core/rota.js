@@ -80,6 +80,8 @@
     'gunluk': { bolum: 'tab-gunluk', menu: 'gunluk', baslik: 'Günlükler' },
     // B2: Sistem › Olay akışı — bütün makinelerin olayları tek zaman çizelgesinde (js/pages/olaylar.js, lib/olayAkisi.js).
     'olaylar': { bolum: 'tab-olaylar', menu: 'olaylar', baslik: 'Olay akışı' },
+    // D3: Sistem › Tatbikatlar — elle provaları Pusula adım adım yönetir (js/pages/tatbikat.js, lib/tatbikat).
+    'tatbikat': { bolum: 'tab-tatbikat', menu: 'tatbikat', baslik: 'Tatbikatlar' },
     'bildirimler': { bolum: 'tab-bildirim', menu: 'bildirimler', baslik: 'Bildirimler' },
     // 63.0: Ayarlar beş sekme — alt yol sekmeyi taşır (#/ayarlar/bildirimler …); js/pages/ayarlar.js sekmeSec.
     'ayarlar': { bolum: 'tab-settings', menu: 'ayarlar', baslik: 'Ayarlar', altYol: true },

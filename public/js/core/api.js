@@ -571,6 +571,15 @@
     olaylar: {
       liste: (q) => al('/api/olaylar' + (q ? '?' + new URLSearchParams(q).toString() : ''))
     },
+    /* ── D3 Tatbikat sihirbazı (lib/tatbikat; panel: js/pages/tatbikat.js) — durum telefonda da; yazma yalnız bu bilgisayardan; kaydet yerel PIN ── */
+    tatbikat: {
+      durum: () => al('/api/tatbikat'),
+      baslat: (prova, bot) => gonder('/api/tatbikat/baslat', { prova, bot }),
+      adim: (id, sembol) => gonder('/api/tatbikat/adim', sembol ? { id, sembol } : { id }),
+      kaydet: (hukum, not) => gonder('/api/tatbikat/kaydet', { hukum, not: not || '' }),
+      iptal: (neden) => gonder('/api/tatbikat/iptal', { neden: neden || '' }),
+      otomatik: () => gonder('/api/tatbikat/otomatik', {})
+    },
     /* ── D2 Haftalık karne (lib/karne.js; panel: js/pages/karne.js, Raporlar sayfasının üstünde) — salt okuma; bas: pazartesi | 'bu' ── */
     karne: {
       getir: (bas) => al('/api/karne' + (bas ? '?' + new URLSearchParams({ bas }).toString() : ''))

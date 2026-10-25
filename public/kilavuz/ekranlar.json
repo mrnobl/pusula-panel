@@ -771,12 +771,12 @@
         "dosya": "kayit-1400.webp",
         "en": 1400,
         "boy": 1700,
-        "bayt": 83122,
+        "bayt": 66192,
         "olcek": 1,
         "ozet": "3e3c37a520f9fe81e2fcd5865553b87ed53cd2327af773d8c9b945b41fe2e786",
-        "genel": "f4040b56471ff42cd63cf7307d1931fb0b57f4be59d27fde2a991f87a0b1ddda",
-        "surum": "73.9",
-        "tarih": "2026-10-24",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#pnPortfoyKart",
@@ -815,7 +815,7 @@
           }
         ]
       },
-      "kalite": 45
+      "kalite": 26
     },
     {
       "kimlik": "portfoy-ad-1400",
@@ -1444,11 +1444,11 @@
         "dosya": "islem-defterim-1400.webp",
         "en": 1400,
         "boy": 1900,
-        "bayt": 76894,
+        "bayt": 69878,
         "olcek": 1,
         "ozet": "d0789ea16d54ce0bfbccbe93d13c4c53b68e601e513894a7924c56f02a0d1c56",
-        "genel": "084261dd86be88256af06db03f31207b335f075ed799a6ae588d82671eb98c3d",
-        "surum": "75.2",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -1488,7 +1488,7 @@
           }
         ]
       },
-      "kalite": 42
+      "kalite": 34
     },
     {
       "kimlik": "islem-defterim-sembol-1400",
@@ -2801,11 +2801,11 @@
         "dosya": "pano-grafik-1400.webp",
         "en": 1400,
         "boy": 1250,
-        "bayt": 75984,
+        "bayt": 66614,
         "olcek": 1,
         "ozet": "08c00ed799fce22937215f112ca25ae93df4db77e1d19bf053975a9dfbc9cf5f",
-        "genel": "084261dd86be88256af06db03f31207b335f075ed799a6ae588d82671eb98c3d",
-        "surum": "75.2",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -2845,7 +2845,7 @@
           }
         ]
       },
-      "kalite": 42
+      "kalite": 32
     },
     {
       "kimlik": "pano-390",
@@ -5875,12 +5875,12 @@
         "dosya": "arastirma-ozet-1400.webp",
         "en": 1400,
         "boy": 1350,
-        "bayt": 82694,
+        "bayt": 67012,
         "olcek": 1,
         "ozet": "73e41d046537416a3a46437c3398e0e9d8e120a3b3576845b7ce782d9a73cc78",
-        "genel": "f4040b56471ff42cd63cf7307d1931fb0b57f4be59d27fde2a991f87a0b1ddda",
-        "surum": "73.9",
-        "tarih": "2026-10-24",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#arOzetKok .p-serit",
@@ -5905,7 +5905,7 @@
           }
         ]
       },
-      "kalite": 45
+      "kalite": 28
     },
     {
       "kimlik": "tarama-ayarlari-1400",
@@ -6849,7 +6849,7 @@
       "rota": "piyasa",
       "genislik": 1400,
       "yukseklik": 1100,
-      "kalite": 40,
+      "kalite": 24,
       "once": [
         {
           "bekleSecici": "#pbKok .pb-grup",
@@ -6881,12 +6881,12 @@
         "dosya": "piyasa-1400.webp",
         "en": 1400,
         "boy": 1100,
-        "bayt": 80728,
+        "bayt": 66010,
         "olcek": 1,
         "ozet": "2aaf7e0a414a6bf6867e65903acd8c5d72eeb938911e54e979c53b4074db32b9",
-        "genel": "3d6f0de85347ea1a6e99849ea23d356fcecf4bebc9716048b5abbf70c051ba94",
-        "surum": "73.9",
-        "tarih": "2026-10-24",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#pbBilgiRozet",
@@ -7084,11 +7084,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 47724,
+        "bayt": 47842,
         "olcek": 1,
-        "ozet": "98f178b499c07d367068036c2ca050ccc9f4d97da8540ec700346bfe31786ee9",
-        "genel": "ccde7e39d933acc067171b2d09144cee43c1f013698116da4b39198bc0a6eb60",
-        "surum": "76.5",
+        "ozet": "2bf95d88405f4238ab661f983e08137e07d209105aa44180c74ca2bcef2de19c",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -7641,6 +7641,47 @@
       "kalite": 40
     },
     {
+      "kimlik": "tatbikat-1400",
+      "rota": "tatbikat",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekleSecici": ".tb-prova",
+          "sure": 30000
+        },
+        {
+          "bekle": 500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": ".tb-prova",
+          "etiket": "Tatbikat kartı: amaç, bot, önkoşullar, \"Tatbikatı başlat\""
+        }
+      ],
+      "kalite": 40,
+      "uretim": {
+        "dosya": "tatbikat-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 58206,
+        "olcek": 1,
+        "ozet": "f17562c2f87d97a1cdf19bcd12cc39c5796937827596f40581203fc5a48fd42f",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
+        "tarih": "2026-10-25",
+        "isaretler": [
+          {
+            "secici": ".tb-prova",
+            "x": 260,
+            "y": 234,
+            "w": 1128,
+            "h": 151
+          }
+        ]
+      }
+    },
+    {
       "kimlik": "bildirim-1400",
       "rota": "bildirimler",
       "genislik": 1400,
@@ -7823,7 +7864,7 @@
       "rota": "ayarlar/bildirimler",
       "genislik": 1400,
       "yukseklik": 1080,
-      "kalite": 50,
+      "kalite": 36,
       "isaretler": [
         {
           "secici": "#txtPortfoyTelegram",
@@ -7854,12 +7895,12 @@
         "dosya": "ayarlar-telegram-1400.webp",
         "en": 1400,
         "boy": 1080,
-        "bayt": 78706,
+        "bayt": 67278,
         "olcek": 1,
         "ozet": "f1c3fb7a3ccba6dbf838e1053ea09fdcf8a5f435ad698570c3c291a8a5528579",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "genel": "aeafb5bf6f3ef63a29b9f1cedb667cb126760115776e3412a8cefa88a8003001",
+        "surum": "76.6",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#txtPortfoyTelegram",
