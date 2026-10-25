@@ -9,6 +9,8 @@
  * 30 dk ulaşılamazsa öbür sunucu geçici devralır (kart + bant gösterir).
  * 75.5 (3c): BOTU BAŞKA MAKİNEYE TAŞI kartı (GET /api/makine/tasima; POST /api/makine/tasi — yalnız bilgisayardan + yerel PIN + "TAŞI";
  * belirsiz taşımada "Yeniden denetle"). Canlı hesap ve Kairos demo kabulü (2026-12-09'a kadar) taşınmaz — satırda nedeni yazar.
+ * 4. faz (4a, B4): EŞ KOPYALARI kartı (pano `kopya` + satırda `kopyaYasi` / `kopya`): eş başına son kopya yaşı, dosya, boyut, şifreli
+ * anahtarın doğrulanması, eşin bu bilgisayardan son alışı; "Şimdi kopya al" (POST /api/makine/kopya/simdi — yalnız bilgisayardan).
  * DOM AG.dom ile (HTML dizgesi yok), stil p- / an- aileleri, istek AG.api.makine.
  */
 (function (global) {
@@ -92,6 +94,27 @@
     if (b && !b.tasinabilir) return { metin: `Taşınamaz: ${b.neden || '—'}`, ton: '', eylem: null };
     return { metin: b && b.calisiyor ? 'Taşınabilir — taşıma botu burada DURDURUR (pozisyon ve emirlere dokunmaz), hedefte siz başlatırsınız.' : 'Taşınabilir.', ton: '', eylem: 'tasi' };
   }
+  /**
+   * Saf (4. faz 4a, B4): bir eşin kopya satırı → { metin, alt, ton }. m = pano satırı (kopyaYasi dk, kopya { sonuc, metin, basari, dosya,
+   * bayt, gizli, deneme, verilen }); eskiSaat = öz denetim eşiği (2 sa).
+   */
+  function kopyaSatirMetni(m, eskiSaat = 2, simdi = Date.now()) {
+    const k = (m && m.kopya) || null;
+    if (m && m.rol !== 'sunucu') return { metin: 'Kopya alınmaz (geliştirme / araştırma bilgisayarı — sır taşınmasın).', alt: '', ton: '' };
+    const yas = m && Number.isFinite(m.kopyaYasi) ? m.kopyaYasi : null;
+    const boyut = k && Number.isFinite(k.bayt) ? `${(k.bayt / 1048576).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} MB` : null;
+    const gizli = k && k.gizli === 'var' ? 'hesap anahtarı şifreli (yedek şifresiyle doğrulandı)' : k && k.gizli === 'cozulemedi' ? 'şifreli anahtar ÇÖZÜLEMEDİ — yedek şifreleri farklı olabilir' : k && k.gizli === 'yok' ? 'sır yok (kâğıt botlar)' : null;
+    let metin, ton = '';
+    if (yas === null) { metin = k && k.sonuc && k.sonuc !== 'tamam' ? `Kopya alınamadı — ${k.metin || k.sonuc}` : 'Henüz kopya alınmadı (ilk kopya bir sonraki saat başında).'; ton = k && k.sonuc && k.sonuc !== 'tamam' ? 'uyari' : ''; }
+    else {
+      metin = `Son kopya ${onceMetni(k && k.basari, simdi)}${k && k.dosya != null ? ` · ${k.dosya} dosya` : ''}${boyut ? ` · ${boyut}` : ''}`;
+      if (yas > eskiSaat * 60) ton = 'uyari';
+      if (k && k.sonuc && k.sonuc !== 'tamam') { metin += ` — son deneme başarısız: ${k.metin || k.sonuc}`; ton = 'uyari'; }
+      else if (ton !== 'uyari') ton = 'iyi';
+    }
+    const alt = [gizli, k && k.verilen && (k.verilen.paket || k.verilen.manifest) ? `bu bilgisayarın kopyasını ${onceMetni(k.verilen.paket || k.verilen.manifest, simdi)} aldı` : null].filter(Boolean).join(' · ');
+    return { metin, alt, ton };
+  }
   /** Saf: sekme ışığı — reddeden / uyumsuz eş varsa tehlike, sessiz varsa uyarı, hepsi bağlıysa iyi, eş yoksa gizli. */
   function sekmeIsigi(v) {
     const l = (v && v.makineler) || [];
@@ -110,6 +133,19 @@
       if (r && r.success) AG.bildir(r.esSayisi ? `Nabız ${r.esSayisi} makineye gönderildi.` : 'Eşlenmiş makine yok — hiçbir yere istek gönderilmedi.', 'ok');
       else AG.bildir(`Yoklanamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata');
     } catch (e) { AG.bildir(`Yoklanamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
+  async function kopyaAl() {
+    if (mesgul || telefonMu()) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.kopyaSimdi();
+      if (r && r.success) {
+        const l = r.sonuclar || [];
+        const iyi = l.filter(x => x.sonuc === 'tamam').length;
+        AG.bildir(r.atlandi === 'es-yok' ? 'Eşlenmiş sunucu yok — kopya alınacak makine yok.' : r.atlandi === 'gelistirme' ? 'Bu bilgisayar geliştirme kopyası — kopya çekmez.' : r.atlandi === 'suruyor' ? 'Kopya zaten alınıyor.' : `Kopya: ${iyi}/${l.length} eşten alındı.`, iyi === l.length ? 'ok' : 'uyari');
+      } else AG.bildir(`Kopya alınamadı: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata');
+    } catch (e) { AG.bildir(`Kopya alınamadı: ${e.message}`, 'hata'); } finally { mesgul = false; }
     await yukle();
   }
   async function kodUret() {
@@ -304,6 +340,33 @@
     return el('section', { class: 'p-kart', id: 'mkTasima' }, [ust, alt, ...notlar,
       satirlar.length ? AG.tablo.kutulu({ id: 'mkTasimaTablo', sinif: 'an-tablo', basliklar: ['Bot', 'Durum', 'Taşı'], satirlar }) : el('p', { class: 'an-alt', text: 'Bu bilgisayarda bot yok.' })]);
   }
+  /** 4. faz (4a, B4): eş kopyaları kartı — eş yokken çizilmez. */
+  function kopyaKarti() {
+    const l = veri.makineler || [];
+    if (!l.length) return null;
+    const k = veri.kopya || null;
+    const ust = el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Eş kopyaları (saat başı)' }), el('a', { href: '#/kilavuz/ayarlar/makine-kopya', text: 'Kılavuz: Eş kopyaları →' })]);
+    const alt = el('p', { class: 'p-kart-alt', text: `Eşlenmiş SUNUCULAR birbirinin bot verisini (bot durumları, emir defterleri, bot kayıtları, hesap işlemleri, ayarlar) her saatin ${k && k.dakika != null ? k.dakika : 20}. dakikasında kopyalar. Kopya yedek şifresiyle şifreli gider; demo hesap anahtarı ayrıca şifreli saklanır ve açılmaz. Canlı hesap ve Kairos demo kabulünün anahtarı kopyaya girmez. Kopya botlara dokunmaz; bir makine bozulursa öbüründeki son kopya kalır.` });
+    const notlar = [];
+    if (!k) notlar.push(el('p', { class: 'an-alt', text: 'Kopya bilgisi yok (sunucu bu sürümü bilmiyor olabilir).' }));
+    else {
+      if (k.rol !== 'sunucu') notlar.push(el('p', { class: 'an-alt', text: 'Bu bilgisayar geliştirme / araştırma kopyası — kopya çekmez ve ona kopya verilmez.' }));
+      else if (!k.etkin) notlar.push(el('p', { class: 'an-alt p-neg', text: 'Saat başı kopya kapalı (MAKINE_KOPYA=0).' }));
+      if (k.rol === 'sunucu' && !k.yedekSifre) notlar.push(el('p', { class: 'an-alt p-neg', text: 'Bu bilgisayarda yedek şifresi yok — kopya şifreli alındığı için ALINMIYOR. Ayarlar › Yedek & taşıma\'dan yedek şifresini girin (iki bilgisayarda AYNI).' }));
+      if (k.sonraki) notlar.push(el('p', { class: 'an-alt', text: `Sonraki kopya: ${zaman(k.sonraki)}${k.suruyor ? ' · şu an kopya alınıyor' : ''}` }));
+      if (k.denetim && k.denetim.durum === 'uyari') notlar.push(el('p', { class: 'an-alt p-neg', text: `Öz denetim: ${k.denetim.ayrinti}` }));
+    }
+    const satirlar = l.map(m => {
+      const d = kopyaSatirMetni(m, k && k.eskiSaat);
+      return el('tr', { 'data-kopya': m.kimlik }, [
+        el('td', null, [el('strong', { text: m.ad }), el('span', { class: 'an-alt', text: ROL[m.rol] || m.rol || '—' })]),
+        el('td', null, [el('span', { class: d.ton === 'uyari' ? 'p-neg' : d.ton === 'iyi' ? 'p-pos' : '', text: d.metin }), d.alt ? el('span', { class: 'an-alt', text: d.alt }) : null])
+      ]);
+    });
+    return el('section', { class: 'p-kart', id: 'mkKopya' }, [ust, alt, ...notlar,
+      AG.tablo.kutulu({ id: 'mkKopyaTablo', sinif: 'an-tablo', basliklar: ['Makine', 'Kopya'], satirlar }),
+      !telefonMu() && k && k.rol === 'sunucu' ? el('div', { class: 'an-dugmeler' }, [dugme('mkKopyaAl', 'Şimdi kopya al', kopyaAl)]) : null]);
+  }
   function bantlar() {
     const l = [];
     if (telefonMu()) l.push(bant('Telefondan makineler yalnız görüntülenir — eşleme ve kaldırma bilgisayardaki panelden.', ''));
@@ -345,6 +408,7 @@
         l.length ? AG.tablo.kutulu({ id: 'mkTablo', sinif: 'an-tablo', basliklar: ['Makine', 'Durum', 'Sürüm', 'Botlar', 'Güncelleme · disk', 'İşlem'], satirlar: l.map(makineSatiri) })
           : el('p', { class: 'p-kart-alt', id: 'mkBos', text: 'Henüz eşlenmiş makine yok. Bot çalıştıran sunucuyla bu bilgisayarı aşağıdan eşleyebilirsiniz; tek bilgisayar kullanıyorsanız bir şey yapmanız gerekmez.' })
       ]),
+      kopyaKarti(),
       tasimaKarti(),
       telefonMu() ? null : eslemeKarti()
     ]);
@@ -371,7 +435,7 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, tasimaDurumMetni,
+  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, tasimaDurumMetni, kopyaSatirMetni,
     _veriAyarla: (v, kod, tasima) => { veri = v; sonKod = kod || null; tasimaVeri = tasima || null; tasimaHata = null; ciz(); } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.makineler;
 })(typeof window !== 'undefined' ? window : globalThis);

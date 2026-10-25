@@ -579,7 +579,7 @@ Bot kaydındaki `makine` ve `nobet` (2. faz alanları) burada anlam kazanır.
 - **Devralma sonrası eski makinenin açılması:** nöbet kuralı + mutabakat ENGEL; e2e'de sınanır.
 
 ### 5.6 Bölme, büyüklük, bağımlılık
-- **4a (L):** kopya + `kopya` denetimi + pano kopya yaşı.
+- **4a (L):** kopya + `kopya` denetimi + pano kopya yaşı. **YAPILDI** (paralel-f4; sürüm numarası birleştirmede — CLAUDE.md sürüm notu). Sapmalar: (1) paket ucu `GET …/paket?yollar=` yerine `POST /api/makine/kopya/paket { yollar }` (yol listesi uzun olabilir; uç yine SALT OKUMA); (2) ayrı `GET …/gizli` ucu YOK — gizli.enc paketin içinde bir dosya (makine kademesine yalnız iki uç); (3) paketin TAMAMI yedek şifresiyle şifreli gider (yalnız sırlar değil; yedek şifresi iki makinede yoksa kopya alınmaz), gizli.enc ayrıca şifreli ve çeken makinede şifreli kalır; (4) yerleşim `es-kopya/<kimlik>/kopya/{manifest.json, veri/…, gizli.enc}` + `son.json` (kopya klasörü bütünüyle yer değiştirir — yarım çekme eskisini bozmaz); (5) sır kapsamı = taşınabilir botlar (nobet.tasinabilirMi: canlı hesap ve Kairos demo kabulü HARİÇ) — tasarımdaki "eşin botlarına bağlı hesap kayıtları"nın dar hâli; (6) kopya yalnız SUNUCU eşine verilir (geliştirme kopyası ne çeker ne verir — §11 #8 iki uçta); (7) çekme her saatin 20. dakikasında (UTC) — "günlük çalışmadan sonra / olay geldiğinde" ayrı tetik yok (00:20 çekmesi 00:02 çalışmasını kapsar); (8) ayarlar.json sır alanları boşaltılarak verilir (ikinci kat).
 - **4b (L):** devralma + sahiplen + nöbet bildirimi.
 - **4c (M):** D1 tatbikatı.
 - **Bağımlılık:** 3. faz (eşleme, makine kademesi, nöbet).

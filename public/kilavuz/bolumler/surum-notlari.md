@@ -2,6 +2,9 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 76.1 — Eş makine kopyası (2026-10-25) {#s76-1}
+**Eş makine kopyası (saat başı).** İki sunucu eşlediyseniz artık her biri **her saatin 20. dakikasında** öbürünün bot verisinin (bot durumları, emir defterleri, bot kayıtları, hesap işlemleri, ayarlar) bir kopyasını alır — bir bilgisayar bozulursa öbüründe en çok bir saatlik kopya kalır. Kopya **yedek şifresiyle şifreli** gider (iki bilgisayarda aynı yedek şifresi gerekir); demo hesap anahtarı kopyada ayrıca şifreli durur ve açılmaz; **canlı hesap ve Kairos demo kabulünün anahtarı kopyaya hiç girmez**. Kopya botlara dokunmaz. Durum: **Ayarlar › Makineler › Eş kopyaları** (son kopyanın yaşı, dosya sayısı, "Şimdi kopya al"). Sağlık'ta yeni satır **Eş makine kopyası**: kopya 2 saatten eskiyse sarı (yalnız haber). Geliştirme bilgisayarı kopya almaz. Tek bilgisayar kullanıyorsanız hiçbir şey değişmez. *(Devralma — kapanan makinenin botunu kopyadan almak — sonraki sürümde.)*
+
 ## 76.0 — Bütün hesapların toplam riski (2026-10-25) {#s76-0}
 - **Yeni: [Sistem › Sağlık › Toplam risk](#/kilavuz/saglik/toplam-risk).** Bütün botların borsa hesapları birlikte ölçülür (yalnız okuma; demo kabul botu Kairos borsaya ek istek atılmadan son kaydından): **brüt kaldıraç**, **net BTC payı**, **tek coin payı** (BTC dışındaki en büyük coin, bütün hesaplarda) ve **felaket kaybı** (bütün felaket stopları tetiklenseydi; stopsuz kısımda %30 düşüş). Kâğıt, demo ve canlı hesap ayrı hesaplanır. Eşlenmiş başka bir sunucu varsa onun botları da girer.
 - **İlk 14 gün yalnız izleme:** ölçüm saatte bir kaydedilir; öneri eşiği (4× · %120 · %35 · %25) aşılınca yalnız panelde **uyarı** görünür — Telegram'a ileti gitmez. **Hiçbir emir engellenmez.**

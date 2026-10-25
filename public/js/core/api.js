@@ -226,7 +226,9 @@
       // 75.5 (3c): bot taşıma — liste salt okur; taşıma yalnız bilgisayardan + yerel PIN + "TAŞI"; yeniden denetle (belirsiz taşıma)
       tasimaListe: () => al('/api/makine/tasima'),
       tasi: (bot, hedef) => gonder('/api/makine/tasi', { bot, hedef, onay: 'TAŞI' }),
-      tasimaCozumle: (bot) => gonder('/api/makine/tasima/cozumle', { bot })
+      tasimaCozumle: (bot) => gonder('/api/makine/tasima/cozumle', { bot }),
+      // 4. faz (4a): eşlenmiş sunuculardan şimdi kopya çek (yalnız bilgisayardan; kopya şifreli, botlara dokunmaz)
+      kopyaSimdi: () => gonder('/api/makine/kopya/simdi', {})
     },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {

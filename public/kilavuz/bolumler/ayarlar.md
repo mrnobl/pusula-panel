@@ -148,6 +148,7 @@ Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucun
 
 **Pano botlara dokunmaz.** Buradan eşleme, yönetici makine seçimi ve (75.5) **bot taşıma** yapılır. Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir**, **nabız** gönderebilir ve sizin onu hedef seçtiğiniz bir taşımada **bot paketini teslim edebilir**: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, yönetici seçemez, taşımayı kendisi başlatamaz, Portföyüm ve İşlem defterim'i okuyamaz.
 
+- **Eş kopyaları (saat başı)** kartı (yalnız eş varken): her eşlenmiş sunucudan alınan son kopyanın yaşı, dosya sayısı, boyutu, şifreli anahtarın doğrulanıp doğrulanmadığı ve o eşin bu bilgisayarın kopyasını en son ne zaman aldığı; **Şimdi kopya al**. Ayrıntı: [Eş kopyaları](#/kilavuz/ayarlar/makine-kopya).
 - **Botu başka makineye taşı** kartı (yalnız eş varken): bu bilgisayardaki her bot için *taşınabilir mi* (değilse nedeni — canlı hesap, Kairos demo kabulü …), taşıma durumu (*taşınıyor*, *… makinesinde çalışır*, *… makinesinden geldi*, *son taşıma yapılamadı*) ve **hedef makine + Taşı** (onay penceresinde **TAŞI** yazılır, acil PIN). Sonucu belli olmayan taşımada **Yeniden denetle**. Ayrıntı ve adım adım: [Botu başka makineye taşımak](#/kilavuz/botlar/bot-tasima). Aynı bot iki makinede aynı anda çalışamaz: [nöbet kuralı](#/kilavuz/botlar/bot-nobet).
 
 ### Önce: Tailscale {#makine-tailscale}
@@ -190,6 +191,17 @@ Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda
 - **Ulaşılamayan makine sırayı engellemez** (kapalı bir yedek yüzünden güncelleme takılmaz). Sıra 24 saatten uzun açılmazsa Telegram'a tek uyarı gider.
 - Tek bilgisayarda ya da yalnız sunucu + geliştirme bilgisayarı varken **hiçbir şey değişmez**; geliştirme bilgisayarı sıraya girmez.
 
+### Eş kopyaları (saat başı) {#makine-kopya}
+
+İki (ya da daha çok) **sunucu** eşlenmişse her biri **her saatin 20. dakikasında** öbürünün bot verisinin kopyasını alır (bot çalıştırmayan sunucu da alır). Amaç: bir bilgisayar bozulur, çalınır ya da kapanırsa öbüründe en çok bir saatlik bir kopya kalsın (ileride o kopyadan botu devralmak ve aylık geri dönüş tatbikatı için).
+
+- **Ne kopyalanır:** bot dizinleri (durum, emir defteri, işlem geçmişi), bot kayıtları, hesap işlemleri kaydı, ayarlar (anahtar ve adres alanları **boşaltılmış** olarak) ve bildirim tercihleri. İleriye kayıt, araştırma verisi, günlükler **kopyalanmaz**. Yalnız **değişen** dosyalar gider.
+- **Şifreli:** kopya **yedek şifresiyle** şifrelenip gönderilir (Ayarlar › Yedek & taşıma; iki bilgisayarda **aynı** şifre olmalı — yoksa kopya alınmaz). Kâğıt ve demo botların **demo hesap anahtarı** ile sağlık adresi kopyada **ayrıca şifreli** durur ve açılmaz (yalnız şifrenin doğru olduğu denetlenir). **Canlı hesap** ve **Kairos demo kabulünün** anahtarı kopyaya **hiç girmez**.
+- **Kim alır:** yalnız sunucular, yalnız eşlenmiş sunuculardan. Geliştirme / araştırma bilgisayarı kopya **almaz** ve ona kopya **verilmez** (anahtar taşınmasın; o zaten sunucuyu canlı okur).
+- **Bütünlük:** her dosya SHA-256 ile denetlenir; yarıda kalan kopya eskisini **bozmaz** (yeni kopya ayrı klasörde tamamlanıp doğrulanınca yer değiştirir).
+- **Botlara dokunmaz:** kopya bot başlatmaz, durdurmaz, emir vermez, ayar değiştirmez. Kopyanın kendisi bu bilgisayarın yedeğine ve taşıma dosyasına girmez (başka makinenin verisi).
+- **Öz denetim:** bir eşin son kopyası **2 saatten eskiyse** Sistem › Sağlık'ta *Eş makine kopyası* sarı yanar (yalnız haber). Yeni eşlenen makine için ilk 2 saat "ilk kopya bekleniyor" sayılır.
+
 ### Ne yapmalı {#makine-sorun}
 
 | Görünen | Anlamı | Ne yapmalı |
@@ -203,6 +215,8 @@ Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda
 | Telegram: **Bot açılışta başlamadı (nöbet denetimi)** | eşlenmiş sunuculara ulaşılamadı ya da bot başka makineye geçmiş | Eşlerin durumuna bakın; bot başka makinede çalışmıyorsa Botlar'dan elle **Başlat** — [nöbet](#/kilavuz/botlar/bot-nobet) |
 | **Geçici devralma** (sarı bant) | yönetici 30 dakikadır görünmüyor; komutları bu bilgisayar dinliyor | Yönetici bilgisayarın açık olduğuna ve Tailscale'e bakın; geri gelince kendiliğinden düzelir |
 | **Telegram'ı başka bir makine dinliyor (409)** | yönetici bu bilgisayardan görünmüyor ama çalışıyor | İki bilgisayarda Tailscale bağlantısına bakın, **Şimdi yokla** |
+| Eş kopyaları: **yedek şifresi yok / farklı** | kopya yedek şifresiyle şifrelendiği için alınamıyor | İki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin, sonra **Şimdi kopya al** |
+| Eş kopyaları: **son kopya … önce** sarı | eşten 2 saatten uzun süredir kopya alınamadı | Eş açık mı, Tailscale bağlı mı bakın; satırdaki nedeni okuyun — [sorun giderme](#/kilavuz/sorun-giderme/es-kopya) |
 | Güncelleme **sırada bekliyor** | kademeli güncelleme: önce başka makine kurmalı | Bekleyin; bot kodu değiştiyse önce bot çalıştırmayan makinede **Güncellemeyi kur** |
 
 Telefondan bu sekme **yalnız görüntülenir** (eşleme, kaldırma ve bot taşıma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.

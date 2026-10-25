@@ -338,6 +338,12 @@ Zararsız: öz denetim sessiz saatte (çalışma sürmüyorken, 02:30–04:30 d�
 
 **Adımlar:** USB / ikinci disk takılı mı; "ENOSPC" = yedek diski dolu; Ayarlar › Yedek ve taşıma'da son yedeğin durumu. Uzak yedek kurulmamışsa: Kılavuz › Yedek ve taşıma › Şifreli uzak yedek (ücretsiz).
 
+### Eş makinenin kopyası eski {#es-kopya}
+
+Eşlenmiş SUNUCULAR birbirinin bot verisini her saatin 20. dakikasında şifreli olarak kopyalar (Ayarlar › Makineler › Eş kopyaları). Öz denetim bir eşin son kopyası 2 saatten eskiyse sarı yanar — **botları etkilemez**, yalnız o makine bozulursa elinizdeki kopyanın eski kalacağını haber verir.
+
+**Adımlar:** kartta yazan nedene bakın. *Eşe ulaşılamadı* → eş açık mı, Tailscale bağlı mı; açınca "Şimdi kopya al". *Yedek şifresi yok / farklı* → iki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin (kopya bu şifreyle şifrelenir). *Sürüm uyumsuz / kopyayı bilmiyor* → iki makineyi aynı sürüme güncelleyin.
+
 ### Windows yeniden başlatması {#windows-yeniden-baslatma}
 
 Windows güncellemesi yeniden başlatma bekliyor; gece yeniden başlatırsa 03:02 çalışması kaçabilir. Uygun bir gündüz saatinde elle yeniden başlatın; kalıcı çözüm sunucuda yönetici olarak `scripts\windows-etkin-saat.ps1`.
