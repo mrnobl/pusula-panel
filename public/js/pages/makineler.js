@@ -5,7 +5,8 @@
  * GET /api/makine/pano): son görülme, sürüm uyumu, botlar (mod · çalışıyor), güncelleme durumu, boş disk, Tailscale adresi.
  * PANO SALT OKUMA: buradan hiçbir bota, emre, ayara dokunulmaz. Yazan tek şey eşleme yönetimi — "Kod üret", "Eşle", "Kaldır" —
  * yalnız bilgisayardan ve yerel PIN'le (sunucu her şeyi yeniden doğrular). Telefonda yalnız görüntüleme.
- * Yönetici makine seçimi (3b) ve bot taşıma (3c) sonraki sürümlerde; alanları şimdiden boş gelir.
+ * 75.3 (3b): YÖNETİCİ MAKİNE — Telegram komutlarını dinleyen tek makine ("Yönetici yap", yalnız bilgisayardan + yerel PIN); seçilen
+ * 30 dk ulaşılamazsa öbür sunucu geçici devralır (kart + bant gösterir). Bot taşıma (3c) sonraki sürümde.
  * DOM AG.dom ile (HTML dizgesi yok), stil p- / an- aileleri, istek AG.api.makine.
  */
 (function (global) {
@@ -19,7 +20,10 @@
   const ISIK = { iyi: ['Bağlı', 'p-rozet-pos'], sessiz: ['Sessiz', 'p-rozet-warn'], hic: ['Henüz görülmedi', 'p-rozet-info'], red: ['Bu makineyi reddediyor', 'p-rozet-neg'], uyumsuz: ['Sürüm uyumsuz', 'p-rozet-neg'] };
   const ROL = { sunucu: 'Sunucu (botları çalıştırabilir)', gelistirme: 'Geliştirme / araştırma bilgisayarı' };
   const MOD = { kagit: 'kâğıt', demo: 'demo', canli: 'canlı' };
-  const GUNC = { guncel: 'güncel', gelistirme: 'geliştirme kopyası (buraya kurulmaz)', 'onay-bekliyor': 'onay bekliyor', bekliyor: 'bekliyor', hata: 'hata', kuruluyor: 'kuruluyor' };
+  const GUNC = { guncel: 'güncel', gelistirme: 'geliştirme kopyası (buraya kurulmaz)', 'onay-bekliyor': 'onay bekliyor', onay: 'onay bekliyor', kuruldu: 'kuruldu', bekliyor: 'bekliyor', hata: 'hata', kuruluyor: 'kuruluyor', 'kademe-bekliyor': 'sırada (kademeli güncelleme)' };
+  /** 75.3: bu makinenin Telegram komut kararı (lib/makine/yonetici.js kip). */
+  const KIP = { tek: 'Tek makine — komutları bu bilgisayar dinliyor', yonetici: 'Yönetici — komutları bu bilgisayar dinliyor', gecici: 'Geçici devralma — yönetici ulaşılamadığı için komutları bu bilgisayar dinliyor',
+    bekle: 'Komutları yönetici makine dinliyor', cekisme: 'Bekliyor — Telegram\'ı başka bir makine dinliyor (409)', 'uygun-degil': 'Bu bilgisayar komut dinlemez (geliştirme / araştırma kopyası ya da Telegram kurulu değil)' };
 
   let veri = null, mesgul = false, sonKod = null;
   const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon') || !!(veri && veri.yazilabilir === false);
@@ -54,6 +58,21 @@
     const d = m && m.disk && Number.isFinite(m.disk.bosGB) ? `boş disk ${m.disk.bosGB.toLocaleString('tr-TR')} GB` : 'disk: —';
     return `${g} · ${d}`;
   }
+  /** Saf (75.3): Telegram komut durumu → { metin, ton } (ton: '' | 'uyari'). */
+  function telegramMetni(t) {
+    if (!t) return { metin: 'Yönetici bilgisi yok (eski sunucu).', ton: '' };
+    const m = KIP[t.kip] || t.sebep || '—';
+    const uyari = t.kip === 'gecici' || t.kip === 'cekisme';
+    return { metin: uyari ? `${m}. ${t.sebep || ''}` : m, ton: uyari ? 'uyari' : '' };
+  }
+  /** Saf (75.3): etkin yönetici metni. */
+  function yoneticiMetni(v) {
+    const y = v && v.etkinYonetici;
+    if (!y || !y.kimlik) return 'yok';
+    return `${y.ad || y.kimlik}${y.secildi ? '' : ' (varsayılan — seçim yapılmadı)'}`;
+  }
+  /** Saf (75.3): bu satır için "Yönetici yap" gösterilir mi — sunucu, Telegram dinleyebilir, şu an yönetici değil. */
+  function yoneticiYapilabilir(m) { return !!m && m.rol === 'sunucu' && !(m.telegram && m.telegram.uygun === false) && !m.yonetici; }
   /** Saf: sekme ışığı — reddeden / uyumsuz eş varsa tehlike, sessiz varsa uyarı, hepsi bağlıysa iyi, eş yoksa gizli. */
   function sekmeIsigi(v) {
     const l = (v && v.makineler) || [];
@@ -99,6 +118,18 @@
     } catch (e) { AG.bildir(`Eşlenemedi: ${e.message}`, 'hata'); } finally { mesgul = false; }
     await yukle();
   }
+  async function yoneticiYap(m) {
+    if (mesgul || telefonMu()) return;
+    const c = await AG.onayla({ baslik: `Yönetici makine "${m.ad}" olsun mu?`, metin: `Telegram komutlarını (/durum, /menu …) artık ${m.ad} dinler; öteki makineler dinlemeyi bırakır (iki makine aynı anda dinlerse Telegram çakışır). Bildirimleri her makine kendi botları için göndermeye devam eder. ${m.ad} 30 dakika ulaşılamazsa öbür sunucu komutları geçici olarak devralır ve Telegram'a haber verir. Acil PIN istenir.`, onay: 'Yönetici yap' });
+    if (!c) return;
+    mesgul = true;
+    try {
+      const r = await AG.api.makine.yoneticiSec(m.kimlik);
+      if (r && r.success) AG.bildir(`Yönetici makine: ${r.ad}.${r.yayilim && r.yayilim.esSayisi ? ` Seçim ${r.yayilim.tamam}/${r.yayilim.esSayisi} makineye iletildi.` : ''}`, 'ok');
+      else AG.bildir(`Seçilemedi: ${(r && r.error) || 'bilinmeyen hata'}`, 'hata', { sure: 10000 });
+    } catch (e) { AG.bildir(`Seçilemedi: ${e.message}`, 'hata'); } finally { mesgul = false; }
+    await yukle();
+  }
   async function kaldir(m) {
     if (mesgul || telefonMu()) return;
     const c = await AG.onayla({ baslik: `"${m.ad}" eşlemesi kaldırılsın mı?`, metin: 'Bu bilgisayar o makinenin jetonunu siler; o makine artık buraya nabız gönderemez ve bot durumunu okuyamaz. Karşı makineye haber verilmez — orada da Ayarlar › Makineler\'den kaldırın. Yeniden eşlemek için yeni kod gerekir.', onay: 'Kaldır', tehlikeli: true });
@@ -131,7 +162,23 @@
         el('dt', { text: 'Sürüm' }), el('dd', { text: `${b.surum || '—'} · makine protokolü ${b.protokol || '—'}` }),
         el('dt', { text: 'Adres (Tailscale)' }), el('dd', { text: b.adres || 'kaydedilmedi — ilk eşlemede yazılır' }),
         el('dt', { text: 'Botlar' }), el('dd', { text: botlarMetni(b.botlar) }),
-        el('dt', { text: 'Durum' }), el('dd', { text: durumMetni(b) })
+        el('dt', { text: 'Durum' }), el('dd', { text: durumMetni(b) }),
+        el('dt', { text: 'Telegram komutları' }), el('dd', { id: 'mkBenTelegram', text: telegramMetni(veri.telegram).metin })
+      ]),
+      !telefonMu() && (veri.makineler || []).length && yoneticiYapilabilir({ rol: b.rol, telegram: { uygun: !(veri.telegram && veri.telegram.uygun === false) }, yonetici: b.yoneticiMi })
+        ? el('div', { class: 'an-dugmeler' }, [dugme('mkYoneticiBen', 'Bu bilgisayarı yönetici yap', () => yoneticiYap({ kimlik: b.kimlik, ad: b.ad }))]) : null
+    ]);
+  }
+  /** 75.3: Telegram komutları (yönetici makine) kartı — yalnız eş varken. */
+  function yoneticiKarti() {
+    if (!(veri.makineler || []).length) return null;
+    const t = telegramMetni(veri.telegram);
+    return el('section', { class: 'p-kart', id: 'mkYonetici' }, [
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Telegram komutları — yönetici makine' })]),
+      el('p', { class: 'p-kart-alt', text: 'Telegram komutlarını (/durum, /menu …) tek bir makine dinler; iki makine aynı anda dinlerse Telegram çakışır (409). Yönetici seçilmezse dinleyebilen sunucular arasından biri kendiliğinden seçilir. Seçilen yönetici 30 dakika ulaşılamazsa öbür sunucu geçici olarak devralır, Telegram\'a haber verir ve yönetici geri gelince bırakır. Eşlenmiş bir sunucu 30 dakika sessiz kalırsa Telegram\'a tek uyarı, geri gelince tek bilgi gider.' }),
+      el('dl', { class: 'p-kv' }, [
+        el('dt', { text: 'Yönetici' }), el('dd', { id: 'mkYoneticiAd', text: yoneticiMetni(veri) }),
+        el('dt', { text: 'Bu bilgisayar' }), el('dd', { class: t.ton === 'uyari' ? 'p-neg' : '', text: t.metin })
       ])
     ]);
   }
@@ -140,13 +187,15 @@
     const notlar = [];
     if (m.giden && m.giden.sonuc && m.giden.sonuc !== 'tamam' && m.giden.hata) notlar.push(`son gönderim: ${m.giden.hata}`);
     return el('tr', { 'data-makine': m.kimlik }, [
-      el('td', null, [el('strong', { text: m.ad }), el('span', { class: 'an-alt', text: `${ROL[m.rol] || m.rol} · ${m.kimlik}` }), el('span', { class: 'an-alt', text: m.adres })]),
+      el('td', null, [el('strong', { text: m.ad }), m.yonetici ? el('span', { class: 'p-rozet p-rozet-info', text: 'Yönetici' }) : null,
+        m.telegram && m.telegram.kip === 'gecici' ? el('span', { class: 'p-rozet p-rozet-warn', text: 'Komutları geçici dinliyor' }) : null,
+        el('span', { class: 'an-alt', text: `${ROL[m.rol] || m.rol} · ${m.kimlik}` }), el('span', { class: 'an-alt', text: m.adres })]),
       el('td', null, [el('span', { class: `p-rozet ${isikSinif}`, text: isikAd }), el('span', { class: 'an-alt', text: `son görülme: ${onceMetni(m.sonGorulme)}${m.sonGorulme ? ` (${zaman(m.sonGorulme)})` : ''}` }),
         notlar.length ? el('span', { class: 'an-alt p-neg', text: notlar.join(' · ') }) : null]),
       el('td', null, [el('span', { text: surumMetni(m, veri.ben && veri.ben.surum) })]),
       el('td', null, [el('span', { text: botlarMetni(m.botlar) })]),
       el('td', null, [el('span', { text: durumMetni(m) })]),
-      el('td', null, [el('div', { class: 'an-dugmeler' }, telefonMu() ? [] : [dugme(`mkKaldir-${m.kimlik}`, 'Kaldır', () => kaldir(m), 'p-dugme-sessiz')])])
+      el('td', null, [el('div', { class: 'an-dugmeler' }, telefonMu() ? [] : [yoneticiYapilabilir(m) ? dugme(`mkYonetici-${m.kimlik}`, 'Yönetici yap', () => yoneticiYap(m)) : null, dugme(`mkKaldir-${m.kimlik}`, 'Kaldır', () => kaldir(m), 'p-dugme-sessiz')])])
     ]);
   }
   function eslemeKarti() {
@@ -177,7 +226,10 @@
   function bantlar() {
     const l = [];
     if (telefonMu()) l.push(bant('Telefondan makineler yalnız görüntülenir — eşleme ve kaldırma bilgisayardaki panelden.', ''));
-    l.push(bant('Pano yalnız görüntüler: yönetici makine seçimi ve botu başka makineye taşıma sonraki sürümlerde gelecek. Eşlenmiş makine yokken Pusula hiçbir makineye istek göndermez.', ''));
+    l.push(bant('Pano botlara dokunmaz: buradan yalnız eşleme ve yönetici makine seçimi yapılır; botu başka makineye taşıma sonraki sürümde gelecek. Eşlenmiş makine yokken Pusula hiçbir makineye istek göndermez.', ''));
+    const t = veri.telegram;
+    if (t && t.kip === 'gecici') l.push(bant(`Geçici devralma: ${t.sebep}. Yönetici geri gelince bu bilgisayar dinlemeyi kendiliğinden bırakır.`, 'uyari'));
+    if (t && t.kip === 'cekisme') l.push(bant(`${t.sebep}. İki makine çalışıyor ama birbirini görmüyor olabilir — Tailscale bağlantısına bakın ve "Şimdi yokla"ya basın.`, 'uyari'));
     const sorunlu = (veri.makineler || []).filter(m => m.isik === 'red' || m.isik === 'uyumsuz');
     if (sorunlu.length) l.push(bant(`${sorunlu.map(m => m.ad).join(', ')}: ${sorunlu.some(m => m.isik === 'red') ? 'bu bilgisayarı reddediyor — orada eşleme kaldırılmış ya da jeton eskimiş olabilir; iki makineyi yeniden eşleyin.' : 'sürüm uyumsuz — iki makineyi aynı sürüme güncelleyin.'}`, 'uyari'));
     return l;
@@ -204,6 +256,7 @@
       ]),
       ...bantlar(),
       benKarti(),
+      yoneticiKarti(),
       el('section', { class: 'p-kart', id: 'mkEsler' }, [
         el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: `Eşlenmiş makineler (${l.length})` })]),
         l.length ? AG.tablo.kutulu({ id: 'mkTablo', sinif: 'an-tablo', basliklar: ['Makine', 'Durum', 'Sürüm', 'Botlar', 'Güncelleme · disk', 'İşlem'], satirlar: l.map(makineSatiri) })
@@ -228,6 +281,6 @@
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, _veriAyarla: (v, kod) => { veri = v; sonKod = kod || null; ciz(); } };
+  AG.pages.makineler = { yukle, ciz, onceMetni, botlarMetni, surumMetni, durumMetni, sekmeIsigi, telegramMetni, yoneticiMetni, yoneticiYapilabilir, _veriAyarla: (v, kod) => { veri = v; sonKod = kod || null; ciz(); } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.makineler;
 })(typeof window !== 'undefined' ? window : globalThis);

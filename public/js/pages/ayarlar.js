@@ -47,7 +47,7 @@
   const zaman = (iso) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? iso : d.toLocaleString('tr-TR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); };
   /**
    * Saf: GET /api/guncelleme/durum → { metin, ton, onay (bekleyen hedef sha | null), kontrolDugmesi }.
-   * Durumlar: gelistirme · guncel · kuruldu · onay · elle · geri-alindi · yeniden-baslat · ag-hatasi · kuruluyor · (yok).
+   * Durumlar: gelistirme · guncel · kuruldu · onay · elle · geri-alindi · yeniden-baslat · ag-hatasi · kuruluyor · kademe-bekliyor (75.3 B3) · (yok).
    */
   function guncellemeOzeti(g) {
     if (!g || g.success === false) return { metin: 'Güncelleme durumu okunamadı.', ton: 'tone-muted', onay: null, kontrolDugmesi: false };
@@ -62,6 +62,8 @@
         if (g.kuruFark && g.kuruFark.hedef === g.hedef) return { metin: `${s} kurulmadı: kuru denemede botun kararı değişti — ${g.kuruFark.ozet || ''}. Fark bekleniyorsa (ör. bir düzeltme) yine de kurabilirsiniz.`, ton: 'tone-warning', onay: g.hedef || null, kuruFark: true, kontrolDugmesi: true };
         const paket = g.paketFarki && g.paketFarki.length ? ` · paket değişikliği (${g.paketFarki.length}): ${g.paketFarki.slice(0, 5).map(x => `${x.ad} ${x.eski || '—'} → ${x.yeni || 'silindi'}`).join(', ')}${g.paketFarki.length > 5 ? ' …' : ''}` : '';
         return { metin: `${s} kurulmayı bekliyor: bot kodu değişti (${dosyalar}${paket}). Kurmadan önce botların kararı eski ve yeni kodla, emir göndermeden karşılaştırılır; Pusula yeniden başlar (paket kurulumu varsa birkaç dakika sürer), ardından 8 dk kararlılık gözlemi; açılmazsa eski sürüme kendiliğinden döner. Telefondan da kurulabilir (acil PIN ile).`, ton: 'tone-warning', onay: g.hedef || null, kontrolDugmesi: true };
+      // 75.3 B3: kademeli güncelleme — önce bot çalıştırmayan makine kurar; bu sunucu sırasını bekliyor (kod değişmedi).
+      case 'kademe-bekliyor': return { metin: `${s} sırada bekliyor (kademeli güncelleme${g.kademe && g.kademe.onayli ? ', onayınız korunuyor' : ''}): ${(g.kademe && g.kademe.neden) || g.neden || ''} Sunucu 5 dakikada bir yeniden dener; öteki makinelerin durumu Ayarlar › Makineler'de.`, ton: 'tone-warning', onay: null, kontrolDugmesi: true };
       case 'elle': return { metin: `Elle bakılmalı: ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       case 'geri-alindi': return { metin: `${s} kurulamadı, geri alındı (${g.geriDonus || ''}): ${g.neden || ''}`, ton: 'tone-danger', onay: null, kontrolDugmesi: true };
       // 73.6 (S25): "Pusula KAPALI" varyantı kırmızı; eski süreç çalışıyorsa sarı (zararsız: sonraki yeniden başlatmada yeni kod açılır).
@@ -78,7 +80,7 @@
   /* ── 69.0: güncelleme izleme — adımlar + canlı günlük (lib/guncelleme.js `islem`) ─────────────────────── */
   /** Sunucu `adimTanim` göndermezse (eski sunucu) aynı liste — lib/guncelleme.js ADIMLAR ile aynı sıra. */
   const GUNC_ADIMLAR = [
-    { kod: 'baglanti', ad: 'GitHub bağlantısı' }, { kod: 'plan', ad: 'Değişikliklerin incelenmesi' },
+    { kod: 'baglanti', ad: 'GitHub bağlantısı' }, { kod: 'plan', ad: 'Değişikliklerin incelenmesi' }, { kod: 'kademe', ad: 'Kademeli güncelleme sırası' },
     { kod: 'indir', ad: 'Yeni kodun indirilmesi' }, { kod: 'paket', ad: 'Paketler' }, { kod: 'denetim', ad: 'Sözdizimi denetimi' },
     { kod: 'kuru', ad: 'Kuru deneme (bot kararı)' }, { kod: 'baslat', ad: "Pusula'nın yeniden başlatılması" }, { kod: 'acilis', ad: 'Yeni sürümün açılışı' }, { kod: 'kararlilik', ad: 'Kararlılık gözlemi' }
   ];
@@ -93,9 +95,11 @@
     if (!islem) return null;
     const liste = (Array.isArray(tanim) && tanim.length ? tanim : GUNC_ADIMLAR);
     const bitti = !!islem.bitti, yarida = !bitti && !!islem.yarida;
-    const adimlar = liste.map(t => {
+    // 75.3: sonraki bir adım başlamışsa kaydı olmayan önceki adım (ör. tek makinede "kademe", eski güncelleyici) "gerekmedi" sayılır.
+    const sonVar = liste.reduce((m, t, i) => ((islem.adimlar || []).some(x => x.kod === t.kod) ? i : m), -1);
+    const adimlar = liste.map((t, i) => {
       const a = (islem.adimlar || []).find(x => x.kod === t.kod);
-      let durum = a ? a.durum : 'bekliyor';
+      let durum = a ? a.durum : (i < sonVar ? 'gerekmedi' : 'bekliyor');
       if ((bitti || yarida) && durum === 'bekliyor') durum = 'gerekmedi';
       if (yarida && durum === 'suruyor') durum = 'hata';
       const bas = a && a.bas ? Date.parse(a.bas) : NaN, bit = a && a.bit ? Date.parse(a.bit) : NaN;
@@ -113,8 +117,8 @@
       oran = Math.min(0.99, (tamam + kesir) / (gecerli.length || 1));
     }
     const sonuc = islem.sonuc || null;
-    const basari = bitti && ['kuruldu', 'guncel', 'onay', 'kuru'].includes(sonuc);
-    const SONUC = { kuruldu: 'Kuruldu ✓', guncel: 'Güncel ✓ — yeni sürüm yok', onay: 'Bot kodu değişti — onayınız bekleniyor', elle: 'Elle bakılmalı', 'geri-alindi': 'Kurulamadı — eski sürüme dönüldü', 'yeniden-baslat': 'Kod indi, yeniden başlatma gerekli', 'ag-hatasi': 'GitHub\'a ulaşılamadı', kuru: 'Deneme (hiçbir şey değişmedi)' };
+    const basari = bitti && ['kuruldu', 'guncel', 'onay', 'kuru', 'kademe-bekliyor'].includes(sonuc);
+    const SONUC = { kuruldu: 'Kuruldu ✓', guncel: 'Güncel ✓ — yeni sürüm yok', onay: 'Bot kodu değişti — onayınız bekleniyor', elle: 'Elle bakılmalı', 'geri-alindi': 'Kurulamadı — eski sürüme dönüldü', 'yeniden-baslat': 'Kod indi, yeniden başlatma gerekli', 'ag-hatasi': 'GitHub\'a ulaşılamadı', kuru: 'Deneme (hiçbir şey değişmedi)', 'kademe-bekliyor': 'Kademeli güncelleme: sırada bekliyor' };
     const suren = adimlar.find(a => a.durum === 'suruyor');
     const baslik = yarida ? 'Güncelleme işlemi yarıda kaldı (güncelleyici süreç kapandı)'
       : bitti ? (SONUC[sonuc] || `Bitti: ${sonuc || '?'}`)

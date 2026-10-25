@@ -7,6 +7,8 @@
  *   node scripts/guncelle.js --kuru          ne yapacağını yaz, hiçbir şey değiştirme
  *   node scripts/guncelle.js --onayla <sha> --kuru-fark-onay   (panel "Farkı gördüm, yine de kur") kuru denemedeki karar farkına rağmen kur
  *   node scripts/guncelle.js --durum         son durumu yaz (data/guncelleme.json)
+ * 75.3 B3: kod birleştirilmeden önce kademeli güncelleme kapısı sorulur (çalışan sunucunun GET /api/makine/kademe ucu); kapı kapalıysa
+ * "kademe-bekliyor" (kod değişmez), sunucu 5 dk'da bir yeniden çalıştırır. Onaylı bekleyen kurulum günlük kontrolde de onaylı sürer.
  *
  * Yeniden başlatma: POST /api/sistem/yeniden-baslat (denetleyici 10 sn sonra yeni kodla açar). Pusula kapalıysa
  * `schtasks /run /tn PusulaBot`. 73.6: PowerShell AÇILMAZ (eskiden pusula-sunucu.ps1 / Start-ScheduledTask; antivirüs).
@@ -182,21 +184,36 @@ async function kuruDeneme({ eskiRev, yeniRev, ilerleme }) {
     ops: { git: (a) => calistirSenk(GIT, G.guvenliGit(a)), gitHam: ham, komut: (k, a, o = {}) => calistirSenk(k, a, o), node } });
 }
 
+/**
+ * 75.3 B3 KADEMELİ GÜNCELLEME (lib/makine/kademe.js): kod birleştirilmeden önce çalışan sunucuya sorulur (GET /api/makine/kademe —
+ * eşlerin son nabız özetleri). Sunucu yanıt vermezse ya da eski sürümse (uç yok) izin sayılır: tek makine = bugünkü davranış.
+ */
+async function kademe({ hedef }) {
+  const r = await istek('GET', `/api/makine/kademe?hedef=${encodeURIComponent(hedef)}`, 5000);
+  if (!r || r.durum !== 200 || !r.j || typeof r.j.izin !== 'boolean') return { izin: true, uyari: true, neden: `kademe denetlenemedi (${r ? `sunucu ${r.durum}` : 'Pusula yanıt vermedi'}) — tek makine gibi sürüyor` };
+  return { izin: r.j.izin, neden: r.j.neden, rapor: r.j.rapor };
+}
+
 /** Telegram: lib/telegramDosya.js (config.json + data/secrets.json; araştırma kopyasında göndermez). */
 const telegram = () => require('../lib/telegramDosya').telegramDosyadan(KOK);
 
 (async () => {
   if (arg.includes('--durum')) { console.log(JSON.stringify(G.durumOku(KOK), null, 1)); return; }
   if (deger('--nobet')) { const r = await nobet(Number(deger('--nobet'))); console.log(`[${new Date().toISOString()}] nöbet: ${r.durum}`); return; }
-  const onayla = deger('--onayla');
+  let onayla = deger('--onayla');
+  let kuruFarkOnay = !!onayla && arg.includes('--kuru-fark-onay');
+  // 75.3 B3: kademe kapısında ONAYLI bekleyen kurulum (kullanıcı "Güncellemeyi kur" demişti) — günlük kontrol onayı kaybettirmesin.
+  // Yalnız aynı hedef için geçerli (calistir hedef = origin/main değilse onayı yok sayar); gece penceresinde dönüştürülmez.
+  const kuyruk = (() => { if (onayla || arg.includes('--kuru')) return null; const d = G.durumOku(KOK); return d.durum === 'kademe-bekliyor' && d.kademe && d.kademe.onayli && /^[0-9a-f]{40}$/.test(String(d.kademe.hedef || '')) ? d.kademe : null; })();
   // Gece penceresi: botun günlük kararı (~03:02) ve veri indirmesi (04:30). Görev "kaçırılınca açılışta çalış" ayarlı;
   // bilgisayar bu saatlerde açılırsa güncelleme o gün atlanır (onaylı kurulum kullanıcının kararı — atlanmaz).
   // D2 (62.1): pencere UTC'ye bağlı (bot UTC 00:02'de karar verir) — PC'nin saat dilimi İstanbul değilse kaymasın.
   // UTC 23:00–02:00 = TR 02:00–05:00.
   const saat = new Date().getUTCHours();
   if (!onayla && !arg.includes('--kuru') && (saat >= 23 || saat < 2)) { console.log(`[${new Date().toISOString()}] gece penceresi (TR 02:00–05:00) — atlandı`); return; }
+  if (kuyruk) { onayla = kuyruk.hedef; kuruFarkOnay = !!kuyruk.kuruFarkOnay; }
   const sonuc = await G.calistir({
-    kok: KOK, onayla, kuru: arg.includes('--kuru'), kuruFarkOnay: !!onayla && arg.includes('--kuru-fark-onay'), kuruDeneme,
+    kok: KOK, onayla, kuru: arg.includes('--kuru'), kuruFarkOnay, kuruDeneme, kademe,
     git: (a) => calistirSenk(GIT, G.guvenliGit(a)),   // 69.6: fsmonitor/hooks kapalı
     // 69.4: npm ci — yalnız kilit dosyasındaki sürümler; kurulum betikleri çalışmaz (.npmrc ignore-scripts + açık bayrak).
     npmKur: () => { const [k, a, kabuk] = npmKomut(['ci', '--no-audit', '--no-fund', '--ignore-scripts']); return calistirSenk(k, a, { sure: 15 * 60000, kabuk }); },

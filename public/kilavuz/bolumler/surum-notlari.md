@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.3 — Yönetici makine, geçici devralma, kademeli güncelleme (2026-10-25) {#s75-3}
+
+- **Yeni: [yönetici makine](#/kilavuz/ayarlar/makine-yonetici).** Telegram komutlarını (`/durum`, `/menu` …) tek bir makine dinler; iki makine aynı anda dinlerse Telegram çakışır. **Ayarlar › Makineler › Yönetici yap** (acil PIN) ile hangisinin dinleyeceğini siz seçersiniz; seçim öteki makinelere kendiliğinden iletilir. Seçim yapılmazsa dinleyebilen sunucular arasından biri kendiliğinden seçilir. Bildirimleri her makine kendi botları için göndermeye devam eder.
+- **Geçici devralma:** seçilen yönetici **30 dakika** ulaşılamazsa öbür sunucu komutları geçici olarak dinler ve Telegram'a yazar; yönetici geri gelince bırakır ve yine yazar. İki makine çalışıyor ama birbirini göremiyorsa (ör. Tailscale koptu) geçici dinleyen makine Telegram'ın çakışma yanıtını görünce **hemen geri çekilir** ve bir kez haber verir — iki makine sürekli birlikte dinlemez.
+- **Sessiz makine uyarısı:** eşlenmiş bir sunucu 30 dakika nabız vermezse Telegram'a **tek uyarı**, geri gelince **tek bilgi** (geliştirme bilgisayarı için [Bildirimler](#/kilavuz/bildirimler)'deki "Makine sessiz" süresi, varsayılan 24 saat). Uyarıyı yalnız o an Telegram'ı dinleyen makine yollar.
+- **[Kademeli güncelleme](#/kilavuz/ayarlar/makine-kademe):** birden çok sunucu varsa yeni sürümü önce **bot çalıştırmayan** makine kurar ve 8 dakika kararlı çalışır; sonra bot çalıştıranlar sırayla. Sırası gelmeyen sunucuda [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme) "sırada bekliyor" der, 5 dakikada bir yeniden dener; onayınız korunur. Tek bilgisayarda hiçbir şey değişmez.
+- Botların kodu ve kararları değişmedi (kuru deneme: Kairos kâğıt, Kairos demo, Tao kâğıt — üçü de aynı). Sunucu programı değiştiği için güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme) › "Güncellemeyi kur").
+
 ## 75.2 — Makineler: makine kimliği, eşleme, nabız ve Makineler panosu (2026-10-25) {#s75-2}
 
 - **Yeni: [Ayarlar › Makineler](#/kilavuz/ayarlar/makineler).** Her Pusula kendine bir **makine kimliği** verir (ilk açılışta bir kez). İki bilgisayar (örneğin sunucu ve geliştirme bilgisayarı) Tailscale üzerinden bir kez **eşlenir**: birinde 10 dakikalık tek kullanımlık kod üretilir, ötekinde o kod yazılır; iki işlem de **acil PIN** ister ve Telegram'a "Makine eşlendi" uyarısı gider.

@@ -4594,7 +4594,7 @@
       "kimlik": "ayarlar-makineler-1400",
       "rota": "ayarlar/makineler",
       "genislik": 1400,
-      "yukseklik": 1390,
+      "yukseklik": 1690,
       "once": [
         {
           "bekleSecici": "#makinelerKok .p-kart",
@@ -4604,7 +4604,7 @@
           "bekle": 400
         },
         {
-          "degerJs": "AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:null,esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.2',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.2',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,kopyaYasi:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.1',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,kopyaYasi:null}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()})"
+          "degerJs": "AG.pages.makineler._veriAyarla({success:true,protokol:1,kademe:'yerel',yazilabilir:true,nabizDk:5,sessizDk:15,yonetici:{kimlik:'m-3f9a1c07b2e4',surum:2,zaman:new Date(Date.now()-600*60000).toISOString(),secen:'m-3f9a1c07b2e4'},telegram:{dinle:true,kip:'yonetici',sebep:'bu makine yönetici (seçildi)',uygun:true,yoklamaCalisiyor:true,devir:null,cekisme:null},etkinYonetici:{kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',secildi:true},esleme:{var:true,bitis:new Date(Date.now()+540000).toISOString()},ben:{protokol:1,surum:'75.3',commit:'ornek',kimlik:'m-3f9a1c07b2e4',ad:'SUNUCU-PC',rol:'sunucu',zaman:new Date().toISOString(),adres:'https://sunucu-pc.ornek-ag.ts.net',ben:true,yoneticiMi:true,botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:true,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:true,nobet:0}],guncelleme:{durum:'guncel',zaman:new Date(Date.now()-90*60000).toISOString()},disk:{bosGB:182.4}},makineler:[{kimlik:'m-0b5e7d21c9a8',ad:'GELISTIRME-PC',adres:'https://gelistirme-pc.ornek-ag.ts.net',rol:'gelistirme',sira:1,eklendi:new Date(Date.now()-4000*60000).toISOString(),sonGorulme:new Date(Date.now()-2*60000).toISOString(),isik:'iyi',surum:'75.3',protokol:1,uyum:'tam',botlar:[{kimlik:'hucum',adGorunen:'Kairos',mod:'demo',calisiyor:false,nobet:0},{kimlik:'denge',adGorunen:'Tao',mod:'kagit',calisiyor:false,nobet:0}],guncelleme:{durum:'gelistirme',zaman:null},disk:{bosGB:410.1},gelen:{zaman:new Date(Date.now()-2*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'tamam',hata:null,sonBasari:new Date(Date.now()-3*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:false,kip:'uygun-degil'},kopyaYasi:null},{kimlik:'m-c41d6e8f0a3b',ad:'YEDEK-PC',adres:'https://yedek-pc.ornek-ag.ts.net',rol:'sunucu',sira:2,eklendi:new Date(Date.now()-9000*60000).toISOString(),sonGorulme:new Date(Date.now()-140*60000).toISOString(),isik:'sessiz',surum:'75.2',protokol:1,uyum:'tam',botlar:[],guncelleme:{durum:'onay-bekliyor',zaman:new Date(Date.now()-150*60000).toISOString()},disk:{bosGB:64.0},gelen:{zaman:new Date(Date.now()-140*60000).toISOString()},giden:{zaman:new Date(Date.now()-3*60000).toISOString(),sonuc:'hata',hata:'eş 10 sn içinde yanıt vermedi (kapalı ya da Tailscale bağlı değil)',sonBasari:new Date(Date.now()-140*60000).toISOString()},yonetici:false,telegram:{dinliyor:false,uygun:true,kip:'bekle'},kopyaYasi:null}]}, {kod:'4821-0937-5512-6604-1189-3075-9426-8813',bitis:new Date(Date.now()+540000).toISOString()})"
         },
         {
           "bekleSecici": "#mkTablo",
@@ -4616,37 +4616,48 @@
       ],
       "isaretler": [
         {
+          "secici": "#mkYonetici",
+          "etiket": "Telegram komutlarını dinleyen yönetici makine"
+        },
+        {
           "secici": "#mkEsler",
-          "etiket": "Eşlenmiş makineler: durum, sürüm, botlar"
+          "etiket": "Eşlenmiş makineler: durum, sürüm, botlar, Yönetici yap"
         },
         {
           "secici": "#mkEsleme",
           "etiket": "Eşle: kod üret / koduyla eşle (PIN)"
         }
       ],
-      "kalite": 28,
+      "kalite": 20,
       "uretim": {
         "dosya": "ayarlar-makineler-1400.webp",
         "en": 1400,
-        "boy": 1390,
-        "bayt": 63804,
+        "boy": 1690,
+        "bayt": 70244,
         "olcek": 1,
-        "ozet": "56ef35bd0d341494d0af1de5e5621176e7c11b095271ec0b0c11aa2f6b09931f",
-        "genel": "084261dd86be88256af06db03f31207b335f075ed799a6ae588d82671eb98c3d",
-        "surum": "75.2",
+        "ozet": "9288c4d90c023d8b2e53eea3ceaf89ec51018352151f2b4fdb4684512b3457d2",
+        "genel": "1e2ba57921bef1df6035875b005f49a13a7c8c9956ba9a8fed1c8c5ca6ffcefc",
+        "surum": "75.3",
         "tarih": "2026-10-25",
         "isaretler": [
           {
+            "secici": "#mkYonetici",
+            "x": 260,
+            "y": 656,
+            "w": 1128,
+            "h": 178
+          },
+          {
             "secici": "#mkEsler",
             "x": 260,
-            "y": 628,
+            "y": 838,
             "w": 1128,
-            "h": 307
+            "h": 324
           },
           {
             "secici": "#mkEsleme",
             "x": 260,
-            "y": 939,
+            "y": 1166,
             "w": 1128,
             "h": 417
           }
@@ -6997,11 +7008,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 53022,
+        "bayt": 53222,
         "olcek": 1,
-        "ozet": "78b0fe64000e1254c452b8325abcd3afaf7164bd19bdfd8f23fa239e1c87e886",
-        "genel": "084261dd86be88256af06db03f31207b335f075ed799a6ae588d82671eb98c3d",
-        "surum": "75.2",
+        "ozet": "0e7f253db603b3edfc675143974e0ae196f5fa8d024058adf667535a7a06c33a",
+        "genel": "1e2ba57921bef1df6035875b005f49a13a7c8c9956ba9a8fed1c8c5ca6ffcefc",
+        "surum": "75.3",
         "tarih": "2026-10-25",
         "isaretler": [
           {
@@ -7892,26 +7903,26 @@
         "dosya": "ayarlar-guncelleme-izleme-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 55472,
+        "bayt": 54236,
         "olcek": 1,
         "ozet": "3a7412e4b9f33c4382dab7ecf8e96f3815af4a0aa8e55eb9f6496a86c4a847c5",
-        "genel": "71501cfc9630b20c1b4669ab77d0f99d7f71a291410b02cfe61e1ba8bbfd456e",
-        "surum": "73.0",
-        "tarih": "2026-10-23",
+        "genel": "1e2ba57921bef1df6035875b005f49a13a7c8c9956ba9a8fed1c8c5ca6ffcefc",
+        "surum": "75.3",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#guncIzleme .gunc-adimlar",
             "x": 445,
             "y": 357,
             "w": 758,
-            "h": 379
+            "h": 403
           },
           {
             "secici": "#guncKonsol",
             "x": 445,
-            "y": 772,
+            "y": 796,
             "w": 758,
-            "h": 126
+            "h": 102
           }
         ]
       }

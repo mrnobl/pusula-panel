@@ -14,7 +14,7 @@ Panelin ayarları **dokuz alt sayfada**; yan menüde Ayarlar'ın altında durur 
 | **Güncelleme** | `#/ayarlar/guncelleme` | otomatik güncellemenin durumu, onay bekleyen kurulum |
 | **Yedek ve taşıma** | `#/ayarlar/yedek` | taşıma dosyası, araştırma eklentisi, USB yedeği şifresi, eski yedekten geri yükleme — [ayrıntı](#/kilavuz/yedek-tasima) |
 | **Ayar geçmişi** | `#/ayarlar/gecmis` | her ayar değişikliği (ne zaman, hangi makine, nereden, eski → yeni) ve PIN'li **Geri al** — [ayrıntı](#/kilavuz/ayarlar/ayar-gecmisi) |
-| **Makineler** | `#/ayarlar/makineler` | bu bilgisayarın makine kimliği, eşlenmiş Pusula makineleri (son görülme, sürüm, botlar, güncelleme, disk) ve PIN'li **eşleme** — [ayrıntı](#/kilavuz/ayarlar/makineler) |
+| **Makineler** | `#/ayarlar/makineler` | bu bilgisayarın makine kimliği, eşlenmiş Pusula makineleri (son görülme, sürüm, botlar, güncelleme, disk), PIN'li **eşleme** ve (75.3) Telegram'ı dinleyen **yönetici makine** — [ayrıntı](#/kilavuz/ayarlar/makineler) |
 
 Ayarlar menüden açılınca **Botlar (özet)** ile başlar. **Piyasa verisi** ve **İzleme listesi** botları etkilemediği için Araştırma'dadır: [Veri ve izleme listesi](#/kilavuz/izleme).
 
@@ -140,13 +140,13 @@ Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucun
 
 ![Ayarlar › Makineler (örnek makinelerle)](ekran:ayarlar-makineler-1400)
 
-**Makineler** alt sayfası (75.2) Pusula'nın çalıştığı bilgisayarları bir arada gösterir. Tek bilgisayar kullanıyorsanız burada yapmanız gereken bir şey yok: eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**.
+**Makineler** alt sayfası (75.2; 75.3'te yönetici makine) Pusula'nın çalıştığı bilgisayarları bir arada gösterir. Tek bilgisayar kullanıyorsanız burada yapmanız gereken bir şey yok: eşlenmiş makine yokken Pusula **hiçbir yere istek göndermez**.
 
 - **Bu bilgisayar:** adı, **makine kimliği** (`m-` ile başlayan 12 haneli kod; ilk açılışta bir kez üretilir, hiç değişmez — yeni bilgisayar yeni kimlik alır), rolü (**sunucu** ya da **geliştirme / araştırma bilgisayarı**), sürümü, Tailscale adresi, botları.
-- **Eşlenmiş makineler** tablosu: her makinenin **durumu** (*Bağlı* · *Sessiz* — 15 dakikadan uzun ses yok · *Henüz görülmedi* · *Bu makineyi reddediyor* · *Sürüm uyumsuz*) ve son görülme zamanı, **sürümü** (bu bilgisayardan farklıysa yazar), **botları** (ad · hesap türü · çalışıyor / durmuş), **güncelleme** durumu ve **boş disk**. Satırdaki **Kaldır** (acil PIN) o makinenin jetonunu siler.
+- **Eşlenmiş makineler** tablosu: her makinenin **durumu** (*Bağlı* · *Sessiz* — 15 dakikadan uzun ses yok · *Henüz görülmedi* · *Bu makineyi reddediyor* · *Sürüm uyumsuz*) ve son görülme zamanı, **sürümü** (bu bilgisayardan farklıysa yazar), **botları** (ad · hesap türü · çalışıyor / durmuş), **güncelleme** durumu ve **boş disk**. Satırdaki **Yönetici yap** (75.3, acil PIN) o makineyi Telegram'ı dinleyen makine yapar; **Kaldır** (acil PIN) o makinenin jetonunu siler. Yönetici makinenin satırında **Yönetici** rozeti, geçici dinleyen makinede **Komutları geçici dinliyor** rozeti görünür.
 - **Şimdi yokla** eşlere hemen nabız yollar; kendiliğinden her **5 dakikada** bir yollanır. Sekmedeki ışık: yeşil hepsi bağlı, sarı sessiz makine var, kırmızı reddeden ya da sürümü uyumsuz makine var.
 
-**Bu pano yalnız görüntüler.** Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir** ve **nabız** gönderebilir: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, Portföyüm ve İşlem defterim'i okuyamaz. **Yönetici makine seçimi** (Telegram'ı hangi bilgisayarın dinleyeceği) ve **botu başka makineye taşıma** sonraki sürümlerde gelecek.
+**Pano botlara dokunmaz.** Buradan yalnız eşleme ve yönetici makine seçimi yapılır. Eşlenmiş makine buradan yalnız **bot durumunu okuyabilir** ve **nabız** gönderebilir: bot başlatamaz, durduramaz, emir veremez, ayar / anahtar değiştiremez, güncelleme kuramaz, yönetici seçemez, Portföyüm ve İşlem defterim'i okuyamaz. **Botu başka makineye taşıma** sonraki sürümde gelecek.
 
 ### Önce: Tailscale {#makine-tailscale}
 
@@ -164,6 +164,30 @@ Makineler birbirine yalnız **Tailscale** üzerinden bağlanır (ücretsiz; tele
 
 Kod yanlış girilirse eşleme olmaz; 5 yanlış denemede kod iptal edilir (yenisini üretin). Aynı makineyle yeniden eşlemek iki tarafın jetonlarını **yeniler** (jeton eskidiyse ya da bir taraf kaldırıldıysa bunu yapın).
 
+### Yönetici makine: Telegram komutlarını kim dinler {#makine-yonetici}
+
+Telegram komutlarını (`/durum`, `/menu`, `/teshis` …) aynı anda **yalnız bir makine** dinleyebilir: aynı Telegram botunu iki bilgisayar birlikte dinlerse Telegram birini keser (409 çakışması) ve komutlar yanıtsız kalabilir. Bu makineye **yönetici** denir. **Bildirimler** (işlem, uyarı, günlük özet) bundan etkilenmez — her makine kendi botları için göndermeye devam eder.
+
+- **Seçmek:** Ayarlar › Makineler'de dinleyecek makinenin satırında (ya da "Bu bilgisayar" kartında) **Yönetici yap** → onay → acil PIN. Seçim öteki makinelere nabızla hemen iletilir; o an ulaşılamayan makine bir sonraki nabızda alır. İki ayrı bilgisayarda iki ayrı seçim yapılırsa **son yapılan** geçerli olur.
+- **Kimler olabilir:** yalnız Telegram'ı kurulu olan **sunucu** makineleri. Geliştirme / araştırma bilgisayarı yönetici olamaz (orada Telegram zaten kapalıdır).
+- **Seçim yapılmazsa:** dinleyebilen sunucular arasından biri kendiliğinden seçilir (kart "varsayılan" yazar). Tek sunucu + geliştirme bilgisayarı kullanıyorsanız yönetici zaten sunucudur; bir şey yapmanız gerekmez.
+- **Kartta:** "Telegram komutları — yönetici makine" kartı yöneticiyi ve bu bilgisayarın durumunu yazar (*Yönetici — komutları bu bilgisayar dinliyor*, *Komutları yönetici makine dinliyor*, *Geçici devralma*, *Bekliyor — Telegram'ı başka bir makine dinliyor*).
+
+**Yönetici kapanırsa — geçici devralma:** seçilen yönetici **30 dakika** boyunca nabız vermezse (kapalı, uykuda ya da bağlantısı kopuk) öbür sunucu komutları **geçici olarak** dinlemeye başlar ve Telegram'a yazar: *"Yönetici makine ulaşılamıyor — komutları geçici olarak bu makine dinliyor"*. Yönetici yeniden görüldüğünde geçici dinleyen makine **kendiliğinden bırakır** ve yine yazar: *"… geri geldi — Telegram komutlarını yine o dinliyor"*. Birden çok yedek sunucu varsa yalnız biri (sıradaki ilk) devralır.
+
+**İki makine çalışıyor ama birbirini görmüyorsa** (ör. Tailscale bağlantısı koptu, internet var): yedek makine 30 dakika sonra devralmayı dener; yönetici de dinlediği için Telegram çakışma yanıtı verir. Geçici dinleyen makine bunu görünce **hemen geri çekilir**, Telegram'a bir kez yazar (*"Telegram'ı başka bir makine dinliyor — geçici devralma bırakıldı"*) ve en az 30 dakika (her denemede iki katı, en çok 4 saat) yeniden denemez. Böylece iki makine **sürekli birlikte dinlemez**; çakışma yalnız denemenin ilk birkaç saniyesindedir. Bağlantı gelince her şey kendiliğinden düzelir. Ne yapmalı: iki bilgisayarda Tailscale'in bağlı olduğuna bakın, Makineler'de **Şimdi yokla**.
+
+**Sessiz makine uyarısı:** eşlenmiş bir **sunucu** 30 dakika nabız vermezse Telegram'a **tek uyarı** gider (*"Makine sessiz: …"*), yeniden görülünce **tek bilgi** (*"Makine yeniden görüldü: …"*). Geliştirme bilgisayarı için süre [Bildirimler](#/kilavuz/bildirimler)'deki **Makine sessiz** ayarındaki saattir (varsayılan 24 saat — dizüstü kapanınca uyarı gelmez). Uyarıyı yalnız o an Telegram'ı dinleyen makine yollar; sessiz olan yöneticiyse devralma mesajı uyarının yerine geçer. Bu tür Bildirimler'de **Makine sessiz** satırından kapatılabilir.
+
+### Kademeli güncelleme {#makine-kademe}
+
+Birden çok **sunucu** eşlenmişse yeni bir Pusula sürümü hepsine aynı anda kurulmaz: önce **bot çalıştırmayan** sunucu kurar ve **8 dakika** kararlı çalışır; ardından bot çalıştıran sunucular sırayla kurar. Bir sorun olursa önce botsuz makinede görülür, botların çalıştığı makine eski sürümde kalır.
+
+- Sırası gelmeyen sunucuda [Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme) **"sırada bekliyor (kademeli güncelleme)"** der ve neyi beklediğini yazar (ör. *"Önce bot çalıştırmayan makine kurmalı ve 8 dk kararlı çalışmalı: YEDEK-PC (hedef sürüm kurulmadı)"*). Kod değişmez; sunucu **5 dakikada bir** yeniden bakar, sıra gelince kendiliğinden kurar.
+- **Onaylı kurulumda** ("Güncellemeyi kur") onayınız korunur. Bot kodu değişen sürümde önce bot çalıştırmayan makinede de **Güncellemeyi kur** demeniz gerekir — orası kurmadan sıra gelmez.
+- **Ulaşılamayan makine sırayı engellemez** (kapalı bir yedek yüzünden güncelleme takılmaz). Sıra 24 saatten uzun açılmazsa Telegram'a tek uyarı gider.
+- Tek bilgisayarda ya da yalnız sunucu + geliştirme bilgisayarı varken **hiçbir şey değişmez**; geliştirme bilgisayarı sıraya girmez.
+
 ### Ne yapmalı {#makine-sorun}
 
 | Görünen | Anlamı | Ne yapmalı |
@@ -173,6 +197,9 @@ Kod yanlış girilirse eşleme olmaz; 5 yanlış denemede kod iptal edilir (yeni
 | **Bu makineyi reddediyor** | o makine bu bilgisayarın jetonunu kabul etmiyor | Orada eşleme kaldırılmış ya da jeton yenilenmiş olabilir — iki makineyi **yeniden eşleyin** |
 | **Sürüm uyumsuz** | iki makinenin sürümleri birbirini anlamıyor | İki makineyi de aynı sürüme güncelleyin (Ayarlar › Güncelleme) |
 | sürüm satırında "yalnız okuma" | bir sürüm fark var | Görüntüleme çalışır; ileride bot taşımak için aynı sürüm gerekir |
+| **Geçici devralma** (sarı bant) | yönetici 30 dakikadır görünmüyor; komutları bu bilgisayar dinliyor | Yönetici bilgisayarın açık olduğuna ve Tailscale'e bakın; geri gelince kendiliğinden düzelir |
+| **Telegram'ı başka bir makine dinliyor (409)** | yönetici bu bilgisayardan görünmüyor ama çalışıyor | İki bilgisayarda Tailscale bağlantısına bakın, **Şimdi yokla** |
+| Güncelleme **sırada bekliyor** | kademeli güncelleme: önce başka makine kurmalı | Bekleyin; bot kodu değiştiyse önce bot çalıştırmayan makinede **Güncellemeyi kur** |
 
 Telefondan bu sekme **yalnız görüntülenir** (eşleme ve kaldırma bilgisayardan). Makine jetonları veri klasöründe `makine-jetonlari.json` dosyasındadır (Anahtarlar gibi gizli; taşıma dosyasına şifreli girer), panelde hiç gösterilmez.
 
@@ -192,7 +219,7 @@ Telefondan bu sekme **yalnız görüntülenir** (eşleme ve kaldırma bilgisayar
 
 **Şimdi kontrol et** ya da **Güncellemeyi kur**'a bastığınızda (ya da 12:00 görevi çalışırken sayfayı açtığınızda) kartın altında işlem baştan sona görünür:
 
-- **Adımlar:** GitHub bağlantısı → değişikliklerin incelenmesi → yeni kodun indirilmesi → paketler → sözdizimi denetimi → **kuru deneme** (aşağıda) → Pusula'nın yeniden başlatılması → yeni sürümün açılışı → **kararlılık gözlemi** (8 dk boyunca 15 sn'de bir sağlık kontrolü; "12/32 kontrol · kalan ~5 dk" gibi). ✓ bitti, ◐ sürüyor, – atlandı (ör. paket değişikliği yok), ✗ hata; işlem bir adıma varmadan bittiyse (yeni sürüm yok, onay bekleniyor) kalan adımlar soluk görünür.
+- **Adımlar:** GitHub bağlantısı → değişikliklerin incelenmesi → (75.3, birden çok sunucu varsa) **kademeli güncelleme sırası** ([ayrıntı](#/kilavuz/ayarlar/makine-kademe)) → yeni kodun indirilmesi → paketler → sözdizimi denetimi → **kuru deneme** (aşağıda) → Pusula'nın yeniden başlatılması → yeni sürümün açılışı → **kararlılık gözlemi** (8 dk boyunca 15 sn'de bir sağlık kontrolü; "12/32 kontrol · kalan ~5 dk" gibi). ✓ bitti, ◐ sürüyor, – atlandı (ör. paket değişikliği yok), ✗ hata; işlem bir adıma varmadan bittiyse (yeni sürüm yok, onay bekleniyor) kalan adımlar soluk görünür.
 - **Çubuk ve süre:** ne kadarının bittiği, ne zaman başladığı, kaç dakikadır sürdüğü.
 - **Günlük:** güncelleyicinin yazdığı her satır, saatiyle. Pusula yeniden başlarken panel birkaç saniye yanıt vermez — günlükte *"Panel yanıt vermiyor — bekleniyor…"* ve geri gelince *"Panel yeniden yanıt veriyor"* yazar; bu beklenen bir durumdur.
 - **Bitince:** başlık sonucu söyler (**Kuruldu ✓**, **Güncel ✓**, **onayınız bekleniyor**, **eski sürüme dönüldü** …). Yeni sürüm kurulduysa sayfa 5 sn içinde kendiliğinden yeni panelle yenilenir. Son işlemin adımları ve günlüğü bir sonraki işleme kadar burada kalır.

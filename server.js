@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.2';
+const APP_VERSION = '75.3';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -81,6 +81,8 @@ const ctx = require('./lib/sunucu/baglam').olustur({
   wss: () => wss, server: () => server, HOST: () => HOST, bildirimKurulum: () => BILDIRIM_KURULUM,
   // 75.2 (3a): makine eşlemesi (lib/makine/eslesme) — güvenlik katmanının makine kademesiyle AYNI örnek
   makineEslesme: () => MAKINE_ESLESME,
+  // 75.3 (3b): makine modülü (yönetici kararı → Telegram yoklayıcısının engel kancası; B3 kademe kapısı)
+  makine: () => MAKINE,
 });
 
 /**
@@ -540,8 +542,8 @@ const isler = new Isler((tur, veri) => broadcast(tur, veri));
 const KISISEL_UCLAR = require('./lib/sunucu/kisiselUclar').olustur(ctx);   // C1 (75.0)
 const { veriOrk, piyasaBaglami, yapayZeka } = KISISEL_UCLAR.laboratuvarUclari();
 BILDIRIM_KURULUM.uclar();   // C1 (75.0): /api/bildirim*, GET /api/makine/nabiz, rapor motoru (/api/rapor*) — lib/sunucu/bildirimKurulum.js
-/* 75.2 (3a) MAKİNELER: kimlik, eşleme, nabız (POST /api/makine/nabiz — makine kademesi), B1 pano (salt okuma) — lib/sunucu/makineUclari.js. */
-require('./lib/sunucu/makineUclari').kur(ctx);
+/* 75.2 (3a) MAKİNELER: kimlik, eşleme, nabız (POST /api/makine/nabiz — makine kademesi), B1 pano (salt okuma); 75.3 (3b) yönetici makine + B3 kademe — lib/sunucu/makineUclari.js. */
+const MAKINE = require('./lib/sunucu/makineUclari').kur(ctx);
 
 /* PORTFÖYÜM (lib/portfoyum), İŞLEM DEFTERİ (lib/islemDefteri), 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar) — lib/sunucu/kisiselUclar.js portfoyUclari(). */
 const { portfoyum, islemDefteri, anahtarlar } = KISISEL_UCLAR.portfoyUclari();   // C1 (75.0)

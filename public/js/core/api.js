@@ -214,7 +214,9 @@
       kodUret: (kendiAdres) => gonder('/api/makine/esle/kod', kendiAdres ? { kendiAdres } : {}),
       esleBaslat: (adres, kod, kendiAdres) => gonder('/api/makine/esle-baslat', { adres, kod, kendiAdres }),
       kaldir: (kimlik) => gonder('/api/makine/kaldir', { kimlik }),
-      nabizSimdi: () => gonder('/api/makine/nabiz/simdi', {})
+      nabizSimdi: () => gonder('/api/makine/nabiz/simdi', {}),
+      // 75.3 (3b): Telegram komutlarını dinleyecek yönetici makine — yalnız bilgisayardan + yerel PIN
+      yoneticiSec: (kimlik) => gonder('/api/makine/yonetici', { kimlik })
     },
     /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
     ayarGecmisi: {
