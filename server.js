@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '75.6';
+const APP_VERSION = '75.7';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -83,6 +83,8 @@ const ctx = require('./lib/sunucu/baglam').olustur({
   makineEslesme: () => MAKINE_ESLESME,
   // 75.3 (3b): makine modülü (yönetici kararı → Telegram yoklayıcısının engel kancası; B3 kademe kapısı)
   makine: () => MAKINE,
+  // B2 + D2: olay akışı ve haftalık karne (bildirim üreticisi karneyi buradan alır — çağrı anında okunur)
+  olayAkisi: () => OLAY_UCLARI,
 });
 
 /**
@@ -558,6 +560,9 @@ const MAKINE = require('./lib/sunucu/makineUclari').kur(ctx);
 /* PORTFÖYÜM (lib/portfoyum), İŞLEM DEFTERİ (lib/islemDefteri), 73.0 AYARLAR › ANAHTARLAR (lib/anahtarlar) — lib/sunucu/kisiselUclar.js portfoyUclari(). */
 const { portfoyum, islemDefteri, anahtarlar } = KISISEL_UCLAR.portfoyUclari();   // C1 (75.0)
 anahtarYonlendirici = anahtarlar.router;
+/* B2 OLAY AKIŞI (GET /api/olaylar — eşler + sunucu birleşik, GET /api/makine/olaylar) + D2 HAFTALIK KARNE (GET /api/karne) — lib/sunucu/olayUclari.js;
+ * kaynaklara yazma kancası YOK (toplayıcı mevcut kayıtları okur), bot kodu değişmez. */
+const OLAY_UCLARI = require('./lib/sunucu/olayUclari').kur(ctx);
 
 BILDIRIM_KURULUM.ureticiler();   // C1 (75.0): 73.5 bildirim üreticileri, 73.9 piyasa bildirimi, 73.7 BIST hafif fiyat (yalnız sunucu) — lib/sunucu/bildirimKurulum.js
 KISISEL_UCLAR.tasarimciUclari();   // C1 (75.0): işlem defteri eşitlemesi, PORTFÖY TASARIMCISI (lib/tasarimci), 74.2 AYAR GEÇMİŞİ uçları — lib/sunucu/kisiselUclar.js

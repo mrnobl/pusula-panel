@@ -22,6 +22,30 @@ Rapor üç şeyi anlatır:
 
 ![Aylık rapor (örnek, sahte sayılar)](ekran:raporlar-aylik-1400)
 
+## Haftalık karne {#karne}
+
+Sayfanın en üstündeki kart: **geçen haftanın** (pazartesi–pazar) tek bakışlık karnesi, **yalnız yüzdelerle**. Pazartesi 09:00'dan sonra aynı karne Telegram'a **tek mesaj** olarak gider ([Bildirimler](#/kilavuz/bildirimler) › "Haftalık karne"); eski "Gölge testler haftalık özeti" artık bu mesajın içindedir, ayrıca gelmez.
+
+![Haftalık karne (örnek, sahte sayılar)](ekran:raporlar-karne-1400)
+
+| Alan | Anlamı |
+|---|---|
+| ‹ Önceki · Sonraki › · Bu hafta (sürüyor) | Haftalar arasında gezinme. Süren hafta o ana kadarki **önizlemedir**; kayıtlı karne pazartesi sabahı yazılır |
+| BTC bu hafta | Aynı haftada BTC al-tut getirisi (botların grafiğindeki BTC çizgisiyle aynı) |
+| Bu hafta | Botun haftalık getirisi — Botlar grafiğindeki "bot" çizgisinin haftalık değişimi (panelden kaydedilen para yatırma / çekme getiri sayılmaz) |
+| BTC'ye fark | Bot getirisi − BTC getirisi, puan olarak. Artı = bot BTC'den iyi |
+| En büyük düşüş | Hafta içinde (günlük kapanışlarla) zirveden en derin iniş |
+| Tepeden | Botun bugüne kadarki en yüksek değerinden şu anki uzaklığı |
+| İşlem | Haftadaki dolum sayısı |
+| Portföy | Portföyüm (USD endeksi) ve model portföylerin haftalık getirisi (Lydia TL) |
+| Sorunlar | Karnenin hazırlandığı andaki etkin sorunlar + haftanın alarm / uyarı olayları ([Olay akışı](#/kilavuz/olay-akisi)) |
+| Kairos demo kabulü · Gölge testler | İleri testin ara durumu — **hüküm değildir**; gölge satırları İleri test sayfasıyla aynı kaynaktan |
+| Telegram'a giden metin | Telefona giden mesajın aynısı (tutar yok, yalnız yüzde) |
+
+- Karne bu makinenin botlarını sayar. Telegram'a yalnız Telegram'ı dinleyen makine gönderir (eşlenmiş makine yoksa sunucu); öbür makine karnesini kaydeder ama mesaj atmaz.
+- Bir bot o hafta hiç değer kaydı yazmadıysa satırında "veri yok" yazar (bot durmuştu ya da yeni kuruldu).
+- Karneler `veri/karne/<pazartesi>.json` dosyalarıdır (yedeğe ve taşıma dosyasına girer).
+
 ## Alanlar {#alanlar}
 
 | Alan | Anlamı |

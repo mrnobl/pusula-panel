@@ -1,5 +1,5 @@
 {
-  "surum": "75.6",
+  "surum": "75.7",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -22,7 +22,7 @@
     { "id": "kur-cevirici", "baslik": "Kur çevirici", "grup": "Ekranlar", "dosya": "bolumler/kur-cevirici.md" },
     { "id": "botlar", "baslik": "Botlar", "grup": "Ekranlar", "rota": "botlar", "dosya": "bolumler/botlar.md", "dosyalar": ["js/pages/botlar.js", "js/pages/botDil.js", "js/pages/bindirmeIslem.js", "js/pages/bindirme.js", "js/pages/botPerformans.js"] },
     { "id": "portfoy-botlari", "baslik": "Portföy botları (Nova · Lydia · Simurg)", "grup": "Ekranlar", "dosya": "bolumler/portfoy-botlari.md", "dosyalar": ["js/pages/portfoyBotlari.js"] },
-    { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js"] },
+    { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js", "js/pages/karne.js"] },
     { "id": "hesaplar", "baslik": "Bot hesabı (Botlar › Hesap)", "grup": "Ekranlar", "dosya": "bolumler/hesaplar.md", "dosyalar": ["js/pages/hesaplar.js", "js/pages/borsa.js"] },
 
     { "id": "arastirma-ozet", "baslik": "Araştırma özeti", "grup": "Araştırma", "rota": "arastirma/ozet", "dosya": "bolumler/arastirma-ozet.md", "dosyalar": ["js/pages/arastirmaOzet.js"], "arastirma": true },
@@ -44,6 +44,7 @@
     { "id": "sorunlar", "baslik": "Sorunlar (Sorun merkezi)", "grup": "Diğer ekranlar", "rota": "sorunlar", "dosya": "bolumler/sorunlar.md", "dosyalar": ["js/pages/sorunlar.js"] },
     { "id": "saglik", "baslik": "Sağlık (öz denetim)", "grup": "Diğer ekranlar", "rota": "saglik", "dosya": "bolumler/saglik.md", "dosyalar": ["js/pages/saglik.js"] },
     { "id": "gunluk", "baslik": "Günlükler", "grup": "Diğer ekranlar", "rota": "gunluk", "dosya": "bolumler/gunluk.md", "dosyalar": ["js/pages/gunluk.js"] },
+    { "id": "olay-akisi", "baslik": "Olay akışı", "grup": "Diğer ekranlar", "rota": "olaylar", "dosya": "bolumler/olay-akisi.md", "dosyalar": ["js/pages/olaylar.js"] },
     { "id": "bildirimler", "baslik": "Bildirimler", "grup": "Diğer ekranlar", "rota": "bildirimler", "dosya": "bolumler/bildirimler.md", "dosyalar": ["js/pages/bildirimMerkezi.js"] },
     { "id": "kurulum-denetimi", "baslik": "Kurulum denetimi", "grup": "Diğer ekranlar", "rota": "kurulum-denetimi", "dosya": "bolumler/kurulum-denetimi.md", "dosyalar": ["js/pages/kurulumDenetimi.js"] },
     { "id": "ayarlar", "baslik": "Ayarlar", "grup": "Diğer ekranlar", "rota": "ayarlar", "dosya": "bolumler/ayarlar.md", "dosyalar": [] },
@@ -62,6 +63,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"75.7","tarih":"2026-10-25","yeni":["Yeni: Sistem › Olay akışı — emirler, başlat/durdur, sorunlar, bildirimler, ayar ve güncellemeler tek çizelgede; süzgeçli, 1 yıl saklanır, tutar yazılmaz.","Yeni: Raporlar › Haftalık karne — geçen haftanın bot getirisi, BTC'ye fark, düşüş, işlem sayısı, sorunlar; pazartesi sabahı Telegram'a tek mesaj (yalnız yüzde)."]},
     {"surum":"75.6","tarih":"2026-10-25","yeni":["Yeni: Sağlık › API anahtarı yetkisi — günde bir salt okuma sınaması; para çekme izni açıksa kırmızı + Sorunlar kartı + tek Telegram uyarısı, IP kısıtı yoksa sarı. Botları durdurmaz.","Düzeltme: Ayarlar › Anahtarlar'da Kairos satırlarının son sınaması görünüyor."]},
     {"surum":"75.5","tarih":"2026-10-25","yeni":["Yeni: Ayarlar › Makineler › Botu başka makineye taşı — eşlenmiş iki sunucu arasında bir kâğıt ya da demo botu taşırsınız (yalnız botun bulunduğu bilgisayardan, TAŞI yazıp acil PIN). Bot burada durur (pozisyon ve emirlere dokunulmaz), verisi öteki makineye gider; demo botun hesap anahtarı yedek şifresiyle şifreli gider (iki bilgisayarda aynı yedek şifresi). Hedefte kendiliğinden başlamaz: önce Mutabakat, temizse Başlat.","Gerçek para botu ve Kairos (demo kabulü 2026-12-09'a kadar) taşınmaz.","Nöbet: aynı bot iki makinede aynı anda çalışamaz. Taşınan botun eski kopyası salt okunur (Başlat, Acil … reddedilir). Eşlenmiş sunucu varken açılışta botlar önce eşlere sorulur; eşlere ulaşılamazsa bot kendiliğinden başlamaz ve Telegram'a haber gelir (elle Başlat açık). Tek bilgisayarda hiçbir şey değişmez.","Taşıma yarıda kalırsa (hedef reddetti, bağlantı koptu, bir makine kapandı) yapılanlar geri alınır ya da sonuç kendiliğinden tamamlanır; sonucu belli değilse bot iki makinede de başlamaz ve kartta \"Yeniden denetle\" çıkar.","Botların karar kodu değişmedi; güncelleme sunucuda onaylı kurulur (Ayarlar › Güncelleme › \"Güncellemeyi kur\")."]},
     {"surum":"75.4","tarih":"2026-10-25","yeni":["Düzeltme: planlı kapanış (Pusula'yı durdur, güncelleme sonrası yeniden başlatma, düzgün kapatma) artık doğru tanınıyor. Sağlık'taki beklenmedik kapanış (günlük açılış) sayacı bundan sonra yalnız gerçekten beklenmedik açılışları sayar."]},

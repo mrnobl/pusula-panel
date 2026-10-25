@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 75.7 — Olay akışı ve haftalık karne (2026-10-25) {#s75-7}
+- **Yeni sayfa: Sistem › Olay akışı.** Bütün olaylar tek çizelgede, en yeni üstte: botun emirleri (doldu / reddedildi), başlatma ve durdurma, ENGEL ve güvenli kip, öz denetim sorunları, giden bildirimler, ayar değişiklikleri, güncellemeler, Pusula'nın açılışları, model portföylerin ay sonu kararları. Süzgeç: tür, bot, makine, önem, tarih, arama. Eşlenmiş başka makine varsa onun olayları da aynı çizelgede; geliştirme bilgisayarında sunucunun olayları da görünür. **1 yıl saklanır.** Yalnız okuma; tutarlar yazılmaz.
+- **Yeni: Haftalık karne.** Raporlar sayfasının en üstünde: geçen haftanın (pazartesi–pazar) her bot için getirisi, aynı haftada BTC ve BTC'ye fark, hafta içi en büyük düşüş, işlem sayısı; Portföyüm ve model portföyler; sorunlar; Kairos demo kabulü ve gölge testler (hüküm değil). Haftalar arasında gezilebilir, süren hafta önizlenir.
+- **Telegram: pazartesi sabahı TEK mesaj** — haftalık karne (yalnız yüzdeler). Eski "Gölge testler haftalık özeti" artık bu mesajın içinde, ayrıca gelmez; onun aç/kapa, kanal ve sessiz saat ayarı karneye taşındı (Bildirimler › "Haftalık karne").
+
 ## 75.6 — API anahtarı yetkisi Sağlık'ta (2026-10-25) {#s75-6}
 - Sağlık sayfasına yeni denetim: **API anahtarı yetkisi**. Pusula günde bir kez her borsa anahtarının izinlerini yalnız okuyarak sınar (Anahtarlar › Sına ile aynı; emir yok). Para çekme izni açıksa kırmızı olur, Sorunlar sayfasında kart çıkar ve Telegram'a bir uyarı gelir. Canlı hesapta IP kısıtı yoksa sarı bilgi verir. Botları durdurmaz.
 - Düzeltme: Ayarlar › Anahtarlar'da "Binance canlı / demo (Kairos)" satırlarının son sınama sonucu artık görünüyor.

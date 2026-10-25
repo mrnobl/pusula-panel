@@ -554,6 +554,14 @@
       genel: (g) => gonder('/api/bildirim/genel', g),
       geciciBitir: () => gonder('/api/bildirim/gecici-bitir', {})
     },
+    /* ── B2 Olay akışı (lib/olayAkisi.js; panel: js/pages/olaylar.js) — salt okuma; bu makine + eşler (+ araştırma kopyasında sunucu) ── */
+    olaylar: {
+      liste: (q) => al('/api/olaylar' + (q ? '?' + new URLSearchParams(q).toString() : ''))
+    },
+    /* ── D2 Haftalık karne (lib/karne.js; panel: js/pages/karne.js, Raporlar sayfasının üstünde) — salt okuma; bas: pazartesi | 'bu' ── */
+    karne: {
+      getir: (bas) => al('/api/karne' + (bas ? '?' + new URLSearchParams({ bas }).toString() : ''))
+    },
     /* ── Raporlar (lib/rapor.js, PLAN-PANEL-2; panel: js/pages/raporlar.js) ── */
     rapor: {
       getir: (tur, bas) => al('/api/rapor?' + new URLSearchParams(bas ? { tur, bas } : { tur: tur || 'gunluk' }).toString()),
