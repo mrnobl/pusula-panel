@@ -19,6 +19,7 @@
     "github-jeton": "node scripts/github-jeton.js",
     "yedek": "node scripts/yedek.js",
     "canli-kapilar": "node scripts/canli-kapilar.js",
+    "aktarim-kapisi": "node scripts/aktarim-kapisi.js",
     "guncelle": "node scripts/guncelle.js",
     "tasarimci:hazirla": "node scripts/tasarimci-hazirla.js",
     "tasarimci:tik": "node scripts/tasarimci-tik.js",

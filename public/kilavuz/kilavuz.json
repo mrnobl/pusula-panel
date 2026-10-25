@@ -1,5 +1,5 @@
 {
-  "surum": "76.9",
+  "surum": "77.0",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -21,6 +21,7 @@
     { "id": "islem-defterim", "baslik": "İşlem defteri (kendi kripto ve FX işlemlerin)", "grup": "Ekranlar", "dosya": "bolumler/islem-defterim.md" },
     { "id": "kur-cevirici", "baslik": "Kur çevirici", "grup": "Ekranlar", "dosya": "bolumler/kur-cevirici.md" },
     { "id": "botlar", "baslik": "Botlar", "grup": "Ekranlar", "rota": "botlar", "dosya": "bolumler/botlar.md", "dosyalar": ["js/pages/botlar.js", "js/pages/botDil.js", "js/pages/bindirmeIslem.js", "js/pages/bindirme.js", "js/pages/botPerformans.js"] },
+    { "id": "sermaye-dagitimi", "baslik": "Sermaye dağıtımı (onaylı alt hesap aktarımı)", "grup": "Ekranlar", "rota": "sermaye", "dosya": "bolumler/sermaye-dagitimi.md", "dosyalar": ["js/pages/sermaye.js"] },
     { "id": "portfoy-botlari", "baslik": "Portföy botları (Nova · Lydia · Simurg)", "grup": "Ekranlar", "dosya": "bolumler/portfoy-botlari.md", "dosyalar": ["js/pages/portfoyBotlari.js"] },
     { "id": "raporlar", "baslik": "Raporlar", "grup": "Ekranlar", "rota": "raporlar", "dosya": "bolumler/raporlar.md", "dosyalar": ["js/pages/raporlar.js", "js/pages/karne.js"] },
     { "id": "hesaplar", "baslik": "Bot hesabı (Botlar › Hesap)", "grup": "Ekranlar", "dosya": "bolumler/hesaplar.md", "dosyalar": ["js/pages/hesaplar.js", "js/pages/borsa.js"] },
@@ -64,6 +65,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"77.0","tarih":"2026-10-26","yeni":["Yeni: Botlar › Sermaye dağıtımı — hedef paylar, sapma ve aktarım önerisi; iki aşamalı aktarım (önizleme, sonra acil PIN + AKTAR). Şimdilik yalnız prova (para hareketi yok); canlı hesap aktarımı kapalı. Pusula dış adrese para çekmez."]},
     {"surum":"76.9","tarih":"2026-10-26","yeni":["Yeni hisse alımı: hesap kartında \"Hesap toplamı\" ve \"Kasa (nakit)\" üstte; Al · Sat · Para yatır · Para çek düğmeleri tek bir işlem kartı açar (hangi hisse → ne kadar → kontrol et → kaydet, makbuzda \"Geri al\"). Alış her zaman kasadan düşer; kasa yetmezse \"Bu alım için kasaya önce para yatırdım\" işaretlenmeden alım kaydedilmez — kasa eksiye düşemez.","Tek izleme listesi (Portföy › Hesaplar): hisse ara, \"+ Ekle\"; son fiyat ve günlük değişim, \"Al\" ile işlem kartı; kasaya ve hesap toplamına etkisi yok. Eski \"Varlık ekle\" yalnız ilk kurulum için: \"Bu hesapta zaten olanlar (Pusula'yı ilk kurarken bir kez)\". Nakit bakiyesi ikinci kez girilemez (para yatırma / çekme girin). Yanlışlıkla bu bölüme girilmiş yeni alım için \"Bunu alışa çevir\"."]},
     {"surum":"76.8","tarih":"2026-10-26","yeni":["Yeni: Sistem › Tatbikatlar › Geri dönüş tatbikatı — ayın ilk pazarı 11:00 (ya da Şimdi çalıştır): son yedek ve eş kopyası doğrulanır, botlar geçici klasöre geri yüklenip kuru denenir; hiçbir bot başlatılmaz, emir gitmez. Sağlık'ta yeni satır (yalnız haber)."]},
     {"surum":"76.7","tarih":"2026-10-25","yeni":["Tatbikatlar: yeni prova 8 — karar saatinde (02:55–03:45) internet kesintisi; prova 1'e \"Pusula kapalıyken stopları telefondan görün\" adımı; kâğıt botların sonucu ayrıca botun kendi prova günlüğüne yazılır; geliştirme bilgisayarı sunucunun tatbikat durumunu salt okuma gösterir. Aylık otomatik denetim acil durdurmayı denemez, yalnız son denemeyi yazar.","Devralmada SAHİPLEN onayı PIN'i yeniden ister. OKX botu: OKX'te olmayan coinler Botlar kartında \"OKX'te yok — nakitte\" satırında (Telegram'a gitmez); güncellemenin kuru denemesi OKX botunu da dener. Sağlık: eş kopyası 64 MB sınırına yaklaşınca / aşınca uyarı (yalnız haber)."]},

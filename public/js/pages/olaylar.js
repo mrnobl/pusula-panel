@@ -16,7 +16,7 @@
   const botAdi = (k) => (k && AG.botAd && AG.botAd.ad(k)) || k || '';
 
   const TUR_AD = { emir: 'Emir', karar: 'Karar', baslat: 'Başlat', durdur: 'Durdur', uyari: 'Uyarı', sorun: 'Sorun', bildirim: 'Bildirim', ayar: 'Ayar',
-    guncelleme: 'Güncelleme', makine: 'Makine', tasima: 'Taşıma', devralma: 'Devralma', tatbikat: 'Tatbikat' };
+    guncelleme: 'Güncelleme', makine: 'Makine', tasima: 'Taşıma', devralma: 'Devralma', tatbikat: 'Tatbikat', aktarim: 'Aktarım' };
   const CIDDIYET_TON = { alarm: 'neg', uyari: 'warn', bilgi: '' };
   const TUR_TON = { emir: 'info', karar: 'info', baslat: 'pos', durdur: 'warn' };
   const ZAMANLAR = [['1', 'Bugün'], ['3', 'Son 3 gün'], ['7', 'Son 7 gün'], ['30', 'Son 30 gün'], ['90', 'Son 90 gün'], ['365', 'Son 1 yıl']];

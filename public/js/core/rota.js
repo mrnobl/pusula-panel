@@ -51,6 +51,8 @@
     'ana': { bolum: 'tab-ana', menu: 'ana', baslik: 'Ana sayfa' },
     'portfoy': { bolum: 'tab-portfoy', menu: 'portfoy', baslik: 'Portföy', altYol: true },
     'botlar': { bolum: 'tab-botlar', menu: 'botlar', baslik: 'Botlar', altYol: true },
+    // A4: Botlar › Sermaye dağıtımı — hedef paylar, sapma önerisi, onaylı alt hesap aktarımı (js/pages/sermaye.js, lib/aktarim).
+    'sermaye': { bolum: 'tab-sermaye', menu: 'botlar', baslik: 'Sermaye dağıtımı' },
     'raporlar': { bolum: 'tab-raporlar', menu: 'raporlar', baslik: 'Raporlar' },
     'sinyaller': { bolum: 'tab-sinyaller', menu: 'sinyaller', baslik: 'Sinyaller' },
     // 73.9: İzleme › Piyasa bağlamı — yalnız bilgi (js/pages/piyasaBaglami.js, lib/piyasaBaglami).

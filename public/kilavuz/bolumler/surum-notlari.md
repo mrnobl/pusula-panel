@@ -2,6 +2,9 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.0 — Sermaye dağıtımı (2026-10-26) {#s77-0}
+```
+
 ## 76.9 — Yeni hisse alımı: kasadan düşer; izleme listesi (2026-10-26) {#s76-9}
 > **Kullanıcı geri bildirimi:** "Varlık ekle" ile girilen yeni alım kasadan düşmüyor, hesap "ekstra para koymuşum gibi" görünüyordu; kasa bir denemede 100'e inmişti. Akış baştan kuruldu (taslak onaylı).
 

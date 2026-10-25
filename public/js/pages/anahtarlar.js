@@ -27,7 +27,7 @@
   ];
   const DURUM = { tamam: ['Tamam', 'p-rozet-pos'], bakilmali: ['Bakılmalı', 'p-rozet-warn'], eksik: ['Eksik', 'p-rozet-neg'], bos: ['Boş', ''] };
   const BORSA_AD = { binance: 'Binance', okx: 'OKX', bybit: 'Bybit' };
-  const TUR_AD = { demo: 'demo', canli: 'canlı' };
+  const TUR_AD = { demo: 'demo', canli: 'canlı', aktarim: 'aktarım' };
   /** A2 parça 2: OKX hesabının hazırlık durumu (lib/live/borsalar/okx.js `durum`; hazir:true olunca kalkar). */
   const OKX_HAZIRLIK = 'OKX demo: hazırlık — henüz bota bağlanamaz (anahtar saklanır, salt okuma sınanır)';
   const DOSYA_AD = { 'secrets.json': 'API anahtarları dosyası (secrets.json)', 'telefon-jeton.json': 'Telefon jetonu dosyası (telefon-jeton.json)', 'ev-baglanti.json': 'Sunucu bağlantısı dosyası (ev-baglanti.json)', 'yedek-sifre.json': 'Yedek şifresi dosyası (yedek-sifre.json)' };
@@ -65,8 +65,8 @@
     if (ekle) {
       return [{ ad: 'ad', etiket: 'Hesap adı', tip: 'text', ipucu: 'ör. Binance alt hesap — Tao' },
         { ad: 'borsa', etiket: 'Borsa', tip: 'select', secenekler: [['binance', 'Binance'], ['okx', 'OKX'], ['bybit', 'Bybit']] },
-        { ad: 'tur', etiket: 'Hesap türü', tip: 'select', secenekler: [['demo', 'Demo (sahte para)'], ['canli', 'Canlı hesap']] },
-        { ad: 'altHesap', etiket: 'Alt hesap (isteğe bağlı)', tip: 'text', ipucu: 'borsadaki alt hesap adı' },
+        { ad: 'tur', etiket: 'Hesap türü', tip: 'select', secenekler: [['demo', 'Demo (sahte para)'], ['canli', 'Canlı hesap'], ['aktarim', 'Aktarım (yalnız alt hesaplar arası — çekme izni KAPALI)']] },
+        { ad: 'altHesap', etiket: 'Alt hesap (isteğe bağlı)', tip: 'text', ipucu: 'alt hesap e-postası (Binance) / adı (OKX)' },
         k('apiKey', 'API anahtarı'), k('apiSecret', 'Gizli anahtar (secret)'), k('parola', 'Parola (yalnız OKX: passphrase)')];
     }
     switch (satir.tip) {

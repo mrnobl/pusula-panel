@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '76.9';
+const APP_VERSION = '77.0';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -186,7 +186,7 @@ app.use(guvenlik.middleware);
 // Araştırma modunda botu başlatan, borsaya bağlanan ya da emir veren POST'lar kapalı (yukarıdaki ARASTIRMA_MODU).
 // (paper motoru start/stop/bots, borsa, kalkan, bindirme, pozisyon kapatma, hesap senkronu, Telegram ve healthchecks testleri)
 // 61.3: otomatik güncelleme ve yeniden başlatma da kapalı (geliştirme bilgisayarı güncellemelerin KAYNAĞI, hedefi değil).
-const ARASTIRMA_KAPALI = /^\/api\/(exchange|kalkan|bindirme|botlar|bots|start|stop|position|hesap-islemleri|telegram|saglik|guncelleme|sistem)(\/|$)/;
+const ARASTIRMA_KAPALI = /^\/api\/(exchange|kalkan|bindirme|botlar|bots|start|stop|position|hesap-islemleri|telegram|saglik|guncelleme|sistem|sermaye)(\/|$)/;
 // Denetim 61.1 O3: Express yönlendirmesi harf duyarsız ve sondaki eğik çizgiyi yok sayar — desen normalleşmiş yola uygulanır.
 app.use((req, res, next) => {
   if (ARASTIRMA_MODU && req.method !== 'GET' && ARASTIRMA_KAPALI.test(guvenlikKur.yasakYolu(req.path))) {
@@ -570,6 +570,9 @@ const OLAY_UCLARI = require('./lib/sunucu/olayUclari').kur(ctx);
 /* D3 TATBİKAT SİHİRBAZI (Sistem › Tatbikatlar; GET /api/tatbikat, POST /api/tatbikat/{baslat,adim,kaydet,iptal,otomatik}) — lib/sunucu/tatbikatUclari.js;
  * sihirbaz emir vermez, bot ayarı değiştirmez, süreç kapatmaz — kullanıcının yaptığını kayıtlardan doğrular. */
 require('./lib/sunucu/tatbikatUclari').kur(ctx);
+/* A4 SERMAYE DAĞITIMI + ONAYLI ALT HESAPLAR ARASI AKTARIM (Botlar › Sermaye dağıtımı; GET /api/sermaye/dagitim, POST /api/sermaye/{dagitim/ayar,aktar/onizle,aktar,aktar/sorgula})
+ * — lib/sunucu/sermayeUclari.js; otomatik aktarım YOK, dış adrese çekme YOK, canlı hesap kapısı varsayılan KAPALI (prova kipi sahte borsada). */
+require('./lib/sunucu/sermayeUclari').kur(ctx);
 
 BILDIRIM_KURULUM.ureticiler();   // C1 (75.0): 73.5 bildirim üreticileri, 73.9 piyasa bildirimi, 73.7 BIST hafif fiyat (yalnız sunucu) — lib/sunucu/bildirimKurulum.js
 KISISEL_UCLAR.tasarimciUclari();   // C1 (75.0): işlem defteri eşitlemesi, PORTFÖY TASARIMCISI (lib/tasarimci), 74.2 AYAR GEÇMİŞİ uçları — lib/sunucu/kisiselUclar.js

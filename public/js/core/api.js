@@ -586,6 +586,15 @@
       otomatik: () => gonder('/api/tatbikat/otomatik', {}),
       geriDonus: () => gonder('/api/tatbikat/geri-donus', {})   // 4c D1: arka planda başlar; sonuç durum().geriDonus
     },
+    /* ── A4 Sermaye dağıtımı + onaylı alt hesap aktarımı (lib/aktarim; panel: js/pages/sermaye.js) — durum her kademede; yazma yalnız bu
+     *    bilgisayardan; ayar ve aktar acil PIN gövdede (PIN hiçbir yerde saklanmaz); aktarım önizleme → PIN + AKTAR ── */
+    sermaye: {
+      durum: () => al('/api/sermaye/dagitim'),
+      ayar: (g) => gonder('/api/sermaye/dagitim/ayar', g),
+      onizle: (g) => gonder('/api/sermaye/aktar/onizle', g),
+      aktar: (g) => gonder('/api/sermaye/aktar', g),
+      sorgula: (id) => gonder('/api/sermaye/aktar/sorgula', { id })
+    },
     /* ── D2 Haftalık karne (lib/karne.js; panel: js/pages/karne.js, Raporlar sayfasının üstünde) — salt okuma; bas: pazartesi | 'bu' ── */
     karne: {
       getir: (bas) => al('/api/karne' + (bas ? '?' + new URLSearchParams({ bas }).toString() : ''))
