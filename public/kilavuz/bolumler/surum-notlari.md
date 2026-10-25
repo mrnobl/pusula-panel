@@ -2,6 +2,16 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.5 — Panelden yeni bot (kâğıt), hesap bağlama, sermaye üst sınırı, arşiv (2026-10-25) {#s74-5}
+
+- **Yeni: [Yeni bot oluşturmak](#/kilavuz/botlar/yeni-bot)** — Ayarlar › Botlar › **Bot kayıtları**. Yalnız sınanmış kurallar: **Kairos tipi** (küçük sermaye kuralı Kairos-S seçenek olarak) ya da **Tao tipi**. Yeni bot her zaman **kâğıt hesapta** ve durmuş başlar (gerçek emir yok); PIN istemez, onay ister. Botlar sayfasında, Ana sayfada, öz denetimde, raporda, Telegram'da ve Hesaplar'da kendi adıyla görünür.
+- **Demo hesabı bağlama** (acil PIN): Anahtarlar'daki bir **Binance demo** hesabı bota bağlanır, sonra bot demo moda geçebilir. **Aynı borsa hesabını aynı anda yalnız bir bot kullanır** (kâğıt botlar hariç) — Kairos'un demo hesabı başka bota bağlanamaz. Bota bağlı hesap Anahtarlar'dan silinmez; Anahtarlar'daki "kullanan" sütunu artık bağlı botları gösterir.
+- **Sermaye üst sınırı** her bot ve mod için (USD): bot bu tutardan fazlasını kullanmaz, hesapta daha az varsa hesaptakini. Kâğıt: onay; demo sınırını artırmak: acil PIN. Kairos'un demo sınırı demo kabulü süresince değişmez.
+- **Arşivle / geri getir:** kâğıttaki durmuş yeni bot listelerden kalkar; kaydı ve dosyaları silinmez, geri getirilebilir. Kairos ve Tao arşivlenmez.
+- **Canlı hesap 5. faza kadar yalnız Kairos ve Tao'da:** yeni bot canlı moda geçemez, canlı hesaba bağlanamaz.
+- Yeni Kairos tipi botun gölge kıyası Kairos modeli (hucum.C0): kâğıtta sapma botu durdurmaz, yalnız uyarı; kartta "kıyas: Kairos modeli" notu.
+- **Kairos ve Tao'nun davranışı ve sayıları aynı** (eski ve yeni kodla kuru deneme birebir). Bot kodu değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.4 — Bot kaydı: her bot için ayrı dosya (2026-10-25) {#s74-4}
 
 - **Yeni: [Bot kaydı](#/kilavuz/botlar/bot-kaydi).** Kairos ve Tao'nun tanımı artık kendi dosyalarında (`live/botlar/hucum.json`, `live/botlar/denge.json`): kural, mod, mod başına sermaye üst sınırı, kâğıt bakiyesi, coin sepeti, küçük sermaye, BTC ayağı ve bağlı borsa hesabı (Anahtarlar'daki hesap adıyla). **Kayıtta sır yok** — anahtarlar ve sağlık adresi yerinde.

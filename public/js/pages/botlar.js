@@ -64,6 +64,10 @@
       if (l) {
         ADLAR.length = 0; ADLAR.push(...l);
         for (const b of r.botlar) if (b && l.includes(b.kimlik)) BOT_BILGI[b.kimlik] = b;
+        // 74.5: kullanıcının oluşturduğu botların adları ortak sözlüğe (Ana sayfa, Hesaplar, işlem listeleri de görsün)
+        if (AG.botAd && AG.botAd.kaydet) AG.botAd.kaydet(r.botlar);
+        // 74.5: arşivlenen botun kartı sayfadan kalkar (dosyaları sunucuda durur; Ayarlar › Botlar'dan geri getirilir)
+        if (doc && doc.querySelectorAll) doc.querySelectorAll('article.bot-kart[id^="botKart-"]').forEach(k => { if (!l.includes(k.id.slice(8)) && k.parentNode) k.parentNode.removeChild(k); });
         listeZamani = Date.now();
         if (!ADLAR.includes(secili)) secili = ADLAR[0];
       }
@@ -454,6 +458,16 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     denge: 'Kairos\'un sakin hâli: BTC oranı en çok %50 + aynı coin sepeti (×3). Her gün 03:00 civarı karar verir.'
   };
   const SIMGE = { hucum: 'K', denge: 'T' };   // 72.0: Kairos / Tao
+  /** 74.5: yeni botun kıyas notu (/api/botlar kiyas) — "kıyas: Kairos modeli"; küçük sermayede Kairos-S gölgesi bilgi olarak. */
+  function kiyasNotu(ad) {
+    const k = BOT_BILGI[ad] && BOT_BILGI[ad].kiyas;
+    if (!k) return null;
+    return el('p', { class: 'hint hint-sm mb-0 bot-kiyas-notu' }, [
+      el('span', { text: `${k.metin}.` }),
+      k.hucumS ? el('span', { text: ' Küçük sermaye kuralı açık: Kairos-S gölgesi (deneme 972) bilgi olarak — ' }) : null,
+      k.hucumS ? el('a', { href: '#/ileri/genel', text: 'İleri test' }) : null
+    ]);
+  }
   const sonVeri = {};                 // ad → son /durum yanıtı
   const grafikKip = {};               // ad → 'canli' | 'gecmis'
   const gecmisVeri = {};              // ad → GET /api/tasarimci/gecmis/b-<ad> (null = yükleniyor)
@@ -510,6 +524,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
             yardim(modAd === 'demo' ? 'demo' : modAd === 'canlı hesap' ? 'gercekPara' : 'kagit')
           ]),
           el('p', { class: 'hint mb-0', text: KURAL[ad] || (BOT_BILGI[ad] && BOT_BILGI[ad].aciklama) || '' }),
+          kiyasNotu(ad),   // 74.5: yeni botta gölge kıyası notu
           el('p', { class: 'mb-0 bot-bu-gece' }, [el('strong', { text: 'Son karar: ' }), el('span', { text: buGece })])
         ]),
         el('div', { class: 'bot-bas-dugme' }, [telefonMu() ? null : baslatDurdur(ad, d), acilFren(ad, d)])

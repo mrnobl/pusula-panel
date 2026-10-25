@@ -44,7 +44,38 @@ Botlar günde bir kez, UTC gün kapanışından ~2 dakika sonra (Türkiye saatiy
 - **Botlar aynı:** iç adlar, bot klasörleri (`hucum`, `hucum-demo`, `denge` …), demo hesabı, sağlık ping adresi, gölge karşılaştırması ve botların kararları değişmedi. Kairos'un demo kabulü (2026-12-09) aynen sürüyor.
 - **İki yere birden yazılır:** mod, küçük sermaye, kâğıt sıfırlama gibi değişiklikler hem kayda hem eski ayar dosyasına yazılır; eski sürüme dönülse de ayarlar kaybolmaz. İkisi bir gün farklı olursa (ör. ayar dosyası elle düzenlendiyse) **ayar dosyası kazanır** ve kayıt ona göre düzeltilir.
 - Kayıt değişiklikleri [Ayarlar › Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde **Bot kaydı** türüyle görünür (geri alma botun kendi ekranından). Kayıtlar yedeğe ve taşıma dosyasına girer.
-- Panelden yeni bot kurmak sonraki sürümde gelecek; bu sürüm yalnız mevcut iki botu kayda geçirir.
+- 74.5'ten beri panelden **yeni bot** kurulabilir: [Yeni bot oluşturmak](#/kilavuz/botlar/yeni-bot). Sizin oluşturduğunuz botun tek kaynağı kendi kaydıdır (eski ayar dosyasına yazılmaz).
+
+## Yeni bot oluşturmak (kâğıt hesapta başlar) {#yeni-bot}
+
+Yer: **Ayarlar › Botlar › Bot kayıtları**. Yalnız sınanmış kurallarla bot kurulur; yeni strateji yoktur.
+
+1. **Kural** seçin: **Kairos tipi** (BTC trendi + coin sepeti) ya da **Tao tipi** (yarı BTC, sakin). Kairos tipinde **küçük sermaye kuralı** (Kairos-S) seçilebilir: otomatik (5000 $ altında açık), açık ya da kapalı.
+2. **Kâğıt sermayesi** (USD) girin: botun kâğıt hesabı bu bakiyeyle açılır ve bot bu tutardan fazlasını kullanmaz.
+3. **Kimlik** girin: küçük harf ve rakam, 2–16 karakter (ör. `ares`). İlk iki harf her botta farklı olmalı (borsa emir kimliği botun ilk iki harfini taşır; Kairos `hu…`, Tao `de…` olduğu için bu iki başlangıç kullanılamaz). Kimlik sonradan değişmez.
+4. **Görünen ad** girin (ör. "Ares"): ekranda ve Telegram'da bu ad görünür. Başka bir botun adı (Kairos, Tao, Nova, Lydia, Simurg …) verilemez.
+5. **Oluştur…** → onay. PIN istenmez: bot **kâğıt hesapta** ve **durmuş** olarak eklenir, gerçek emir vermez. Botlar sayfasında kendi sekmesi çıkar; **Başlat** ile çalışır.
+
+- **Gölge kıyası:** yeni bot kendi kuralının modeliyle (Kairos tipi → Kairos modeli `hucum.C0`, Tao tipi → `denge.C0`) karşılaştırılır; bot kartında "kıyas: Kairos modeli" notu görünür. Kâğıt hesapta sapma botu **durdurmaz**, yalnız uyarı gönderir (sermaye ve küçük sermaye kuralı farkı sapmayı büyütebilir). Küçük sermaye kuralı açıksa Kairos-S gölgesi (deneme 972) bilgi olarak İleri test'te.
+- **Canlı hesap 5. faza kadar yalnız Kairos ve Tao'da.** Yeni bot canlı moda geçemez ve canlı hesaba bağlanamaz; denerseniz ret yanıtı gelir ("5. faza kadar yalnız mevcut botlarda").
+
+### Demo hesabına bağlamak {#bot-hesap}
+
+Yeni bot demo hesapta çalışacaksa önce bir **Binance demo** hesabı bağlanır: Bot kayıtları tablosunda **Demo hesabı** seçicisi (Ayarlar › Anahtarlar'daki Binance demo hesapları) → **acil PIN**. Sonra Botlar › <bot> › Yönetim › Hesap türü: **demo** (masaüstünde de PIN ister).
+
+- **Aynı borsa hesabını aynı anda yalnız bir bot kullanır** (kâğıt botlar hariç). Kairos demo hesabını (Binance demo) kullanırken o hesap başka bota bağlanamaz; her yeni bot için Binance'te ayrı bir demo hesabı / alt hesap açıp Anahtarlar'a ekleyin.
+- Bu sürümde yalnız **Binance** hesapları bağlanır (OKX ve Bybit 5. fazda). Hesap türü moda uymalı (demo hesabı demo moda).
+- Bot demo modundayken hesap değişmez; önce kâğıda dönün. Bota bağlı bir hesap Anahtarlar'dan silinmez (önce bağı kaldırın).
+
+### Sermaye üst sınırı {#bot-sermaye}
+
+Her botun her mod için sabit bir üst sınırı vardır (USD): bot bu tutardan fazlasını kullanmaz, hesapta daha az para varsa hesaptakini kullanır. Bot kayıtları tablosunda **Kâğıt…** / **Demo…** ile değişir; bot durmuş olmalı. Kâğıt sınırı onayla, demo sınırını **artırmak** acil PIN ile. Kairos'un demo sınırı demo kabulü bitene kadar (2026-12-09) değişmez; canlı hesap sınırı bu ekrandan değişmez.
+
+### Arşivle ve geri getir {#bot-arsiv}
+
+Kullanmadığınız yeni botu **Arşivle…** ile listelerden kaldırırsınız: yalnız **kâğıt** moddaki ve **durmuş** bot arşivlenir. Kaydı ve kâğıt hesap dosyaları **silinmez**; "Arşivdeki botlar" altında **Geri getir…** ile kâğıtta, durmuş olarak geri gelir. Arşivdeki botun kimliği ve görünen adı başka bota verilmez. Kairos ve Tao arşivlenemez.
+
+Yeni bot, hesap bağlama, sermaye ve arşiv değişiklikleri [Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi)'nde **Bot kaydı** türüyle görünür. Kullanıcının oluşturduğu bot kaydı kişisel veridir: yedeğe ve taşıma dosyasına girer; taşıma sonrası diğer botlar gibi ilk borsa karşılaştırmasına kadar kendiliğinden başlamaz.
 
 ## Ne zaman kullanılır {#ne-zaman}
 

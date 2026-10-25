@@ -33,6 +33,17 @@ Botun hesap türünü değiştirmek, para kaydı, şimdi çalıştır ve kontrol
 
 Salt okunur tablo: **Bot · Durum · Hesap türü · Küçük hesap kipi · Hesap değeri** ve **Yönet →**. Burada hiçbir şey değişmez; hesap türü, canlı hesap emir onayı, para yatırdım / çektim, küçük hesap kipi, şimdi çalıştır ve kontroller (deneme, borsayla karşılaştır, acil freni dene) botun kendi sayfasında: [Botlar › Yönetim](#/kilavuz/botlar/ayarlar).
 
+### Bot kayıtları (74.5) {#bot-kayitlari}
+
+Özetin altındaki tablo her botun kaydını gösterir: **Bot · Kural · Hesap türü · Demo hesabı · Sermaye üst sınırı** ve işlem düğmesi. Buradan:
+
+- **Yeni bot** kurulur (Kairos tipi ya da Tao tipi; her zaman kâğıt hesapta başlar, PIN istemez) — adım adım: [Yeni bot oluşturmak](#/kilavuz/botlar/yeni-bot).
+- Yeni botun **demo hesabı** bağlanır (acil PIN; aynı hesabı aynı anda yalnız bir bot kullanır) — [Demo hesabına bağlamak](#/kilavuz/botlar/bot-hesap).
+- **Sermaye üst sınırı** değişir (kâğıt: onay; demo artışı: acil PIN) — [Sermaye üst sınırı](#/kilavuz/botlar/bot-sermaye).
+- Kâğıttaki durmuş yeni bot **arşivlenir** / arşivden **geri getirilir** (dosyalar silinmez) — [Arşivle ve geri getir](#/kilavuz/botlar/bot-arsiv).
+
+Kairos ve Tao'nun hesapları sabittir (Binance demo / canlı anahtarı) ve arşivlenmezler. Telefonda ve araştırma kopyasında tablo salt okunur.
+
 ## Bağlantılar {#borsa}
 
 Bir kez yapılan borsa işleri (eski adı Ayarlar › Borsa): **Demo hesap API anahtarı** ve katlı **Canlı hesap** bölümü. Ayrıntı: [Bot hesabı › Ayarlar › Bağlantılar](#/kilavuz/hesaplar/anahtar). İşlem dökümü (CSV) buradan [Portföy › İşlem defteri](#/kilavuz/islem-defterim)'ne (kaynak **Bot**) taşındı.

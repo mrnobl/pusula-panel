@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.4';
+const APP_VERSION = '74.5';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -371,7 +371,7 @@ app.use(guvenlik.middleware);
 // Araştırma modunda botu başlatan, borsaya bağlanan ya da emir veren POST'lar kapalı (yukarıdaki ARASTIRMA_MODU).
 // (paper motoru start/stop/bots, borsa, kalkan, bindirme, pozisyon kapatma, hesap senkronu, Telegram ve healthchecks testleri)
 // 61.3: otomatik güncelleme ve yeniden başlatma da kapalı (geliştirme bilgisayarı güncellemelerin KAYNAĞI, hedefi değil).
-const ARASTIRMA_KAPALI = /^\/api\/(exchange|kalkan|bindirme|bots|start|stop|position|hesap-islemleri|telegram|saglik|guncelleme|sistem)(\/|$)/;
+const ARASTIRMA_KAPALI = /^\/api\/(exchange|kalkan|bindirme|botlar|bots|start|stop|position|hesap-islemleri|telegram|saglik|guncelleme|sistem)(\/|$)/;
 // Denetim 61.1 O3: Express yönlendirmesi harf duyarsız ve sondaki eğik çizgiyi yok sayar — desen normalleşmiş yola uygulanır.
 app.use((req, res, next) => {
   if (ARASTIRMA_MODU && req.method !== 'GET' && ARASTIRMA_KAPALI.test(guvenlikKur.yasakYolu(req.path))) {
@@ -734,12 +734,26 @@ if (kalkanBot.durum.calisiyor && !ARASTIRMA_MODU && !tasimaLib.botBekliyor('kalk
 const { BindirmeBot } = require('./lib/live/bindirmeBot');
 const isletim = require('./lib/live/isletim');
 const bindirmeArastirma = require('./lib/research/bindirme');
-const BINDIRME_ADLAR = Object.keys(bindirmeArastirma.STRATEJILER);   // ['hucum', 'denge']
+/** Strateji (model) adları — Kairos/Tao iç adları ['hucum', 'denge']; gölge ve ölçüm döngüleri BUNU kullanır. */
+const STRATEJI_ADLAR = Object.freeze(Object.keys(bindirmeArastirma.STRATEJILER));
+/**
+ * Çalışan bot kimlikleri. 74.5 (A1 2b): DİNAMİK — Kairos/Tao + kullanıcının oluşturduğu botlar (live/botlar); yeni bot eklenince
+ * push, arşivlenince çıkarılır. Dizi NESNESİ hiç değişmez: her tüketici (öz denetim, bekçi, rapor, Telegram, sağlık, taşıma, anahtarlar)
+ * listeyi çağrı anında bu diziden okur (getter) — önbelleğe alan yok.
+ */
+const BINDIRME_ADLAR = [...STRATEJI_ADLAR];
+/** Görünen ad: Kairos/Tao → strateji adı (eskisiyle aynı); yeni bot → kaydın adı (lib/botAdlari EK), yoksa kimlik. */
+const botEtiketi = (ad) => (STRATEJI_ADLAR.includes(ad) ? bindirmeArastirma.STRATEJILER[ad].ad : (require('./lib/botAdlari').ad(ad) || ad));
+/** 74.5: kullanıcının oluşturduğu bot mu (Kairos/Tao değil). */
+const yeniBotMu = (ad) => !STRATEJI_ADLAR.includes(ad);
+const YENI_CANLI_RED = require('./lib/sunucu/botFabrikasi').YENI_CANLI_RED;
 const BINDIRME_MODLAR = ['kagit', 'demo', 'canli'];
 const canliKapi = require('./lib/live/canliKapi');
 const CANLI_KAPILAR_DOSYA = yollar.veri('live', 'canli-kapilar.json');
 /** Gerçek para kapısı (lib/live/canliKapi.js) — her çağrıda dosyadan okunur; çalışan bot her günlük çalışmada sorar (kapiFn). */
 function canliKapiDurum(ad) {
+  // 74.5: yeni botlar için gerçek para TAMAMEN kapalı (5. faza kadar) — kapı dosyası okunmaz bile.
+  if (yeniBotMu(ad)) return { izin: false, yeniBot: true, eksikler: [{ kod: 'yeni-bot', metin: YENI_CANLI_RED }], ustSinir: 0 };
   let kapilar = null;
   try { kapilar = JSON.parse(fs.readFileSync(CANLI_KAPILAR_DOSYA, 'utf8')); } catch { /* yok/bozuk = onay yok */ }
   return canliKapi.denetle({ simdi: Date.now(), ad, tavan: bindirmeAyar(ad).canliSermayeTavani, kapilar,
@@ -768,7 +782,7 @@ const portfoyBildirici = new isletim.Bildirici(() => engine.telegram, { ikinciKa
  *   "up" tutardı. Denge'nin adresi yoksa Denge ping GÖNDERMEZ (Hücum'unkine de). `saglikBot` = Hücum'unki (eski ad).
  */
 const { SaglikSinyali, urlGecerli: saglikUrlGecerli, botUrl: botSaglikUrl } = require('./lib/saglikSinyali');
-const saglikBotlar = Object.fromEntries(BINDIRME_ADLAR.map(ad => [ad, new SaglikSinyali({ ad: `sağlık sinyali (${bindirmeArastirma.STRATEJILER[ad].ad})`, urlFn: () => botSaglikUrl(config, ad), kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) })]));
+const saglikBotlar = Object.fromEntries(BINDIRME_ADLAR.map(ad => [ad, new SaglikSinyali({ ad: `sağlık sinyali (${botEtiketi(ad)})`, urlFn: () => botSaglikUrl(config, ad), kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) })]));
 const saglikBot = saglikBotlar.hucum;
 const saglikSunucu = new SaglikSinyali({ ad: 'sağlık sinyali (sunucu)', urlFn: () => config.healthchecksSunucuUrl, kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
 /**
@@ -786,6 +800,8 @@ BOT_KAYIT = botKayitLib.olustur({ dizin: yollar.veri('live', 'botlar'), strateji
 /** Eski yol (74.3'e kadar tek yol): varsayılanlar ⊕ config.bindirme.<ad> — lib/botKayit.hamAyar birebir. */
 const bindirmeAyarEski = (ad) => botKayitLib.hamAyar(config, ad);
 function bindirmeAyar(ad) {
+  // 74.5: kullanıcının oluşturduğu bot — kayıt TEK kaynak (config.bindirme'de tanımı yok).
+  if (BOT_KAYIT && BOT_KAYIT.yeniMi && BOT_KAYIT.yeniMi(ad)) { const y = BOT_KAYIT.kayit(ad); if (!y) throw new Error(`bot kaydı yok: ${ad}`); return botKayitLib.ayar(y); }
   const ham = bindirmeAyarEski(ad);
   const k = BOT_KAYIT ? BOT_KAYIT.esitKayit(ad, ham) : null;
   return k ? { ...botKayitLib.ayar(k), ...botKayitLib.sirlar(ham) } : ham;
@@ -835,8 +851,12 @@ function bindirmeKur(ad, mod) {
   if (!BINDIRME_MODLAR.includes(mod)) throw new Error(`mod kagit | demo | canli olmalı ("${mod}")`);
   // 74.4: kayıt config'le eşitse kayıttan, değilse eski yoldan (config.bindirme) — ikisi de aynı fabrikadan geçer.
   const ham = bindirmeAyarEski(ad);
+  // 74.5: kullanıcının oluşturduğu bot → yalnız kayıttan (sır yok; canlı fabrikada reddedilir).
+  const yeniKayit = yeniBotMu(ad) ? (BOT_KAYIT && BOT_KAYIT.kayit(ad)) : null;
+  if (yeniBotMu(ad) && !yeniKayit) throw new Error(`bot kaydı yok: ${ad}`);
   const kayit = BOT_KAYIT ? BOT_KAYIT.esitKayit(ad, ham) : null;
-  const r = kayit ? botFabrikasi.argumanlar(kayit, mod, FABRIKA_ORTAM, botKayitLib.sirlar(ham)) : botFabrikasi.argumanlarAyardan(ham, ad, mod, FABRIKA_ORTAM);
+  const r = yeniKayit ? botFabrikasi.argumanlar(yeniKayit, mod, FABRIKA_ORTAM, {})
+    : kayit ? botFabrikasi.argumanlar(kayit, mod, FABRIKA_ORTAM, botKayitLib.sirlar(ham)) : botFabrikasi.argumanlarAyardan(ham, ad, mod, FABRIKA_ORTAM);
   const { dizin, canliMi, ayar: a } = r;
   const y = new CanliYurutucu(r.yurutucu);
   const bot = new BindirmeBot(y, r.bot);
@@ -851,6 +871,10 @@ function bindirmeKur(ad, mod) {
       // açık pozisyon kapatılabilmeli; acil zaten ELLE durdurur ve kalıcı emir onayını kaldırır.
       if (!o.mutabakatsiz) canliKapiGerekli(ad);
       ozet = await y.baglan({ ortam: 'live', apiKey: config.apiKey, apiSecret: config.apiSecret });
+    } else if (mod === 'demo' && yeniKayit) {
+      // 74.5: yeni bot — bağlı demo hesabın anahtarı (Anahtarlar kimliğiyle; bağlanış anında güncel kayıttan, a4 yeniden denetlenir).
+      const an = yeniBotAnahtari(ad, 'demo');
+      ozet = await y.baglan({ ortam: 'testnet', apiKey: an.apiKey, apiSecret: an.apiSecret, veri });
     } else if (mod === 'demo') {
       if (!config.testnetApiKey || !config.testnetApiSecret) throw new Error('Demo anahtarı yok — Borsa sekmesi → API anahtarları → Testnet Key/Secret girin');
       ozet = await y.baglan({ ortam: 'testnet', apiKey: config.testnetApiKey, apiSecret: config.testnetApiSecret, veri });
@@ -874,6 +898,93 @@ for (const ad of BINDIRME_ADLAR) {
   if (b.bot.durum.calisiyor && !ARASTIRMA_MODU && !tasimaLib.botBekliyor(ad)) acilisBaglan(ad, b);   // 68.1: taşıma sonrası mutabakat bekler
   else if (b.bot.durum.calisiyor && tasimaLib.botBekliyor(ad)) db.addLog('WARN', `[${ad}] taşıma dosyasıyla gelindi — bot kendiliğinden başlamadı; önce mutabakat, sonra Başlat`);
 }
+
+/**
+ * 74.5 (A1 + 2. faz parça 2b — TASARIM-MAKINE-HESAP-BOT §2.6–2.10): KULLANICININ OLUŞTURDUĞU BOTLAR. Kayıt TEK kaynak (live/botlar/<kimlik>.json);
+ * açılışta (göçten sonra) yüklenir, panelden (POST /api/botlar) çalışma zamanında eklenir. Her tüketici listeyi BINDIRME_ADLAR / bindirmeler /
+ * saglikBotlar'dan çağrı anında okur. Kurallar: a6 her zaman kâğıtta başlar; a3 yalnız Kairos/Tao kuralı; a4 aynı borsa hesabına ikinci bot
+ * yok (kâğıt hariç); a5 sermaye sabit üst sınır (USD, bakiye azsa bakiye — Ecap = min(E, tavan) bot içinde); CANLI YOK (5. faza kadar);
+ * demo yalnız Binance demo hesabıyla (A2'ye kadar). Kairos/Tao'nun yolu (config.bindirme + çift yazım) DEĞİŞMEDİ.
+ */
+const anahtarlarLib = require('./lib/anahtarlar');
+/** Bot nesnesi → şu an kullandığı borsa hesabı kimliği (kâğıtta null). Kairos/Tao her zaman sabit hesaplar (eski anahtar alanları). */
+function botHesapId(b) {
+  if (!b || b.mod === 'kagit') return null;
+  if (!yeniBotMu(b.ad)) return b.mod === 'demo' ? 'binance-demo' : 'binance-canli';
+  const k = BOT_KAYIT && BOT_KAYIT.kayit(b.ad);
+  return (k && k.hesap && k.hesap[b.mod]) || null;
+}
+/** Anahtarlar hesabı (sır DAHİL — yalnız sunucu içinde; dışarı verilmez). Bilinmeyen → null. */
+function hesapBilgisi(id) {
+  const s = anahtarlarLib.SABIT[id];
+  if (s) return { id, ad: s.ad, borsa: 'binance', tur: s.tur, sabit: true, apiKey: config[s.key] || '', apiSecret: config[s.secret] || '' };
+  const h = ((loadSecrets() || {}).borsaHesaplari || {})[id];
+  if (!h || typeof h !== 'object') return null;
+  return { id, ad: String(h.ad || id).slice(0, 40), borsa: h.borsa || null, tur: h.tur || null, sabit: false, altHesap: h.altHesap || null, apiKey: h.apiKey || '', apiSecret: h.apiSecret || '' };
+}
+/** Hesap bu moda bağlanabilir mi → engel metni | null (A2'ye kadar yalnız Binance; tür moda uymalı; canlı yeni botlara kapalı). */
+function hesapUygunMu(h, mod) {
+  if (mod === 'canli') return YENI_CANLI_RED;
+  if (!h) return 'hesap Anahtarlar\'da bulunamadı (silinmiş olabilir)';
+  if (h.borsa !== 'binance') return 'bu sürümde yalnız Binance hesapları bağlanır (OKX/Bybit 5. fazda)';
+  if (h.tur !== mod) return `hesap türü "${h.tur === 'canli' ? 'canlı' : h.tur || '?'}" — ${mod} moduna yalnız ${mod} hesabı bağlanır`;
+  if (!h.apiKey || !h.apiSecret) return 'hesabın API anahtarı eksik (Ayarlar › Anahtarlar)';
+  return null;
+}
+/** a4: başka bir bot (kâğıt dışı) ya da Borsa sekmesinin eski yürütücüsü bu hesabı kullanıyor mu → engel metni | null. */
+function hesapCakismasi(ad, mod, hesapId) {
+  if (mod === 'kagit' || !hesapId) return null;
+  for (const x of BINDIRME_ADLAR) {
+    if (x === ad) continue;
+    const o = bindirmeler[x];
+    if (o && o.mod !== 'kagit' && botHesapId(o) === hesapId) return `${o.bot.adGorunen} bu hesabı ${o.mod === 'demo' ? 'demo' : 'gerçek para'} modunda kullanıyor — aynı borsa hesabına ikinci bot bağlanamaz (her bot kendi hesabı / alt hesabı)`;
+  }
+  if (hesapId === 'binance-demo' && canli.borsa && canli.ortam === 'testnet') return 'Borsa sekmesinde demo hesaba ayrı bir bağlantı açık — önce onu kesin (aynı hesapta iki yürütücü olmaz)';
+  if (hesapId === 'binance-canli' && canli.borsa && canli.ortam === 'live') return 'Borsa sekmesinde gerçek hesaba ayrı bir bağlantı açık — önce onu kesin';
+  return null;
+}
+/** Yeni botun bağlanış anahtarı (yalnız demo). */
+function yeniBotAnahtari(ad, mod) {
+  if (mod !== 'demo') throw new Error(YENI_CANLI_RED);
+  const k = BOT_KAYIT && BOT_KAYIT.kayit(ad);
+  const id = k && k.hesap ? k.hesap.demo : null;
+  if (!id) throw new Error(`${botEtiketi(ad)}: demo hesabı bağlı değil — Ayarlar › Botlar › Hesap (acil PIN)`);
+  const h = hesapBilgisi(id);
+  const u = hesapUygunMu(h, 'demo');
+  if (u) throw new Error(`${botEtiketi(ad)}: ${u}`);
+  const c = hesapCakismasi(ad, 'demo', id);
+  if (c) throw new Error(c);
+  return { apiKey: h.apiKey, apiSecret: h.apiSecret };
+}
+/** Yeni botu çalışma zamanı listelerine ekler (açılışta ve POST /api/botlar). Sağlık sinyali adresi secrets'tan (bindirmeSaglik). */
+function botEkle(k, { acilis = false } = {}) {
+  const kayit = BOT_KAYIT.kayit(k);
+  if (!kayit) throw new Error(`bot kaydı yok: ${k}`);
+  require('./lib/botAdlari').kaydet(k, kayit.adGorunen || k);
+  if (!saglikBotlar[k]) saglikBotlar[k] = new SaglikSinyali({ ad: `sağlık sinyali (${botEtiketi(k)})`, urlFn: () => botSaglikUrl(config, k), kaydet: (sv, m) => db.addLog(sv, `[SAĞLIK] ${m}`) });
+  let mod = kayit.mod;
+  if (mod === 'canli' || !BINDIRME_MODLAR.includes(mod)) { db.addLog('ERROR', `[BOT KAYDI] ${k}: mod "${mod}" yeni botta kullanılamaz — kâğıt`); mod = 'kagit'; }
+  const b = bindirmeler[k] = bindirmeKur(k, mod);
+  if (!BINDIRME_ADLAR.includes(k)) BINDIRME_ADLAR.push(k);
+  if (acilis && b.bot.durum.calisiyor && !ARASTIRMA_MODU && !tasimaLib.botBekliyor(k)) acilisBaglan(k, b);
+  else if (acilis && b.bot.durum.calisiyor && tasimaLib.botBekliyor(k)) db.addLog('WARN', `[${k}] taşıma dosyasıyla gelindi — bot kendiliğinden başlamadı; önce mutabakat, sonra Başlat`);
+  return b;
+}
+/** Botu çalışma zamanı listelerinden çıkarır (arşiv). Dosyalar ve bot dizini olduğu gibi kalır. */
+function botCikar(k) {
+  const b = bindirmeler[k];
+  if (b) { try { if (b.bot.zamanlayici) b.bot.durdur(); } catch { /* */ } try { if (b.y.borsa) b.y.baglantiyiKes(); } catch { /* */ } }
+  delete bindirmeler[k];
+  delete saglikBotlar[k];
+  const i = BINDIRME_ADLAR.indexOf(k);
+  if (i >= 0) BINDIRME_ADLAR.splice(i, 1);
+}
+try {
+  for (const k of BOT_KAYIT.yukle()) {
+    try { botEkle(k, { acilis: true }); } catch (e) { db.addLog('ERROR', `[BOT KAYDI] ${k}: yüklenemedi — ${e.message}`); }
+  }
+  for (const [k, x] of Object.entries(BOT_KAYIT.arsivliler())) require('./lib/botAdlari').kaydet(k, x.adGorunen || k);   // geçmiş satırlarında ad
+} catch (e) { db.addLog('ERROR', `[BOT KAYDI] yeni botlar yüklenemedi: ${e.message}`); }
 /**
  * Y1 (61.8, DENETIM-CANLI-ALTYAPI): açılışta internet/DNS henüz yoksa bot bir daha denenmiyordu (panelden "Başlat"a kadar ölü).
  * Artık 1 · 2 · 5 · 10 · 30 dk (sonra 30 dk'da bir) yeniden denenir; ALARM ilk hatada değil, 15 dk süren başarısızlıkta
@@ -894,7 +1005,7 @@ function acilisBaglan(ad, b, deneme = 0, ilk = null) {
     db.addLog('ERROR', `[${ad}] açılışta ${etiket} bağlanılamadı (deneme ${deneme + 1}): ${e.message}`);
     if (!b._acilisAlarm && Date.now() - bas >= ACILIS_ALARM_MS) {
       b._acilisAlarm = true;
-      portfoyBildirici.gonder('alarm', `${bindirmeArastirma.STRATEJILER[ad].ad}: açılışta bağlanılamadı`, [e.message, `${Math.round((Date.now() - bas) / 60000)} dakikadır deneniyor; denemeler sürüyor (en çok 30 dk arayla).`]);
+      portfoyBildirici.gonder('alarm', `${botEtiketi(ad)}: açılışta bağlanılamadı`, [e.message, `${Math.round((Date.now() - bas) / 60000)} dakikadır deneniyor; denemeler sürüyor (en çok 30 dk arayla).`]);
     }
     const bekle = ACILIS_DENEME_DK[Math.min(deneme, ACILIS_DENEME_DK.length - 1)] * 60000;
     setTimeout(() => {
@@ -990,7 +1101,7 @@ if (!ARASTIRMA_MODU) {
 /** `:ad` → bot kaydı; bilinmeyen ad 404. */
 function bindirmeBul(req, res) {
   const b = bindirmeler[req.params.ad];
-  if (!b) { res.status(404).json({ success: false, error: `bilinmeyen strateji: ${req.params.ad} (hucum | denge)` }); return null; }
+  if (!b) { res.status(404).json({ success: false, error: `bilinmeyen bot: ${req.params.ad} (${BINDIRME_ADLAR.join(' | ')})` }); return null; }
   return b;
 }
 /** Demo hesabı tek: başka bir portföy botu ya da Borsa sekmesinin Donchian botu aynı hesapta çalışmasın. */
@@ -999,8 +1110,14 @@ function bindirmeDemoCakisma(b) {
   // başlatılamaz/çalıştırılamaz — aynı anahtarla iki yürütücü aynı hesabı yönetir, mutabakat ve K-TEK bozulur.
   if (b.mod === 'canli' && canli.borsa && canli.ortam === 'live') throw new Error('Borsa sekmesinde gerçek hesaba ayrı bir bağlantı açık — önce onu kesin (aynı hesapta iki yürütücü olmaz)');
   if (b.mod !== 'demo') return;
-  for (const ad of BINDIRME_ADLAR) if (ad !== b.ad && bindirmeler[ad].mod === 'demo') throw new Error(`${bindirmeler[ad].bot.adGorunen} zaten demo modunda — tek demo hesapta iki portföy botu mutabakatı bozar`);
-  if (canli.ortam === 'testnet' && donchianBot.durum.calisiyor) throw new Error('Borsa sekmesindeki Donchian botu demo hesapta çalışıyor — önce onu durdurun');
+  // 74.5 (a4): çakışma HESAP bazında — Kairos/Tao ikisi de sabit 'binance-demo' kullandığı için onlarda davranış aynı; başka demo hesaba
+  // bağlı yeni bot bu kuralla Kairos'u engellemez (ayrı hesap).
+  const hid = botHesapId(b);
+  if (!hid) throw new Error(`${b.bot.adGorunen}: demo hesabı bağlı değil — Ayarlar › Botlar › Hesap`);
+  for (const ad of BINDIRME_ADLAR) if (ad !== b.ad && bindirmeler[ad].mod === 'demo' && botHesapId(bindirmeler[ad]) === hid) throw new Error(`${bindirmeler[ad].bot.adGorunen} zaten demo modunda — tek demo hesapta iki portföy botu mutabakatı bozar`);
+  if (hid === 'binance-demo' && canli.ortam === 'testnet' && donchianBot.durum.calisiyor) throw new Error('Borsa sekmesindeki Donchian botu demo hesapta çalışıyor — önce onu durdurun');
+  // §2.10: aynı hesapta iki botun emir kimliği öneki (bd + ilk 2 harf) aynı olamaz (a4 zaten engeller; kimlik kuralı da — üçüncü savunma).
+  for (const ad of BINDIRME_ADLAR) if (ad !== b.ad && bindirmeler[ad].mod !== 'kagit' && botHesapId(bindirmeler[ad]) === hid && ad.slice(0, 2) === b.ad.slice(0, 2)) throw new Error(`${bindirmeler[ad].bot.adGorunen} ile emir kimliği öneki (bd${ad.slice(0, 2)}) aynı hesapta çakışıyor`);
 }
 
 /**
@@ -1008,27 +1125,215 @@ function bindirmeDemoCakisma(b) {
  * okur. Görünen ad: botAdlari (kimlikten) → kaydın adGorunen'i → strateji adı. Yalnız okuma (telefon + araştırma kopyası EV_YOLU ile
  * sunucudan). Sır yok; bot yazma uçları (/api/bindirme/:ad/*) aynen. Yeni bot oluşturma 2b'de.
  */
-function botListesi() {
-  const durumlar = BOT_KAYIT ? BOT_KAYIT.durum() : {};
+/**
+ * 74.5 (A1 2b): yeni botlar da listede (yeni: true); ?arsiv=1 arşivdekileri de verir (arsiv: { zaman }). Her satırda kıyas notu
+ * (yeni Kairos tipi bot: ENGEL eşiği hucum.C0'a göre, kâğıtta yalnız uyarı; küçük sermaye açıksa Kairos-S gölgesi 972 bilgi olarak).
+ */
+function botSatiri(ad, k, b, durumlar) {
   const botAdlari = require('./lib/botAdlari');
-  return BINDIRME_ADLAR.map(ad => {
-    const b = bindirmeler[ad];
-    const k = BOT_KAYIT ? BOT_KAYIT.kayit(ad) : null;
-    const strateji = (k && k.strateji) || ad;
-    const st = bindirmeArastirma.STRATEJILER[strateji] || {};
-    const sablonAd = (k && k.sablon) || botSablonlari.GOC_SABLON[ad] || null;
-    const sb = sablonAd ? botSablonlari.sablon(sablonAd) : null;
-    return { kimlik: ad, adGorunen: botAdlari.ad(ad) || (k && k.adGorunen) || st.ad || ad, motor: 'bindirme', strateji, sablon: sablonAd,
-      aciklama: (sb && sb.aciklama) || st.aciklama || null, mod: b ? b.mod : null, calisiyor: !!(b && b.bot.durum.calisiyor),
-      kayit: durumlar[ad] || { durum: 'eski-yol', neden: 'kayıt yüklenmedi' }, hesap: k ? { ...k.hesap } : null, sermaye: k ? { ...k.sermaye } : null,
-      makine: k ? k.makine : null };
-  });
+  const strateji = (k && k.strateji) || ad;
+  const st = bindirmeArastirma.STRATEJILER[strateji] || {};
+  const sablonAd = (k && k.sablon) || botSablonlari.GOC_SABLON[ad] || null;
+  const sb = sablonAd ? botSablonlari.sablon(sablonAd) : null;
+  const yeni = yeniBotMu(ad);
+  const mod = b ? b.mod : (k ? k.mod : null);
+  let kiyas = null;
+  if (yeni && k) {
+    const tavan = mod === 'demo' ? k.sermaye.demo : k.sermaye.kagit;
+    const kucukAcik = k.kucukSermaye === true || (k.kucukSermaye === 'oto' && +tavan < 5000);
+    let hucumS = null;
+    if (strateji === 'hucum' && kucukAcik) {
+      try { const p = require('./lib/ileri/hucumSGolge').panelVerisi(); hucumS = { deneme: p.deneme, son: (p.ozet && p.ozet.rapor && p.ozet.rapor.son) || null, uc: '/api/ileri/hucum-s' }; }
+      catch { hucumS = { deneme: 972, son: null, uc: '/api/ileri/hucum-s' }; }
+    }
+    kiyas = { model: `${strateji}.C0`, metin: `kıyas: ${botEtiketi(strateji)} modeli (${strateji}.C0) — ENGEL eşiği buna göre${mod === 'kagit' ? '; kâğıtta sapma yalnız uyarı' : ''}`,
+      engelYalnizUyari: mod === 'kagit', kucukSermayeAcik: kucukAcik, hucumS };
+  }
+  const hesapAdi = (id) => { if (!id) return null; const h = hesapBilgisi(id); return h ? h.ad : `${id} (Anahtarlar'da yok)`; };
+  return { kimlik: ad, adGorunen: botAdlari.ad(ad) || (k && k.adGorunen) || st.ad || ad, motor: 'bindirme', strateji, sablon: sablonAd,
+    aciklama: (sb && sb.aciklama) || st.aciklama || null, mod, calisiyor: !!(b && b.bot.durum.calisiyor),
+    kayit: durumlar[ad] || { durum: 'eski-yol', neden: 'kayıt yüklenmedi' }, hesap: k ? { ...k.hesap } : null, sermaye: k ? { ...k.sermaye } : null,
+    makine: k ? k.makine : null,
+    // 74.5
+    yeni, arsiv: (k && k.arsiv) || null, kucukSermaye: k ? k.kucukSermaye : null,
+    hesapAdlari: k && yeni ? { demo: hesapAdi(k.hesap.demo), canli: null } : null,
+    arsivlenebilir: yeni && !!b && b.mod === 'kagit' && !b.bot.durum.calisiyor,
+    canliKapali: yeni, kiyas, olusturma: (k && k.olusturma) || null };
+}
+function botListesi({ arsiv = false } = {}) {
+  const durumlar = BOT_KAYIT ? BOT_KAYIT.durum() : {};
+  const l = BINDIRME_ADLAR.map(ad => botSatiri(ad, BOT_KAYIT ? BOT_KAYIT.kayit(ad) : null, bindirmeler[ad], durumlar));
+  if (arsiv && BOT_KAYIT) for (const [ad, k] of Object.entries(BOT_KAYIT.arsivliler())) l.push(botSatiri(ad, k, null, durumlar));
+  return l;
 }
 app.get('/api/botlar', (req, res) => {
-  try { res.json({ success: true, surum: botKayitLib.SURUM, kaynak: 'kayit', botlar: botListesi() }); }
+  try { res.json({ success: true, surum: botKayitLib.SURUM, kaynak: 'kayit', botlar: botListesi({ arsiv: String((req.query || {}).arsiv || '') === '1' }) }); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
-app.get('/api/botlar/sablonlar', (req, res) => res.json({ success: true, sablonlar: botSablonlari.liste(), olusturma: false }));
+app.get('/api/botlar/sablonlar', (req, res) => res.json({ success: true, sablonlar: botSablonlari.liste(), olusturma: true,
+  sinirlar: { sermayeEnAz: botKayitLib.SERMAYE_EN_AZ, sermayeEnCok: botKayitLib.SERMAYE_EN_COK, kimlik: '2–16 küçük harf/rakam, harfle başlar; ilk iki harf her botta farklı' } }));
+/** 74.5: bağlanabilir borsa hesapları (Anahtarlar) — SIR YOK (yalnız ad, borsa, tür, anahtar var mı, kim kullanıyor). */
+app.get('/api/botlar/hesaplar', (req, res) => {
+  try {
+    const sir = loadSecrets() || {};
+    const idler = [...Object.keys(anahtarlarLib.SABIT), ...Object.keys(sir.borsaHesaplari || {}).filter(id => /^[a-z0-9][a-z0-9-]{1,31}$/.test(id) && !anahtarlarLib.SABIT[id])];
+    const hesaplar = idler.map(id => {
+      const h = hesapBilgisi(id);
+      const kullanan = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(b => b && botHesapId(b) === id).map(b => ({ kimlik: b.ad, ad: b.bot.adGorunen, mod: b.mod }));
+      const bagli = Object.values(BOT_KAYIT ? BOT_KAYIT.kayitlar() : {}).filter(k => yeniBotMu(k.kimlik) && k.hesap && (k.hesap.demo === id || k.hesap.canli === id)).map(k => ({ kimlik: k.kimlik, ad: k.adGorunen || k.kimlik }));
+      const neden = hesapUygunMu(h, h && h.tur === 'canli' ? 'canli' : 'demo');
+      return { id, ad: h ? h.ad : id, borsa: h ? h.borsa : null, tur: h ? h.tur : null, sabit: !!(h && h.sabit), altHesap: (h && h.altHesap) || null,
+        anahtarVar: !!(h && h.apiKey && h.apiSecret), kullanan, bagli, demoyaUygun: !neden && !!h && h.tur === 'demo', neden };
+    });
+    res.json({ success: true, hesaplar });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+/* ── 74.5 YAZMA UÇLARI (yalnız sunucu bilgisayarındaki panel: telefon salt okuma, geliştirme kademesine eklenmedi, araştırmada 403) ── */
+const botYerelDegil = (req, res) => {
+  if ((req.kademe || 'yerel') !== 'yerel') { res.status(403).json({ success: false, error: 'Botlar yalnız sunucu bilgisayarındaki panelden yönetilir (telefon izler, geliştirme bilgisayarı yazamaz).' }); return true; }
+  if (ARASTIRMA_MODU) { res.status(409).json({ success: false, error: 'Bu bilgisayar araştırma kopyası — botlar sunucuda oluşturulur ve yönetilir.' }); return true; }
+  return false;
+};
+/** Acil PIN + onay (anahtarlar.js deseni: yanlış 400, tanımsız 428, kilit 429). null = geçti. */
+function botPinKapisi(g) {
+  if (g.onay !== true) return { durum: 400, govde: { success: false, error: 'Onay gerekli.' } };
+  const r = acilPin.pinDogrula(String(g.pin == null ? '' : g.pin).trim());
+  if (r.ok) return null;
+  if (r.tanimli === false) return { durum: 428, govde: { success: false, pinTanimsiz: true, error: 'Acil PIN bu bilgisayarda tanımlı değil — önce bilgisayar başında `npm run acil-pin` ile PIN belirleyin.' } };
+  return { durum: r.durum === 429 ? 429 : 400, govde: { success: false, pinHatali: true, error: r.hata } };
+}
+const botHata = (res, e) => res.status(e && [400, 404, 409].includes(e.kod) ? e.kod : 500).json({ success: false, error: e ? e.message : 'bilinmeyen hata' });
+/** Kullanılan görünen adlar (yeni botun adı bunlardan farklı olmalı): tablo adları + eski adlar + bütün kayıtlar (arşiv dahil). */
+function doluAdlar() {
+  const BA = require('./lib/botAdlari');
+  const l = [];
+  for (const id of BA.SIRA) l.push(BA.ad(id), BA.eski(id));
+  for (const k of Object.values({ ...(BOT_KAYIT ? BOT_KAYIT.kayitlar() : {}), ...(BOT_KAYIT ? BOT_KAYIT.arsivliler() : {}) })) if (k.adGorunen) l.push(k.adGorunen);
+  return l.filter(Boolean);
+}
+/** POST /api/botlar — şablondan YENİ KÂĞIT bot (PIN yok, onay var — kâğıt, para riski yok). */
+app.post('/api/botlar', (req, res) => {
+  if (botYerelDegil(req, res)) return;
+  const g = req.body || {};
+  if (g.onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+  try {
+    const BA = require('./lib/botAdlari');
+    const kayit = BOT_KAYIT.yeni({ sablon: g.sablon, kimlik: g.kimlik, adGorunen: g.adGorunen, sermaye: g.sermaye, kucukSermaye: g.kucukSermaye },
+      { dolu: doluAdlar(), takma: (k) => !!BA.kimlik(k) });
+    try { botEkle(kayit.kimlik); }
+    catch (e) { try { BOT_KAYIT.arsivle(kayit.kimlik, `kurulamadı: ${e.message}`); } catch { /* */ } throw Object.assign(new Error(`bot kurulamadı (kayıt arşive alındı): ${e.message}`), { kod: 500 }); }
+    db.addLog('INFO', `[BOTLAR] yeni kâğıt bot: ${kayit.adGorunen} (${kayit.kimlik}, ${botSablonlari.sablon(kayit.sablon).ad || kayit.sablon}, üst sınır ${kayit.sermaye.kagit} USD) — durmuş; Başlat ile çalışır`);
+    portfoyBildirici.gonder('bilgi', `Yeni kâğıt bot: ${kayit.adGorunen}`, [`Şablon: ${botSablonlari.sablon(kayit.sablon).ad || kayit.sablon}. Kâğıt hesap (gerçek emir yok), henüz başlatılmadı.`, 'Siz oluşturmadıysanız: Ayarlar › Botlar › Arşivle.']);
+    res.json({ success: true, bot: botSatiri(kayit.kimlik, BOT_KAYIT.kayit(kayit.kimlik), bindirmeler[kayit.kimlik], BOT_KAYIT.durum()) });
+  } catch (e) { botHata(res, e); }
+});
+/** Yeni bot uçlarının ortak girişi: bilinmeyen 404; Kairos/Tao bu uçlarda değişmez (409) — `goc` true ise Kairos/Tao da kabul. */
+function yeniBotBul(req, res, { goc = false } = {}) {
+  const k = String(req.params.k || '');
+  if (!goc && !yeniBotMu(k) && BINDIRME_ADLAR.includes(k)) { res.status(409).json({ success: false, error: `${botEtiketi(k)} sabit hesaplarını ve kendi ayar yolunu kullanır — bu işlem yalnız sizin oluşturduğunuz botlarda` }); return null; }
+  const b = bindirmeler[k];
+  if (!b) { res.status(404).json({ success: false, error: BOT_KAYIT && BOT_KAYIT.arsivKayit(k) ? 'bot arşivde — önce geri getirin' : `bilinmeyen bot: ${k}` }); return null; }
+  return b;
+}
+/** POST /api/botlar/:k/hesap { mod: 'demo', hesap: <Anahtarlar kimliği> | null, pin, onay: true } — acil PIN + onay. */
+app.post('/api/botlar/:k/hesap', (req, res) => {
+  if (botYerelDegil(req, res)) return;
+  const b = yeniBotBul(req, res); if (!b) return;
+  const g = req.body || {};
+  const mod = String(g.mod || '');
+  if (mod === 'canli') return res.status(409).json({ success: false, error: YENI_CANLI_RED });
+  if (mod !== 'demo') return res.status(400).json({ success: false, error: 'mod "demo" olmalı (kâğıt hesap borsa hesabı istemez)' });
+  const id = g.hesap == null || g.hesap === '' ? null : String(g.hesap);
+  if (id !== null && !/^[a-z0-9][a-z0-9-]{1,39}$/.test(id)) return res.status(400).json({ success: false, error: 'hesap kimliği geçersiz' });
+  if (b.mod === mod) return res.status(409).json({ success: false, error: `${b.bot.adGorunen} şu an ${mod} modunda — hesap çalışırken değişmez; önce kâğıda dönün` });
+  let h = null;
+  if (id) {
+    h = hesapBilgisi(id);
+    const u = hesapUygunMu(h, mod);
+    if (u) return res.status(400).json({ success: false, error: u });
+  }
+  const pk = botPinKapisi(g);
+  if (pk) return res.status(pk.durum).json(pk.govde);
+  try {
+    if (id) { const c = hesapCakismasi(b.ad, mod, id); if (c) return res.status(409).json({ success: false, error: c }); }
+    const yeni = BOT_KAYIT.guncelle(b.ad, (c) => { c.hesap = { ...(c.hesap || {}), [mod]: id }; }, id ? 'hesap bağlandı' : 'hesap bağı kaldırıldı');
+    db.addLog('INFO', `[BOTLAR] ${b.bot.adGorunen}: ${mod} hesabı ${id ? `→ ${h.ad} (${id})` : 'bağı kaldırıldı'}`);
+    const baskasi = id ? Object.values(BOT_KAYIT.kayitlar()).filter(x => x.kimlik !== b.ad && x.hesap && x.hesap[mod] === id).map(x => x.adGorunen || x.kimlik) : [];
+    res.json({ success: true, hesap: { ...yeni.hesap }, uyari: baskasi.length ? `${baskasi.join(', ')} de bu hesaba bağlı — aynı anda yalnız biri ${mod} modunda olabilir (a4).` : null,
+      bot: botSatiri(b.ad, yeni, bindirmeler[b.ad], BOT_KAYIT.durum()) });
+  } catch (e) { botHata(res, e); }
+});
+/**
+ * POST /api/botlar/:k/sermaye { mod: 'kagit' | 'demo', tutar (USD), pin?, onay: true } — a5 sermaye üst sınırı. Kâğıtta onay; demoda ARTIŞ acil PIN
+ * ister (azaltma risk düşürür). Bot durmuşken. Kairos/Tao da (çift yazımla config.bindirme); Kairos demo kabulü süresince Kairos demo sınırı
+ * değişmez. Gerçek para üst sınırı bu uçtan değişmez (canlı kapısı + onaylı üst sınır).
+ */
+app.post('/api/botlar/:k/sermaye', (req, res) => {
+  if (botYerelDegil(req, res)) return;
+  const b = yeniBotBul(req, res, { goc: true }); if (!b) return;
+  const g = req.body || {};
+  const mod = String(g.mod || '');
+  if (mod === 'canli') return res.status(409).json({ success: false, error: yeniBotMu(b.ad) ? YENI_CANLI_RED : 'Gerçek para üst sınırı bu ekrandan değişmez — canlı kapısı ve onaylı üst sınır (PLAN-GERCEK-PARA-2027).' });
+  if (!['kagit', 'demo'].includes(mod)) return res.status(400).json({ success: false, error: 'mod kagit | demo olmalı' });
+  if (g.onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+  const tutar = typeof g.tutar === 'string' && /^\d+(\.\d{1,2})?$/.test(g.tutar.trim()) ? +g.tutar.trim() : g.tutar;
+  const sh = botKayitLib.sermayeHatasi(tutar);
+  if (sh) return res.status(400).json({ success: false, error: sh });
+  if (b.bot.durum.calisiyor || b.bot.mesgul) return res.status(409).json({ success: false, error: 'önce botu durdurun (sermaye üst sınırı bot çalışırken değişmez)' });
+  if (b.ad === 'hucum' && mod === 'demo' && Date.now() < VeriKalitesi.KORUMA_BITIS) return res.status(409).json({ success: false, error: `Kairos demo kabulü ${new Date(VeriKalitesi.KORUMA_BITIS).toISOString().slice(0, 10)} sonuna kadar sürüyor — Kairos'un demo sermaye sınırı bu süre içinde değişmez.` });
+  const a = bindirmeAyar(b.ad);
+  const simdiki = mod === 'demo' ? +a.demoSermayeTavani : +a.sermayeTavani;
+  const t = Math.round(tutar * 100) / 100;
+  if (t === simdiki) return res.json({ success: true, degismedi: true, tutar: t });
+  if (mod === 'demo' && t > simdiki) { const pk = botPinKapisi(g); if (pk) return res.status(pk.durum).json(pk.govde); }
+  try {
+    if (yeniBotMu(b.ad)) {
+      const kagitDosyaVar = fs.existsSync(path.join(bindirmeDizin(b.ad, 'kagit'), 'kagit-borsa.json'));
+      BOT_KAYIT.guncelle(b.ad, (c) => { c.sermaye = { ...c.sermaye, [mod]: t }; if (mod === 'kagit' && !kagitDosyaVar) c.kagitBakiye = t; }, 'sermaye üst sınırı');
+    } else {
+      const alan = mod === 'demo' ? 'demoSermayeTavani' : 'sermayeTavani';
+      const onceki = (config.bindirme || {})[b.ad] || {};
+      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, [alan]: t } };
+      saveConfig(config);
+    }
+    if (b.mod === mod) {
+      if (b.y.borsa) b.y.baglantiyiKes();
+      if (b.bot.zamanlayici) b.bot.durdur();
+      bindirmeler[b.ad] = bindirmeKur(b.ad, mod);
+    }
+    db.addLog('INFO', `[BOTLAR] ${b.bot.adGorunen}: ${mod === 'demo' ? 'demo' : 'kâğıt'} sermaye üst sınırı ${simdiki} → ${t} USD`);
+    res.json({ success: true, mod, eski: simdiki, tutar: t });
+  } catch (e) { botHata(res, e); }
+});
+/** POST /api/botlar/:k/arsivle { onay: true } — yalnız kâğıtta ve durmuş yeni bot; dosyalar SİLİNMEZ (kayıtta arsiv, bot dizini yerinde). */
+app.post('/api/botlar/:k/arsivle', (req, res) => {
+  if (botYerelDegil(req, res)) return;
+  if (!yeniBotMu(String(req.params.k || ''))) return res.status(409).json({ success: false, error: 'Kairos ve Tao arşivlenemez' });
+  const b = yeniBotBul(req, res); if (!b) return;
+  if ((req.body || {}).onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+  if (b.mod !== 'kagit') return res.status(409).json({ success: false, error: 'yalnız kâğıt moddaki bot arşivlenir — önce kâğıda dönün' });
+  if (b.bot.durum.calisiyor || b.bot.mesgul || (typeof b.bot.calismaSuruyor === 'function' && b.bot.calismaSuruyor())) return res.status(409).json({ success: false, error: 'önce botu durdurun' });
+  try {
+    const ad = b.bot.adGorunen;
+    BOT_KAYIT.arsivle(b.ad, 'panel');
+    botCikar(b.ad);
+    db.addLog('INFO', `[BOTLAR] ${ad} (${b.ad}) arşivlendi — kayıt ve kâğıt hesap dosyaları silinmedi (data/live/${b.ad}); geri getirilebilir`);
+    res.json({ success: true, arsiv: true });
+  } catch (e) { botHata(res, e); }
+});
+/** POST /api/botlar/:k/geri-getir { onay: true } — arşivden kâğıtta geri getirir (durmuş). */
+app.post('/api/botlar/:k/geri-getir', (req, res) => {
+  if (botYerelDegil(req, res)) return;
+  const k = String(req.params.k || '');
+  if ((req.body || {}).onay !== true) return res.status(400).json({ success: false, error: 'Onay gerekli.' });
+  try {
+    BOT_KAYIT.geriGetir(k);
+    botEkle(k);
+    db.addLog('INFO', `[BOTLAR] ${botEtiketi(k)} (${k}) arşivden geri getirildi (kâğıt, durmuş)`);
+    res.json({ success: true, bot: botSatiri(k, BOT_KAYIT.kayit(k), bindirmeler[k], BOT_KAYIT.durum()) });
+  } catch (e) { botHata(res, e); }
+});
 
 /** Panelin mod rozeti: paper motor mu, testnet mi, canlı mı. */
 const borsaModu = () => (canli.borsa ? canli.ortam : 'paper');
@@ -1205,7 +1510,7 @@ const ozDenetim = new OzDenetim({
   dizin: yollar.veri('oz-denetim'), bildirici: portfoyBildirici, kaydet: (sv, m) => db.addLog(sv, m),
   ctx: {
     botlar: () => BINDIRME_ADLAR.map(ad => bindirmeler[ad]).filter(Boolean).map(b => ({ ad: b.ad, mod: b.mod, adGorunen: b.bot.adGorunen, dizin: b.dizin,
-      etiket: bindirmeArastirma.STRATEJILER[b.ad].ad.toLocaleUpperCase('tr-TR') + (b.mod === 'demo' ? '·DEMO' : ''), bot: b.bot, y: b.y })),
+      etiket: botEtiketi(b.ad).toLocaleUpperCase('tr-TR') + (b.mod === 'demo' ? '·DEMO' : ''), bot: b.bot, y: b.y })),
     disk: () => { try { const st = fs.statfsSync(__dirname); return { bosGB: +((st.bavail * st.bsize) / 1e9).toFixed(1), toplamGB: +((st.blocks * st.bsize) / 1e9).toFixed(1) }; } catch (e) { return { hata: e.message }; } },
     bellekMB: () => Math.round(process.memoryUsage().rss / 1048576),
     denetleyici: () => { try { return JSON.parse(fs.readFileSync(yollar.veri('denetleyici.json'), 'utf8')); } catch { return null; } },
@@ -1228,7 +1533,7 @@ const ozDenetim = new OzDenetim({
       imza: (d.imza && d.imza.durum && d.imza.durum !== 'atlandi') ? d.imza.durum : (fs.existsSync(guncelleme.imzaDosyasi(__dirname)) ? 'kurulu' : 'kurulmadi') }; },
     telegram: () => ({ ...portfoyBildirici.durum(), gecmis: portfoyBildirici.gecmis, kuyruk: portfoyBildirici._kuyrukOku().length,
       komut: (() => { try { return telegramYoklayici.durum(); } catch { return null; } })() }),   // 73.6 (S05) komut yoklaması
-    sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: bindirmeArastirma.STRATEJILER[ad].ad, ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
+    sinyal: () => [...BINDIRME_ADLAR.map(ad => ({ ad: botEtiketi(ad), ...saglikBotlar[ad].durum() })), { ad: 'sunucu', sunucu: true, ...saglikSunucu.durum() }],
     kalp: (b) => isletim.kalpOku(b.dizin),
     gunlukDizin: () => yollar.veri('gunluk'),
     ag: ozAgOlc,
@@ -2011,7 +2316,8 @@ app.post('/api/exchange/connect', async (req, res) => {
     }
     if (ortam === 'live' && onay !== 'CANLI') throw new Error('canlı bağlantı için onay metni "CANLI" gerekli');
     // 62.1: portföy botu gerçek paradayken aynı hesaba ikinci yürütücü bağlanmaz; demo hesapta da aynısı (D6).
-    const ayniHesap = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).find(b => b && ((ortam === 'live' && b.mod === 'canli') || (ortam === 'testnet' && b.mod === 'demo' && b.bot.durum.calisiyor)));
+    // 74.5: yalnız AYNI hesabı (sabit Binance demo / canlı anahtarı) kullanan bot sayılır — başka demo hesaba bağlı yeni bot çakışmaz.
+    const ayniHesap = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).find(b => b && botHesapId(b) === (ortam === 'live' ? 'binance-canli' : 'binance-demo') && ((ortam === 'live' && b.mod === 'canli') || (ortam === 'testnet' && b.mod === 'demo' && b.bot.durum.calisiyor)));
     if (ayniHesap) throw new Error(`${ayniHesap.bot.adGorunen} bu hesapta (${ortam === 'live' ? 'gerçek para' : 'demo'}) çalışıyor — aynı hesaba ikinci bağlantı açılmaz`);
     const anahtar = ortam === 'testnet'
       ? { apiKey: config.testnetApiKey, apiSecret: config.testnetApiSecret }
@@ -2089,7 +2395,7 @@ app.post('/api/exchange/bot', async (req, res) => {
     // Denetim D6 (62.1): Borsa sekmesinin Donchian botu, aynı hesabı kullanan portföy botuyla birlikte çalışamaz (ters yön
     // bindirmeDemoCakisma'da vardı): demo hesapta Hücum demo'dayken, gerçek hesapta Hücum gerçek paradayken başlatma/çalıştırma reddedilir.
     if (eylem === 'baslat' || eylem === 'simdi') {
-      const ayni = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).find(b => b && ((canli.ortam === 'testnet' && b.mod === 'demo') || (canli.ortam === 'live' && b.mod === 'canli')));
+      const ayni = BINDIRME_ADLAR.map(ad => bindirmeler[ad]).find(b => b && botHesapId(b) === (canli.ortam === 'live' ? 'binance-canli' : 'binance-demo') && ((canli.ortam === 'testnet' && b.mod === 'demo') || (canli.ortam === 'live' && b.mod === 'canli')));   // 74.5: hesap bazında
       if (ayni) throw new Error(`${ayni.bot.adGorunen} aynı hesapta (${ayni.mod === 'demo' ? 'demo' : 'gerçek'}) çalışıyor — iki bot aynı hesapta mutabakatı bozar`);
     }
     if (eylem === 'baslat') donchianBot.baslat();
@@ -2154,7 +2460,7 @@ let bindirmeOlcumOnbellek = null;
 function bindirmeOlcumKur() {
   const A = bindirmeArastirma;
   const out = { zaman: Date.now(), stratejiler: {}, ortak: null };
-  for (const ad of BINDIRME_ADLAR) {
+  for (const ad of STRATEJI_ADLAR) {   // 74.5: ölçüm strateji başına (yeni botlar aynı kuralı paylaşır)
     const t = A.STRATEJILER[ad];
     const s = A.bindirmeSonuc({ btcPay: t.btcPay, bootstrap: true });
     out.stratejiler[ad] = { ad: t.ad, aciklama: t.aciklama, btcPay: t.btcPay, kayit: t.kayit, egri: s.egri, metrik: s.metrik, yillik: s.yillik.strateji, btcIslemler: s.btcIslemler, marj: s.marj };
@@ -2228,6 +2534,18 @@ app.post('/api/bindirme/:ad/mod', async (req, res) => {
     const mod = String((req.body || {}).mod || '');
     if (!BINDIRME_MODLAR.includes(mod)) throw new Error(`mod kagit | demo | canli olmalı`);
     if (mod === b.mod) return res.json({ success: true, mod });
+    if (yeniBotMu(b.ad)) {
+      // 74.5: yeni bot — canlı TAMAMEN kapalı; demo yalnız bağlı Binance demo hesabıyla ve a4 temizse (PIN: masaüstünde yerel PIN kapısı).
+      if (mod === 'canli') return res.status(409).json({ success: false, error: YENI_CANLI_RED });
+      if (mod === 'demo') {
+        const id = ((BOT_KAYIT.kayit(b.ad) || {}).hesap || {}).demo;
+        if (!id) return res.status(409).json({ success: false, error: `${b.bot.adGorunen}: demo hesabı bağlı değil — önce Ayarlar › Botlar › Hesap (acil PIN)` });
+        const u = hesapUygunMu(hesapBilgisi(id), 'demo');
+        if (u) return res.status(409).json({ success: false, error: u });
+        const c = hesapCakismasi(b.ad, 'demo', id);
+        if (c) return res.status(409).json({ success: false, error: c });
+      }
+    }
     if (mod === 'canli') {
       canliKapiGerekli(b.ad);
       if (String((req.body || {}).onay || '').trim().toLocaleUpperCase('tr-TR') !== 'GERÇEK PARA') throw new Error('gerçek paraya geçiş onayı: "GERÇEK PARA" yazılmalı');
@@ -2248,9 +2566,12 @@ app.post('/api/bindirme/:ad/mod', async (req, res) => {
     if (b.y.borsa) b.y.baglantiyiKes();
     if (b.bot.zamanlayici) b.bot.durdur();
     bindirmeler[b.ad] = yeni;
-    const onceki = (config.bindirme || {})[b.ad] || {};
-    config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, mod } };
-    saveConfig(config);
+    if (yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.mod = mod; }, 'mod');   // 74.5: yeni bot — kayıt tek kaynak
+    else {
+      const onceki = (config.bindirme || {})[b.ad] || {};
+      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, mod } };
+      saveConfig(config);
+    }
     db.addLog(mod === 'canli' ? 'WARN' : 'INFO', `[${b.ad}] mod: ${mod === 'demo' ? 'DEMO hesap (BTC ayağı perp LONG — demo yaklaşımı)' : mod === 'canli' ? '⚠ GERÇEK PARA (çoklu varlık; kapı açık)' : 'kâğıt'}`);
     if (mod === 'canli') portfoyBildirici.gonder('alarm', `${yeni.bot.adGorunen}: GERÇEK PARA moduna geçildi`, ['Bot henüz başlamadı: emir onayı (CANLI) ve Başlat gerekir. Siz değilseniz hemen moda geri dönün.'], { anahtar: `canli-mod:${Date.now()}` });
     res.json({ success: true, mod });
@@ -2269,9 +2590,12 @@ app.post('/api/bindirme/:ad/kucuk-sermaye', (req, res) => {
     if (b.bot.durum.calisiyor) throw new Error('önce botu durdurun');
     const v = KUCUK_SECIMLER[anahtar];
     b.bot.ayar.kucukSermaye = v; b.bot.kol.ayar.kucukSermaye = v;
-    const onceki = (config.bindirme || {})[b.ad] || {};
-    config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, kucukSermaye: v } };
-    saveConfig(config);
+    if (yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.kucukSermaye = v; }, 'küçük sermaye');   // 74.5: yeni bot — kayıt tek kaynak
+    else {
+      const onceki = (config.bindirme || {})[b.ad] || {};
+      config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, kucukSermaye: v } };
+      saveConfig(config);
+    }
     db.addLog('INFO', `[${b.ad}] küçük sermaye (Kairos-S): ${anahtar}`);
     res.json({ success: true, secim: anahtar, bot: b.bot.ozet() });
   } catch (err) { borsaHata(res, err); }
@@ -2297,7 +2621,8 @@ app.post('/api/bindirme/:ad/kagit-sifirla', (req, res) => {
     if (b.y.borsa) b.y.baglantiyiKes();
     if (b.bot.zamanlayici) b.bot.durdur();
     const r = kagitSifirlaLib.sifirla({ ...durum, simdi: Date.now() });
-    if (yeniAyak != null) {
+    if (yeniAyak != null && yeniBotMu(b.ad)) BOT_KAYIT.guncelle(b.ad, (c) => { c.btcAyak = yeniAyak; }, 'BTC ayağı (kâğıt sıfırlama)');   // 74.5
+    else if (yeniAyak != null) {
       const onceki = (config.bindirme || {})[b.ad] || {};
       config.bindirme = { ...(config.bindirme || {}), [b.ad]: { ...onceki, btcAyak: yeniAyak } };
       saveConfig(config);
@@ -2471,7 +2796,8 @@ const { HesapIslemleri } = require('./lib/live/hesapIslemleri');
 const hesapIslemleri = new HesapIslemleri(path.join(CANLI_DIZIN, 'hesap-islemleri.jsonl'), { kaydet: (sv, m) => db.addLog(sv, `[HESAP] ${m}`) });
 const tarihBas = (g) => (/^\d{4}-\d{2}-\d{2}$/.test(String(g || '')) ? Date.parse(`${g}T00:00:00Z`) : null);
 const tarihBit = (g) => (/^\d{4}-\d{2}-\d{2}$/.test(String(g || '')) ? Date.parse(`${g}T23:59:59.999Z`) : null);
-function bindirmeHesapAdi(b) { return b.y.borsa ? (b.y.ortam === 'kagit' ? `kagit-${b.ad}` : b.y.ortam) : (b.mod === 'demo' ? 'testnet' : `kagit-${b.ad}`); }
+/** 74.5: yeni bot Anahtarlar'daki AYRI bir demo hesaba bağlıysa o hesabın adıyla (demo-<kimlik>) — Kairos'un "testnet" defteriyle karışmasın. */
+function bindirmeHesapAdi(b) { const hid = yeniBotMu(b.ad) ? botHesapId(b) : null; if (hid && !anahtarlarLib.SABIT[hid]) return `demo-${hid}`; return b.y.borsa ? (b.y.ortam === 'kagit' ? `kagit-${b.ad}` : b.y.ortam) : (b.mod === 'demo' ? 'testnet' : `kagit-${b.ad}`); }
 
 /** Bağlı yürütücüler → hesap grupları (aynı hesabı paylaşan defterler birlikte sınıflanır). */
 function hesapGruplari() {
@@ -2632,11 +2958,11 @@ function ileriCalistir(neden) {
         db.addLog(o.eksik.length || o.golgeHata ? 'WARN' : 'INFO', `[İLERİ] Bollinger ileri kayıt (${neden}): +${o.yeniSatir} satır${o.gecikmeliSatir ? ` (${o.gecikmeliSatir} gecikmeli)` : ''}, gölge +${o.golgeYeni}, ${o.kaydedilenSeri}/37 seri${o.eksik.length ? ` · indirilemeyen: ${o.eksik.map(e => e.seri).join(', ')}` : ''}${o.golgeHata ? ` · gölge hatası: ${o.golgeHata}` : ''} (${(o.sureMs / 1000).toFixed(0)} sn)`);
         // PLAN-ILERI-HUCUM-DENGE A: gölge ileri MaxDD > p99 → "DUR" (yalnız gösterge + alarm; kural değişmez).
         const golge = isletim.golgeOku(GOLGE_DOSYA);
-        for (const ad of BINDIRME_ADLAR) {
+        for (const ad of STRATEJI_ADLAR) {   // 74.5: model gölgesi strateji başına (yeni botların kendi modeli yok)
           const md = isletim.golgeModelDurumu(golge, ad);
           if (md.durum === 'DUR' || md.durum === 'uyari') {
-            db.addLog(md.durum === 'DUR' ? 'ERROR' : 'WARN', `[İLERİ] ${bindirmeArastirma.STRATEJILER[ad].ad} gölge: ${md.metin}`);
-            portfoyBildirici.gonder(md.durum === 'DUR' ? 'alarm' : 'uyari', `${bindirmeArastirma.STRATEJILER[ad].ad} ileri veri: ${md.durum === 'DUR' ? 'DUR' : 'uyarı'}`, [md.metin], { anahtar: `model:${ad}:${md.durum}`, kisitMs: 24 * 3600e3 });
+            db.addLog(md.durum === 'DUR' ? 'ERROR' : 'WARN', `[İLERİ] ${botEtiketi(ad)} gölge: ${md.metin}`);
+            portfoyBildirici.gonder(md.durum === 'DUR' ? 'alarm' : 'uyari', `${botEtiketi(ad)} ileri veri: ${md.durum === 'DUR' ? 'DUR' : 'uyarı'}`, [md.metin], { anahtar: `model:${ad}:${md.durum}`, kisitMs: 24 * 3600e3 });
             // C1 (PLAN-GERCEK-PARA-2027 §7): gerçek parada ileri test DUR → acil durdurma + ENGEL (yeniden değerlendirme).
             const bc = bindirmeler[ad];
             if (md.durum === 'DUR' && bc && bc.mod === 'canli' && !(bc.bot.durum.engel || '').startsWith('ileri test DUR')) {
@@ -2740,14 +3066,14 @@ function sirlariUygula(govde0) {
     for (const [ad, v] of Object.entries(botGovde)) {
       if (!BINDIRME_ADLAR.includes(ad) || ad === 'hucum') return red(400, `botSaglik.${ad}: bilinmeyen bot (Kairos'un adresi healthchecksUrl alanında)`);
       const u = typeof v === 'string' ? v.trim() : '';
-      if (u && !saglikUrlGecerli(u)) return red(400, `${bindirmeArastirma.STRATEJILER[ad].ad} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
+      if (u && !saglikUrlGecerli(u)) return red(400, `${botEtiketi(ad)} ping URL'si geçersiz — healthchecks ping URL'sini olduğu gibi yapıştırın (https://hc-ping.com/...)`);
     }
   }
   {
     // Kayıttan SONRAKİ adresler birbirinden farklı olmalı: her bot ve sunucu kalp atışı AYRI check (aynı URL bir botun durmasını gizler).
     const yeni = (k, eski) => (k in govde ? (typeof govde[k] === 'string' ? govde[k].trim() : '') : eski);
     const sonra = [[bindirmeArastirma.STRATEJILER.hucum.ad, yeni('healthchecksUrl', config.healthchecksUrl || '')], ['sunucu kalp atışı', yeni('healthchecksSunucuUrl', config.healthchecksSunucuUrl || '')],
-      ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [bindirmeArastirma.STRATEJILER[a].ad, botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
+      ...BINDIRME_ADLAR.filter(a => a !== 'hucum').map(a => [botEtiketi(a), botGovde && a in botGovde ? (typeof botGovde[a] === 'string' ? botGovde[a].trim() : '') : botSaglikUrl(config, a)])].filter(([, u]) => u);
     for (let i = 0; i < sonra.length; i++) for (let j = i + 1; j < sonra.length; j++) {
       if (sonra[i][1] === sonra[j][1]) return red(400, `${sonra[i][0]} ile ${sonra[j][0]} aynı ping URL'si olamaz — her bot (ve sunucu kalp atışı) healthchecks.io'da ayrı bir check olmalı; aynı adres bir botun durmasını gizler.`);
     }
@@ -2790,7 +3116,7 @@ function sirlariUygula(govde0) {
   const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k) || k.startsWith('botSaglik.'));
   const anahtarDegisti = degisen.some(k => !SAGLIK_URL_KEYS.includes(k) && !k.startsWith('botSaglik.'));
   if (anahtarDegisti) db.addLog('INFO', 'Borsa API anahtarları güncellendi.');
-  if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: ${BINDIRME_ADLAR.map(a => `${bindirmeArastirma.STRATEJILER[a].ad} ${saglikBotlar[a].ayarli() ? 'ayarlı' : 'yok'}`).join(' · ')} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
+  if (saglikDegisti) db.addLog('INFO', `Sağlık sinyali (healthchecks) ayarı güncellendi: ${BINDIRME_ADLAR.map(a => `${botEtiketi(a)} ${saglikBotlar[a].ayarli() ? 'ayarlı' : 'yok'}`).join(' · ')} · sunucu ${saglikSunucu.ayarli() ? 'ayarlı' : 'yok'}.`);
   return { durum: 200, govde: { success: true, sirlar: disariConfig().sirlar, degisen } };
 }
 
@@ -3660,6 +3986,7 @@ app.get('/api/makine/nabiz', (req, res) => {
  * GET /api/rapor/liste · GET /api/rapor?tur=&bas= · POST /api/rapor/olustur { tur, gun, telegram }.
  */
 const RAPOR = require('./lib/rapor').olusturucu({ kok: __dirname, port: process.env.PORT || 3000, log: (lv, msg) => db.addLog(lv, msg),
+  botlar: () => BINDIRME_ADLAR.slice(),   // 74.5: yeni botlar da raporda (çağrı anında okunur)
   gonder: (metin) => engine.telegram.sendMessageDetailed(metin) });
 app.use(require('./lib/rapor').router(RAPOR));
 if (!ARASTIRMA_MODU && process.env.RAPOR !== '0') RAPOR.baslat();
@@ -3712,7 +4039,9 @@ const anahtarlar = require('./lib/anahtarlar').olustur({
   sir: { oku: loadSecrets, yaz: saveSecrets, kilit: () => SIRLAR_KILITLI },
   acilPin, veri: (ad) => yollar.veri(ad), log: (lv, msg) => db.addLog(lv, msg),
   bilgi: () => ({
-    botlar: BINDIRME_ADLAR.map(ad => ({ kimlik: ad, ad: require('./lib/botAdlari').ad(ad) || ad, mod: bindirmeler[ad] ? bindirmeler[ad].mod : null })),
+    // 74.5: hesapId (şu an kullandığı Anahtarlar hesabı) + hesap (yeni botun bağları) — Anahtarlar 'kullanan' sütunu hesap bazında
+    botlar: BINDIRME_ADLAR.map(ad => ({ kimlik: ad, ad: require('./lib/botAdlari').ad(ad) || ad, mod: bindirmeler[ad] ? bindirmeler[ad].mod : null,
+      hesapId: botHesapId(bindirmeler[ad]), hesap: yeniBotMu(ad) && BOT_KAYIT && BOT_KAYIT.kayit(ad) ? { ...BOT_KAYIT.kayit(ad).hesap } : null })),
     telegramAcik: !!(config.telegram && config.telegram.enabled), panelJetonuEnv: (process.env.PANEL_TOKEN || '').length >= 24,
     gelistirmeJetonu: fs.existsSync(guvenlikKur.gelistirmeJetonYolu(__dirname))
   }),
@@ -4224,7 +4553,7 @@ app.post('/api/saglik/test', async (req, res) => {
   const botlar = {};
   for (const ad of BINDIRME_ADLAR) botlar[ad] = await tek(saglikBotlar[ad]);
   const sonuc = { bot: botlar.hucum, botlar, sunucu: await tek(saglikSunucu) };
-  const hepsi = [...BINDIRME_ADLAR.map(a => [bindirmeArastirma.STRATEJILER[a].ad, botlar[a]]), ['sunucu', sonuc.sunucu]];
+  const hepsi = [...BINDIRME_ADLAR.map(a => [botEtiketi(a), botlar[a]]), ['sunucu', sonuc.sunucu]];
   const herhangi = hepsi.some(([, x]) => x.ayarli);
   const hepsiOk = hepsi.every(([, x]) => !x.ayarli || x.ok);
   if (herhangi) db.addLog(hepsiOk ? 'SUCCESS' : 'WARN', `Sağlık sinyali testi: ${hepsi.map(([a, x]) => `${a} ${x.ayarli ? (x.ok ? 'gönderildi' : `başarısız (${x.hata})`) : 'ayarlı değil'}`).join(' · ')}`);
@@ -4233,7 +4562,7 @@ app.post('/api/saglik/test', async (req, res) => {
 });
 
 app.get('/api/saglik/durum', (req, res) => {
-  res.json({ success: true, bot: saglikBot.durum(), botlar: Object.fromEntries(BINDIRME_ADLAR.map(a => [a, { ad: bindirmeArastirma.STRATEJILER[a].ad, ...saglikBotlar[a].durum() }])),
+  res.json({ success: true, bot: saglikBot.durum(), botlar: Object.fromEntries(BINDIRME_ADLAR.map(a => [a, { ad: botEtiketi(a), ...saglikBotlar[a].durum() }])),
     sunucu: saglikSunucu.durum(), telegramKomut: telegramYoklayici.durum() });
 });
 

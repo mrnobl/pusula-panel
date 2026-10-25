@@ -273,6 +273,17 @@
     /* ── Hücum / Denge (bindirme; yalnız kâğıt borsa) ─────────────────── */
     /** 74.4: bot listesi kayıttan (live/botlar) — Botlar sayfası sekmeleri ve Ayarlar › Botlar bu sırayla. */
     botlar: () => al('/api/botlar'),
+    /** 74.5 (A1 2b): bot kaydı yönetimi (Ayarlar › Botlar › Bot kayıtları) — yalnız sunucunun kendi panelinden yazılır. */
+    botKayit: {
+      liste: () => al('/api/botlar?arsiv=1'),
+      sablonlar: () => al('/api/botlar/sablonlar'),
+      hesaplar: () => al('/api/botlar/hesaplar'),
+      olustur: (govde) => gonder('/api/botlar', { ...govde, onay: true }),
+      hesap: (k, mod, hesap, pin) => gonder(`/api/botlar/${q(k)}/hesap`, { mod, hesap, pin, onay: true }),
+      sermaye: (k, mod, tutar, pin) => gonder(`/api/botlar/${q(k)}/sermaye`, { mod, tutar, ...(pin ? { pin } : {}), onay: true }),
+      arsivle: (k) => gonder(`/api/botlar/${q(k)}/arsivle`, { onay: true }),
+      geriGetir: (k) => gonder(`/api/botlar/${q(k)}/geri-getir`, { onay: true })
+    },
     bindirmeDurum: (ad) => al(`/api/bindirme/${q(ad)}/durum`),
     bindirmeEylem: (ad, eylem) => tetikle(`/api/bindirme/${q(ad)}/${q(eylem)}`),
     /** Telefondan acil durdurma (60.5): gövdede acil PIN + onay "DURDUR" (sunucu lib/acilPin.js denetler). */

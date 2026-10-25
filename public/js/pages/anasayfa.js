@@ -26,7 +26,14 @@
   const doc = global.document;
   const D = () => AG.botDil;
 
+  /** 74.5: bot listesi yerinde güncellenir — Botlar sayfasıyla aynı kaynak (GET /api/botlar; kullanıcının oluşturduğu botlar dahil). */
   const BOTLAR = ['hucum', 'denge'];
+  async function listeTazele() {
+    try {
+      const l = AG.pages && AG.pages.botlar && AG.pages.botlar.listeYukle ? await AG.pages.botlar.listeYukle(false) : null;
+      if (Array.isArray(l) && l.length) { BOTLAR.length = 0; BOTLAR.push(...l); }
+    } catch (e) { /* liste alınamadı — son bilinen */ }
+  }
   const YENILEME_MS = 60000;
   const GRAFIK_MS = 5 * 60000;
   const DILIM_SINIRI = 7;
@@ -240,7 +247,7 @@
   }
 
   function botKarti(ad, d, bugun, egri) {
-    const yedekAd = BA(ad, ad === 'hucum' ? 'Kairos' : 'Tao');
+    const yedekAd = BA(ad, ad === 'hucum' ? 'Kairos' : ad === 'denge' ? 'Tao' : ad);
     if (!d || !d.success || !d.bot) {
       return el('div', { class: `saglik-kart ana-bot ana-bot-${ad}`, id: `anaBot-${ad}` }, [
         el('div', { class: 'saglik-ust' }, [el('strong', { text: yedekAd })]),
@@ -439,6 +446,7 @@
     if (yukleniyor || !bul('anaBotSagligi')) return;
     yukleniyor = true;
     try {
+      await listeTazele();
       const tz = AG.api.tasarimci;
       const [durumlar, egriListe, pm, veri, modeller, oneri, tdurum, guncelleme, emirler, hesaplar, gunluk, oz] = await Promise.all([
         Promise.all(BOTLAR.map(ad => AG.api.bindirmeDurum(ad).catch(e => ({ success: false, error: e.message })))),

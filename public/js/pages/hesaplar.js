@@ -61,6 +61,9 @@
 
   // ── Saf yardımcılar (test edilir) ───────────────────────────────────────
   const BOT_AD = { hucum: 'Kairos', denge: 'Tao', kalkan: 'Kalkan', elle: 'Elle' };
+  /** 74.5: portföy botu mu (Kairos, Tao + kullanıcının oluşturduğu botlar — Botlar sayfasının listesi) ve görünen adı. */
+  const botMu = (k) => k === 'hucum' || k === 'denge' || !!(k && AG.pages && AG.pages.botlar && Array.isArray(AG.pages.botlar.ADLAR) && AG.pages.botlar.ADLAR.includes(k));
+  const botAdi = (k) => BOT_AD[k] || (AG.botAd && AG.botAd.ad ? AG.botAd.ad(k) : null) || null;
   /** Saf: hesap kimliği → sekme adı. */
   function hesapAdi(hesap) {
     if (hesap === 'testnet') return 'Binance demo';
@@ -68,7 +71,9 @@
     if (hesap === 'kagit-motor') return 'Kâğıt test hesabı';
     if (hesap === 'kagit-borsa') return 'Elle kâğıt hesabı';
     const m = /^kagit-(.+)$/.exec(String(hesap || ''));
-    if (m) return `${BOT_AD[m[1]] || m[1]} kâğıt hesabı`;
+    if (m) return `${botAdi(m[1]) || m[1]} kâğıt hesabı`;
+    const dm = /^demo-(.+)$/.exec(String(hesap || ''));   // 74.5: yeni botun ayrı Binance demo hesabı
+    if (dm) return `Binance demo (${dm[1]})`;
     return String(hesap || '—');
   }
   /** Saf: hesabın ne olduğu, tek satır. */
@@ -118,8 +123,8 @@
    */
   function saglik(b, pozlar) {
     if (b.kilitli) return { ton: 'notr', baslik: 'Kilitli', neOldu: null, neYapmali: null, kutular: [] };
-    const bot = (b.kaynaklar || []).find(k => k === 'hucum' || k === 'denge');
-    const botAd = bot ? BOT_AD[bot] : null;
+    const bot = (b.kaynaklar || []).find(k => botMu(k));
+    const botAd = bot ? botAdi(bot) || bot : null;
     const borsa = b.ortam === 'testnet' || b.ortam === 'live' || (!b.ortam && (b.hesap === 'testnet' || b.hesap === 'live'));
     if (!b.bagli) {
       return { ton: 'uyari', baslik: botAd ? 'Bot durdu' : 'Bağlı değil',
@@ -156,7 +161,7 @@
   }
 
   // ── Ortak parçalar ──────────────────────────────────────────────────────
-  const kimin = (kod, ad) => el('span', { class: `hs-kaynak hs-kaynak-${String(kod || '').replace(/[^a-z]/gi, '')}`, text: BOT_AD[kod] || (AG.botAd && ad ? AG.botAd.cevir(ad) : ad) || kod || '—' });
+  const kimin = (kod, ad) => el('span', { class: `hs-kaynak hs-kaynak-${String(kod || '').replace(/[^a-z]/gi, '')}`, text: botAdi(kod) || (AG.botAd && ad ? AG.botAd.cevir(ad) : ad) || kod || '—' });
   /** Hücre: `data-etiket` telefondaki kart görünümünün başlığı; `hs-metin` yazı tipini Plex Sans'a döndürür. */
   function hucre(etiket, icerik, sinif) {
     const p = { 'data-etiket': etiket, class: sinif || '' };
@@ -289,7 +294,7 @@
   }
 
   function botaGit(kaynak) {
-    if (kaynak !== 'hucum' && kaynak !== 'denge') return;
+    if (!botMu(kaynak)) return;
     if (AG.pages.botlar && AG.pages.botlar.sec) AG.pages.botlar.sec(kaynak);
     if (AG.rota) AG.rota.git('botlar');
   }
@@ -299,7 +304,7 @@
     const maliyet = sayiMi(p.giris) && sayiMi(p.miktar) ? Math.abs(p.giris * p.miktar) : null;
     const kzY = sayiMi(p.kz) && maliyet > 0 ? (p.kz / maliyet) * 100 : null;
     const yakin = zorlaKapanmayaYakin(p);
-    const botun = p.kaynak === 'hucum' || p.kaynak === 'denge';
+    const botun = botMu(p.kaynak);
     const kapat = o.arsiv && p.kapatilabilir ? el('button', { type: 'button', class: 'btn btn-xs btn-outline-danger', 'data-kilit': 'arastirma',
       title: 'Kâğıt test pozisyonunu piyasa fiyatından kapat (onay ister)', text: 'Kapat',
       onclick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (typeof global.closeDockPosition === 'function') global.closeDockPosition(p.symbol); } }) : null;
@@ -325,7 +330,7 @@
     doldur(k, [
       tablo(`tblBorsaPoz${o.arsiv ? 'Arsiv' : ''}`, [baslik('Coin'), baslik('Kimin', 'kaynak'), baslik('Miktar'), baslik('Giriş'), baslik('Şimdi'), baslik('Şu an K/Z (USDT)'),
         baslik('Koruma stopu', 'korumaEmri'), o.arsiv ? el('th', { 'aria-label': 'İşlem' }) : null].filter(Boolean), pozlar.map(p => pozisyonSatiri(p, o))),
-      pozlar.some(p => p.kaynak === 'hucum' || p.kaynak === 'denge') ? el('p', { class: 'hint hint-sm mb-0 mt-2', text: 'Bot pozisyonuna tıklayınca o botun Botlar sekmesi açılır.' }) : null
+      pozlar.some(p => botMu(p.kaynak)) ? el('p', { class: 'hint hint-sm mb-0 mt-2', text: 'Bot pozisyonuna tıklayınca o botun Botlar sekmesi açılır.' }) : null
     ]);
   }
 
@@ -437,7 +442,8 @@
       el('p', { class: 'hint hint-sm mb-3', text: 'Bot hesaplarının bütün emir ve işlemleri (vergi ve kayıt için). Excel\'de açılır (; ayraçlı); tarih süzgeci sizin gününüze göre.' }),
       el('div', { class: 'grid-4' }, [
         secici('selDokumHesap', 'Hesap', [['', 'Tüm hesaplar'], ...hesaplar], 'hesap'),
-        secici('selDokumKaynak', 'Kimin', [['', 'Hepsi'], ['hucum', 'Kairos'], ['denge', 'Tao'], ['elle', 'Elle'], ['acil', 'Acil fren'], ['kagit', 'Kâğıt test']], 'kaynak'),
+        secici('selDokumKaynak', 'Kimin', [['', 'Hepsi'], ['hucum', 'Kairos'], ['denge', 'Tao'],
+          ...((AG.pages && AG.pages.botlar && AG.pages.botlar.ADLAR) || []).filter(k => k !== 'hucum' && k !== 'denge').map(k => [k, botAdi(k) || k]), ['elle', 'Elle'], ['acil', 'Acil fren'], ['kagit', 'Kâğıt test']], 'kaynak'),
         tarih('inpDokumBas', 'Başlangıç', 'bas'),
         tarih('inpDokumBit', 'Bitiş', 'bit')
       ]),

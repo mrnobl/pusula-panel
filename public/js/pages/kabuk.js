@@ -30,6 +30,8 @@
     '#botKartlari button:not(.yardim-isareti):not(.bot-serbest)', '#botKartlari select',
     // 62.6 Ayarlar › Botlar: mod, canlı hesap emir onayı, para yatırdım, küçük hesap kipi, şimdi çalıştır, kontroller
     '#ayarBotlar button:not(.yardim-isareti)', '#ayarBotlar select',
+    // 74.5 Ayarlar › Botlar › Bot kayıtları: yeni bot, hesap bağlama, sermaye, arşiv (/api/botlar POST — araştırmada sunucu da 403)
+    '#ayarBotKayit button:not(.yardim-isareti)', '#ayarBotKayit select', '#ayarBotKayit input',
     // Arşiv › Elle emir (62.7): bağlan / mutabakat / kilit / acil durdur (/api/exchange/*); elle emir formunun tamamı.
     // Borsa hesapları ve Arşiv › Kâğıt test hesabı tablolarındaki İptal / Kapat düğmeleri data-kilit="arastirma" taşır (js/pages/hesaplar.js).
     '#exchangeStatusBox button:not(.yardim-isareti)', '#exchangePreviewBox button:not(.yardim-isareti)', '#exchangePreviewBox input', '#exchangePreviewBox select',

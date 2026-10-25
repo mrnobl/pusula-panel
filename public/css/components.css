@@ -3566,3 +3566,8 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .yz-bant { padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-md); font-size: var(--fs-sm); margin: 0 0 var(--sp-3); }
 .yz-bant-uyari { background: var(--warn-soft); border: 1px solid var(--warn); color: var(--warn-metin); }
 .yz-konu, .yz-grup, .yz-anahtar { min-width: 0; }
+
+/* 74.5 (A1 2b) Ayarlar › Botlar › Bot kayıtları (js/pages/botKayitlari.js) — yeni bot formu; Botlar kartında kıyas notu */
+.bot-kayit-alan { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.bot-kayit-etiket { font-size: var(--fs-sm); color: var(--text-muted); }
+.bot-kiyas-notu { margin-top: var(--sp-1); }

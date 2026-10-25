@@ -19,7 +19,9 @@
   const TUR_AD = { config: 'Ayar', bildirim: 'Bildirim', sermaye: 'Model sermayesi', anahtar: 'Anahtar', bot: 'Bot kaydı' };
   /** 74.4: bot kaydı alanları (live/botlar/<kimlik>.json; yol "hucum.mod"). */
   const BOT_ALAN = { mod: 'mod', sermayeTavani: 'kâğıt sermaye üst sınırı', demoSermayeTavani: 'demo sermaye üst sınırı', canliSermayeTavani: 'canlı hesap sermaye üst sınırı',
-    kagitBakiye: 'kâğıt başlangıç bakiyesi', k: 'coin sepeti (k)', kucukSermaye: 'küçük sermaye (Kairos-S)', btcAyak: 'BTC ayağı', tavanAkis: 'tavan para akışını izler' };
+    kagitBakiye: 'kâğıt başlangıç bakiyesi', k: 'coin sepeti (k)', kucukSermaye: 'küçük sermaye (Kairos-S)', btcAyak: 'BTC ayağı', tavanAkis: 'tavan para akışını izler',
+    // 74.5: yeni bot / hesap bağı / arşiv
+    adGorunen: 'görünen ad', 'hesap.demo': 'demo hesabı (Anahtarlar)', 'hesap.canli': 'canlı hesap (Anahtarlar)', arsiv: 'arşiv', sablon: 'şablon' };
   const KAYNAK_AD = { panel: 'Panel', telefon: 'Telefon', telegram: 'Telegram', arac: 'Araç', sistem: 'Sistem' };
   /** Sık alanların okunur adları (bilinmeyen alan yolu olduğu gibi). */
   const ALAN_AD = {

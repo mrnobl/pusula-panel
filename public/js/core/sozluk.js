@@ -409,13 +409,26 @@
     if (o && o.alt) ic.push(AG.dom.el('span', { class: 'bot-ad-alt', text: ` · ${b.alt}` }));
     return AG.dom.el('span', { class: 'bot-ad-kap', title: b.anlam }, ic);
   }
+  /**
+   * 74.5 (A1 2b): KULLANICININ OLUŞTURDUĞU botlar — tabloda olmayan kimliğin görünen adı sunucunun /api/botlar `adGorunen`'inden
+   * (`kaydet(liste)`; Botlar sayfası listeyi her yüklediğinde). Tablodaki kimlikler/takmalar ezilmez (lib/botAdlari.js kaydet ile aynı kural).
+   */
+  const BOT_EK = Object.create(null);
+  function botKaydet(liste) {
+    for (const b of (Array.isArray(liste) ? liste : [])) {
+      const k = String((b && b.kimlik) || '');
+      if (!/^[a-z][a-z0-9]{1,15}$/.test(k) || botKimlik(k) || typeof b.adGorunen !== 'string' || !b.adGorunen.trim()) continue;
+      BOT_EK[k] = b.adGorunen.trim().slice(0, 24);
+    }
+  }
+  const botEkAd = (k) => (k != null && Object.prototype.hasOwnProperty.call(BOT_EK, String(k)) ? BOT_EK[String(k)] : null);
   AG.botAd = {
     BOTLAR, TAKMA: BOT_TAKMA, SIRA: Object.freeze(Object.keys(BOTLAR)), kimlik: botKimlik,
-    ad: k => botAlan(k, 'ad'), alt: k => botAlan(k, 'alt'), anlam: k => botAlan(k, 'anlam'), eski: k => botAlan(k, 'eski'),
-    tam: k => { const id = botKimlik(k); return id ? `${BOTLAR[id].ad} · ${BOTLAR[id].alt}` : null; },
-    cevir: botCevir, oge: botOge,
-    /** Bot nesnesi ({ ad, adGorunen }) → görünen ad: kimlikten; tanınmazsa sunucunun metni çevrilerek. */
-    gorunen: b => (b ? (botAlan(b.ad, 'ad') || botCevir(b.adGorunen) || b.ad || '') : '')
+    ad: k => botAlan(k, 'ad') || botEkAd(k), alt: k => botAlan(k, 'alt'), anlam: k => botAlan(k, 'anlam'), eski: k => botAlan(k, 'eski'),
+    tam: k => { const id = botKimlik(k); return id ? `${BOTLAR[id].ad} · ${BOTLAR[id].alt}` : botEkAd(k); },
+    cevir: botCevir, oge: botOge, kaydet: botKaydet,
+    /** Bot nesnesi ({ ad, adGorunen }) → görünen ad: kimlikten; tanınmazsa (74.5) kayıtlı yeni bot adı, sonra sunucunun metni çevrilerek. */
+    gorunen: b => (b ? (botAlan(b.ad, 'ad') || botEkAd(b.ad) || botCevir(b.adGorunen) || b.ad || '') : '')
   };
 
   AG.sozluk = { TERIMLER, metin, yardim, bagla, balonuKapat, acikBalon };
