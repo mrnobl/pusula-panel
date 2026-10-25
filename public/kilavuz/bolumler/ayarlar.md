@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-Panelin ayarları **yedi alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
+Panelin ayarları **sekiz alt sayfada**; yan menüde Ayarlar'ın altında durur ve adres alt sayfayı taşır (ör. `#/ayarlar/guncelleme`):
 
 | Alt sayfa | Adres | İçinde ne var |
 |---|---|---|
@@ -13,6 +13,7 @@ Panelin ayarları **yedi alt sayfada**; yan menüde Ayarlar'ın altında durur v
 | **Bu bilgisayar** | `#/ayarlar/bilgisayar` | bu kopyanın rolü, acil PIN, telefon jetonu |
 | **Güncelleme** | `#/ayarlar/guncelleme` | otomatik güncellemenin durumu, onay bekleyen kurulum |
 | **Yedek ve taşıma** | `#/ayarlar/yedek` | taşıma dosyası, araştırma eklentisi, USB yedeği şifresi, eski yedekten geri yükleme — [ayrıntı](#/kilavuz/yedek-tasima) |
+| **Ayar geçmişi** | `#/ayarlar/gecmis` | her ayar değişikliği (ne zaman, hangi makine, nereden, eski → yeni) ve PIN'li **Geri al** — [ayrıntı](#/kilavuz/ayarlar/ayar-gecmisi) |
 
 Ayarlar menüden açılınca **Botlar (özet)** ile başlar. **Piyasa verisi** ve **İzleme listesi** botları etkilemediği için Araştırma'dadır: [Veri ve izleme listesi](#/kilavuz/izleme).
 
@@ -92,6 +93,35 @@ Bu bilgisayar araştırma kopyasıysa ekran **sunucudaki** anahtarları gösteri
 69.4–69.8 sürümleri sır dosyalarını Windows'un şifrelemesiyle saklıyordu; 70.0'dan beri bu şifreleme yok ve Pusula o eski dosyaları **açmaz** (açmaya çalışmak virüs koruması alarmı veriyordu). Böyle bir dosya kaldıysa sekmenin üstünde kırmızı bant çıkar: içindeki anahtarlar okunamıyor, değişiklik yapılamıyor. **Eski şifreli dosyayı kenara al** (PIN + onay) dosyayı **silmez**; aynı klasörde `secrets.json.eski-sifreli-<tarih>` adıyla kenara koyar. Sonra anahtarları bu ekrandan yeniden girin (telefon jetonu için `npm run telefon-jeton`).
 
 Telefondan bu sekme **yalnız görüntülenir**; değişiklik düğmeleri yoktur, sunucu da reddeder.
+
+## Ayar geçmişi {#ayar-gecmisi}
+
+![Ayarlar › Ayar geçmişi (örnek kayıtlarla)](ekran:ayarlar-gecmis-1400)
+
+**Ayar geçmişi** alt sayfası (74.2) panelin yazdığı **her ayar değişikliğini** listeler: Telegram ve kâğıt test risk ayarları, izleme listesi, bildirim türleri ve sessiz saat, model portföy ayarları (kesirli hisse, telefonda tutar gizleme …), anahtar eklendi / değişti / silindi bilgisi. Her satırda:
+
+- **Zaman** ve **ayar** (okunur adı; altında teknik adı),
+- **Eski → yeni** değer,
+- **Kaynak**: *Panel* (bu bilgisayardaki panel), *Panel (geliştirme bilgisayarından)*, *Telegram* (ör. "1 saat sessize al"), *Araç*, *Sistem* (Pusula'nın kendisi); altında **makine** adı ve isteğin geldiği **uç**,
+- **Geri al** düğmesi (uygunsa) ya da neden geri alınamadığı.
+
+Üstteki süzgeçlerle **makine**, **tür** (Ayar · Bildirim · Model sermayesi · Anahtar) ve **tarih aralığı** seçilir.
+
+**Sırlar kayda girmez.** API anahtarı, gizli anahtar, Telegram bot jetonu, sohbet kimliği, PIN, parola, sağlık sinyali adresi gibi değerler yerine **•••** yazılır (boşsa "(boş)"): yalnız *değişti* bilgisi kalır. Model sermayesi **tutarları** da yazılmaz. Bu satırlar geri alınamaz; değeri Ayarlar › Anahtarlar'dan yeniden girersiniz.
+
+**Kayıt yalnız eklenir, silinmez.** Dosya veri klasöründe `ayar-gecmisi/kayit.jsonl`; 5 MB'ı ya da bir yılı geçince eski parça aynı klasörde ayrı bir dosyaya alınır (silinmez), ekran hepsini birlikte okur. Yedeğe ve taşıma dosyasına girer.
+
+### Geri al {#ayar-geri-al}
+
+1. Satırdaki **Geri al**'a basın. Pencerede "yeni → eski" yazar.
+2. **Acil PIN**'i girin (telefondaki acil durdurmanın PIN'i; yanlış denemeler aynı sayaçta, 5 yanlışta 1 dk kilit).
+3. Geri alma bir **güvenlik sınırını gevşetiyorsa** (ör. zarar sınırı büyüyor, günlük zarar sınırı ya da Telegram uyarıları kapanıyor, bir bildirim türü kapanıyor) düğme kırmızıdır ve ayrıca **GERİ AL** yazmanız istenir.
+4. Değer, ayarı normalde kaydeden yolun **aynı denetimlerinden** geçer (ör. Telegram jeton biçimi, panel adresi, sessiz saat biçimi); geçmezse hiçbir şey değişmez ve nedeni yazar.
+5. Geri alma da listeye **yeni bir satır** olarak eklenir ("geri alma" notuyla); geri alınan satırda "geri alındı" yazar.
+
+Geri alınamayanlar: sırlar ve tutarlar; botun hesap türü, küçük sermaye seçimi, bot başlat/durdur gibi **kendi ekranında ek onayla** değişen ayarlar (o ekrandan geri çevirin); geçici sessiz (süreyle biter). Ayar o satırdan **sonra yeniden değiştiyse** geri alma reddedilir — önce sonraki değişikliği geri alın (sonraki değişiklik sessizce ezilmez).
+
+Telefondan bu sekme **yalnız görüntülenir**. Araştırma kopyasında sunucunun ayar geçmişi de gelir ("sunucu" notlu satırlar); onlar sunucudaki panelden geri alınır.
 
 ## Bu bilgisayar {#bu-bilgisayar}
 

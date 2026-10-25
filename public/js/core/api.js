@@ -203,6 +203,11 @@
       bekleyenGonder: (pin, secimler) => gonder('/api/anahtarlar/bekleyen/gonder', { pin, onay: true, ...(secimler ? { secimler } : {}) }),
       bekleyenVazgec: (id) => gonder('/api/anahtarlar/bekleyen/vazgec', { id, onay: true })
     },
+    /* 74.2 Ayar geçmişi (lib/ayarGecmisi.js; panel js/pages/ayarGecmisi.js) — liste salt okur; geri al acil PIN (+ gevşetmede "GERİ AL"); telefonda yazma yok */
+    ayarGecmisi: {
+      liste: (sorgu) => al(`/api/ayar-gecmisi${sorgu || ''}`),
+      geriAl: (id, yol, pin, onay) => gonder('/api/ayar-gecmisi/geri-al', { id, yol, pin, ...(onay ? { onay } : {}) })
+    },
     /* 61.3 otomatik güncelleme (lib/guncelleme.js): durum · şimdi kontrol et · onay bekleyen güncellemeyi kur */
     guncelleme: {
       durum: () => al('/api/guncelleme/durum'),

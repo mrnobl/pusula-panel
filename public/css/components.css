@@ -2983,6 +2983,9 @@ body.kademe-telefon .ts-yazma.ts-satir-ici { display: none; }
 .an-form-baslik { margin: 0; font-size: var(--fs-md); color: var(--text-strong); }
 .an-form-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: var(--sp-2) var(--sp-3); }
 .an-kutu { display: flex; align-items: center; gap: var(--sp-1); font-size: var(--fs-sm); }
+
+/* ═══ AYARLAR › AYAR GEÇMİŞİ (74.2, js/pages/ayarGecmisi.js) — an- tablo düzenini kullanır; yalnız süzgeç ızgarası ═══ */
+.ag-suzgec { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr)); gap: var(--sp-2) var(--sp-3); margin-top: var(--sp-3); }
 .an-liste { flex-basis: 100%; margin: 0; padding-left: var(--sp-4); display: grid; gap: var(--sp-1); font-size: var(--fs-sm); }
 .an-liste li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-2); }
 .an-bekleyen, .an-cakisma { align-items: flex-start; }

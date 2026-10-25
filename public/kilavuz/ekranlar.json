@@ -1301,12 +1301,12 @@
         "dosya": "portfoyum-rapor-1400.webp",
         "en": 1400,
         "boy": 2200,
-        "bayt": 125936,
+        "bayt": 115540,
         "olcek": 1,
         "ozet": "70a2f2819530ecddc15807efe822b774b5cf67c1d8441192c20b37d57e54d0ba",
-        "genel": "1c23c1729d148820b351f312f89facf40d16e517f6045739c167075217e7a125",
-        "surum": "73.3",
-        "tarih": "2026-10-24",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#prUst .pr-secici",
@@ -1352,7 +1352,7 @@
           }
         ]
       },
-      "kalite": 44
+      "kalite": 36
     },
     {
       "kimlik": "portfoyum-rapor-390",
@@ -2406,12 +2406,12 @@
         "dosya": "model-portfoy-1400.webp",
         "en": 1400,
         "boy": 1900,
-        "bayt": 129218,
+        "bayt": 119152,
         "olcek": 1,
         "ozet": "d97bd0aa434bdd3d979a003cb0802913e497f0549ed74b6c2a2eeb731f2e3569",
-        "genel": "1c23c1729d148820b351f312f89facf40d16e517f6045739c167075217e7a125",
-        "surum": "73.3",
-        "tarih": "2026-10-24",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#pfModelSecici",
@@ -2439,25 +2439,25 @@
             "x": 281,
             "y": 430,
             "w": 1086,
-            "h": 767
+            "h": 730
           },
           {
             "secici": "#hisseGrafik-qqq",
             "x": 294,
-            "y": 1259,
+            "y": 1221,
             "w": 638,
             "h": 361
           },
           {
             "secici": "#hisseKz-qqq",
             "x": 962,
-            "y": 1250,
+            "y": 1212,
             "w": 392,
             "h": 246
           }
         ]
       },
-      "kalite": 44
+      "kalite": 36
     },
     {
       "kimlik": "model-havuz-1400",
@@ -3119,12 +3119,12 @@
         "dosya": "para-ekle-1400.webp",
         "en": 1400,
         "boy": 2500,
-        "bayt": 120194,
+        "bayt": 111974,
         "olcek": 1,
         "ozet": "51ccecd3f9de21a560d749eb482111d8333b4b804deb18b464e327c8743fb518",
-        "genel": "1c23c1729d148820b351f312f89facf40d16e517f6045739c167075217e7a125",
-        "surum": "73.3",
-        "tarih": "2026-10-24",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#pePara",
@@ -3177,7 +3177,7 @@
           }
         ]
       },
-      "kalite": 42
+      "kalite": 36
     },
     {
       "kimlik": "para-ekle-390",
@@ -4526,6 +4526,69 @@
       "kalite": 50
     },
     {
+      "kimlik": "ayarlar-gecmis-1400",
+      "rota": "ayarlar/gecmis",
+      "genislik": 1400,
+      "yukseklik": 820,
+      "once": [
+        {
+          "bekleSecici": "#ayarGecmisiKok .p-kart",
+          "sure": 20000
+        },
+        {
+          "bekle": 400
+        },
+        {
+          "degerJs": "AG.pages.ayarGecmisi._veriAyarla({\"success\":true,\"arastirma\":false,\"yazilabilir\":true,\"pin\":{\"tanimli\":true},\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"makineler\":[\"SUNUCU-PC\"],\"bozuk\":0,\"toplam\":5,\"sonHata\":null,\"onayMetni\":\"GERİ AL\",\"kayitlar\":[{\"id\":\"a1b2c3d4e5f6\",\"z\":\"2026-10-25T08:55:00.000Z\",\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"tur\":\"config\",\"kaynak\":\"panel\",\"uc\":\"POST /api/ayar-gecmisi/geri-al\",\"kademe\":\"yerel\",\"geriAlinan\":\"c3d4e5f6a1b2\",\"degisiklikler\":[{\"yol\":\"telegram.notifyTrades\",\"eski\":false,\"yeni\":true,\"geriAl\":{\"uygun\":true,\"neden\":null,\"gevsetme\":true}}]},{\"id\":\"b2c3d4e5f6a1\",\"z\":\"2026-10-25T08:20:00.000Z\",\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"tur\":\"bildirim\",\"kaynak\":\"telegram\",\"uc\":\"Telegram menüsü (1 saat sessize al)\",\"kademe\":null,\"degisiklikler\":[{\"yol\":\"gecici\",\"eski\":null,\"yeni\":{\"bitis\":1793000000000},\"geriAl\":{\"uygun\":false,\"neden\":\"Geçici sessiz süreyle biter — geri alınmaz (\\\"Erken bitir\\\").\",\"gevsetme\":false}}]},{\"id\":\"c3d4e5f6a1b2\",\"z\":\"2026-10-25T07:30:00.000Z\",\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"tur\":\"config\",\"kaynak\":\"panel\",\"uc\":\"POST /api/config\",\"kademe\":\"yerel\",\"degisiklikler\":[{\"yol\":\"telegram.notifyTrades\",\"eski\":true,\"yeni\":false,\"geriAl\":{\"uygun\":false,\"neden\":\"Bu ayar bu değişiklikten SONRA yeniden değişti — önce sonraki değişikliği geri alın (sonraki değişiklik ezilmez).\",\"gevsetme\":false}},{\"yol\":\"telegram.botToken\",\"eski\":\"•••\",\"yeni\":\"•••\",\"sir\":true,\"geriAl\":{\"uygun\":false,\"neden\":\"Sır (anahtar, jeton, PIN …) değeri kayda yazılmaz — geri alınamaz; Ayarlar › Anahtarlar'dan yeniden girin.\",\"gevsetme\":false}}]},{\"id\":\"d4e5f6a1b2c3\",\"z\":\"2026-10-25T04:00:00.000Z\",\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"tur\":\"bildirim\",\"kaynak\":\"panel\",\"uc\":\"POST /api/bildirim/tur\",\"kademe\":\"gelistirme\",\"degisiklikler\":[{\"yol\":\"turler.fiyat.kanal\",\"eski\":\"telegram\",\"yeni\":\"ikisi\",\"geriAl\":{\"uygun\":true,\"neden\":null,\"gevsetme\":false}}]},{\"id\":\"e5f6a1b2c3d4\",\"z\":\"2026-10-24T08:00:00.000Z\",\"makine\":{\"ad\":\"SUNUCU-PC\",\"rol\":\"sunucu\"},\"tur\":\"sermaye\",\"kaynak\":\"panel\",\"uc\":\"POST /api/tasarimci/sermaye\",\"kademe\":\"yerel\",\"degisiklikler\":[{\"yol\":\"kesirli\",\"eski\":true,\"yeni\":false,\"geriAl\":{\"uygun\":true,\"neden\":null,\"gevsetme\":false}},{\"yol\":\"modeller.m-qqq-m10.tutar\",\"eski\":\"•••\",\"yeni\":\"•••\",\"gizli\":true,\"geriAl\":{\"uygun\":false,\"neden\":\"Tutar kayda yazılmaz — ilgili ekrandan elle girin.\",\"gevsetme\":false}}]}]})"
+        },
+        {
+          "bekleSecici": "#agTablo",
+          "sure": 10000
+        },
+        {
+          "bekle": 400
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#agSuzgec",
+          "etiket": "Süzgeç: makine, tür, tarih"
+        },
+        {
+          "secici": "#agTablo",
+          "etiket": "Eski → yeni, kaynak, Geri al (PIN)"
+        }
+      ],
+      "kalite": 30,
+      "uretim": {
+        "dosya": "ayarlar-gecmis-1400.webp",
+        "en": 1400,
+        "boy": 820,
+        "bayt": 46292,
+        "olcek": 1,
+        "ozet": "b24141d545703febbb48d5dcbdffd32bf43c78853110e1b118f5d7041465ec02",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
+        "isaretler": [
+          {
+            "secici": "#agSuzgec",
+            "x": 279,
+            "y": 233,
+            "w": 1090,
+            "h": 67
+          },
+          {
+            "secici": "#agTablo",
+            "x": 279,
+            "y": 339,
+            "w": 1090,
+            "h": 479
+          }
+        ]
+      }
+    },
+    {
       "kimlik": "hesaplar-390",
       "rota": "botlar/hucum/hesap",
       "genislik": 390,
@@ -5116,17 +5179,17 @@
         }
       ],
       "yukseklik": 2350,
-      "kalite": 40,
+      "kalite": 32,
       "uretim": {
         "dosya": "dikkat-listesi-1400.webp",
         "en": 1400,
         "boy": 2350,
-        "bayt": 163218,
+        "bayt": 149376,
         "olcek": 1,
         "ozet": "c0969208fa1d3eaa367f3cd0f9afe70f678066e436d965e5fd92d3e9c76a2d6d",
-        "genel": "1c23c1729d148820b351f312f89facf40d16e517f6045739c167075217e7a125",
-        "surum": "73.3",
-        "tarih": "2026-10-24",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#selDikkatKip",
@@ -6815,12 +6878,12 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 53774,
+        "bayt": 53360,
         "olcek": 1,
-        "ozet": "fb98f7d2b2337457cd04cb164945f0bde56dc25e63007ea248833d0a93bd7aae",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "ozet": "3f0f0537e1c61bb84252100d30c8ee0480d95f9240bcf3e051255fbd92110b1f",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#inpSearch",
@@ -7363,12 +7426,12 @@
         "dosya": "bildirim-1400.webp",
         "en": 1400,
         "boy": 1750,
-        "bayt": 108406,
+        "bayt": 100090,
         "olcek": 1,
         "ozet": "cdc6a5ca91960d0124b28b139b94770de62ad1a199219ba407319140cdf7d95d",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#bildirimTelegram",
@@ -7421,7 +7484,7 @@
           }
         ]
       },
-      "kalite": 42
+      "kalite": 36
     },
     {
       "kimlik": "ayarlar-1400",
@@ -7456,10 +7519,10 @@
         "boy": 900,
         "bayt": 44162,
         "olcek": 1,
-        "ozet": "6e1f217efb96f01efa6bcafa94f8df8c4ad36d948b536b5e32dcff5844495eb9",
-        "genel": "3a4ff1bea4efc208f9a2405d30851f287ea09f5d19a113b7cc77c8223a52c696",
-        "surum": "74.1",
-        "tarih": "2026-10-24",
+        "ozet": "f11741cdc5475890a6ccf047e6c78cd56b2025ad0194c5c13eefb511ca0ed2ec",
+        "genel": "5a41d97b916f7a8b4b3b9da2da1da6ebab1f1879fd8dce662f5f73ae28af663d",
+        "surum": "74.2",
+        "tarih": "2026-10-25",
         "isaretler": [
           {
             "secici": "#yanMenu [data-rota=\"ayarlar/botlar\"]",

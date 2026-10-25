@@ -48,7 +48,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '74.1';
+const APP_VERSION = '74.2';
 
 /**
  * GİZLİ ANAHTARLAR `config.json`'DA DURMAZ.
@@ -246,7 +246,16 @@ function saveConfig(cfg) {
     }
   }
   if (temiz.telegram) temiz.telegram = { ...temiz.telegram, botToken: '' };
-  if (degisti) saveSecrets(gizli);
+  const sirDegisen = [];   // 74.2 ayar geçmişi: yalnız "değişti" bilgisi (değer yok)
+  if (degisti) {
+    const onceki = loadSecrets();
+    for (const k of SECRET_KEYS) if ((onceki[k] || '') !== (gizli[k] || '')) sirDegisen.push({ yol: k, eski: onceki[k] || '', yeni: gizli[k] || '' });
+    if (((onceki.telegram || {}).botToken || '') !== ((gizli.telegram || {}).botToken || '')) sirDegisen.push({ yol: 'telegram.botToken', eski: (onceki.telegram || {}).botToken || '', yeni: (gizli.telegram || {}).botToken || '' });
+    for (const ad of new Set([...Object.keys(onceki.bindirmeSaglik || {}), ...Object.keys(gizli.bindirmeSaglik || {})])) {
+      if ((onceki.bindirmeSaglik || {})[ad] !== (gizli.bindirmeSaglik || {})[ad]) sirDegisen.push({ yol: `bindirme.${ad}.healthchecksUrl`, eski: (onceki.bindirmeSaglik || {})[ad] || '', yeni: (gizli.bindirmeSaglik || {})[ad] || '' });
+    }
+    saveSecrets(gizli);
+  }
 
   // ARAŞTIRMA MODU (denetim A-02): bellekte kapatılan Telegram ASLA kalıcı yazılmaz — diskteki açık/kapalı korunur.
   let yazilacak = temiz;
@@ -255,7 +264,14 @@ function saveConfig(cfg) {
     try { diskteki = ayarlarLib.oku(); } catch { /* okunamadı: alan değişmez */ }
     yazilacak = guvenlikKur.arastirmaKayitDuzelt(temiz, diskteki);
   }
+  let diskOnceki = null;
+  try { diskOnceki = ayarlarLib.oku(); } catch { diskOnceki = null; }
   ayarlarLib.yaz(yazilacak);   // 68.0: <veri>/ayarlar.json, yalnız varsayılandan farklar (Y5: atomik + fsync + .yedek)
+  // 74.2 ayar geçmişi: diskteki etkin ayar (sırsız) → yazılan; sırlar yalnız "değişti" (lib/ayarGecmisi süzer). Kayıt hatası ayarı durdurmaz.
+  try {
+    const farklar = [...(diskOnceki ? ayarGecmisiLib.farkBul(diskOnceki, JSON.parse(JSON.stringify(yazilacak))) : []), ...sirDegisen];
+    if (farklar.length) AYAR_GECMISI.kaydet({ tur: 'config', farklar });
+  } catch (e) { console.error('ayar geçmişi:', e.message); }
 }
 
 let config = loadConfig();
@@ -320,6 +336,16 @@ const acilPin = require('./lib/acilPin').olustur({
   // Kilit uyarısı Telegram'a (portfoyBildirici aşağıda tanımlanır; çağrı anında hazırdır).
   uyari: (metin) => portfoyBildirici.gonder('alarm', 'PIN kilitlendi (yanlış denemeler)', [metin], { anahtar: 'acil-pin-kilit' })
 });
+/**
+ * 74.2 AYAR GEÇMİŞİ (C2, lib/ayarGecmisi.js): panelin yazdığı her ayar değişikliği (config, bildirim, model sermayesi ayarları, anahtar
+ * "değişti" bilgisi) <veri>/ayar-gecmisi/kayit.jsonl'e YALNIZ EKLENİR — kim/ne zaman/makine/uç/eski → yeni; sırlar "•••".
+ * Bağlam (kaynak, uç) express.json'dan sonraki ara katmanla; Telegram'dan gelen yazma baglamla({ kaynak: 'telegram' }).
+ * GET /api/ayar-gecmisi (araştırma kopyasında sunucunun kaydı da lib/evOkuma jsonGetir ile birleşir) · POST /api/ayar-gecmisi/geri-al
+ * (yalnız bilgisayardan, acil PIN; gevşetme "GERİ AL"; aynı doğrulama yolu). Bot kodu (lib/live) değişmez.
+ */
+const ayarGecmisiLib = require('./lib/ayarGecmisi');
+const AYAR_GECMISI = ayarGecmisiLib.olustur({ dizin: yollar.veri('ayar-gecmisi'), acilPin, makine: { rol: ARASTIRMA_MODU ? 'arastirma' : 'sunucu' },
+  log: (lv, msg) => { try { db.addLog(lv, msg); } catch { console.log(msg); } } });
 const wss = new WebSocket.Server({ server, verifyClient: guvenlik.wsDogrula });
 
 /** Panele ve WebSocket'e giden config: sırlar çıkarılmış. */
@@ -403,6 +429,24 @@ const evOkuma = require('./lib/evOkuma').olustur({ kok: __dirname, etkin: EV_BAG
 app.get('/api/ev-baglanti', (req, res) => res.json({ success: true, ...evOkuma.bilgi() }));
 app.use(evOkuma.middleware);
 app.use(express.json({ limit: '10mb' }));
+app.use(AYAR_GECMISI.middleware);   // 74.2: isteğin kaynağı/ucu ayar geçmişi bağlamına (gövde ayrıştırıldıktan SONRA — bağlam kaybolmasın)
+// 74.2: Ayarlar › Anahtarlar yazmaları (borsa hesapları, defter anahtarları, PIN değişimi …) ayar geçmişine YALNIZ "değişti" olarak (değer asla).
+// Sabit Binance satırları ve sağlık adresleri sirlariUygula'da zaten yazılır (aynı istekte ikinci satır yok). Araştırma kopyasında sunucu yazar.
+const ANAHTAR_YAZMA = /^\/api\/anahtarlar\/(hesap|degistir|sil|eski-kenara-al|pin-degistir)$/;
+app.use((req, res, next) => {
+  if (ARASTIRMA_MODU || req.method !== 'POST' || !ANAHTAR_YAZMA.test(guvenlikKur.yasakYolu(req.path))) return next();
+  const islem = guvenlikKur.yasakYolu(req.path).split('/').pop();
+  const b = req.body && typeof req.body === 'object' ? req.body : {};
+  const kimlik = typeof b.kimlik === 'string' && /^[a-z0-9:_.-]{1,80}$/i.test(b.kimlik) ? b.kimlik : islem === 'hesap' ? 'yeni-hesap' : islem === 'pin-degistir' ? 'acil-pin' : islem === 'eski-kenara-al' ? `dosya:${String(b.dosya || '').replace(/[^a-z.-]/gi, '').slice(0, 40)}` : islem;
+  const st = req.ayarBaglam;
+  res.on('finish', () => {
+    if (res.statusCode !== 200 || (st && st.kayit > 0)) return;
+    AYAR_GECMISI.kaydet({ tur: 'anahtar', kaynak: (st && st.kaynak) || 'panel', uc: `POST ${req.path}`, kademe: req.kademe || 'yerel',
+      farklar: [{ yol: `anahtar.${kimlik}`, eski: islem === 'hesap' ? '' : 'var', yeni: islem === 'sil' || islem === 'eski-kenara-al' ? '' : 'var' }],
+      gizliYol: () => true });
+  });
+  next();
+});
 /*
  * KURULUM SİHİRBAZI (lib/kurulum.js, PLAN-PANEL-2): yeni kurulumda riskler + kullanım şartları onaylanmadan bot başlatılamaz
  * ve hesap türü değiştirilemez (POST /api/bindirme/:ad/baslat|mod → 403). Mevcut kurulum (data/secrets.json var) etkilenmez.
@@ -587,7 +631,9 @@ const BILDIRIM = require('./lib/bildirimMerkezi').olustur({ kok: __dirname,
   ntfyFn: () => { const k = ikinciKanal(); return k.konu ? { konu: k.konu } : null; },
   engelFn: () => TELEGRAM_GELISTIRME_ENGELI || (ARASTIRMA_MODU ? 'araştırma modu' : null),
   // 73.7: alarm / uyarı mesajlarına Sorun merkezi adımları + bağlantı (adres: Ayarlar › Bildirimler › Panel adresi; yoksa 'Panel › Sorunlar').
-  sorunBagi: { panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null } });
+  sorunBagi: { panelAdresi: () => (config.telegram && config.telegram.panelAdresi) || null },
+  // 74.2 ayar geçmişi (etkin görünümün farkı; geçici sessiz de yazılır, geri alınmaz)
+  degisiklik: (once, sonra) => AYAR_GECMISI.kaydet({ tur: 'bildirim', farklar: ayarGecmisiLib.farkBul(once, sonra) }) });
 engine.telegram.merkezBagla(BILDIRIM);
 // 67.5: geliştirme bilgisayarında (araştırma modu / data/makine.json / sunucu bağlantısı kurulu) Telegram yoklaması ve gönderimi
 // kapalı — sunucudaki yoklamayla 409 çakışması olmasın. TELEGRAM_GELISTIRME=1 açıkça açar. Sunucuda davranış değişmez.
@@ -2620,8 +2666,16 @@ function sirlariUygula(govde0) {
       degisen.push(`botSaglik.${ad}`);
     }
   }
+  const sirOnce = loadSecrets();
   try { saveSecrets(gizli); } catch (e) { return red(409, e.message); }
   for (const f of bellek) f();
+  // 74.2 ayar geçmişi: yalnız hangi sırrın değiştiği (değer "•••" / boş)
+  try {
+    const farklar = degisen.map(k => { const ad = k.startsWith('botSaglik.') ? k.slice(10) : null;
+      const e = ad ? (sirOnce.bindirmeSaglik || {})[ad] : sirOnce[k], y = ad ? (gizli.bindirmeSaglik || {})[ad] : gizli[k];
+      return { yol: ad ? `bindirme.${ad}.healthchecksUrl` : k, eski: e || '', yeni: y || '' }; }).filter(x => x.eski !== x.yeni);
+    if (farklar.length) AYAR_GECMISI.kaydet({ tur: 'anahtar', farklar });
+  } catch (e) { console.error('ayar geçmişi:', e.message); }
   engine.updateConfig(config);
   // Değer DEĞİL yalnız hangi alanın değiştiği loglanır.
   const saglikDegisti = degisen.some(k => SAGLIK_URL_KEYS.includes(k) || k.startsWith('botSaglik.'));
@@ -2650,18 +2704,20 @@ function panelAdresiYama(govde) {
   govde.telegram = { ...govde.telegram, panelAdresi: a };
   return null;
 }
-app.post('/api/config', (req, res) => {
+/** /api/config çekirdeği — 74.2: ayar geçmişinin "Geri al"ı da AYNI yoldan (chat id yaması, panel adresi, jeton biçimi, yamaTemizle). */
+function configUygula(govde0) {
   // Maskeli ya da boş chat id geri gelirse (panel maskeli gösterir) kayıtlı değer korunur (Ö18 / A-04).
-  const govde = req.body && req.body.telegram ? { ...req.body, telegram: guvenlikKur.chatIdYamaTemizle(req.body.telegram) } : req.body;
-  const yHata = panelAdresiYama(govde) || telegramJetonHatasi(govde); if (yHata) return res.status(400).json({ success: false, error: yHata });
+  const govde = govde0 && govde0.telegram ? { ...govde0, telegram: guvenlikKur.chatIdYamaTemizle(govde0.telegram) } : govde0;
+  const yHata = panelAdresiYama(govde) || telegramJetonHatasi(govde); if (yHata) return { durum: 400, govde: { success: false, error: yHata } };
   config = mergeConfig(config, guvenlikKur.yamaTemizle(govde, SECRET_KEYS));
   botSaglikSirlariniYukle(config, loadSecrets());   // 68.8: yama bindirme bölümünü değiştirse de bot sağlık adresleri (sır) bellekte kalır
   saveConfig(config);
   engine.updateConfig(config);
   db.addLog('INFO', 'Sistem ve strateji parametreleri güncellendi.');
   broadcast('CONFIG_UPDATED', disariConfig());
-  res.json({ success: true, config: disariConfig() });
-});
+  return { durum: 200, govde: { success: true, config: disariConfig() } };
+}
+app.post('/api/config', (req, res) => { const r = configUygula(req.body); res.status(r.durum).json(r.govde); });
 
 // Custom Candle Import Endpoint (CSV/JSON upload)
 app.post('/api/candles/import', (req, res) => {
@@ -3640,7 +3696,80 @@ if (!ARASTIRMA_MODU && process.env.ISLEM_DEFTERI_ESITLE !== '0') {
 const tasarimciZaman = require('./lib/tasarimci/zamanlayici').kur({ log: (lv, msg) => db.addLog(lv, msg), veriOrk,
   // O10 (62.0): ardışık tik hatası Telegram'a (araştırma modunda Telegram zaten kapalı).
   alarm: (baslik, satirlar) => portfoyBildirici.gonder(/yeniden çalışıyor/.test(baslik) ? 'bilgi' : 'uyari', baslik, satirlar, { anahtar: `tasarimci:${baslik}` }) });
-app.use(require('./lib/tasarimci/api').router({ zamanlayici: tasarimciZaman, log: (lv, msg) => db.addLog(lv, msg) }));
+const tasarimciYonlendirici = require('./lib/tasarimci/api').router({ zamanlayici: tasarimciZaman, log: (lv, msg) => db.addLog(lv, msg),
+  // 74.2 ayar geçmişi: model sermayesi ayarları (tutarlar "•••" — kişisel, geri alınmaz)
+  degisiklik: (once, sonra) => AYAR_GECMISI.kaydet({ tur: 'sermaye', farklar: ayarGecmisiLib.farkBul(once || {}, sonra || {}), gizliYol: (y) => /^modeller\./.test(y) }) });
+app.use(tasarimciYonlendirici);
+
+/* ── 74.2 AYAR GEÇMİŞİ uçları (C2; lib/ayarGecmisi.js) ── */
+/** Ayarın bugünkü (etkin, sırsız) değeri: config diskteki etkin ayardan (kayıt da diskten yazılır), bildirim merkezin etkin görünümünden. */
+function ayarSimdikiOkuyucu() {
+  let disk = null, bildirim = null, sermaye = null;   // istek başına bir kez okunur
+  return (tur, yol) => {
+    if (tur === 'config') { if (!disk) disk = ayarlarLib.oku(); return ayarGecmisiLib.yoldanAl(disk, yol); }
+    if (tur === 'bildirim') { if (!bildirim) bildirim = BILDIRIM.etkinAyar(); return ayarGecmisiLib.yoldanAl(bildirim, yol); }
+    if (tur === 'sermaye') { if (!sermaye) sermaye = require('./lib/tasarimci/api').sermayeOku() || {}; return ayarGecmisiLib.yoldanAl(sermaye, yol); }
+    throw new Error('bilinmeyen tür');
+  };
+}
+const ayarGunu = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '');
+app.get('/api/ayar-gecmisi', async (req, res) => {
+  try {
+    const q = req.query || {};
+    const sz = { bas: ayarGunu(q.bas), bit: ayarGunu(q.bit), tur: ayarGecmisiLib.TURLER.includes(q.tur) ? q.tur : '', makine: String(q.makine || '').replace(/[^A-Za-z0-9_.-]/g, '').slice(0, 40), n: q.n };
+    const kademe = req.kademe || 'yerel';
+    const simdiki = ayarSimdikiOkuyucu();
+    const bilgi = (k, d, uzak) => {
+      if (!uzak && k.makine && k.makine.ad !== AYAR_GECMISI.makine.ad) return { uygun: false, neden: 'Bu kayıt başka bir makineye ait — o makinenin panelinden geri alınır.', gevsetme: false };
+      let v, yok = false;
+      try { v = simdiki(k.tur, d.yol); } catch { yok = true; }
+      const u = ayarGecmisiLib.uygunluk(k, d, { kademe, uzak, arastirma: ARASTIRMA_MODU, simdiki: v, simdikiYok: yok });
+      return { uygun: u.uygun, neden: u.neden || null, gevsetme: !!u.gevsetme };
+    };
+    const satirla = (k, uzak) => ({ ...k, uzak: !!uzak, degisiklikler: (k.degisiklikler || []).map(d => ({ ...d, geriAl: bilgi(k, d, uzak) })) });
+    const yerel = AYAR_GECMISI.oku(sz);
+    let kayitlar = yerel.kayitlar.map(k => satirla(k, false));
+    let sunucu = null;
+    if (ARASTIRMA_MODU && q.yerel !== '1') {
+      const p = new URLSearchParams({ yerel: '1', ...(sz.bas ? { bas: sz.bas } : {}), ...(sz.bit ? { bit: sz.bit } : {}), ...(sz.tur ? { tur: sz.tur } : {}), ...(sz.makine ? { makine: sz.makine } : {}), ...(q.n ? { n: String(q.n) } : {}) });
+      const r = evOkuma.ayar() ? await evOkuma.jsonGetir(`/api/ayar-gecmisi?${p}`) : null;
+      if (r && r.govde && r.govde.success && Array.isArray(r.govde.kayitlar)) {
+        kayitlar.push(...r.govde.kayitlar.map(k => satirla(k, true)));
+        kayitlar.sort((a, b) => String(b.z).localeCompare(String(a.z)));
+        sunucu = { durum: r.eski ? 'eski' : 'tamam', zaman: r.zaman || null };
+      } else sunucu = { durum: evOkuma.ayar() ? 'ulasilamadi' : 'kurulu-degil' };
+    }
+    const makineler = [...new Set(kayitlar.map(k => k.makine && k.makine.ad).filter(Boolean))];
+    res.json({ success: true, kayitlar, toplam: yerel.toplam, bozuk: yerel.bozuk, makine: AYAR_GECMISI.makine, makineler, arastirma: ARASTIRMA_MODU, sunucu,
+      yazilabilir: kademe === 'yerel', pin: { tanimli: !!acilPin.durum().tanimli }, onayMetni: ayarGecmisiLib.ONAY_METNI, sonHata: AYAR_GECMISI.durum().sonHata });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+/** Geri al: yalnız bilgisayardan (telefon/geliştirme kademesi 403 — lib/guvenlik beyaz listelerinde YOK), acil PIN, gevşetmede "GERİ AL", aynı doğrulama yolu. */
+app.post('/api/ayar-gecmisi/geri-al', async (req, res) => {
+  try {
+    const r = await AYAR_GECMISI.geriAl(req.body || {}, {
+      kademe: req.kademe || 'yerel', arastirma: ARASTIRMA_MODU, acilPin, simdiki: ayarSimdikiOkuyucu(),
+      uygula: {
+        config: (yol, hedef) => {
+          const p = String(yol).split('.');
+          const ust = p[0];
+          const yama = { [ust]: p.length > 1 ? ayarGecmisiLib.yolaKoy(config[ust], p.slice(1).join('.'), hedef, { tanimsizBirak: true }) : hedef };
+          if (ARASTIRMA_MODU) { const red = guvenlikKur.arastirmaAyarRed('POST', '/api/config', yama); if (red) return { durum: 403, govde: { success: false, arastirma: true, error: red } }; }
+          return configUygula(yama);
+        },
+        bildirim: (yol, hedef) => {
+          try { BILDIRIM.yolAyarla(yol, hedef); return { durum: 200, govde: { success: true } }; }
+          catch (e) { return { durum: e.durum || 500, govde: { success: false, error: e.message } }; }
+        },
+        sermaye: (yol, hedef) => {
+          const p = String(yol).split('.');
+          return tasarimciYonlendirici.sermayeYaz(p[0] === 'hesaplar' ? { hesaplar: { [p[1]]: hedef == null ? '' : hedef } } : { [p[0]]: hedef });
+        }
+      }
+    });
+    res.status(r.durum).json(r.govde);
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
 tasarimciZaman.baslat();
 
 /** İstekten veri kaynağı: borsa, piyasa, sembol, dilim, [bas, bit] (ms). */
@@ -4071,7 +4200,7 @@ const TG_MENU = require('./lib/telegramMenu').olustur({
   makineler: () => (bildirimUreticileri ? bildirimUreticileri.durum().makine : null),
   bildirim: () => { const v = BILDIRIM.gorunum(0); return { sessiz: v.sessiz, gecici: v.sessiz.gecici, turler: v.katalog.map(t => ({ ad: t.ad, acik: t.acik })) }; },
   // TEK YAZMA İSTİSNASI (kullanıcı kararı 2026-10-24): kritik olmayan bildirimler 60 dk bekler; kritikler asla susmaz.
-  sessizAl: (dk) => { const r = BILDIRIM.geciciSessiz(dk); db.addLog('INFO', `🔕 Telegram'dan ${dk} dk sessize alındı — kritik olmayan bildirimler ${new Date(r.bitis).toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' })}'e kadar bekler`); return r; },
+  sessizAl: (dk) => { const r = AYAR_GECMISI.baglamla({ kaynak: 'telegram', uc: 'Telegram menüsü (1 saat sessize al)' }, () => BILDIRIM.geciciSessiz(dk)); db.addLog('INFO', `🔕 Telegram'dan ${dk} dk sessize alındı — kritik olmayan bildirimler ${new Date(r.bitis).toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' })}'e kadar bekler`); return r; },
 });
 // Alarm / uyarı mesajlarının düğmeleri (Ayrıntı · Panelde çöz ↗ · 1 saat sessize al) — imza anahtarı bot jetonundan türetilir.
 engine.telegram.klavyeFn = (bag) => TG_MENU.bildirimKlavyesi(bag);

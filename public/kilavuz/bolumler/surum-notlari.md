@@ -2,6 +2,14 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 74.2 — Ayar geçmişi ve geri alma (2026-10-25) {#s74-2}
+
+- **Yeni alt sayfa: [Ayarlar › Ayar geçmişi](#/kilavuz/ayarlar/ayar-gecmisi).** Panelin yazdığı her ayar değişikliği tek listede: ne zaman, hangi makinede, nereden (panel, Telegram, araç, sistem), hangi ayar, **eski → yeni**. Süzgeç: makine, tür, tarih.
+- **Sırlar kayda girmez:** anahtar, jeton, PIN, parola, sağlık adresi yerine **•••** — yalnız "değişti" bilgisi. Model sermayesi tutarları da yazılmaz.
+- **Geri al:** tek bir değişiklik eski değerine döner — yalnız bilgisayardan, **acil PIN** ile; güvenlik sınırını gevşeten geri alma ayrıca **GERİ AL** yazdırır. Değer normal kaydın aynı denetimlerinden geçer; geri alma da yeni bir satır olarak yazılır. Ayar sonradan yeniden değiştiyse eski satır geri alınamaz.
+- Kayıt yalnız eklenir (5 MB / 1 yıl dolunca eski parça ayrı dosyaya, silinmez); yedeğe ve taşıma dosyasına girer. Telefonda yalnız görüntüleme. Araştırma kopyasında sunucunun kaydı da gösterilir.
+- Botların karar ve emir kodu değişmedi. Sunucu dosyaları değiştiği için güncelleme sunucuda **onaylı** kurulur (Ayarlar › Güncelleme › "Güncellemeyi kur").
+
 ## 74.1 — Yapay zekâ notları ve Telegram'da tutarlar gizli (2026-10-25) {#s74-1}
 
 - **Yeni sayfa: [İzleme › Yapay zekâ notları](#/kilavuz/yapay-zeka-notlari).** Başlığında **Yalnız not · karar yok**. Sunucu her sabah ~07:00'dan sonra bir kez, kamuya açık metinleri Google Gemini'ye (**ücretsiz katman**) okutur: coin dikkat listesinin kısa listesi (İZLE ilk 15 + KAÇIN'a bu hafta yeni düşen 5; Google Haberler ve Binance delist duyuruları), elinizdeki ve BIST 100'deki şirketlerin KAP bildirimleri, Nova / Simurg hisselerinin SEC bildirimleri (8-K okunur, 10-Q / 10-K başlık).
