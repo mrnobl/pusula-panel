@@ -86,6 +86,8 @@
     'olaylar': { bolum: 'tab-olaylar', menu: 'olaylar', baslik: 'Olay akışı' },
     // D3: Sistem › Tatbikatlar — elle provaları Pusula adım adım yönetir (js/pages/tatbikat.js, lib/tatbikat).
     'tatbikat': { bolum: 'tab-tatbikat', menu: 'tatbikat', baslik: 'Tatbikatlar' },
+    // 78.1: Sistem › Pusula Doktoru — teşhis, onarım günlüğü, hazır olma (js/pages/doktor.js, lib/doktor; salt okuma, telefonda da).
+    'doktor': { bolum: 'tab-doktor', menu: 'doktor', baslik: 'Pusula Doktoru' },
     'bildirimler': { bolum: 'tab-bildirim', menu: 'bildirimler', baslik: 'Bildirimler' },
     // 63.0: Ayarlar beş sekme — alt yol sekmeyi taşır (#/ayarlar/bildirimler …); js/pages/ayarlar.js sekmeSec.
     'ayarlar': { bolum: 'tab-settings', menu: 'ayarlar', baslik: 'Ayarlar', altYol: true },

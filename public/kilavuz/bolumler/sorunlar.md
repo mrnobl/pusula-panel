@@ -22,6 +22,7 @@ Ayrıca: **Neyi saydı?** (botu durduran satırlar, ret kodlarının sade açık
 - Ana sayfanın üstünde sorun bandı çıktığında (yalnız müdahale ya da dikkat varken).
 - Telegram'daki bir uyarının sonundaki **Sorunlar** bağlantısına tıkladığınızda.
 - Geliştirme sohbetine bir sorun anlatacağınızda: **Sohbete gönder**.
+- Aynı kartların sade özeti, Pusula'nın kendiliğinden yaptığı onarımlar ve botların hazır olup olmadığı tek sayfada: [Pusula Doktoru](#/kilavuz/doktor).
 
 ## Ekran {#ekran}
 

@@ -16,6 +16,8 @@
 
 Geliştirme bilgisayarında (sunucu bağlantısı kuruluysa) sayfa **sunucunun** öz denetimini gösterir; öz denetim yalnız sunucuda çalışır.
 
+Öz denetimin onarımları (sahipsiz kilit, eski günlük sıkıştırma, sessiz saatte yeniden başlatma) ve Pusula'nın diğer kendiliğinden onarımları [Pusula Doktoru](#/kilavuz/doktor) sayfasında tek listede görünür. Orada "şu an ne bozuk, ne yapmalı" özeti ve botların hazır olup olmadığı da yazar.
+
 ## Ne zaman kullanılır {#ne-zaman}
 
 - Ana sayfadaki **Sistem sağlığı** kartında sarı ya da kırmızı bir satır gördüğünüzde.

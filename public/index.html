@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="css/utilities.css">
   <!-- Tema stillerden HEMEN SONRA ve senkron: `data-theme` ilk boyamadan
        önce yazılmazsa sayfa bir an yanlış temada açılır. -->
-  <script src="js/core/tema.js?v=78.0"></script>
+  <script src="js/core/tema.js?v=78.1"></script>
 </head>
 <body>
 
@@ -147,6 +147,8 @@
       <p class="menu-grup-ad">Sistem</p>
       <!-- 73.7: Sorun merkezi — sayı rozeti (kırmızı müdahale · sarı dikkat · mavi kendiliğinden geçecek) js/pages/sorunlar.js rozetGuncelle. -->
       <a class="menu-ogesi" href="#/sorunlar" data-rota="sorunlar"><i data-lucide="life-buoy"></i><span>Sorunlar</span><span class="menu-rozet sorun-menu-rozet is-hidden" data-sorun-menu-rozet aria-hidden="true"></span></a>
+      <!-- 78.1: Pusula Doktoru — şu an ne bozuk, kendiliğinden düzelir mi, ne yapmalı; kendiliğinden yapılan onarımlar; hazır olma (js/pages/doktor.js; GET /api/doktor, salt okuma). -->
+      <a class="menu-ogesi" href="#/doktor" data-rota="doktor"><i data-lucide="stethoscope"></i><span>Pusula Doktoru</span></a>
       <a class="menu-ogesi" href="#/saglik" data-rota="saglik"><i data-lucide="heart-pulse"></i><span>Sağlık</span><span class="menu-rozet oz-rozet is-hidden" data-saglik-rozet aria-hidden="true"></span></a>
       <div class="menu-dal" data-menu="veri">
         <a class="menu-ogesi menu-ust" href="#/veri" aria-expanded="false"><i data-lucide="database"></i><span>Veri</span><i class="menu-ok" data-lucide="chevron-down"></i></a>
@@ -345,6 +347,15 @@
       </div>
       <p class="hint mb-4 max-w-prose">Pusula o an bildiği bütün sorunları burada tek biçimde gösterir: ne oldu, ciddi mi, kendiliğinden geçer mi (ne zaman), ne yapmalı ve neye dokunmamalı. Sorun yoksa yalnız "Her şey yolunda" yazar — ekrana bakıp beklemenize gerek yok.</p>
       <div id="sorunKok"><p class="hint mb-0">Yükleniyor…</p></div>
+    </section>
+
+    <!-- SİSTEM › PUSULA DOKTORU (78.1, F1): teşhis kartları (Sorun merkezi + Doktor kuralları), Pusula'nın kendiliğinden yaptığı onarımların günlüğü, hazır olma (GET /api/hazir), iki zararsız bakım işi; Doktor ne yapar / ne yapmaz (js/pages/doktor.js; GET /api/doktor). Salt okuma — telefonda da. -->
+    <section id="tab-doktor" class="tab-content" role="tabpanel" aria-label="Pusula Doktoru">
+      <div class="toolbar">
+        <h2 class="page-title"><i class="tone-primary" data-lucide="stethoscope"></i> Pusula Doktoru</h2>
+      </div>
+      <p class="hint mb-4 max-w-prose">Şu an ne bozuk, bunun anlamı ne, kendiliğinden düzelir mi ve sizin ne yapmanız gerekiyor — tek sayfada, sade dille. Altında Pusula'nın kendiliğinden yaptığı onarımlar ve botların hazır olup olmadığı. Doktor bu sayfadan hiçbir şeyi değiştirmez: pozisyona, ayara, ENGEL'e, güvenli kipe dokunmaz.</p>
+      <div id="doktorKok"><p class="hint mb-0">Yükleniyor…</p></div>
     </section>
 
     <!-- SİSTEM › SAĞLIK (69.1, PLAN-OZ-DENETIM): öz denetim — 19 denetim, güvenli kip, tam kapanma, onarım kaydı (js/pages/saglik.js; GET /api/saglik/oz). -->
@@ -2974,98 +2985,99 @@
   <!-- Çekirdek ÖNCE: `indicatorUI.js` ve `app.js` `AG.api` / `AG.dom`
        üzerinden çalışıyor, bunlar tanımlı değilken yüklenirlerse ilk
        istekte patlarlar (bkz. `PLAN-MOTOR.md` §8, P2). -->
-  <script src="js/core/dom.js?v=78.0"></script>
-  <script src="js/core/format.js?v=78.0"></script>
+  <script src="js/core/dom.js?v=78.1"></script>
+  <script src="js/core/format.js?v=78.1"></script>
   <!-- Yeni panel F4: portföy ölçütleri (saf; Sharpe, düşüş, sağlık puanı) — js/pages/pano.js kullanır. -->
-  <script src="js/core/olcut.js?v=78.0"></script>
-  <script src="js/core/paraPlan.js?v=78.0"></script>
-  <script src="js/core/api.js?v=78.0"></script>
-  <script src="js/core/bildirim.js?v=78.0"></script>
-  <script src="js/core/ilerleme.js?v=78.0"></script>
-  <script src="js/core/tablo.js?v=78.0"></script>
-  <script src="js/core/rota.js?v=78.0"></script>
-  <script src="js/core/sozluk.js?v=78.0"></script>
-  <script src="js/core/md.js?v=78.0"></script>
-  <script src="js/core/grafik.js?v=78.0"></script>
-  <script src="js/core/pwa.js?v=78.0"></script>
+  <script src="js/core/olcut.js?v=78.1"></script>
+  <script src="js/core/paraPlan.js?v=78.1"></script>
+  <script src="js/core/api.js?v=78.1"></script>
+  <script src="js/core/bildirim.js?v=78.1"></script>
+  <script src="js/core/ilerleme.js?v=78.1"></script>
+  <script src="js/core/tablo.js?v=78.1"></script>
+  <script src="js/core/rota.js?v=78.1"></script>
+  <script src="js/core/sozluk.js?v=78.1"></script>
+  <script src="js/core/md.js?v=78.1"></script>
+  <script src="js/core/grafik.js?v=78.1"></script>
+  <script src="js/core/pwa.js?v=78.1"></script>
   <!-- Sayfa modülleri: çekirdekten SONRA, app.js'ten ÖNCE. -->
-  <script src="js/pages/dock.js?v=78.0"></script>
-  <script src="js/pages/bots.js?v=78.0"></script>
-  <script src="js/pages/backtest.js?v=78.0"></script>
-  <script src="js/pages/backtestIs.js?v=78.0"></script>
-  <script src="js/pages/backtestEkran.js?v=78.0"></script>
-  <script src="js/pages/seciciler.js?v=78.0"></script>
-  <script src="js/pages/analiz.js?v=78.0"></script>
+  <script src="js/pages/dock.js?v=78.1"></script>
+  <script src="js/pages/bots.js?v=78.1"></script>
+  <script src="js/pages/backtest.js?v=78.1"></script>
+  <script src="js/pages/backtestIs.js?v=78.1"></script>
+  <script src="js/pages/backtestEkran.js?v=78.1"></script>
+  <script src="js/pages/seciciler.js?v=78.1"></script>
+  <script src="js/pages/analiz.js?v=78.1"></script>
   <!-- Borsa hesapları (62.7): sekme = hesap (hesaplar.js) + Ayarlar › Borsa (anahtar, döküm, canlı hesap) + Arşiv (elle emir, kâğıt test) ve
        emir/işlem tabloları (Pusula P3). İkisi de kendi kendine başlar, #tab-exchange kaplarını doldurur. -->
-  <script src="js/pages/borsa.js?v=78.0"></script>
-  <script src="js/pages/hesaplar.js?v=78.0"></script>
-  <script src="js/pages/arastirma.js?v=78.0"></script>
-  <script src="js/pages/stratejiler.js?v=78.0"></script>
-  <script src="js/pages/bindirme.js?v=78.0"></script>
-  <script src="js/pages/bindirmeIslem.js?v=78.0"></script>
-  <script src="js/pages/ileri.js?v=78.0"></script>
-  <script src="js/pages/tarama.js?v=78.0"></script>
-  <script src="js/pages/listeler.js?v=78.0"></script>
-  <script src="js/pages/dikkat.js?v=78.0"></script>
-  <script src="js/pages/izle.js?v=78.0"></script>
-  <script src="js/pages/defter.js?v=78.0"></script>
-  <script src="js/pages/arastirmaOzet.js?v=78.0"></script>
-  <script src="js/pages/gunluk.js?v=78.0"></script>
-  <script src="js/pages/saglik.js?v=78.0"></script>
-  <script src="js/pages/sorunlar.js?v=78.0"></script>
-  <script src="js/pages/bildirimMerkezi.js?v=78.0"></script>
-  <script src="js/pages/raporlar.js?v=78.0"></script>
-  <script src="js/pages/tasima.js?v=78.0"></script>
-  <script src="js/pages/kurulum.js?v=78.0"></script>
-  <script src="js/pages/kurulumDenetimi.js?v=78.0"></script>
-  <script src="js/pages/botPerformans.js?v=78.0"></script>
-  <script src="js/pages/gunlukArsiv.js?v=78.0"></script>
-  <script src="js/pages/olaylar.js?v=78.0"></script>
-  <script src="js/pages/karne.js?v=78.0"></script>
-  <script src="js/pages/tatbikat.js?v=78.0"></script>
-  <script src="js/pages/sermaye.js?v=78.0"></script>
+  <script src="js/pages/borsa.js?v=78.1"></script>
+  <script src="js/pages/hesaplar.js?v=78.1"></script>
+  <script src="js/pages/arastirma.js?v=78.1"></script>
+  <script src="js/pages/stratejiler.js?v=78.1"></script>
+  <script src="js/pages/bindirme.js?v=78.1"></script>
+  <script src="js/pages/bindirmeIslem.js?v=78.1"></script>
+  <script src="js/pages/ileri.js?v=78.1"></script>
+  <script src="js/pages/tarama.js?v=78.1"></script>
+  <script src="js/pages/listeler.js?v=78.1"></script>
+  <script src="js/pages/dikkat.js?v=78.1"></script>
+  <script src="js/pages/izle.js?v=78.1"></script>
+  <script src="js/pages/defter.js?v=78.1"></script>
+  <script src="js/pages/arastirmaOzet.js?v=78.1"></script>
+  <script src="js/pages/gunluk.js?v=78.1"></script>
+  <script src="js/pages/saglik.js?v=78.1"></script>
+  <script src="js/pages/sorunlar.js?v=78.1"></script>
+  <script src="js/pages/doktor.js?v=78.1"></script>
+  <script src="js/pages/bildirimMerkezi.js?v=78.1"></script>
+  <script src="js/pages/raporlar.js?v=78.1"></script>
+  <script src="js/pages/tasima.js?v=78.1"></script>
+  <script src="js/pages/kurulum.js?v=78.1"></script>
+  <script src="js/pages/kurulumDenetimi.js?v=78.1"></script>
+  <script src="js/pages/botPerformans.js?v=78.1"></script>
+  <script src="js/pages/gunlukArsiv.js?v=78.1"></script>
+  <script src="js/pages/olaylar.js?v=78.1"></script>
+  <script src="js/pages/karne.js?v=78.1"></script>
+  <script src="js/pages/tatbikat.js?v=78.1"></script>
+  <script src="js/pages/sermaye.js?v=78.1"></script>
   <!-- 63.2: Veri ekranı — özet + kullanana göre gruplar (js/pages/veri.js). -->
-  <script src="js/pages/veri.js?v=78.0"></script>
+  <script src="js/pages/veri.js?v=78.1"></script>
   <!-- 63.3: Sinyaller ekranı — bugün sistem ne diyor (js/pages/sinyaller.js). -->
-  <script src="js/pages/sinyaller.js?v=78.0"></script>
+  <script src="js/pages/sinyaller.js?v=78.1"></script>
   <!-- 73.9: Piyasa bağlamı (#/piyasa) + Ana sayfa "Bu hafta" kartı. -->
-  <script src="js/pages/piyasaBaglami.js?v=78.0"></script>
-  <script src="js/pages/yapayZekaNotlari.js?v=78.0"></script>
-  <script src="js/pages/pine.js?v=78.0"></script>
-  <script src="js/pages/kurCevirici.js?v=78.0"></script>
+  <script src="js/pages/piyasaBaglami.js?v=78.1"></script>
+  <script src="js/pages/yapayZekaNotlari.js?v=78.1"></script>
+  <script src="js/pages/pine.js?v=78.1"></script>
+  <script src="js/pages/kurCevirici.js?v=78.1"></script>
   <!-- 64.8: sunucuya yazma + kuyruk ortak parçası (Portföyüm ve İşlem defterim kullanır) — portfoyum.js'ten ÖNCE. -->
-  <script src="js/pages/evKuyruk.js?v=78.0"></script>
-  <script src="js/pages/portfoyum.js?v=78.0"></script>
-  <script src="js/pages/portfoyumRapor.js?v=78.0"></script>
-  <script src="js/pages/islemDefteri.js?v=78.0"></script>
-  <script src="js/pages/tasarimci.js?v=78.0"></script>
-  <script src="js/pages/modelPortfoy.js?v=78.0"></script>
+  <script src="js/pages/evKuyruk.js?v=78.1"></script>
+  <script src="js/pages/portfoyum.js?v=78.1"></script>
+  <script src="js/pages/portfoyumRapor.js?v=78.1"></script>
+  <script src="js/pages/islemDefteri.js?v=78.1"></script>
+  <script src="js/pages/tasarimci.js?v=78.1"></script>
+  <script src="js/pages/modelPortfoy.js?v=78.1"></script>
   <!-- Yeni panel F4: Pano · Varlıklar · Hedefim · Takvim + üst çubuk Ben/Fırat/Tümü · $/₺/Gizli (portfoy.js çağırır). -->
-  <script src="js/pages/paraEkle.js?v=78.0"></script>
-  <script src="js/pages/pano.js?v=78.0"></script>
-  <script src="js/pages/portfoy.js?v=78.0"></script>
-  <script src="js/pages/kabuk.js?v=78.0"></script>
-  <script src="js/pages/botDil.js?v=78.0"></script>
-  <script src="js/pages/hisseYapilari.js?v=78.0"></script>
-  <script src="js/pages/portfoyBotlari.js?v=78.0"></script>
-  <script src="js/pages/botGetiri.js?v=78.0"></script>
-  <script src="js/pages/botlar.js?v=78.0"></script>
-  <script src="js/pages/botKayitlari.js?v=78.0"></script>
-  <script src="js/pages/anasayfa.js?v=78.0"></script>
-  <script src="js/pages/anahtarlar.js?v=78.0"></script>
-  <script src="js/pages/ayarGecmisi.js?v=78.0"></script>
-  <script src="js/pages/makineler.js?v=78.0"></script>
-  <script src="js/pages/esBotlari.js?v=78.0"></script>
-  <script src="js/pages/ayarlar.js?v=78.0"></script>
-  <script src="js/pages/kitapcik.js?v=78.0"></script>
-  <script src="js/pages/kilavuz.js?v=78.0"></script>
-  <script src="chartIndicators.js?v=78.0"></script>
-  <script src="indicatorUI.js?v=78.0"></script>
-  <script src="app.js?v=78.0"></script>
+  <script src="js/pages/paraEkle.js?v=78.1"></script>
+  <script src="js/pages/pano.js?v=78.1"></script>
+  <script src="js/pages/portfoy.js?v=78.1"></script>
+  <script src="js/pages/kabuk.js?v=78.1"></script>
+  <script src="js/pages/botDil.js?v=78.1"></script>
+  <script src="js/pages/hisseYapilari.js?v=78.1"></script>
+  <script src="js/pages/portfoyBotlari.js?v=78.1"></script>
+  <script src="js/pages/botGetiri.js?v=78.1"></script>
+  <script src="js/pages/botlar.js?v=78.1"></script>
+  <script src="js/pages/botKayitlari.js?v=78.1"></script>
+  <script src="js/pages/anasayfa.js?v=78.1"></script>
+  <script src="js/pages/anahtarlar.js?v=78.1"></script>
+  <script src="js/pages/ayarGecmisi.js?v=78.1"></script>
+  <script src="js/pages/makineler.js?v=78.1"></script>
+  <script src="js/pages/esBotlari.js?v=78.1"></script>
+  <script src="js/pages/ayarlar.js?v=78.1"></script>
+  <script src="js/pages/kitapcik.js?v=78.1"></script>
+  <script src="js/pages/kilavuz.js?v=78.1"></script>
+  <script src="chartIndicators.js?v=78.1"></script>
+  <script src="indicatorUI.js?v=78.1"></script>
+  <script src="app.js?v=78.1"></script>
   <!-- app.js parçaları (Pusula P6): aynı küresel kapsam, app.js'ten HEMEN SONRA. -->
-  <script src="js/app/riskEkrani.js?v=78.0"></script>
-  <script src="js/app/olaylar.js?v=78.0"></script>
-  <script src="js/app/backtestAnaliz.js?v=78.0"></script>
+  <script src="js/app/riskEkrani.js?v=78.1"></script>
+  <script src="js/app/olaylar.js?v=78.1"></script>
+  <script src="js/app/backtestAnaliz.js?v=78.1"></script>
 </body>
 </html>

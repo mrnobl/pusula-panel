@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.1 — Pusula Doktoru (2026-10-27) {#s78-1}
+- **Pusula Doktoru ([Sistem › Pusula Doktoru](#/kilavuz/doktor)):** şu an ne bozuk, anlamı ne, kendiliğinden düzelir mi ve ne yapmanız gerektiği tek sayfada; Pusula'nın kendiliğinden yaptığı onarımların günlüğü (yeniden bağlanma, yeniden açılma, güncelleme geri alma, stopu yeniden koyma, güvenli kip …); botların hazır olup olmadığı. Doktor yalnız bakar: pozisyona, ayara, ENGEL'e, güvenli kipe dokunmaz. İki zararsız bakım işi yapar: 20 MB'ı aşan konsol günlüğünü açılışta döndürür, yarıda kalmış geçici tatbikat klasörlerini günde bir siler. Telefonda da açılır.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
+
 ## 78.0 — Pusula Kursu (2026-10-26) {#s78-0}
 - **Yeni: [Bilgi › Pusula Kursu](#/kilavuz/pusula-kursu).** paneli baştan sona kendiniz deneyerek öğrenmek için 17 modül, 107 görev — her görevde amaç, adımlar, doğru gittiyse ne görürsünüz ve olmadıysa ne yapılır; sonda 15 sorun çözme senaryosu. İşaretler ve notlar bu tarayıcıda saklanır, "Notlarımı kopyala" ile sohbete alınır. Ölçüm süren botlarda (Kairos, Tao) yalnız okuma; denemeler kendi açacağınız "Kurs" kâğıt botunda.
 - Kılavuz düzeltmeleri: acil fren engel koymaz (Başlat yeter; kâğıtta önce geri alınabilir), telefonda Durdur/Başlat yok, Kâğıt hesabı sıfırla PIN ister, spot yatırma 'Yatırmayı kabul et' ile, Erken bitir telefondan da; güncelleme penceresi gerçek onay kuralını yazar.

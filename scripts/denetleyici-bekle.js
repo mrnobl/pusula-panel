@@ -5,7 +5,7 @@
  * Eskiden sunucu her çöküşte sabit 10 sn sonra, sonsuza kadar yeniden açılıyordu: kalıcı bir hatada (bozuk ayar, eksik paket,
  * port dolu) saatte yüzlerce açılış, her birinde Binance bağlantısı ve "Bot çöktü" Telegram'ı.
  *
- *   node scripts/denetleyici-bekle.js --basla      → açılış zamanını yazar (data/denetleyici.json)
+ *   node scripts/denetleyici-bekle.js --basla      → açılış zamanını yazar (data/denetleyici.json); 78.1: konsol günlüklerini döndürür (lib/doktor/bakim.js D1)
  *   node scripts/denetleyici-bekle.js <çıkışKodu>  → kaç saniye beklenecek (stdout'a yalnız sayı)
  *
  * Kural: süreç HIZLI_SN'den kısa yaşadıysa ardışık hızlı çökme sayacı artar → bekleme 10 · 30 · 60 · 300 sn (sonra 300).
@@ -52,7 +52,13 @@ if (require.main === module) {
   (async () => {
     const a = process.argv[2];
     const d = oku();
-    if (a === '--basla') { yaz({ ...d, basla: Date.now() }); return; }
+    if (a === '--basla') {
+      yaz({ ...d, basla: Date.now() });
+      // 78.1 PUSULA DOKTORU D1: node server.js henüz başlamadı (konsol günlüğü açık değil) — büyüyen sunucu-konsol.log / supervisor.log
+      // .1'e döndürülür (20 MB üstü, en çok 3 kopya; yasak saatte ve dosya açıkken atlanır). Yalnız Node fs; hata verirse açılış aynen sürer.
+      try { require('../lib/doktor/bakim').acilisDondur(); } catch { /* döndürülemedi — Pusula yine açılır */ }
+      return;
+    }
     const cikis = parseInt(a, 10);
     const k = karar(d, Number.isFinite(cikis) ? cikis : -1, Date.now());
     yaz(k.durum);

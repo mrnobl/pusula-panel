@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '78.0';
+const APP_VERSION = '78.1';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -577,6 +577,9 @@ require('./lib/sunucu/tatbikatUclari').kur(ctx);
 /* A4 SERMAYE DAĞITIMI + ONAYLI ALT HESAPLAR ARASI AKTARIM (Botlar › Sermaye dağıtımı; GET /api/sermaye/dagitim, POST /api/sermaye/{dagitim/ayar,aktar/onizle,aktar,aktar/sorgula})
  * — lib/sunucu/sermayeUclari.js; otomatik aktarım YOK, dış adrese çekme YOK, canlı hesap kapısı varsayılan KAPALI (prova kipi sahte borsada). */
 require('./lib/sunucu/sermayeUclari').kur(ctx);
+/* PUSULA DOKTORU (F1): GET /api/doktor (teşhis + onarım günlüğü + bakım), GET /api/hazir (hazır olma; /api/health değişmedi) — salt okuma;
+ * D2 geçici tatbikat artığı temizliği günde bir — lib/sunucu/doktorUclari.js, lib/doktor/*. Eylem motoru yok; botlara yazmaz. */
+require('./lib/sunucu/doktorUclari').kur(ctx);
 
 BILDIRIM_KURULUM.ureticiler();   // C1 (75.0): 73.5 bildirim üreticileri, 73.9 piyasa bildirimi, 73.7 BIST hafif fiyat (yalnız sunucu) — lib/sunucu/bildirimKurulum.js
 KISISEL_UCLAR.tasarimciUclari();   // C1 (75.0): işlem defteri eşitlemesi, PORTFÖY TASARIMCISI (lib/tasarimci), 74.2 AYAR GEÇMİŞİ uçları — lib/sunucu/kisiselUclar.js

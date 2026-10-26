@@ -580,6 +580,11 @@
     olaylar: {
       liste: (q) => al('/api/olaylar' + (q ? '?' + new URLSearchParams(q).toString() : ''))
     },
+    /* ── 78.1 Pusula Doktoru (lib/doktor; panel: js/pages/doktor.js) — SALT OKUMA (telefonda da); araştırma kopyasında sunucudan (EV_YOLU) ── */
+    doktor: {
+      durum: (gun, ornek) => al('/api/doktor?' + new URLSearchParams({ ...(gun ? { gun: String(gun) } : {}), ...(ornek ? { ornek: '1' } : {}) }).toString()),
+      hazir: () => al('/api/hazir')
+    },
     /* ── D3 Tatbikat sihirbazı (lib/tatbikat; panel: js/pages/tatbikat.js) — durum telefonda da; yazma yalnız bu bilgisayardan; kaydet yerel PIN ── */
     tatbikat: {
       durum: () => al('/api/tatbikat'),

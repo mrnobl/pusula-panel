@@ -7269,11 +7269,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 48686,
+        "bayt": 49494,
         "olcek": 1,
-        "ozet": "6223fda74ed594f86e0b092989e0bc016aaec5b34d311e5ed1fd4b4d1aa16918",
-        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
-        "surum": "78.0",
+        "ozet": "d007e05bace1ed648eae8240beb988982959dc3773d8ae923895ee19be977b8d",
+        "genel": "57bc38d081bafc3cc734d6f223ae4ad9178b28daf2fe788516c0ed487ce3a351",
+        "surum": "78.1",
         "tarih": "2026-10-26",
         "isaretler": [
           {
@@ -7624,6 +7624,148 @@
             "y": 18,
             "w": 65,
             "h": 34
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "doktor-1400",
+      "rota": "doktor",
+      "genislik": 1400,
+      "yukseklik": 2350,
+      "kalite": 36,
+      "once": [
+        {
+          "bekleSecici": "#doktorKok",
+          "sure": 20000
+        },
+        {
+          "degerJs": "AG.pages.doktor.yukle({ ornek: true })"
+        },
+        {
+          "bekleSecici": "#doktorTeshis .sorun-kart",
+          "sure": 20000
+        },
+        {
+          "bekle": 1200
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#doktorOzet",
+          "etiket": "Genel durum, kart sayıları, bugün kendiliğinden düzelenler"
+        },
+        {
+          "secici": "#doktorHazir",
+          "etiket": "Hazır olma: Pusula süreci, öz denetim, her botun durumu ve son kararı"
+        },
+        {
+          "secici": "#doktorTeshis .sorun-kart .sorun-ne",
+          "etiket": "Şu an ne bozuk · anlamı · kendiliğinden düzelir mi"
+        },
+        {
+          "secici": "#doktorOnarim",
+          "etiket": "Kendiliğinden yapılan onarımlar (1 / 7 / 30 gün)"
+        }
+      ],
+      "uretim": {
+        "dosya": "doktor-1400.webp",
+        "en": 1400,
+        "boy": 2350,
+        "bayt": 134238,
+        "olcek": 1,
+        "ozet": "71b2669e5d1aa7f770a0b2b4d3bb5698f89100960444a994abcb4e09e3e3e276",
+        "genel": "57bc38d081bafc3cc734d6f223ae4ad9178b28daf2fe788516c0ed487ce3a351",
+        "surum": "78.0",
+        "tarih": "2026-10-26",
+        "isaretler": [
+          {
+            "secici": "#doktorOzet",
+            "x": 260,
+            "y": 268,
+            "w": 1128,
+            "h": 259
+          },
+          {
+            "secici": "#doktorHazir",
+            "x": 279,
+            "y": 408,
+            "w": 1090,
+            "h": 102
+          },
+          {
+            "secici": "#doktorTeshis .sorun-kart .sorun-ne",
+            "x": 280,
+            "y": 602,
+            "w": 1091,
+            "h": 112
+          },
+          {
+            "secici": "#doktorOnarim",
+            "x": 260,
+            "y": 1488,
+            "w": 1128,
+            "h": 553
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "doktor-390",
+      "rota": "doktor",
+      "genislik": 390,
+      "kalite": 36,
+      "once": [
+        {
+          "bekleSecici": "#doktorKok",
+          "sure": 20000
+        },
+        {
+          "degerJs": "AG.pages.doktor.yukle({ ornek: true })"
+        },
+        {
+          "bekleSecici": "#doktorTeshis .sorun-kart",
+          "sure": 20000
+        },
+        {
+          "bekle": 1200
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#doktorOzet",
+          "etiket": "Telefonda da aynı özet (yalnız okuma)"
+        },
+        {
+          "secici": "#doktorTeshis .sorun-kart",
+          "etiket": "Teşhis kartı: ne bozuk, ne yapmalı, rehber"
+        }
+      ],
+      "yukseklik": 1800,
+      "uretim": {
+        "dosya": "doktor-390.webp",
+        "en": 780,
+        "boy": 3600,
+        "bayt": 125078,
+        "olcek": 2,
+        "ozet": "e75e6dcf7b8b801681777017a98a086e122cddad74a9609fd43bf727a26fbece",
+        "genel": "57bc38d081bafc3cc734d6f223ae4ad9178b28daf2fe788516c0ed487ce3a351",
+        "surum": "78.0",
+        "tarih": "2026-10-26",
+        "isaretler": [
+          {
+            "secici": "#doktorOzet",
+            "x": 8,
+            "y": 402,
+            "w": 374,
+            "h": 746
+          },
+          {
+            "secici": "#doktorTeshis .sorun-kart",
+            "x": 8,
+            "y": 1178,
+            "w": 374,
+            "h": 620
           }
         ]
       }
