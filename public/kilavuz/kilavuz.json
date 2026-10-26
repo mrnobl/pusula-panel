@@ -1,5 +1,5 @@
 {
-  "surum": "78.2",
+  "surum": "78.3",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -68,6 +68,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"78.3","tarih":"2026-10-26","yeni":["Veri dosyaları daha sağlam: silinen ya da bozulan bot durumu son iyi kopyadan açılır ve ENGEL'de bekler; işlem geçmişi dosyası bozulursa kenara alınır, silinmez; mum veritabanı bozulursa Pusula çökme döngüsüne girmez, veri yeniden iner; antivirüs kısa kilitlerinde yazım yeniden denenir."]},
     {"surum":"78.2","tarih":"2026-10-26","yeni":["Bilgi › Onarım Rehberi: bir uyarı gördüğünüzde ya da bir şey çalışmadığında yazılım bilgisi gerekmeden ne yapılacağı — 115 durum, gördüğünüz mesajın bir parçasıyla arama; her durumda ciddi mi, kendiliğinden düzelir mi, kimin çözebileceği (siz / komut satırı ya da karar / geliştirici), adımlar, gerekiyorsa kopyalanabilir komut ve geliştiriciye iletilecek hazır metin. Sorunlar ve Sağlık sayfalarının üstünde \"Onarım Rehberi'nde ara\" bağlantısı; Pusula'nın uyarmayabileceği 17 durum ayrı bölümde.","\"Yeniden başlatma gerekli\" kartı artık doğru yolu söylüyor: Pusula'yı durdur → Pusula kısayolları ya da telefonda Sorunlar › Pusula'yı yeniden başlat."]},
     {"surum":"78.1","tarih":"2026-10-26","yeni":["Yeni: Sistem › Pusula Doktoru — şu an ne bozuk, anlamı, kendiliğinden düzelir mi, ne yapmalısınız; Pusula'nın kendiliğinden yaptığı onarımların günlüğü; botların hazır olup olmadığı. Yalnız bakar; pozisyona, ayara, engele dokunmaz. Telefonda da açılır."]},
     {"surum":"78.0","tarih":"2026-10-26","yeni":["Bilgi › Pusula Kursu: paneli baştan sona kendiniz deneyerek öğrenmek için 17 modül, 107 görev — her görevde amaç, adımlar, doğru gittiyse ne görürsünüz ve olmadıysa ne yapılır; sonda 15 sorun çözme senaryosu. İşaretler ve notlar bu tarayıcıda saklanır, \"Notlarımı kopyala\" ile sohbete alınır. Ölçüm süren botlarda (Kairos, Tao) yalnız okuma; denemeler kendi açacağınız \"Kurs\" kâğıt botunda.","Kılavuz düzeltmeleri: acil fren engel koymaz (Başlat yeter; kâğıtta önce geri alınabilir), telefonda Durdur/Başlat yok, Kâğıt hesabı sıfırla PIN ister, spot yatırma 'Yatırmayı kabul et' ile, Erken bitir telefondan da; güncelleme penceresi gerçek onay kuralını yazar."]},

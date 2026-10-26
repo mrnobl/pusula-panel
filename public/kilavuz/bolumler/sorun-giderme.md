@@ -67,6 +67,9 @@ Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da ri
 
 **Belirti:** "durum dosyası bozuk açıldı". **Anlamı:** dikkat (elektrik kesintisi, disk). Son sağlam kopyadan açıldı. **Adımlar:** **Borsayla karşılaştır** → temizse **Botu yeniden aç**; uyuşmazlık çıkarsa [pozisyon uyuşmazlığı](#/kilavuz/sorun-giderme/pozisyon-uyusmazligi).
 
+- **"… yoktu — son iyi kopyadan (.yedek) kurtarıldı":** durum dosyası silinmiş ya da taşınmış (antivirüs karantinası, elle silme), son iyi kopyası duruyordu. Bot sıfırdan başlamaz: son iyi kopyayla açılır, ana dosya geri yazılır ve bot yine ENGEL'de kalır. Adımlar aynı. Antivirüs dosyayı aldıysa [antivirüs](#/kilavuz/sorun-giderme/antivirus) bölümüne de bakın.
+- **"kâğıt borsa dosyası bozuk açıldı":** kâğıt hesabın kendi dosyası (`kagit-borsa.json`) bozuk açıldı. Son iyi kopyası varsa ondan açıldı. Yoksa kâğıt hesap başlangıç bakiyesiyle açıldı. Bozuk dosya `.bozuk-*.bak` adıyla kenarda durur. Bot ENGEL'de bekler. Kâğıt hesabın pozisyonlarına bakın. Tutarsızsa Yönetim › **Kâğıt hesabı sıfırla (temiz başla)…** ile temiz başlayın, sonra **Engeli kaldır**. Para riski yok, yalnız kâğıt ölçüm geçmişi etkilenir.
+
 ### Uygulama sapması — ENGEL tekrar geliyor {#uygulama-sapmasi}
 
 **Belirti:** "gerçek sonuç simülasyondan %5'ten fazla ayrıldı" (kırmızı) ya da "%3 bandı" (sarı). **Anlamı:** para kaybı demek değil; 30 günde gerçek ile ideal arasında fark birikti (kaçırılan gün, kayma, funding). **Kendiliğinden geçer mi:** hayır; **Engeli kaldır** tek başına yetmez — 30 günlük pencere değişmediği için aynı gün yeniden gelir. **Adımlar:** kartta **Farkı kabul et**'e basın: önizleme bandın hangi aralıklardan geldiğini (gün, gerçek, gölge, fark) ve farkın ne kadarının tek aralıktan geldiğini gösterir. Tek güne yığılmış ve sebebi biliniyorsa (kaçırılan gün / telafi) PIN + **KABUL** ile kabul edin: o aralıklar "kabul edildi" diye işaretlenir (kayıt silinmez), %5 bandına sayılmaz, ENGEL kalkar ve aynı farkla yeniden gelmez; yeni günlerin farkı yine izlenir. Her gün küçük fark varsa (kayma / funding) kabul etmeden önce **Sohbete yazın**. Demo kabul ölçümü (U1/U2) kabulden etkilenmez — ham fark raporda kalır.
@@ -146,6 +149,8 @@ Onaydan sonra bütün hesaplar yeni bakiyeye göre yapılır: sermaye tavanı, p
 ### Borsa verisi şüpheli (veri kapısı) {#veri-kapisi}
 
 **Belirti:** "günlük çalışma ertelendi — borsa verisi şüpheli". **Anlamı:** zararsız. **Adımlar:** dokunmayın; 15 dakikada bir kendisi dener. 2 saatten uzun sürerse sohbete yazın.
+
+- **"karar günü geriye gitti":** sunucunun saati geri kaymış (CMOS pili, elle değişiklik). Bot eski bir günün kararını yeniden uygulamaz, bekler. **Adımlar:** sunucuda Windows › Saat ve dil › **Saati şimdi eşitle**. Saat düzelince bir sonraki denemede kendiliğinden geçer.
 
 ### Veri kalitesi bulgusu (74.3) {#veri-kalitesi}
 
@@ -343,7 +348,7 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 
 ### Çökme döngüsü {#cokme-dongusu}
 
-**Belirti:** Telegram "Pusula açılamıyor — çökme döngüsü"; Sağlık "N kez üst üste açılıp hemen kapandı". **Adımlar:** sunucuda `data\sunucu-konsol.log` son satırları: "Port 3000 kullanımda" → **Pusula'yı durdur** → **Pusula**; "Node.js … çok eski" → [Node](#/kilavuz/sorun-giderme/node); "config.json" → [ayar dosyası](#/kilavuz/sorun-giderme/ayar-bozuk); "Cannot find module" → [antivirüs](#/kilavuz/sorun-giderme/antivirus); başka bir şey → son satırları sohbete gönderin.
+**Belirti:** Telegram "Pusula açılamıyor — çökme döngüsü"; Sağlık "N kez üst üste açılıp hemen kapandı". **Adımlar:** sunucuda `data\sunucu-konsol.log` son satırları: "Port 3000 kullanımda" → **Pusula'yı durdur** → **Pusula**; "Node.js … çok eski" → [Node](#/kilavuz/sorun-giderme/node); "config.json" → [ayar dosyası](#/kilavuz/sorun-giderme/ayar-bozuk); "Cannot find module" → [antivirüs](#/kilavuz/sorun-giderme/antivirus); "mum veritabanı" → [mum veritabanı](#/kilavuz/sorun-giderme/mum-db-bozuk); başka bir şey → son satırları sohbete gönderin.
 
 ### "Pusula süreci: bugün N kez açıldı" {#acilis-sayaci}
 
@@ -352,6 +357,14 @@ Yalnız **beklenmedik** açılışlar sayılır (güncelleme ve sizin yeniden ba
 ### Denetleyicisiz başlatıldı {#denetleyicisiz}
 
 Pusula masaüstü kısayolu dışında açılmış; çökerse yalnız bekçi açar, güncelleme yeniden başlatamaz. Uygun bir saatte **Pusula'yı durdur** → **Pusula** kısayolu.
+
+### Kayıt dosyası bozuk açıldı (kenara alındı) {#kayit-dosyasi-bozuk}
+
+**Belirti:** Telegram "Kayıt dosyası bozuk açıldı — kenara alındı"; Sorunlar'da aynı kart; Sağlık › Kayıt dosyaları okunuyor kırmızı. **Anlamı:** dikkat. Elektrik kesintisinde işlem geçmişi, emir, günlük ya da özsermaye dosyası (`trades.json`, `orders.json`, `logs.json`, `balance_history.json`, `equity_history.json`, `wallet.json`) yarım yazılmış. Pusula bozuk dosyayı silmez ve üzerine yazmaz, `.bozuk-<zaman>.bak` adıyla kenara alır. Son iyi kopya (`.yedek`, her açılışta alınır) varsa ondan açar, yoksa boş başlar. Bot durumları ayrı dosyalarda, para ve pozisyon etkilenmez. **Adımlar:** hiçbir dosyayı silmeyin. Eksik kayıtlar gerekiyorsa Ayarlar › Yedek ve taşıma'daki son yedekten geri getirmek için "Sohbete gönder". Kart "kenara alınamadı" diyorsa Pusula o dosyanın üzerine bu oturumda yazmaz. Pusula'yı yeniden başlatın, sürerse sohbete yazın.
+
+### Mum veritabanı bozuktu, yeniden indiriliyor {#mum-db-bozuk}
+
+**Belirti:** Telegram "Mum veritabanı bozuktu — kenara alındı, yeniden indiriliyor"; Sorunlar'da aynı kart. **Anlamı:** zararsız. Piyasa verisi deposu (`market.db`) elektrik kesintisi ya da disk hatası yüzünden açılamadı. Pusula çökme döngüsüne girmek yerine dosyayı `market.db.bozuk-<zaman>` adıyla kenara aldı ve boş veritabanıyla açıldı. Veri orkestratörü birkaç dakika sonra veriyi yeniden indirir (Veri sayfası). Botlar günlük mumu borsadan okur, etkilenmez. Grafik, araştırma ve tarama verisi inene kadar eksik görünür. **Adımlar:** dokunmayın. Disk yeri darsa, veri yeniden indikten sonra `market.db.bozuk-*` dosyasını silmeden önce sohbete sorun. Konsol günlüğü "mum veritabanı bozuk … kenara alınamadı" diyorsa (dosya kilitli) Pusula açılamaz: Pusula'yı durdurun, adı geçen dosyayı başka bir adla kenara alın (silmeyin), sonra **Pusula** kısayolu.
 
 ### Disk alanı {#disk}
 

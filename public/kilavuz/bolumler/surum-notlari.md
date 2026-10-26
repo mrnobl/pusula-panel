@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.3 — Veri dosyaları elektrik kesintisine karşı daha sağlam (2026-10-27) {#s78-3}
+- **Bozuk ya da silinmiş dosya sessizce sıfırlanmaz.** Bir botun durum dosyası silinmiş (antivirüs, elle) ama son iyi kopyası duruyorsa bot o kopyayla açılır ve ENGEL'de bekler. Kâğıt hesabın kendi dosyası bozulursa da öyle: kâğıt hesap sessizce sıfırdan başlamaz. [Ayrıntı](#/kilavuz/sorun-giderme/durum-dosyasi).
+- **İşlem geçmişi / günlük / özsermaye dosyası bozulursa** Pusula onu silmez, `.bozuk-*.bak` adıyla kenara alır, son iyi kopyadan açar; Telegram ve Sorunlar'da kart çıkar. [Ayrıntı](#/kilavuz/sorun-giderme/kayit-dosyasi-bozuk).
+- **Mum veritabanı (market.db) bozulursa** Pusula artık çökme döngüsüne girmez: dosyayı kenara alıp boş veritabanıyla açılır, veri kendiliğinden yeniden iner. Botlar etkilenmez. [Ayrıntı](#/kilavuz/sorun-giderme/mum-db-bozuk).
+- Antivirüs bir dosyayı kısa süre kilitlerse yazım birkaç kez yeniden denenir (gereksiz "bot döngüsü hata verdi" kapanması olmaz). Sunucunun saati geri kayarsa bot eski günün kararını yeniden uygulamaz, bekler.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); kuru denemede botların kararı birebir aynı.
+
 ## 78.2 — Onarım Rehberi (2026-10-27) {#s78-2}
 - **Yeni: [Bilgi › Onarım Rehberi](#/kilavuz/onarim-rehberi).** bir uyarı gördüğünüzde ya da bir şey çalışmadığında yazılım bilgisi gerekmeden ne yapılacağı — 115 durum, gördüğünüz mesajın bir parçasıyla arama; her durumda ciddi mi, kendiliğinden düzelir mi, kimin çözebileceği (siz / komut satırı ya da karar / geliştirici), adımlar, gerekiyorsa kopyalanabilir komut ve geliştiriciye iletilecek hazır metin. Sorunlar ve Sağlık sayfalarının üstünde "Onarım Rehberi'nde ara" bağlantısı; Pusula'nın uyarmayabileceği 17 durum ayrı bölümde.
 - **Düzeltme:** "Yeniden başlatma gerekli" kartı var olmayan bir düğmeyi tarif ediyordu; artık masaüstündeki **Pusula'yı durdur** → **Pusula** kısayollarını ya da telefonda Sorunlar › **Pusula'yı yeniden başlat**'ı söylüyor.
