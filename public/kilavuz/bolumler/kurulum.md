@@ -526,7 +526,7 @@ Geliştirme bilgisayarında yapılan her yeni sürüm GitHub'a gönderilir; sunu
 
 - **Belge ve görsel değişikliği** (kılavuz metinleri, ekran görüntüleri, araştırma kayıtları): kendiliğinden kurulur, Telegram "Pusula 6x.x kuruldu" der. 69.6'dan önce panel ve araştırma kodu da kendiliğinden kuruluyordu; artık **her kod değişikliği onay ister** ve sunucu yalnız imzalı kodu kurar ([Kod imzası](#/kilavuz/ayarlar/kod-imzasi)).
 - **Bot kodu değişikliği** (canlı bot, risk, strateji, işlem motoru, borsa bağlantısı, Telegram uyarıları ya da paketler): **kurulmaz**. Telegram "kurulmayı bekliyor (onay)" der; panelde **Ayarlar › Güncelleme › Güncellemeyi kur** düğmesiyle siz kurarsınız (Ana sayfa Yapılacaklar'da da görünür).
-- **Kendiliğinden durur, size bırakır:** sunucudaki `config.json` ayarlarınıza dokunan güncelleme; başlatma dosyaları (`start-bot.cmd`, `pusula-sunucu.ps1`, `Pusula-*.cmd` — çalışırken değiştirilemez); sunucuda GitHub'a gönderilmemiş liste kaydı varsa (önce Adım 19).
+- **Kendiliğinden durur, size bırakır:** sunucuda elle değiştirilmiş bir program dosyasına dokunan güncelleme; başlatma dosyaları (`start-bot.cmd`, `pusula-sunucu.ps1`, `Pusula-*.cmd` — çalışırken değiştirilemez); sunucuda GitHub'a gönderilmemiş liste kaydı varsa (önce Adım 19).
 - **Güvenlik:** değişen dosyalarda sözdizimi denetimi; yeniden başlatmadan sonra panel yeni sürümle açılmazsa (3 dakika) ya da açıldıktan sonraki **8 dakika** içinde çökerse / önceden bağlı olan bot bağlanamazsa (61.8) **eski sürüme kendiliğinden döner** ve Telegram'dan haber verir. Gece 02:00–05:00 arası (botun günlük kararı, veri indirme) otomatik güncelleme yapılmaz; **onaylı kurulum ve yeniden başlatma da 02:50–04:30 arasında reddedilir** (61.8). Pusula kapanırken süren bot işini (en çok 2 dk) bekler.
 
 **Yap — ilk kez (bir kerelik; bu sürüm kendiliğinden gelmez):** Pusula'yı durdurun, kodu alın, başlatın, görevi kurun:
@@ -547,7 +547,8 @@ node scripts\guncelle.js --kuru
 
 **Sorun olursa:**
 - `--kuru` "GitHub'a ulaşılamadı" derse: `git fetch` elle çalışıyor mu bakın (`git fetch origin main`); GitHub girişi isterse tarayıcıda açılan pencereden giriş yapın.
-- "Elle bakılmalı: sunucuda değiştirilmiş dosyaya dokunuyor (config.json)": ayarlarınız ezilmesin diye kurulmadı — geliştirme sohbetine haber verin.
+- "Elle bakılmalı: sunucuda değiştirilmiş dosyaya dokunuyor (…)": sunucuda elle değiştirilmiş dosya ezilmesin diye kurulmadı — geliştirme sohbetine haber verin.
+- Ayarlarınız veri klasöründeki `ayarlar.json`'dadır; kökteki eski `config.json` o dosya varken okunmaz. Sunucuda değiştirilmiş `config.json`'a dokunan güncelleme bu yüzden durmaz: kurulurken (gerekirse önce ayarlarınız `ayarlar.json`'a alınır) eski dosyanın içeriği veri klasörüne `config.json.yedek-<zaman>` adıyla yedeklenir, dosya depodaki hâline döndürülür, sonra güncelleme kurulur (`guncelleme.log`'da üç satır). Ayarlar güvenceye alınamazsa "Elle bakılmalı: Ayarlar güvenceye alınamadı" der ve hiçbir şeyi değiştirmez — geliştirme sohbetine haber verin.
 - Geçmiş: `Get-Content C:\Pusula\data\guncelleme.log -Tail 20`; görevin çıktısı `data\guncelleme-gorev.log`; görev durumu `powershell -ExecutionPolicy Bypass -File scripts\install-guncelleme-gorev.ps1 -Durum`.
 - Kaldırmak için: aynı komutun sonuna ` -Kaldir`. Bu görev **geliştirme bilgisayarına kurulmaz** (betik reddeder).
 

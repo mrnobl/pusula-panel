@@ -125,7 +125,7 @@ Write-Host 'Ne yapacak:' -ForegroundColor Cyan
 Write-Host "  - Her gun $Saat'de GitHub'da yeni Pusula surumu var mi bakar."
 Write-Host '  - Panel/arastirma degisikligi: kurar, Pusula ~30 sn yeniden baslar, Telegram haber verir.'
 Write-Host '  - Bot kodu degisikligi: KURMAZ; Telegram haber verir, siz panelden onaylarsiniz.'
-Write-Host '  - Acilmazsa eski surume doner. config.json ayarlariniza dokunan guncelleme kurulmaz.'
+Write-Host '  - Acilmazsa eski surume doner. Ayarlariniz (veri klasorundeki ayarlar.json) guncellemede korunur.'
 Write-Host ''
 Write-Host 'UYARI: "Oturum acilmasa da" kurulumu Windows HESAP PAROLASI ister (PIN degil). Bilmiyorsaniz: -Oturum ile kurun.' -ForegroundColor Yellow
 Write-Host ''

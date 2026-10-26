@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.4 — Ayarlar güvencede: eski config.json güncellemeyi durdurmaz (2026-10-26) {#s77-4}
+- **Güncelleme:** Ayarlarınız artık veri klasöründeki `ayarlar.json` dosyasında. Sunucuda elle değiştirilmiş eski `config.json` dosyasına dokunan bir güncelleme bundan sonra durup sizi beklemez: kurulurken eski dosyanın içeriği veri klasörüne `config.json.yedek-<zaman>` adıyla yedeklenir, dosya depodaki hâline döndürülür, güncelleme kurulur. Ayarlarınız değişmez. Ayarlar güvenceye alınamazsa güncelleme yine "Elle bakılmalı" der ve hiçbir şeyi değiştirmez.
+- Bu sürüm, eski ayar dosyasının depodan çıkarılmasına hazırlıktır; çıkarma bir sonraki sürümde gelir. Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
+
 ## 77.3 — Kılavuz görüntüleri ve sözlük (2026-10-26) {#s77-3}
 - **Kılavuz:** gece kalitesi düşürülen ekran görüntüleri yeniden net; kılavuz görüntülerinin toplam sınırı 8 MB'tan 10 MB'a çıktı.
 - **Sözlük:** FX, MT, XLSX, TCMB, EVDS, TÜİK, HHI ve PATH kısaltmalarının üzerine gelince açıklama çıkar.
