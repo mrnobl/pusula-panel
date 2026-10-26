@@ -297,7 +297,7 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 
 ### Kâğıt hesabı sıfırla (temiz başla) {#kagit-sifirla}
 
-Kâğıt hesaptaki bir botu (ör. Tao) sıfırdan başlatmak için: önce **Durdur**, sonra Yönetim'de **Kâğıt hesabı sıfırla (temiz başla)…** ve onay. Bot yeni bir kâğıt hesapla başlar: sermaye ayarlardaki kâğıt bakiyesi (`kagitBakiye`, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş. **İlk çalışmada geçmiş günler telafi edilmez** — bot bugünkü hedefe gider ve oradan devam eder.
+Kâğıt hesaptaki bir botu (ör. Tao) sıfırdan başlatmak için: önce **Durdur**, sonra Yönetim'de **Kâğıt hesabı sıfırla (temiz başla)…**, onay ve **acil PIN** (sunucu sıfırlamayı PIN'le korur; BTC ayağı değişikliği de aynı). Bot yeni bir kâğıt hesapla başlar: sermaye ayarlardaki kâğıt bakiyesi (`kagitBakiye`, varsayılan 10.000 USDT), pozisyon ve işlem geçmişi boş. **İlk çalışmada geçmiş günler telafi edilmez** — bot bugünkü hedefe gider ve oradan devam eder.
 
 - **Eski kayıtlar silinmez:** botun klasörü `data/live/<bot>-onceki-<tarih saat>` yedeğine taşınır (ör. `denge-onceki-20261020T083005Z`); istenirse oradan incelenir. Bildirim yedek klasörünün adını yazar.
 - **Yalnız kâğıt hesap:** düğme demo ve canlı hesapta görünmez; sunucu da reddeder ("… kâğıt hesapta değil") — demo hesaptaki Kairos'un kayıtlarına (`hucum-demo`, demo kabul testi) dokunulamaz.
@@ -365,8 +365,8 @@ Bot Binance **gerçek** hesabınızda çalışır (BTC spot, vadeli hesapta temi
 
 1. Botun **Genel** görünümünde kırmızı **Acil fren** düğmesine basın (bot çalışırken üst çubuktaki **Acil durdur** da aynı düğmeye basar).
 2. Onay penceresini okuyun ve onaylayın.
-3. Botun bütün emirleri iptal edilir, açık pozisyonları piyasa fiyatından kapanır, bot **Durduruldu** olur.
-4. Sonuç Telegram'a da gelir. Yeniden başlatmak için nedenini anlayın, sonra **Engeli kaldır** + **Başlat**.
+3. Botun bütün emirleri iptal edilir, açık pozisyonları piyasa fiyatından kapanır, bot **Durdu** olur. Acil fren **engel koymaz**: "Durduruldu — onay bekliyor" bandı ve **Engeli kaldır** çıkmaz (77.6'dan beri acilin kendi kayıt satırları öz denetimde güvenli kip de açmaz).
+4. Sonuç Telegram'a da gelir. Yeniden başlatmak için nedenini anlayın, sonra **Başlat** yeter. **Kâğıt hesapta** acil yanlışlıkla basıldıysa önce Yönetim'de **Acil durdurmayı geri al (kâğıt)** › **Önizle ve geri al…** ile acil öncesi hâli geri getirin ([ayrıntı](#/kilavuz/botlar/kagit-geri-al)), sonra **Başlat**; arada **Şimdi çalıştır** ya da günlük çalışma olursa geri alma düğmesi kalkar.
 
 > **Tehlike:** Demo ve canlı hesapta acil fren geri alınamaz (kâğıt hesapta 77.5'ten beri [geri alınabilir](#/kilavuz/botlar/kagit-geri-al)). Fiyat sert hareket ederken piyasa emri kötü fiyattan dolabilir. Yalnız gerçekten durdurmanız gerekiyorsa kullanın; sadece yeni emir vermesin istiyorsanız **Durdur** yeterlidir.
 
@@ -403,7 +403,7 @@ Sermaye artışları her ay ama tutarı belli olmadan yapılacağı için bot ha
 
 - **Fiyat okunamazsa** bot pozisyonu büyüten emir vermez; yalnız küçülten ve kapatan emirler geçer.
 - **"Para yatırdım/çektim" kaydı** onay için **KAYIT** yazılmasını ister. Çekme özsermayeden, yatırma özsermayenin 3 katından büyük olamaz; özsermayenin %20'sini aşan bir tutar Binance bakiyesinde görünmüyorsa kayıt reddedilir. Çoğu zaman bu kayda gerek yoktur: bot vadeli cüzdana gelen aktarımı kendisi algılar ([Sürpriz sermaye](#/kilavuz/botlar/surpriz-sermaye)).
-- **Spot cüzdana yatırma (çoklu varlık):** bot onu hemen sermayeye saymaz, **"kabul bekliyor"** uyarısı gelir. Botun sayfasında **Engeli kaldır** ile kabul edince ölçüm ve tavan güncellenir. Böylece kendi para eklemeniz sahte kayıp gibi görünüp acil durdurmayı tetiklemez.
+- **Spot cüzdana yatırma (çoklu varlık):** bot onu hemen sermayeye saymaz, **"kabul bekliyor"** uyarısı gelir. [Sorunlar](#/kilavuz/sorun-giderme/yatirma-kabul) kartındaki **Yatırmayı kabul et** (PIN + KABUL) ile kabul edince ölçüm ve tavan güncellenir (Engeli kaldır kullanmayın: engel, emir freni ve sapma bandını da birlikte kaldırır). Böylece kendi para eklemeniz sahte kayıp gibi görünüp acil durdurmayı tetiklemez.
 - **Hesap kesicisi kör olmaz:** sermaye artınca birikmiş kayıp korunur, kesici sıfırdan ölçmeye başlamaz.
 - **Bir coinin verisi okunamazsa ya da bozuksa** açık Donchian pozisyonu satılmaz, korunur; günlükte uyarı çıkar. Veri kapısı ani düşüşleri ve tutarsız mumları da yakalar (BTC'de günlük %60'tan büyük düşüş şüpheli veri sayılır).
 - **Canlı hesapta IP kısıtı zorunlu:** API anahtarında "Restrict access to trusted IPs only" açık değilse (yalnız sunucunun IP'si) bot bağlanmaz.

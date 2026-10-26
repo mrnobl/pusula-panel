@@ -123,7 +123,7 @@ npm run telefon
 | Pusula **çalışmıyor** (geliştirme bilgisayarı) | Araştırma modunda yeni bir sunucu açılır (Telegram kapalı, bot başlamaz) |
 | Pusula **çalışıyor** (sunucu) | Çalışan panele **köprü** kurulur (bot yeniden başlamaz); telefon kademesi: izleme + acil durdurma |
 
-Seçenekler: `--yeni-jeton` (telefon kaybolursa eski girişleri geçersiz kılar), `--port 3200`, `--ip <adres>`, `--karekod-yok`. Eski `--tam` (tam erişim) 60.5'te kaldırıldı.
+`npm run telefon` seçenekleri: `--yeni-jeton` (telefon kaybolursa eski girişleri geçersiz kılar), `--port 3200`, `--ip <adres>`, `--karekod-yok`. Tailscale karekodunu veren `npm run telefon-jeton` komutunda aynı işin adı `--yeni`dir (`npm run telefon-jeton -- --yeni`). Eski `--tam` (tam erişim) 60.5'te kaldırıldı.
 
 ## İlk seferde: güvenlik duvarı ve "Özel" ağ {#guvenlik-duvari}
 

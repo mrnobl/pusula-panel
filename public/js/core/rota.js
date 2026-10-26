@@ -26,6 +26,8 @@
  *   kilavuz[/…] · kitapcik[/…] → Bilgi (K-D) — ALT YOLLARI KORUNUR: `#/kilavuz/botlar/acil-fren`,
  *                          `#/kitapcik/bot-stratejileri`; `ag:rota` olayında `detail.alt` gider.
  *   kitap                → tab-kitap           Bilgi › Pusula Kitabı (72.1) — 72.2: araştırma eklentisi yokken gizlenir (kitap dağıtıma girmez).
+ *   kurs                 → tab-kurs            Bilgi › Pusula Kursu — uygulamalı görev listesi (public/kurs/pusula-kursu.html, js/pages/kitapcik.js
+ *                          kursAc); araştırma eklentisine BAĞLI DEĞİL, her kurulumda görünür ve dağıtıma girer.
  *
  * ESKİ SEKME KİMLİKLERİ (`tab-dashboard`, `tab-risk`…) hâlâ kabul edilir:
  * `AG.rota.git('tab-risk')` doğru yola gider. İç bağlantılar
@@ -90,6 +92,8 @@
     // 63.4: Kitapçık — alt yol seçili kitapçığı taşır (#/kitapcik/bot-stratejileri); js/pages/kitapcik.js.
     'kilavuz': { bolum: 'tab-kilavuz', menu: 'bilgi', baslik: 'Kılavuz', altYol: true },
     // 72.1: Pusula Kitabı — kendi yolu ve bölümü (js/pages/kitapcik.js kitapAc). 72.2: kabuk.js eklentisizken gizle({ yollar: ['kitapcik', 'kitap'] }).
+    // Pusula Kursu — Kılavuz'un "nasıl yapılır"ından ayrı, uygulamalı görev listesi (js/pages/kitapcik.js kursAc); her kurulumda görünür.
+    'kurs': { bolum: 'tab-kurs', menu: 'bilgi', baslik: 'Pusula Kursu' },
     'kitap': { bolum: 'tab-kitap', menu: 'bilgi', baslik: 'Pusula Kitabı' },
     'kitapcik': { bolum: 'tab-kitapcik', menu: 'bilgi', baslik: 'Kitapçık', altYol: true },
     'kurulum': { bolum: 'tab-kurulum', menu: 'bilgi', baslik: 'Kurulum sihirbazı' },

@@ -1,0 +1,3708 @@
+<!doctype html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Pusula Kursu</title>
+<style>
+/* Pusula Kursu — panelin renk belirteçleriyle (css/tokens.css) aynı değerler; kendi başına çalışır, dış kaynak yok. */
+:root{color-scheme:dark;
+--bg:#0e1016;--s1:#171a23;--s2:#1c1f2b;--s3:#232737;--inset:#12141b;--overlay:rgba(5,6,10,.72);
+--border:#262a36;--border-strong:#2e3342;--text-strong:#f2f4f8;--text:#e3e6ee;--soft:#c8cdd8;--muted:#a3a9b8;
+--accent:#8b7bff;--accent-solid:#6e5bff;--accent-soft:rgba(110,91,255,.16);--accent-border:rgba(110,91,255,.5);
+--pos:#6fe0ae;--pos-soft:rgba(78,209,154,.13);--pos-border:rgba(78,209,154,.4);
+--neg:#ff968c;--neg-soft:rgba(255,122,110,.13);--neg-border:rgba(255,122,110,.42);
+--warn:#f5b97f;--warn-soft:rgba(240,163,94,.13);--warn-border:rgba(240,163,94,.42);
+--info:#8cc4ff;--info-soft:rgba(90,169,255,.13);--info-border:rgba(90,169,255,.4);
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--ic-gen:300px}
+:root[data-theme="light"]{color-scheme:light;
+--bg:#f4f5f9;--s1:#ffffff;--s2:#f9fafc;--s3:#eceef4;--inset:#f0f1f6;--overlay:rgba(20,22,32,.45);
+--border:#e1e4ec;--border-strong:#cbd0dc;--text-strong:#11131a;--text:#1c1f2a;--soft:#3e4352;--muted:#5c6272;
+--accent:#5b45e0;--accent-solid:#5b45e0;--accent-soft:#eeebff;--accent-border:rgba(91,69,224,.35);
+--pos:#1f7a4d;--pos-soft:rgba(31,122,77,.1);--pos-border:rgba(31,122,77,.35);
+--neg:#b4432f;--neg-soft:rgba(180,67,47,.09);--neg-border:rgba(180,67,47,.35);
+--warn:#8a560c;--warn-soft:rgba(154,98,18,.1);--warn-border:rgba(154,98,18,.35);
+--info:#1f5fae;--info-soft:rgba(31,95,174,.09);--info-border:rgba(31,95,174,.3)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden}
+a{color:var(--accent);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{color:var(--text-strong);line-height:1.25}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--inset);border:1px solid var(--border);border-radius:4px;padding:0 4px}
+.dg{display:inline-block;font-weight:600;font-size:.92em;color:var(--text-strong);background:var(--s3);border:1px solid var(--border-strong);border-radius:6px;padding:0 6px;line-height:1.5;white-space:nowrap}
+.yol{font-weight:600;color:var(--text-strong)}
+.atla{position:absolute;left:-999px;top:0}.atla:focus{left:12px;top:8px;z-index:60;background:var(--s2);padding:6px 10px}
+button,.btn{font:600 14px/1.2 var(--sans);color:var(--text);background:var(--s2);border:1px solid var(--border-strong);border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+button:hover,.btn:hover{border-color:var(--accent)}
+.btn-ana{background:var(--accent-solid);border-color:var(--accent-solid);color:#fff}
+.btn-ana:hover{filter:brightness(1.08)}
+/* içindekiler */
+.icindekiler{position:fixed;top:0;left:0;bottom:0;width:var(--ic-gen);overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:20px 12px 40px 16px;font-size:14px;line-height:1.35;z-index:30}
+.ic-bas{margin:0 0 14px 4px}
+.ic-ad{font-weight:700;font-size:17px;color:var(--text-strong);text-decoration:none}
+.ic-alt{color:var(--muted);font-size:13px;margin-top:2px}
+.ic-ilerleme{margin:10px 4px 16px}
+.ic-liste{list-style:none;margin:0;padding:0}
+.ic-liste a{display:flex;gap:8px;align-items:baseline;padding:6px 8px;border-radius:6px;color:var(--text);text-decoration:none}
+.ic-liste a:hover{background:var(--accent-soft)}
+.ic-liste a.etkin{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.ic-no{flex:0 0 auto;min-width:22px;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12.5px}
+.ic-ad-m{flex:1 1 auto}
+.ic-say{flex:0 0 auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.ic-liste a.bitti .ic-say{color:var(--pos)}
+.ic-ayrac{margin:14px 8px 6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.perde{position:fixed;inset:0;background:var(--overlay);z-index:25}
+.ust-cubuk{display:none}
+/* içerik */
+.icerik{margin-left:var(--ic-gen);padding:32px 32px 96px}
+.icerik>*{max-width:860px;margin-left:auto;margin-right:auto}
+.kapak{padding:24px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.kapak-ust{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.kapak h1{font-size:clamp(32px,6vw,48px);margin:6px 0 8px;letter-spacing:-.01em}
+.kapak p{color:var(--soft);margin:0 0 14px;max-width:70ch}
+.araclar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ilerleme{height:10px;background:var(--s3);border-radius:999px;overflow:hidden}
+.ilerleme>span{display:block;height:100%;width:0;background:var(--pos);border-radius:999px;transition:width .3s}
+.ilerleme-yazi{font-size:13px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.kutu{border:1px solid var(--border);background:var(--s1);border-radius:12px;padding:16px 18px;margin:16px auto}
+.kutu h2,.kutu h3{margin:0 0 8px;font-size:18px}
+.kutu ul,.kutu ol{margin:6px 0 0;padding-left:22px}
+.kutu li{margin:4px 0}
+.kutu-tehlike{border-color:var(--neg-border);background:var(--neg-soft)}
+.kutu-tehlike h2{color:var(--neg)}
+.kutu-bilgi{border-color:var(--info-border);background:var(--info-soft)}
+.modul{margin-top:44px}
+.modul>h2{font-size:26px;margin:0 0 4px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.modul-no{color:var(--accent);font-variant-numeric:tabular-nums}
+.modul-say{font-size:14px;font-weight:600;color:var(--muted);margin-left:auto}
+.modul-ozet{color:var(--soft);margin:4px 0 8px}
+.onkosul{font-size:14px;color:var(--muted);margin:0 0 12px}
+.gorev{border:1px solid var(--border);background:var(--s1);border-radius:12px;padding:16px 18px;margin:14px 0}
+.gorev.tamam{border-color:var(--pos-border)}
+.gorev.tamam .gorev-no{background:var(--pos-soft);color:var(--pos);border-color:var(--pos-border)}
+.gorev-bas{display:flex;gap:12px;align-items:flex-start}
+.gorev-no{flex:0 0 auto;min-width:44px;text-align:center;font-weight:700;font-size:13px;border:1px solid var(--accent-border);background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:3px 6px;font-variant-numeric:tabular-nums}
+.gorev h3{margin:0;font-size:18px}
+.amac{margin:4px 0 0;color:var(--soft)}
+.rozetler{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.rozet{font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;border:1px solid var(--border-strong);color:var(--soft);background:var(--s2)}
+.rozet-okuma{border-color:var(--info-border);color:var(--info);background:var(--info-soft)}
+.rozet-kurs{border-color:var(--pos-border);color:var(--pos);background:var(--pos-soft)}
+.rozet-dikkat{border-color:var(--warn-border);color:var(--warn);background:var(--warn-soft)}
+.rozet-yasak{border-color:var(--neg-border);color:var(--neg);background:var(--neg-soft)}
+.bolum-ad{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.gorev ol,.gorev ul{margin:0;padding-left:22px}
+.gorev li{margin:4px 0}
+.beklenen{border-left:3px solid var(--pos-border);padding-left:12px}
+.olmadi{list-style:none;padding:0 !important}
+.olmadi>li{border:1px solid var(--border);background:var(--s2);border-radius:8px;padding:8px 12px;margin:6px 0}
+.olmadi .neden{font-weight:600;color:var(--text-strong)}
+.olmadi .cozum{color:var(--soft)}
+.uyari-satir{border:1px solid var(--warn-border);background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:12px 0 0;font-size:15px}
+.yasak-satir{border:1px solid var(--neg-border);background:var(--neg-soft);border-radius:8px;padding:8px 12px;margin:12px 0 0;font-size:15px}
+.baglantilar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.baglantilar a{font-size:14px}
+.gorev-alt{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:start;margin-top:14px;padding-top:12px;border-top:1px dashed var(--border-strong)}
+.tamam-kutu{display:flex;gap:8px;align-items:center;font-weight:600;cursor:pointer;white-space:nowrap;padding-top:6px}
+.tamam-kutu input{width:20px;height:20px;accent-color:var(--pos)}
+.not-alan{width:100%;min-height:44px;resize:vertical;font:15px/1.45 var(--sans);color:var(--text);background:var(--inset);border:1px solid var(--border-strong);border-radius:8px;padding:8px 10px}
+.not-alan::placeholder{color:var(--muted)}
+.gizle-bitenler .gorev.tamam{display:none}
+.bildirim{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--s3);color:var(--text-strong);border:1px solid var(--border-strong);border-radius:10px;padding:10px 16px;z-index:70;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+.pencere{position:fixed;inset:0;z-index:65;background:var(--overlay);display:flex;align-items:center;justify-content:center;padding:16px}
+.pencere-ic{background:var(--s1);border:1px solid var(--border-strong);border-radius:12px;padding:16px;width:min(720px,100%);max-height:90vh;display:flex;flex-direction:column;gap:10px}
+.pencere-ic textarea{flex:1 1 auto;min-height:300px;width:100%;font:13px/1.45 ui-monospace,Consolas,monospace;color:var(--text);background:var(--inset);border:1px solid var(--border-strong);border-radius:8px;padding:8px}
+[hidden]{display:none !important}
+.son{margin-top:56px;text-align:center;color:var(--muted);font-size:14px}
+@media (max-width:900px){
+  .icindekiler{transform:translateX(-100%);transition:transform .2s;width:min(320px,86vw);box-shadow:0 0 30px rgba(0,0,0,.35)}
+  body.ic-acik .icindekiler{transform:none}
+  .ust-cubuk{display:flex;position:sticky;top:0;z-index:20;gap:8px;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--s1);border-bottom:1px solid var(--border)}
+  .ust-cubuk .ust-ad{font-weight:700;color:var(--text-strong)}
+  .ust-ilerleme{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .icerik{margin-left:0;padding:12px 16px 80px}
+  .gorev{padding:14px}
+  .gorev-alt{grid-template-columns:1fr}
+  .modul>h2{font-size:22px}
+  .dg{white-space:normal}
+}
+@media print{.icindekiler,.ust-cubuk,.araclar,.baglantilar{display:none}.icerik{margin:0}}
+</style>
+</head>
+<body>
+<a class="atla" href="#icerik">İçeriğe atla</a>
+<div class="ust-cubuk">
+  <button type="button" id="btnIc" aria-controls="icindekiler" aria-expanded="false">☰ İçindekiler</button>
+  <span class="ust-ad">Pusula Kursu</span>
+  <span class="ust-ilerleme" id="ustIlerleme">0 / 0</span>
+</div>
+<nav class="icindekiler" id="icindekiler" aria-label="Kursun içindekileri">
+  <div class="ic-bas">
+    <a class="ic-ad" href="#bas">Pusula Kursu</a>
+    <div class="ic-alt">Paneli uygulamalı öğrenme</div>
+  </div>
+  <div class="ic-ilerleme"><div class="ilerleme" aria-hidden="true"><span id="icCubuk"></span></div><div class="ilerleme-yazi" id="icYazi">0 / 0 görev</div></div>
+  <ol class="ic-liste" id="icListe"></ol>
+</nav>
+<div class="perde" id="perde" hidden></div>
+
+<main class="icerik" id="icerik">
+  <header class="kapak" id="bas">
+    <p class="kapak-ust">Bilgi › Pusula Kursu</p>
+    <h1>Pusula Kursu</h1>
+    <p>Paneli baştan sona kendiniz deneyerek öğrenmek için sıralı görevler. Kılavuz "bu düğme ne yapar" sorusunu cevaplar; bu kurs ise "şimdi şunu yap, şunu görmelisin, görmediysen şuna bak" diye ilerler. Her görevin sonunda <strong>Tamamlandı</strong> kutusu ve <strong>Not / sorun</strong> alanı var; takıldığınız yeri oraya yazın.</p>
+    <div class="ilerleme" aria-hidden="true"><span id="anaCubuk"></span></div>
+    <div class="ilerleme-yazi" id="anaYazi" aria-live="polite">0 / 0 görev tamamlandı</div>
+    <div class="araclar">
+      <button type="button" class="btn-ana" id="btnKopyala" title="Tamamlanmayan görevler ve notlarınız düz metin olarak panoya alınır (geliştirme sohbetine yapıştırmak için)">Notlarımı kopyala</button>
+      <button type="button" id="btnBitenler" aria-pressed="false">Yalnız bitmeyenleri göster</button>
+      <button type="button" id="btnTema" title="Açık / koyu tema">Tema: koyu</button>
+      <button type="button" id="btnSifirla" title="Bütün işaretleri ve notları siler">Kursu sıfırla</button>
+    </div>
+  </header>
+
+  <section class="kutu kutu-tehlike" id="guvenlik" aria-labelledby="guvenlikBaslik">
+    <h2 id="guvenlikBaslik">Güvenlik kuralları — her görevden önce</h2>
+    <ul>
+      <li><strong>Kairos'a dokunmayın.</strong> Kairos demo hesapta kabul ölçümünde. Kairos üzerinde durumu değiştiren hiçbir görev yoktur: <strong>acil durdurma, durdur / başlat, sermaye, hesap türü, engel kaldırma Kairos'ta yasak.</strong> Kairos'ta yalnız okuma görevleri var.</li>
+      <li><strong>Tao'da yalnız okuma.</strong> Tao'nun kâğıt ölçümü sürüyor; Tao'nun ayarına, sermayesine, başlat / durdur düğmelerine dokunmayın.</li>
+      <li><strong>Deneme gereken her şey "Kurs" botunda.</strong> Modül 7'de <span class="yol">Ayarlar › Botlar (özet)</span> altındaki bot kayıtlarından <strong>Kurs</strong> adlı yeni bir <strong>kâğıt</strong> bot oluşturacaksınız. Başlat, durdur, acil durdurma ve geri alma denemeleri yalnız bu botta yapılır; kurs bitince bu bot arşivlenir.</li>
+      <li><strong>Canlı hesap hiçbir görevde yok.</strong> Canlı hesap anahtarı girilmez, "Canlı hesaba bağlan" düğmesine basılmaz. Sermaye dağıtımı yalnız <strong>prova</strong> olarak denenir.</li>
+      <li><strong>Anahtar, gizli anahtar, PIN ve jetonlar</strong> bu kursun not alanına, sohbete ya da başka bir yere yazılmaz. Not alanına yalnız "ne oldu" yazın.</li>
+      <li><strong>Provalar bu kursta yok.</strong> <span class="yol">Sistem › Tatbikatlar</span> sayfasında yalnız sayfayı tanıyacaksınız; provaların kendisi ayrı, müsait bir günde yapılacak.</li>
+      <li>Bir adım ekranda yazılandan farklı bir onay isterse (ör. kelime yazdırma, PIN) ve hangi bot için olduğundan emin değilseniz <strong>durun, Vazgeç'e basın</strong> ve durumu not alanına yazın.</li>
+    </ul>
+  </section>
+
+  <section class="kutu kutu-bilgi" id="nasil" aria-labelledby="nasilBaslik">
+    <h2 id="nasilBaslik">Kurs nasıl çalışılır</h2>
+    <ol>
+      <li>Modülleri sırayla yapın; her modülün başında ön koşulu yazar.</li>
+      <li>Her görevde önce <strong>Amaç</strong> ve <strong>Başlamadan önce</strong> satırını okuyun, sonra <strong>Adımlar</strong>ı paneldeki gerçek ekranda uygulayın. <strong>Paneldeki ekranı aç</strong> bağlantısı ilgili ekranı açar (kurs panelin içindeyse panel o ekrana geçer; ayrı sekmedeyse panel ayrı bir pencerede açılır).</li>
+      <li><strong>Doğru gittiyse ne görürsünüz</strong> listesiyle sonucu karşılaştırın. Aynıysa <strong>Tamamlandı</strong> kutusunu işaretleyin.</li>
+      <li>Farklıysa <strong>Olmadıysa</strong> bölümündeki nedenleri sırayla deneyin. Çözülmezse ne gördüğünüzü <strong>Not / sorun</strong> alanına yazın ve sonraki göreve geçin.</li>
+      <li>Bitirince ya da ara verirken <strong>Notlarımı kopyala</strong>: tamamlanmayan görevler ve notlarınız düz metin olarak panoya alınır; geliştirme sohbetine yapıştırın.</li>
+    </ol>
+    <p style="margin:10px 0 0">Rozetler: <span class="rozet rozet-okuma">Yalnız okuma</span> hiçbir şeyi değiştirmez · <span class="rozet rozet-kurs">Kurs botunda</span> yalnız kendi kâğıt deneme botunuzda · <span class="rozet rozet-dikkat">Ayar değiştirir</span> bir ayar ya da kayıt yazar · <span class="rozet rozet-dikkat">PIN ister</span> acil PIN sorar. Örnek tutarlar yalnız örnektir; kendi değerleriniz paneldedir.</p>
+  </section>
+
+  <div id="moduller"></div>
+
+  <p class="son">Kursun sonu. <strong>Notlarımı kopyala</strong> ile notlarınızı alın; provalar (Tatbikatlar) ayrı bir günde.</p>
+</main>
+
+<script>
+/* ═══ KURS İÇERİĞİ ═══════════════════════════════════════════════════════════
+ * Küçük biçim dili (metin alanlarında): **kalın** · «Düğme adı» · ‹Menü › Yol› · `kod` · [metin](panel yolu: diyez-eğik çizgi ile başlar)
+ * Bağlantılar panelin yolları (#/…) ve kılavuz başlıkları (#/kilavuz/<bölüm>/<başlık>).
+ * Görev alanları: no, baslik, amac, once, adimlar[], gorur[], olmadi[[neden, çözüm, kılavuz?]], panel, kilavuz, rozet[], uyari, yasak
+ * Senaryo alanları: belirti[], teshis[], cozum[], dogrula[], yapma
+ */
+const MODULLER = /*VERI*/[
+ {
+  "kisa": "Panele ilk bakış",
+  "baslik": "Paneli açmak ve gezinmek",
+  "ozet": "Paneli açar, temayı, yan menüyü, üst çubuğu ve telefon görünümünü tanırsınız. Bu modülde hiçbir şey değişmez.",
+  "onkosul": "Sunucu bilgisayarının başındasınız ve Pusula kurulu.",
+  "gorevler": [
+   {
+    "baslik": "Paneli masaüstü kısayolundan açın",
+    "amac": "Pusula'yı her gün nasıl açacağınızı görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "once": "Masaüstünde **Pusula** ve **Pusula'yı durdur** adlı iki kısayol olmalı.",
+    "adimlar": [
+     "Masaüstünde **Pusula**ya çift tıklayın.",
+     "Siyah pencere \"Sunucu baslatiliyor...\" yazıp kapanana kadar bekleyin (Pusula zaten açıksa \"Pusula zaten calisiyor\" der ve yalnız paneli açar).",
+     "Panel kendi penceresinde açılınca başlıkta **Pusula** adını ve rüzgâr gülünü bulun."
+    ],
+    "gorur": [
+     "Panel uygulama gibi ayrı bir pencerede açılır, ilk ekran Ana sayfadır.",
+     "Sunucu bilgisayarında üst çubukta **Araştırma modu** rozeti YOKTUR (o rozet yalnız geliştirme bilgisayarında çıkar)."
+    ],
+    "olmadi": [
+     [
+      "Masaüstünde kısayol yok",
+      "‹Sistem › Kurulum denetimi› sayfasında \"Kısayol yok\" satırındaki komutu okuyun; masaüstünde boş yere sağ tık › **Yenile** ile de deneyin.",
+      "#/kilavuz/kurulum-denetimi/uyarilar"
+     ],
+     [
+      "Panel açılmıyor, tarayıcı \"bağlanılamadı\" diyor",
+      "Bir dakika bekleyip kısayola yeniden basın; olmazsa kurulum kılavuzundaki sorun tablosuna bakın.",
+      "#/kilavuz/kurulum/adim-10"
+     ],
+     [
+      "Üstte turuncu \"eski sürüm\" bandı var",
+      "**Ctrl+F5** ile sayfayı yenileyin; sürmezse **Pusula'yı durdur** ve yeniden **Pusula**.",
+      "#/kilavuz/sss/eski-surum"
+     ],
+     [
+      "Pencere açılıp hemen kapanıyor",
+      "Antivirüs dosya silmiş olabilir — Modül 17'deki antivirüs senaryosuna geçin.",
+      "#/kilavuz/sorun-giderme/antivirus"
+     ]
+    ],
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/baslarken",
+    "no": "1.1",
+    "id": "m1-g1"
+   },
+   {
+    "baslik": "\"Bu sürümde yeni\" kartını okuyun",
+    "amac": "Her güncellemeden sonra neyin değiştiğini nereden öğreneceğinizi bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "once": "Kart yalnız o sürümün notunu henüz görmediyseniz çıkar; görünmüyorsa bu görevi kılavuzdaki sürüm notlarından yapın.",
+    "adimlar": [
+     "Ana sayfanın en üstündeki **Pusula … — bu sürümde yeni** kartını bulun.",
+     "«Sürüm notlarını oku» ile kılavuzdaki sürüm notlarını açın, ilk iki maddeyi okuyun.",
+     "Ana sayfaya dönüp kart hâlâ duruyorsa «Tamam, gördüm»e basın."
+    ],
+    "gorur": [
+     "Sürüm notları kılavuzda açılır; en üstte bugünkü sürüm vardır.",
+     "«Tamam, gördüm»den sonra kart bir daha bu sürüm için çıkmaz."
+    ],
+    "olmadi": [
+     [
+      "Kart hiç görünmüyor",
+      "Bu sürümün notunu daha önce görmüşsünüz; sorun değil. Notlar her zaman ‹Bilgi › Kılavuz› içinde \"Sürüm notları\" bölümündedir.",
+      "#/kilavuz/ana/alanlar"
+     ]
+    ],
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/surum-notlari",
+    "no": "1.2",
+    "id": "m1-g2"
+   },
+   {
+    "baslik": "Temayı açık ↔ koyu değiştirin",
+    "amac": "Gözünüze uygun temayı seçmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Üst çubuğun en sağındaki güneş / ay simgeli düğmeye basın (üzerine gelince \"Temayı değiştir\" yazar).",
+     "Bir kez daha basıp eski temaya dönün ya da beğendiğinizde bırakın.",
+     "Bu kursu panelin içinde açtıysanız kursun da aynı temaya geçtiğini görün."
+    ],
+    "gorur": [
+     "Bütün panel açık ve koyu tema arasında geçer; seçim bu tarayıcıda hatırlanır.",
+     "Pusula Kursu, Pusula Kitabı ve Kitapçık panelin temasını izler."
+    ],
+    "olmadi": [
+     [
+      "Tema her açılışta koyuya dönüyor",
+      "Tarayıcı verisi siliniyor ya da gizli pencere kullanılıyor olabilir; tercih tarayıcıda saklanır. Varsayılan koyudur.",
+      "#/kilavuz/baslarken/isaretler"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/baslarken/isaretler",
+    "no": "1.3",
+    "id": "m1-g3"
+   },
+   {
+    "baslik": "Yan menüyü tanıyın",
+    "amac": "Hangi ekranın hangi grupta olduğunu bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Sol menüde dört grubu bulun: **Günlük** (Ana sayfa, Portföy, Botlar, Raporlar), **İzleme** (Sinyaller, Piyasa bağlamı, Yapay zekâ notları, İleri test), **Araştırma** (araştırma eklentisi yüklüyse) ve **Sistem** (Sorunlar, Sağlık, Veri, Günlükler, Olay akışı, Tatbikatlar, Bildirimler, Kurulum denetimi, Ayarlar, Bilgi, Arşiv).",
+     "‹Portföy› ve ‹Botlar› gibi oklu öğelere basın; alt öğeler açılır.",
+     "Bir alt öğeye basın ve üst çubuktaki kırıntının (ör. \"Günlük › Portföy\") değiştiğini görün."
+    ],
+    "gorur": [
+     "Açık bölüm menüde vurgulanır; adres çubuğundaki `#/…` yolu ekranla birlikte değişir.",
+     "Tarayıcının geri / ileri tuşları ekranlar arasında çalışır."
+    ],
+    "olmadi": [
+     [
+      "Araştırma grubu menüde yok",
+      "Bu kurulumda araştırma eklentisi yüklü değil; beklenen davranış. Araştırma görevleri (Modül 15) o zaman atlanır.",
+      "#/kilavuz/yedek-tasima/eklenti"
+     ]
+    ],
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/baslarken/ekran-haritasi",
+    "no": "1.4",
+    "id": "m1-g4"
+   },
+   {
+    "baslik": "Üst çubuğu ve kur çeviriciyi kullanın",
+    "amac": "Her ekranda duran düğmeleri tanımak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Üst çubukta soldan sağa: kırıntı ve sayfa adı, (varsa) sorun rozeti, «Kur», **? Kılavuz** ve tema düğmesi.",
+     "«Kur»a basın; miktara örnek olarak `100` yazın, kaynağı USD, hedefi TRY seçin, «⇄» ile yer değiştirin, «Kurları yenile»ye basın.",
+     "Esc ile kapatın.",
+     "Herhangi bir ekrandayken **? Kılavuz**a basın; o ekranın kılavuz bölümü açılır."
+    ],
+    "gorur": [
+     "Kur çevirici sonucu anında yazar; birimler USD, TRY, EUR, GBP, gram altın ve BTC.",
+     "**? Kılavuz** her ekranda o ekranın bölümünü açar."
+    ],
+    "olmadi": [
+     [
+      "Kur satırı turuncu yazıyor",
+      "İnternet yok ya da kaynak yanıt vermedi: diskteki son kapanış gösteriliyor (\"canlı değil\"). «Kurları yenile» ile tekrar deneyin.",
+      "#/kilavuz/kur-cevirici/uyarilar"
+     ]
+    ],
+    "yasak": "Üst çubukta kırmızı **Acil durdur** düğmesi görünürse ona basmayın: çalışan botu (Kairos dahil) acil durdurur ve geri alınamaz. Acil durdurma Modül 8'de yalnız Kurs botunun kendi sayfasından denenecek.",
+    "kilavuz": "#/kilavuz/kur-cevirici/kullanim",
+    "no": "1.5",
+    "id": "m1-g5"
+   },
+   {
+    "baslik": "Telefon görünümünü bilgisayarda görün",
+    "amac": "Panelin dar ekranda nasıl dizildiğini önceden tanımak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Panel penceresini kenarından tutup daraltın (1024 pikselden dar).",
+     "Alt çubukta **Ana · Portföy · Botlar · Sinyaller · Menü** düğmelerini bulun.",
+     "«Menü»ye basın; yan menü çekmece olarak açılır. Arka perdeye dokunarak kapatın.",
+     "Pencereyi yeniden genişletin."
+    ],
+    "gorur": [
+     "Dar pencerede yan menü kalkar, alt çubuk çıkar; kartlar alt alta dizilir."
+    ],
+    "olmadi": [
+     [
+      "Pencere daralmıyor",
+      "Pencere tam ekran ise önce küçültün (çift tıklama ya da ekranı geri yükle düğmesi).",
+      "#/kilavuz/baslarken/ekran-haritasi"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/baslarken/ekran-haritasi",
+    "no": "1.6",
+    "id": "m1-g6"
+   },
+   {
+    "baslik": "Kılavuzda arama yapın",
+    "amac": "Takıldığınızda cevabı kendiniz bulabilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Bilgi › Kılavuz›u açın.",
+     "Arama kutusuna `acil` yazın; sonuçlardan birine tıklayın.",
+     "Kutuyu Esc ile temizleyin; soldaki içindekilerden \"Sorun giderme\" bölümünü açıp başlıklarına göz atın.",
+     "Bölüm sonundaki «… ekranına git» düğmesiyle ilgili ekrana geçin."
+    ],
+    "gorur": [
+     "En az iki harften sonra bütün bölümlerde aranır (ı/i, ş/s farkı önemsiz).",
+     "Sonuca tıklayınca ilgili başlık açılır ve adres `#/kilavuz/bölüm/başlık` olur."
+    ],
+    "olmadi": [
+     [
+      "\"Sonuç yok\" diyor",
+      "Daha kısa ya da farklı bir kelime deneyin (ör. \"demo\", \"liste\", \"telefon\").",
+      "#/kilavuz/kilavuz-kullanimi/arama"
+     ],
+     [
+      "Ekran görüntüsü yerine \"henüz üretilmedi\" kutusu var",
+      "İçerik yine okunabilir; görüntü bir sonraki güncellemede gelir.",
+      "#/kilavuz/kilavuz-kullanimi/uyarilar"
+     ]
+    ],
+    "panel": "#/kilavuz",
+    "kilavuz": "#/kilavuz/kilavuz-kullanimi/nasil-acilir",
+    "no": "1.7",
+    "id": "m1-g7"
+   }
+  ],
+  "no": 1,
+  "id": "m1"
+ },
+ {
+  "kisa": "Ana sayfa",
+  "baslik": "Ana sayfayı okumak",
+  "ozet": "Ana sayfa her sabah bakılacak tek ekrandır. Kartları ve ışıkları okumayı öğrenirsiniz; bu modülde hiçbir şey değişmez.",
+  "onkosul": "Modül 1.",
+  "gorevler": [
+   {
+    "baslik": "Kartların sırasını ve anlamını okuyun",
+    "amac": "Ana sayfada neyin nerede durduğunu bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ana sayfa›yı açın.",
+     "Yukarıdan aşağı kartları sayın: (varsa) sorun bandı ve \"bu sürümde yeni\", sonra **Yapman gerekenler → Portföyüm → Sistem → Botlar → Bu hafta**.",
+     "Her kartın başlığındaki bağlantıyı (ör. **Pano ›**, **Ayrıntı ve yönetim: Botlar ›**, **Piyasa bağlamı →**) bir kez açıp geri dönün."
+    ],
+    "gorur": [
+     "Her şey yolundaysa **Yapman gerekenler** kartında \"Yapman gereken bir şey yok — her şey yolunda.\" yazar.",
+     "Kartlardaki bağlantılar ilgili ekranı açar; Ana sayfa kendisi hiçbir şeyi değiştirmez."
+    ],
+    "olmadi": [
+     [
+      "Kartlar boş ya da \"—\" gösteriyor",
+      "Yeni kurulumda ilk ölçümler henüz yapılmamış olabilir; ertesi gün tekrar bakın.",
+      "#/kilavuz/ana/uyarilar"
+     ],
+     [
+      "Üstte kırmızı / sarı sorun bandı var",
+      "Banda tıklayıp Sorunlar sayfasında kartı okuyun (Modül 11).",
+      "#/kilavuz/sorun-giderme/sorunlar-sayfasi"
+     ]
+    ],
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/ana/alanlar",
+    "no": "2.1",
+    "id": "m2-g1"
+   },
+   {
+    "baslik": "Sistem sağlığı ışıklarını tek tek açın",
+    "amac": "Bir ışık sarı / kırmızı olduğunda nereye bakacağınızı bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Ana sayfadaki **Sistem** kartında öz denetim satırını (ör. \"37 / 37 denetim tamam\" — sayı örnektir) ve altındaki beş ışığı bulun.",
+     "Işıklara sırayla tıklayın: veri → Sağlık / Veri, bot hesapları → Botlar › Kairos › Hesap, günlük → Günlükler, toplam risk, Pusula sürümü → Ayarlar › Güncelleme. Her seferinde geri dönün.",
+     "Kartın altındaki **Sağlık sayfasını aç →** bağlantısını açın."
+    ],
+    "gorur": [
+     "Her ışık kendi ekranını açar; yeşil = tamam, sarı = dikkat, kırmızı = müdahale, gri = bilgi / ölçülemedi."
+    ],
+    "olmadi": [
+     [
+      "Bir ışık sarı ya da kırmızı",
+      "Açılan ekrandaki \"Ne yapmalı\" satırını okuyun; çözemezseniz Modül 17'deki \"Sağlık sarı / kırmızı\" senaryosu.",
+      "#/kilavuz/saglik/alanlar"
+     ],
+     [
+      "\"Son 24 saatte N hata\" yazıyor",
+      "Günlükler'de hata satırlarına bakın; tek seferlik ağ hatası çoğu zaman zararsızdır.",
+      "#/kilavuz/sorun-giderme/gunluk-hata"
+     ]
+    ],
+    "uyari": "Bot hesapları ışığı Kairos'un hesap sayfasını açar: orada yalnız okuyun, hiçbir düğmeye basmayın.",
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/ana/alanlar",
+    "no": "2.2",
+    "id": "m2-g2"
+   },
+   {
+    "baslik": "Botlar kartını okuyun",
+    "amac": "Kairos ve Tao'nun bugünkü hâlini tek bakışta anlamak.",
+    "rozet": [
+     "okuma",
+     "kairos"
+    ],
+    "adimlar": [
+     "Ana sayfadaki **Botlar** kartında Kairos ve Tao'yu bulun.",
+     "Her biri için şunları okuyun: durum (\"Çalışıyor\" / \"Durdu\" / \"Durduruldu — onay bekliyor\"), hesap türü (kâğıt / Binance demo), **Hesap değeri**, **Başlangıçtan**, **Son karar**, **Koruma stopu**, **Ne yapmalı**.",
+     "Sağ üstteki **Ayrıntı ve yönetim: Botlar ›** ile Botlar ekranına geçip geri dönün."
+    ],
+    "gorur": [
+     "Botlar \"Çalışıyor\" görünür; Son karar satırında bugünün (ya da dünün) kararı yazar."
+    ],
+    "olmadi": [
+     [
+      "Bir bot \"Durduruldu — onay bekliyor\"",
+      "Kendiniz düğmeye basmayın; Sorunlar kartını okuyun ve Modül 17'deki ilk senaryoyu izleyin. Kairos'taysa önce geliştirme sohbetine yazın.",
+      "#/kilavuz/sss/durduruldu"
+     ],
+     [
+      "\"26 saattir çalışmadı\" uyarısı",
+      "Sunucu kapalı kalmış olabilir; Modül 17'deki \"bugünkü çalışma yapılmadı\" senaryosu.",
+      "#/kilavuz/sorun-giderme/bot-calismadi"
+     ]
+    ],
+    "panel": "#/ana",
+    "kilavuz": "#/kilavuz/ana/alanlar",
+    "no": "2.3",
+    "id": "m2-g3"
+   }
+  ],
+  "no": 2,
+  "id": "m2"
+ },
+ {
+  "kisa": "Anahtarlar ve borsa hesabı",
+  "baslik": "Anahtarlar: borsa hesabı tanımlamak",
+  "ozet": "Bir borsa hesabını Pusula'ya tanıtırsınız: borsada para çekme izni KAPALI bir demo anahtarı oluşturur, ‹Ayarlar › Anahtarlar›a eklersiniz, «Sına» ile doğrularsınız. Telegram ve Gemini anahtarlarını da burada yönetirsiniz.",
+  "onkosul": "Modül 1–2. Sunucudaki masaüstü paneldesiniz (telefondan ve geliştirme bilgisayarından anahtar eklenmez). Acil PIN tanımlı (ilk görevde bakacaksınız).",
+  "not": "**Kural:** \"Binance canlı (Kairos)\" ve \"Binance demo (Kairos)\" satırlarında «Değiştir» ve «Sil»e basmayın — Kairos o anahtarlarla çalışıyor. Bu modülde yalnız yeni bir deneme hesabı eklenir; o hesap hiçbir bota bağlanmaz. Anahtarı hiçbir yere (not alanı, sohbet) yazmayın.",
+  "gorevler": [
+   {
+    "baslik": "‹Ayarlar › Bu bilgisayar› sayfasını okuyun",
+    "amac": "Bu bilgisayarın rolünü ve acil PIN'in tanımlı olduğunu görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Bu bilgisayar›ı açın.",
+     "Satırları okuyun: **Rol**, **Bu oturum**, **Acil PIN**, **Telefon jetonu**."
+    ],
+    "gorur": [
+     "Rol: \"Sunucu (ana bilgisayar) — botlar burada çalışır, ayarlar buradan kaydedilir.\"",
+     "Bu oturum: \"Bu bilgisayardaki masaüstü panel (tam yetki)\".",
+     "Acil PIN: \"tanımlı ✓\". Telefon jetonu: \"tanımlı ✓ (değeri gösterilmez)\"."
+    ],
+    "olmadi": [
+     [
+      "Acil PIN \"tanımlı değil\"",
+      "Sunucu bilgisayarında komut satırında bir kez `npm run acil-pin` çalıştırın (6–12 hane). PIN olmadan anahtar eklenemez, acil durdurma telefondan yapılamaz.",
+      "#/kilavuz/sorun-giderme/acil-pin"
+     ],
+     [
+      "Acil PIN \"şu an KİLİTLİ\"",
+      "Bir dakikada 5 yanlış deneme olmuş; 1 dakika bekleyin.",
+      "#/kilavuz/telefon/acil-pin"
+     ],
+     [
+      "Rol \"Araştırma kopyası\" diyor",
+      "Geliştirme bilgisayarındasınız: anahtar ve bot işlemlerini sunucudaki panelden yapın.",
+      "#/kilavuz/sss/arastirma-modu"
+     ]
+    ],
+    "panel": "#/ayarlar/bilgisayar",
+    "kilavuz": "#/kilavuz/ayarlar/bu-bilgisayar",
+    "no": "3.1",
+    "id": "m3-g1"
+   },
+   {
+    "baslik": "Anahtarlar sayfasını tanıyın",
+    "amac": "Hangi anahtarın nerede durduğunu ve durum rozetlerini okumak.",
+    "rozet": [
+     "okuma",
+     "kairos"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Anahtarlar›ı açın.",
+     "Grupları bulun: **Borsa hesapları**, **İşlem defterim (salt okuma)**, **Bildirim**, **Yapay zekâ**, **Erişim**.",
+     "Tablo sütunlarını okuyun: Ad · Kullanan · Değer · Makine · Durum · İşlem.",
+     "Değer sütununda yalnız son 4 karakterin göründüğünü (ör. `••••wxyz`) ve Durum rozetlerini (**Tamam / Bakılmalı / Eksik / Boş**) görün."
+    ],
+    "gorur": [
+     "Sayfanın üstünde \"Her değişiklik acil PIN ister. \"Sına\" yalnız okur — emir göndermez.\" yazar.",
+     "Kairos satırları \"Binance canlı (Kairos)\" ve \"Binance demo (Kairos)\" adıyla durur."
+    ],
+    "olmadi": [
+     [
+      "Bir satır \"Bakılmalı\"",
+      "Satırdaki son sınama metnini okuyun; Görev 3.5'te ne yapılacağı var.",
+      "#/kilavuz/ayarlar/anahtar-sina"
+     ],
+     [
+      "Kırmızı bant: \"eski şifreli biçimde\"",
+      "Görev 3.9'a bakın.",
+      "#/kilavuz/sorun-giderme/sir-dosyasi"
+     ]
+    ],
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/anahtarlar",
+    "no": "3.2",
+    "id": "m3-g2"
+   },
+   {
+    "baslik": "Borsada para çekme izni KAPALI bir demo anahtarı oluşturun",
+    "amac": "Pusula'ya verilecek anahtarı güvenli biçimde hazırlamak.",
+    "rozet": [
+     "okuma"
+    ],
+    "once": "Kurs için önerilen: **OKX demo** (Pusula bu türü saklar ve sınar ama henüz hiçbir bota bağlayamaz — en güvenli deneme). Binance kullanacaksanız Binance'in **Futures › Demo Trading** bölümündeki API Management'tan alın.",
+    "adimlar": [
+     "Borsanın web sitesinde demo işlem (demo trading) kipine geçin ve API anahtarı oluşturma sayfasını açın.",
+     "İzinlerde **para çekme (Withdraw) KAPALI** olsun; okuma açık olsun.",
+     "OKX'te bir parola (passphrase) belirleyin; borsa bunu anahtar, gizli anahtar ve parola olarak üç parça verir.",
+     "Değerleri yalnız borsanın gösterdiği pencerede bırakın; bir sonraki görevde doğrudan Pusula'ya yapıştıracaksınız."
+    ],
+    "gorur": [
+     "Borsa anahtar listesinde yeni anahtar \"read\" (ve isterseniz \"trade\") izniyle görünür, \"withdraw\" yoktur."
+    ],
+    "olmadi": [
+     [
+      "Borsa IP kısıtı soruyor",
+      "Demo anahtarında IP kısıtı zorunlu değildir; canlı hesap anahtarında olur (bu kursta canlı yok).",
+      "#/kilavuz/sorun-giderme/anahtar-yetkisi"
+     ]
+    ],
+    "uyari": "Anahtarı, gizli anahtarı ve parolayı not alanına, sohbete, e-postaya ya da ekran görüntüsüne koymayın.",
+    "kilavuz": "#/kilavuz/sorun-giderme/anahtar-yetkisi",
+    "no": "3.3",
+    "id": "m3-g3"
+   },
+   {
+    "baslik": "«Hesap ekle» ile deneme borsa hesabını tanımlayın",
+    "amac": "Bir borsa hesabını Pusula'ya eklemek.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "once": "Görev 3.3'teki anahtar hazır, acil PIN biliniyor.",
+    "adimlar": [
+     "‹Ayarlar › Anahtarlar› › **Borsa hesapları** grubunda «Hesap ekle»ye basın.",
+     "**Hesap adı**: `Kurs deneme` (örnek).",
+     "**Borsa**: OKX (ya da kullandığınız borsa). **Hesap türü**: \"Demo (sahte para)\".",
+     "**Alt hesap (isteğe bağlı)**: boş bırakın (alt hesap kullanacaksanız Binance'te alt hesap e-postası, OKX'te alt hesap adı yazılır).",
+     "**API anahtarı**, **Gizli anahtar (secret)** ve OKX ise **Parola (yalnız OKX: passphrase)** alanlarına yapıştırın.",
+     "«Kaydet» → \"Hesap eklensin mi?\" penceresinde **Acil PIN**i girin → «Onayla»."
+    ],
+    "gorur": [
+     "\"Hesap eklendi.\" bildirimi; tabloda \"Kurs deneme\" satırı, değer sütununda yalnız son 4 karakter.",
+     "OKX ve Bybit satırında \"hazırlık — henüz bota bağlanamaz (anahtar saklanır, salt okuma sınanır)\" notu."
+    ],
+    "olmadi": [
+     [
+      "\"Acil PIN tanımlı değil — bu ekranda değişiklik yapılamaz\"",
+      "Sunucuda `npm run acil-pin`, sonra tekrar deneyin.",
+      "#/kilavuz/sorun-giderme/acil-pin"
+     ],
+     [
+      "OKX'te kaydedilmiyor",
+      "OKX'te parola (passphrase) zorunludur; boş bırakılmış olabilir.",
+      "#/kilavuz/ayarlar/anahtar-degistir"
+     ],
+     [
+      "«Hesap ekle» yok ya da gri",
+      "Telefondasınız ya da geliştirme bilgisayarındasınız: anahtarlar orada yalnız görüntülenir.",
+      "#/kilavuz/ayarlar/anahtarlar"
+     ],
+     [
+      "PIN penceresi tekrar tekrar çıkıyor",
+      "PIN yanlış; 5 yanlışta 1 dakika kilitlenir.",
+      "#/kilavuz/ayarlar/anahtar-degistir"
+     ]
+    ],
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/anahtarlar",
+    "no": "3.4",
+    "id": "m3-g4"
+   },
+   {
+    "baslik": "Yeni hesabı «Sına» ile doğrulayın ve para çekme iznini denetleyin",
+    "amac": "Anahtarın çalıştığını ve tehlikeli izin taşımadığını görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "\"Kurs deneme\" satırında «Sına»ya basın.",
+     "Satırda çıkan son sınama metnini okuyun.",
+     "‹Sistem › Sağlık›ta **API anahtarı yetkisi** satırının rengine bakın."
+    ],
+    "gorur": [
+     "Önce \"sınanıyor (yalnız okuma, emir yok)…\", sonra \"Son sınama …: bağlantı tamam · N varlık …\" (sayılar örnek).",
+     "İzinler arasında PARA ÇEKME yoktur; durum **Tamam**."
+    ],
+    "olmadi": [
+     [
+      "\"başarısız — …\" ve anahtar / imza hatası",
+      "Anahtarı yanlış kopyalamış olabilirsiniz: satırda «Değiştir» → değerleri yeniden yapıştırın → «Kaydet» (PIN) → «Sına».",
+      "#/kilavuz/ayarlar/anahtar-sina"
+     ],
+     [
+      "Demo / canlı karışıklığı",
+      "Demo hesap türünde girilen anahtar borsanın demo kipinde oluşturulmuş olmalı; canlı hesap anahtarı demoda çalışmaz. Anahtarı doğru kipte yeniden oluşturun.",
+      "#/kilavuz/hesaplar/anahtar"
+     ],
+     [
+      "Saat hatası (Binance -1021)",
+      "Windows › Saat ve dil › **Saati şimdi eşitle**; sonra yeniden «Sına».",
+      "#/kilavuz/sorun-giderme/saat-farki"
+     ],
+     [
+      "Kırmızı: \"PARA ÇEKME izni AÇIK — borsada hemen kapatın\"",
+      "Borsada bu anahtarın para çekme iznini kapatın, sonra «Sına». Anahtarı başkası görmüş olabilirse silip yenisini oluşturun.",
+      "#/kilavuz/sorun-giderme/anahtar-yetkisi"
+     ],
+     [
+      "\"Bilinmiyor\"",
+      "İnternet ya da borsa yanıt vermedi; biraz sonra yeniden «Sına». Sunucu her gün 06:15'ten sonra kendiliğinden de sınar.",
+      "#/kilavuz/sorun-giderme/anahtar-yetkisi"
+     ]
+    ],
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/anahtar-sina",
+    "no": "3.5",
+    "id": "m3-g5"
+   },
+   {
+    "baslik": "Telegram anahtarını sınayın",
+    "amac": "Bildirim jetonunun çalıştığını görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "once": "Telegram daha önce kurulduysa yapılır; kurulmadıysa önce Görev 4.2.",
+    "adimlar": [
+     "‹Ayarlar › Anahtarlar› › **Bildirim** grubundaki Telegram satırında «Sına»ya basın."
+    ],
+    "gorur": [
+     "Son sınama \"bağlantı tamam\" der; durum **Tamam**."
+    ],
+    "olmadi": [
+     [
+      "\"başarısız\" (jeton geçersiz)",
+      "Jeton değişmiş olabilir: @BotFather'dan yeni jeton alıp satırdaki «Değiştir» ile girin (PIN).",
+      "#/kilavuz/sorun-giderme/telegram-gonderim"
+     ]
+    ],
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/telegram",
+    "no": "3.6",
+    "id": "m3-g6"
+   },
+   {
+    "baslik": "Gemini (yapay zekâ) anahtarını ekleyin ve sınayın",
+    "amac": "Yapay zekâ notlarının çalışması için ücretsiz anahtarı tanımlamak.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "once": "Gemini anahtarı zaten \"Tamam\" ise yalnız «Sına» yapın.",
+    "adimlar": [
+     "Tarayıcıda Google AI Studio'ya Google hesabınızla girin; \"Get API key\" › \"Create API key\". Ücretsizdir — faturalandırma (billing) AÇMAYIN.",
+     "‹Ayarlar › Anahtarlar› › **Yapay zekâ** grubunda Gemini satırında «Değiştir».",
+     "\"Gemini API anahtarı\" alanına yapıştırın (\"AIza…\" ya da \"AQ.…\" ile başlar) → «Kaydet» → acil PIN.",
+     "«Sına»ya basın."
+    ],
+    "gorur": [
+     "\"Son sınama: bağlantı tamam · N model erişilebilir\" (yalnız model listesi sorulur, kota harcanmaz).",
+     "Ertesi sabah ‹İzleme › Yapay zekâ notları› dolmaya başlar (Görev 10.4)."
+    ],
+    "olmadi": [
+     [
+      "Anahtar reddedildi ya da kota doldu",
+      "Anahtarı yeniden kopyalayın; kota ertesi gün yenilenir. Faturalandırmayı açmayın.",
+      "#/kilavuz/sorun-giderme/yapay-zeka-hata"
+     ],
+     [
+      "Notlar sayfası hâlâ \"Gemini API anahtarı bekleniyor\"",
+      "Anahtar gün içinde girildiyse en geç 10 dakikada o günün okuması yapılır; bekleyip sayfayı yenileyin.",
+      "#/kilavuz/sorun-giderme/yapay-zeka-anahtar"
+     ]
+    ],
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/yapay-zeka-notlari/anahtar",
+    "no": "3.7",
+    "id": "m3-g7"
+   },
+   {
+    "baslik": "Alt hesap ve aktarım türünü tanıyın",
+    "amac": "İleride bir botu ayrı alt hesapta çalıştırmak için gereken alanları bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "«Hesap ekle» formunu açın (kaydetmeyeceksiniz).",
+     "**Hesap türü** seçeneklerini okuyun: \"Demo (sahte para)\", \"Canlı hesap\", \"Aktarım (yalnız alt hesaplar arası — çekme izni KAPALI)\".",
+     "**Alt hesap (isteğe bağlı)** alanının ipucunu okuyun: Binance'te alt hesap e-postası, OKX'te alt hesap adı.",
+     "«Vazgeç» ile formu kapatın."
+    ],
+    "gorur": [
+     "Form hiçbir şey kaydetmeden kapanır.",
+     "Yeni bir hesabın bir bota bağlanması ‹Ayarlar › Botlar (özet)› altındaki bot kayıtlarından yapılır — bu kursta yapılmaz."
+    ],
+    "olmadi": [],
+    "yasak": "\"Canlı hesap\" türünde hesap eklemeyin; canlı hesap bu kursun dışında.",
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/anahtarlar",
+    "no": "3.8",
+    "id": "m3-g8"
+   },
+   {
+    "baslik": "\"Eski şifreli dosyayı kenara al\"ı tanıyın",
+    "amac": "Eski biçimdeki anahtar dosyası uyarısı çıkarsa ne yapılacağını bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Anahtarlar sayfasının üstünde \"… eski şifreli biçimde …\" diyen kırmızı bir bant var mı bakın.",
+     "Yoksa: yapılacak bir şey yok, görevi tamamlandı sayın.",
+     "Varsa: kılavuzu okuyun; «Kenara al» dosyayı SİLMEZ, aynı klasörde tarihli bir adla kenara alır (acil PIN ister). Sonra o anahtarlar yeniden girilir."
+    ],
+    "gorur": [
+     "Çoğu kurulumda bant yoktur."
+    ],
+    "olmadi": [
+     [
+      "Bant var ve emin değilsiniz",
+      "Basmadan önce geliştirme sohbetine yazın.",
+      "#/kilavuz/sorun-giderme/sir-dosyasi"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/ayarlar/eski-sifreli",
+    "no": "3.9",
+    "id": "m3-g9"
+   }
+  ],
+  "no": 3,
+  "id": "m3"
+ },
+ {
+  "kisa": "Ayarlar",
+  "baslik": "Ayarlar alt sayfaları",
+  "ozet": "Ayarlar'ın dokuz alt sayfasını gezersiniz; zararsız bir ayarı değiştirip ‹Ayar geçmişi›nden geri alırsınız.",
+  "onkosul": "Modül 3 (acil PIN tanımlı).",
+  "gorevler": [
+   {
+    "baslik": "‹Ayarlar › Botlar (özet)› tablosunu okuyun",
+    "amac": "Bütün botların durumunu tek tabloda görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Botlar (özet)›ı açın.",
+     "Tablo sütunlarını okuyun: Bot · Durum · Hesap türü · Küçük hesap kipi · Hesap değeri.",
+     "Alttaki **Bot kayıtları** kartını bulun (Modül 7'de Kurs botunu burada oluşturacaksınız)."
+    ],
+    "gorur": [
+     "Her satırda «Yönet →» (botun Yönetim sayfası) ya da portföy botlarında «Aç →».",
+     "\"Salt okunur. Hesap türü, para kaydı, şimdi çalıştır ve kontroller her botun kendi sayfasında…\" notu."
+    ],
+    "olmadi": [
+     [
+      "Tablo boş",
+      "Sunucuya ulaşılamıyor olabilir; sayfayı yenileyin.",
+      "#/kilavuz/ayarlar/botlar"
+     ]
+    ],
+    "panel": "#/ayarlar/botlar",
+    "kilavuz": "#/kilavuz/ayarlar/botlar",
+    "no": "4.1",
+    "id": "m4-g1"
+   },
+   {
+    "baslik": "Telegram bildirimlerini kurun (ya da denetleyin) ve test mesajı gönderin",
+    "amac": "Pusula'nın size Telegram'dan ulaşabildiğini görmek.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "once": "Telegram zaten kuruluysa yalnız 6. adımı yapın.",
+    "adimlar": [
+     "Telegram'da **@BotFather**'a `/newbot` yazıp bir bot oluşturun; verdiği jetonu alın.",
+     "Kendi yeni botunuza `/start` yazın.",
+     "**@userinfobot**'a yazıp `Id` satırını alın (Chat ID).",
+     "‹Ayarlar › Bildirimler›de **Bot token** ve **Chat ID** alanlarına girin, \"Telegram bildirimlerini etkinleştir\" kutusunu işaretleyin.",
+     "«Ayarları kaydet» → PIN penceresinde acil PIN (ayar kaydı PIN ile korunur; 10 dakika geçerli).",
+     "«Test mesajı gönder»."
+    ],
+    "gorur": [
+     "\"✅ Telegram ayarları kaydedildi … Durum: Etkin …\" bildirimi.",
+     "\"✅ Test mesajı gönderildi.\" ve telefonda \"Pusula Test Bildirimi\".",
+     "Sayfanın üstünde \"Telegram komutları: yoklama çalışıyor (komutlara cevap veriliyor)\"."
+    ],
+    "olmadi": [
+     [
+      "\"HATA 401 — Telegram jetonu geçersiz\"",
+      "Jetonu yeniden girin; bota `/start` yazın, engellediyseniz kaldırın.",
+      "#/kilavuz/sorun-giderme/telegram-gonderim"
+     ],
+     [
+      "\"HATA 409 — aynı Telegram botunu başka bir bilgisayar … da yokluyor\"",
+      "Başka bir bilgisayarda Pusula açık kalmış; Modül 17'deki Telegram senaryosu.",
+      "#/kilavuz/sorun-giderme/telegram-409"
+     ],
+     [
+      "Geliştirme bilgisayarında hiçbir şey gitmiyor",
+      "Bilinçli: bildirimleri sunucu gönderir. Bu görevi sunucudaki panelden yapın.",
+      "#/kilavuz/bildirimler/uyarilar"
+     ]
+    ],
+    "panel": "#/ayarlar/bildirimler",
+    "kilavuz": "#/kilavuz/ayarlar/telegram",
+    "no": "4.2",
+    "id": "m4-g2"
+   },
+   {
+    "baslik": "\"Telegram'da tutarları gizle\" kutusunu tanıyın",
+    "amac": "Bildirimlerde tutarların görünüp görünmeyeceğini bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Bildirimler›de \"Telegram'da tutarları gizle\" kutusunu bulun ve yanındaki açıklamayı okuyun.",
+     "Kutuya dokunmayın (değişince hemen kaydedilir)."
+    ],
+    "gorur": [
+     "Varsayılan işaretlidir: bildirimlerde tutarlar ••• olarak gider; yüzde, kur ve saat görünür."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/bildirimler/tutarlar",
+    "no": "4.3",
+    "id": "m4-g3"
+   },
+   {
+    "baslik": "Sağlık sinyalini (healthchecks) denetleyin",
+    "amac": "Bilgisayar kapanırsa dışarıdan haber alacağınızdan emin olmak.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "once": "İsteğe bağlı: healthchecks.io hesabınız yoksa bölümü okuyup geçin.",
+    "adimlar": [
+     "‹Ayarlar › Bildirimler›in altındaki \"Sağlık sinyali (healthchecks.io)\" bölümünü bulun.",
+     "Alanlar doluysa «Test sinyali gönder»e basın.",
+     "Boşsa: healthchecks.io'da check'leri açıp adreslerini girin → «Kaydet» (adresler sırdır, acil PIN sorulur) → «Test sinyali gönder»."
+    ],
+    "gorur": [
+     "\"✅ Test sinyali gönderildi — healthchecks.io'da check \"up\" görünmeli.\" ve satır satır \"gönderildi ✓ / ayarlı değil\"."
+    ],
+    "olmadi": [
+     [
+      "\"URL'ler aynı olamaz\"",
+      "Her bot ve sunucu için ayrı check açın.",
+      "#/kilavuz/ayarlar/saglik"
+     ],
+     [
+      "\"son ping başarısız\"",
+      "Çoğu zaman internettir; biraz sonra yeniden deneyin.",
+      "#/kilavuz/sorun-giderme/saglik-sinyali"
+     ]
+    ],
+    "panel": "#/ayarlar/bildirimler",
+    "kilavuz": "#/kilavuz/ayarlar/saglik",
+    "no": "4.4",
+    "id": "m4-g4"
+   },
+   {
+    "baslik": "‹Ayarlar › Bağlantılar› sayfasını tanıyın",
+    "amac": "Botun demo anahtarının nerede durduğunu bilmek.",
+    "rozet": [
+     "okuma",
+     "kairos"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Bağlantılar›ı açın.",
+     "\"Demo hesap API anahtarı\" katını açıp durum satırını (\"demo hesap anahtarı: kayıtlı ✓ / yok\") ve notu okuyun; alanlara bir şey yazmayın."
+    ],
+    "gorur": [
+     "Not: \"yalnız \"Enable Futures\" açık, \"Enable Withdrawals\" KAPALI, IP kısıtı açık olmalı.\""
+    ],
+    "olmadi": [],
+    "yasak": "\"Canlı hesap\" katındaki alanlara anahtar yazmayın, «Canlı anahtarı kaydet» ve «Canlı hesaba bağlan» düğmelerine basmayın. Demo anahtar alanları Kairos'un anahtarıdır; değiştirmeyin.",
+    "panel": "#/ayarlar/borsa",
+    "kilavuz": "#/kilavuz/ayarlar/borsa",
+    "no": "4.5",
+    "id": "m4-g5"
+   },
+   {
+    "baslik": "Güncelleme durumunu okuyun ve «Şimdi kontrol et» deyin",
+    "amac": "Yeni sürüm var mı, nasıl kurulur görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Güncelleme›yi açın; **Çalışan sürüm** ve **Durum** satırlarını okuyun.",
+     "\"Nasıl çalışır?\" bağlantısını açıp onaylı / otomatik farkını okuyun.",
+     "«Şimdi kontrol et»e basın ve alttaki adımların (✓ bitti, ◐ sürüyor, – atlandı, ✗ hata) dolmasını izleyin."
+    ],
+    "gorur": [
+     "\"Kontrol başladı — adımlar aşağıda canlı görünür.\"",
+     "Sonunda \"Güncel ✓ — son kontrol …\" ya da kurulmayı bekleyen sürüm (\"kurulmayı bekliyor: …\")."
+    ],
+    "olmadi": [
+     [
+      "\"Elle bakılmalı: …\"",
+      "Modül 17'deki güncelleme senaryosu; çalışan sürüm sağlamdır.",
+      "#/kilavuz/sorun-giderme/guncelleme-elle"
+     ],
+     [
+      "\"GitHub'a ulaşılamadı\"",
+      "İnternet; ertesi gün kendisi yeniden dener.",
+      "#/kilavuz/sorun-giderme/github"
+     ]
+    ],
+    "uyari": "Kurmak (Güncellemeyi kur) Modül 13'te; burada yalnız kontrol edin.",
+    "panel": "#/ayarlar/guncelleme",
+    "kilavuz": "#/kilavuz/ayarlar/guncelleme",
+    "no": "4.6",
+    "id": "m4-g6"
+   },
+   {
+    "baslik": "Yedek ve taşıma kartlarını okuyun",
+    "amac": "Günlük yedeğin çalıştığını ve taşıma dosyasının nasıl alındığını bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Yedek ve taşıma›yı açın.",
+     "**Günlük yedek** kartında rozeti (Çalışıyor / Eksik / Sorun var) ve \"Günlük kopya (her gün 05:30)\" satırını okuyun.",
+     "**USB yedeği** kartında \"Yedek şifresi kayıtlı / yok\" rozetine bakın.",
+     "**Taşıma dosyası oluştur** kartını okuyun (dosya bu görevde oluşturulmaz)."
+    ],
+    "gorur": [
+     "Günlük yedek rozeti \"Çalışıyor\"; son kopya tarihi bugün ya da dün."
+    ],
+    "olmadi": [
+     [
+      "\"Eksik\" ya da \"Sorun var\"",
+      "Yedek diski takılı mı, dolu mu (\"ENOSPC\") bakın.",
+      "#/kilavuz/sorun-giderme/yedek"
+     ],
+     [
+      "USB yedek şifresi \"yok\"",
+      "En az 12 karakterlik bir şifre belirleyip «Yedek şifresini kaydet»; şifreyi güvenli bir yerde saklayın.",
+      "#/kilavuz/yedek-tasima/usb-yedegi"
+     ]
+    ],
+    "panel": "#/ayarlar/yedek",
+    "kilavuz": "#/kilavuz/yedek-tasima",
+    "no": "4.7",
+    "id": "m4-g7"
+   },
+   {
+    "baslik": "Zararsız bir ayarı değiştirin ve ‹Ayar geçmişi›nden geri alın",
+    "amac": "Yanlışlıkla değişen bir ayarı geri almayı öğrenmek.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "adimlar": [
+     "‹Sistem › Bildirimler›de **Sessiz saatler** kartındaki **Başlangıç** saatini not edin (ör. 23:00), bir yarım saat ileri alın (ör. 23:30) ve «Kaydet» (sessiz saat kaydı PIN istemez).",
+     "‹Ayarlar › Ayar geçmişi›ni açın; Tür süzgecini \"Bildirim\" yapın.",
+     "En üstteki satırda \"Eski → yeni\" sütununda değişikliği görün; «Geri al»a basın.",
+     "Pencerede acil PIN'i girin (gevşeten bir geri almada ayrıca \"GERİ AL\" yazılır) → «Geri al».",
+     "Sessiz saatler kartına dönüp başlangıç saatinin eski değere döndüğünü görün."
+    ],
+    "gorur": [
+     "\"Sessiz saat kaydedildi.\" sonra \"Geri alındı: …\".",
+     "Ayar geçmişine yeni bir \"geri alma\" satırı eklenir; eski satır \"geri alındı (…)\" notunu taşır."
+    ],
+    "olmadi": [
+     [
+      "\"Geri alınamadı: …\"",
+      "Ayar o satırdan sonra yeniden değişmiş olabilir; geri alma yalnız en son değişiklikte çalışır.",
+      "#/kilavuz/ayarlar/ayar-geri-al"
+     ],
+     [
+      "Satır yok",
+      "Süzgeç tarihleri dar olabilir; Başlangıç / Bitiş alanlarını temizleyin.",
+      "#/kilavuz/ayarlar/ayar-gecmisi"
+     ]
+    ],
+    "panel": "#/ayarlar/gecmis",
+    "kilavuz": "#/kilavuz/ayarlar/ayar-geri-al",
+    "no": "4.8",
+    "id": "m4-g8"
+   },
+   {
+    "baslik": "‹Ayarlar › Makineler› panosunu okuyun",
+    "amac": "Eşlenmiş sunucuların sağlığını görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Makineler›i açın; **Bu bilgisayar** kartını okuyun (Ad, Rol, Sürüm, Botlar).",
+     "«Şimdi yokla»ya basın.",
+     "Eşlenmiş makine varsa tablosunda Durum rozetini (Bağlı / Sessiz / Henüz görülmedi / Sürüm uyumsuz) ve \"son görülme\" yazısını okuyun."
+    ],
+    "gorur": [
+     "Eşli makine varsa \"Bağlı\"; yoksa tablo boş — tek sunuculu kurulumda normal."
+    ],
+    "olmadi": [
+     [
+      "\"Sessiz\"",
+      "O bilgisayar kapalı ya da uykuda olabilir; Modül 17'deki \"makine sessiz\" senaryosu.",
+      "#/kilavuz/sorun-giderme/makine-sessiz"
+     ],
+     [
+      "\"Sürüm uyumsuz\"",
+      "İki makineyi aynı sürüme güncelleyin.",
+      "#/kilavuz/ayarlar/makine-sorun"
+     ]
+    ],
+    "yasak": "«Kaldır», «Yönetici yap», «Taşı» ve «Devral» düğmelerine basmayın; bunlar botların hangi makinede çalıştığını değiştirir. Kairos taşınamaz, devralınamaz.",
+    "panel": "#/ayarlar/makineler",
+    "kilavuz": "#/kilavuz/ayarlar/makineler",
+    "no": "4.9",
+    "id": "m4-g9"
+   }
+  ],
+  "no": 4,
+  "id": "m4"
+ },
+ {
+  "kisa": "Portföy",
+  "baslik": "Portföy: hesaplarınızı ve varlıklarınızı girmek",
+  "ozet": "Kendi hesaplarınızı (ör. kullandığınız borsa hesabını) Portföyüm'e tanımlar, hesapta zaten olan varlıkları girer, yeni alım ekranını dener ve geri alırsınız. Burası sizin gerçek kayıt defterinizdir; botları etkilemez.",
+  "onkosul": "Modül 1. Sunucudaki masaüstü panel (telefonda kayıt düğmeleri kilitlidir).",
+  "not": "Portföyüm'de hiçbir bakiye borsadan kendiliğinden dolmaz; varlıkları siz girersiniz. Kayıtlar silinmez: iptal her yerde ters kayıtla yapılır ve satır \"iptal\" olarak kalır. Deneme için açtığınız bir hesabı kurs sonunda ‹Gelişmiş› bölümünden kapatabilirsiniz.",
+  "gorevler": [
+   {
+    "baslik": "Üst çubuktaki portföy ve para birimi seçicilerini tanıyın",
+    "amac": "Kimin portföyüne ve hangi para biriminde baktığınızı bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › Pano›yu açın.",
+     "Üst çubukta **Portföy** seçicisini (Ben / eklenen portföyler / Tümü) ve **Para birimi** seçicisini ($ · ₺ · Gizli) bulun.",
+     "\"Tümü\"nü seçin, bantta \"yalnız okunur\" yazdığını görün; sonra \"Ben\"e dönün. Para birimini ₺ ve \"Gizli\" yapıp $'a dönün."
+    ],
+    "gorur": [
+     "\"Tümü\" görünümünde kayıt düğmeleri kapanır; \"Gizli\" tutarları gizler."
+    ],
+    "olmadi": [
+     [
+      "Seçiciler görünmüyor",
+      "Seçiciler yalnız Portföy sayfalarında çıkar.",
+      "#/kilavuz/portfoy/gorunum"
+     ]
+    ],
+    "panel": "#/portfoy/pano",
+    "kilavuz": "#/kilavuz/portfoy/gorunum",
+    "no": "5.1",
+    "id": "m5-g1"
+   },
+   {
+    "baslik": "Borsa hesabınızı Portföyüm'e tanımlayın",
+    "amac": "Bir hesabı (ör. kripto borsası hesabınızı) Portföyüm'de açmak.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "‹Portföy › Hesaplar›ı açın; «+ Yeni hesap»a basın.",
+     "**Kurum**: borsanın adı (ör. `Binance`). **Hesap adı**: ör. `Kripto ana hesap`.",
+     "**Tür**: \"Binance / kripto borsası\". **Para birimi**: USD.",
+     "«Hesabı aç»."
+    ],
+    "gorur": [
+     "\"… açıldı (kurum da eklendi)… Sıradaki adım: hesapta şu an olanları \"Bu hesapta zaten olanlar\" bölümüne bir kez gir…\" bildirimi.",
+     "Yeni hesap kartı çıkar; \"Bu hesapta zaten olanlar\" katı kendiliğinden açılır."
+    ],
+    "olmadi": [
+     [
+      "\"Kurum adını yaz\" / \"Hesap adını yaz\"",
+      "İki alan da zorunlu.",
+      "#/kilavuz/portfoyum/yeni-hesap"
+     ],
+     [
+      "\"Hesap açılmadı: …\"",
+      "Sunucuya ulaşılamıyor olabilir; sayfayı yenileyip yeniden deneyin.",
+      "#/kilavuz/portfoyum/kayit"
+     ],
+     [
+      "Düğmeler kilitli",
+      "Telefondasınız ya da üst çubukta \"Tümü\" seçili.",
+      "#/kilavuz/portfoyum/telefonda"
+     ]
+    ],
+    "panel": "#/portfoy/hesaplar",
+    "kilavuz": "#/kilavuz/portfoyum/yeni-hesap",
+    "no": "5.2",
+    "id": "m5-g2"
+   },
+   {
+    "baslik": "Hesapta zaten olan varlıkları girin (ilk kurulum)",
+    "amac": "Borsa hesabınızdaki coinleri ve nakdi Portföyüm'e bir kez aktarmak.",
+    "rozet": [
+     "ayar"
+    ],
+    "once": "Borsanızda (uygulamada) hangi coinden kaç adet ve yaklaşık ortalama alış fiyatınız olduğunu önünüze açın.",
+    "adimlar": [
+     "Hesaplar'da «+ Zaten olanları gir (ilk kurulum)»a basın.",
+     "**Kripto** sekmesini seçin: **Coin** (ör. BTC), **Adet**, **Ortalama alış fiyatı (USD)**; hesabın Görev 5.2'de açtığınız hesap olduğunu doğrulayın → «Ekle».",
+     "Her coin için tekrarlayın.",
+     "**Nakit bakiyesi** sekmesinde USDT / USD bakiyenizi **Tutar** olarak girin → «Ekle».",
+     "Sunucu soru sorarsa (\"Bakiyeyi girdiğiniz gün\", \"Hesabın nakdi girilmemiş\") seçenekleri okuyup uygun olanı seçin."
+    ],
+    "gorur": [
+     "\"<SEMBOL> eklendi.\" bildirimi; varlık hesap kartında, ‹Portföy › Varlıklar›da ve Pano'da görünür.",
+     "Hesap kartında \"Hesap toplamı\" ve \"Kasa (nakit)\" dolar."
+    ],
+    "olmadi": [
+     [
+      "\"Önce bir hesap aç\"",
+      "Görev 5.2'yi yapın.",
+      "#/kilavuz/portfoyum/varlik-ekle"
+     ],
+     [
+      "Aynı varlık \"zaten var\"",
+      "Yeni satır eklemeyin; hesap kartındaki satırda «Düzenle» ile adedi düzeltin.",
+      "#/kilavuz/portfoyum/acilis-kurali"
+     ],
+     [
+      "Fiyat inmedi",
+      "«Fiyatları yenile» ile tekrar deneyin.",
+      "#/kilavuz/portfoyum/elle-fiyat"
+     ],
+     [
+      "Sayı yanlış okundu (ör. 1.000 / 1,5)",
+      "Ondalık için virgül, binlik için nokta kullanın.",
+      "#/kilavuz/portfoyum/sayi-yazimi"
+     ]
+    ],
+    "uyari": "Bu ekran yalnız Pusula'yı ilk kurarken hesapta zaten olanlar içindir; yeni bir alımı burada değil, hesap kartındaki «Al» ile girin.",
+    "panel": "#/portfoy/hesaplar",
+    "kilavuz": "#/kilavuz/portfoyum/ilk-kurulum",
+    "no": "5.3",
+    "id": "m5-g3"
+   },
+   {
+    "baslik": "Pano'da borsa bakiyesinin çift sayılmadığını denetleyin",
+    "amac": "İşlem defterindeki borsa bakiyesi ile Portföyüm hesabının üst üste eklenmediğini görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › Pano›yu açın.",
+     "\"Kripto borsaları\" satırını bulun ve metnini okuyun."
+    ],
+    "gorur": [
+     "Portföyüm'de toplama dahil bir kripto borsası hesabınız varsa: \"… çift sayılmasın diye toplama EKLENMEDİ\" yazar.",
+     "İşlem defterinde borsa anahtarı yoksa satır hiç çıkmayabilir."
+    ],
+    "olmadi": [
+     [
+      "\"bakiye okunamadı (İşlem defteri)\"",
+      "İşlem defterindeki salt okuma anahtarına bakın (Modül 6).",
+      "#/kilavuz/sss/tutar-otomatik"
+     ]
+    ],
+    "panel": "#/portfoy/pano",
+    "kilavuz": "#/kilavuz/portfoy/pano",
+    "no": "5.4",
+    "id": "m5-g4"
+   },
+   {
+    "baslik": "Yeni alım ekranını deneyin ve «Geri al» ile iptal edin",
+    "amac": "Bir alımın kasadan nasıl düştüğünü görmek ve yanlış kaydı geri almak.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Bir hesap kartında «Al»a basın (\"Hisse aldım\" ekranı açılır; adım şeridi \"1 · Hangi hisse · 2 · Ne kadar · 3 · Kontrol et\").",
+     "1. adım: \"Hisse ara\" alanına örnek bir sembol yazın (ör. `AAPL`) → «Bul» → listeden seçin.",
+     "2. adım: **Adet** `1`, **Gerçekleşen fiyat** örnek bir değer, **Komisyon** `0` → canlı özette \"Kasadan düşecek\" ve \"Kasa şimdi → sonra\" satırlarını okuyun → «Kontrol et →».",
+     "Kasa yetmiyorsa sarı bandı okuyun (\"Kasada X var, bu alım Y. Z eksik.\") — deneme için «Vazgeç» deyip nakdi olan bir hesapta tekrar deneyin.",
+     "3. adım: «Alışı kaydet».",
+     "Makbuzda «Geri al»a basın."
+    ],
+    "gorur": [
+     "\"✓ Alış kaydedildi\" makbuzu.",
+     "«Geri al» sonrası \"Geri alındı: kayıtlar iptal edildi (İşlem defterinde \"iptal\" görünür).\"",
+     "Hesap toplamı ve kasa eski hâline döner."
+    ],
+    "olmadi": [
+     [
+      "\"Kasa eksiye düşemez\"",
+      "Önce «Para yatır» kaydı ya da \"Bu alım için kasaya önce para yatırdım\" kutusu.",
+      "#/kilavuz/portfoyum/hisse-alimi"
+     ],
+     [
+      "Makbuzu kapattım, «Geri al» kalmadı",
+      "‹Portföy › İşlem defteri›nde kaynak \"Yatırım (Portföyüm)\" → satırda «İptal et».",
+      "#/kilavuz/portfoyum/islem-defteri"
+     ]
+    ],
+    "panel": "#/portfoy/hesaplar",
+    "kilavuz": "#/kilavuz/portfoyum/hisse-alimi",
+    "no": "5.5",
+    "id": "m5-g5"
+   },
+   {
+    "baslik": "İzleme listesine bir hisse ekleyip çıkarın",
+    "amac": "Almadan fiyatını izlemek istediğiniz varlıkları listelemek.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Hesaplar'da **İzleme listesi** bölümüne inin.",
+     "\"Hisse ara ve listeye ekle\" alanına örnek olarak `TSLA` yazın → «Bul» → «+ Ekle».",
+     "Listede satırı görün (Son fiyat · Gün); «Çıkar» ile kaldırın."
+    ],
+    "gorur": [
+     "\"TSLA izleme listesine eklendi.\" ve \"… çıkarıldı.\"; izleme listesi kasayı ve toplamı etkilemez."
+    ],
+    "olmadi": [
+     [
+      "\"… bulunamadı.\"",
+      "Sembolü kontrol edin ya da şirket adını yazın.",
+      "#/kilavuz/portfoyum/izleme-listesi"
+     ]
+    ],
+    "panel": "#/portfoy/hesaplar",
+    "kilavuz": "#/kilavuz/portfoyum/izleme-listesi",
+    "no": "5.6",
+    "id": "m5-g6"
+   },
+   {
+    "baslik": "«Alışa çevir», «Düzenle» ve «Kaldır»ı tanıyın",
+    "amac": "Yanlış yere girilmiş bir kaydı nasıl düzelteceğinizi bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Görev 5.3'te girdiğiniz bir \"zaten olanlar\" satırında üç düğmeyi bulun: «Düzenle», «Kaldır», «Alışa çevir».",
+     "Kılavuzdaki \"Alışa çevir\" örneğini okuyun: aslında yeni bir alım olan kaydı alışa çevirir, tutarı nakitten düşer, eski kayıt \"iptal\" olarak kalır.",
+     "Gerçekten yanlış bir kaydınız yoksa hiçbirine basmayın."
+    ],
+    "gorur": [
+     "Ne zaman hangisinin kullanılacağını biliyorsunuz: adet yanlışsa «Düzenle», kayıt hiç olmamalıysa «Kaldır», yeni alımsa «Alışa çevir»."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/portfoyum/alisa-cevir",
+    "no": "5.7",
+    "id": "m5-g7"
+   },
+   {
+    "baslik": "Hedefim ve «Planla →» ekranını gezin",
+    "amac": "Hedef dağılımını ve para ekleme planını tanımak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › Hedefim›i açın; \"Hedef ne demek?\", \"1 · Hedefini seç\", \"2 · Olması gereken ↔ şu an\", \"3 · Hangi hesapta ne yapılacak\" kartlarını okuyun.",
+     "«Planla →»a basın; örnek bir tutar yazıp \"3 · Yapılacaklar\" listesine bakın.",
+     "«Vazgeç» ile çıkın (hiçbir şey yazılmaz)."
+    ],
+    "gorur": [
+     "\"Öneri: emir gönderilmez.\" notu; plan ekranı «Vazgeç» ile kapanır."
+    ],
+    "olmadi": [
+     [
+      "\"Ağırlıklar toplamı %X — %100 olmalı.\"",
+      "Hedefi kaydetmek istiyorsanız yüzdeleri 100'e tamamlayın.",
+      "#/kilavuz/portfoy/hedefim"
+     ]
+    ],
+    "uyari": "«Aldım, işlemleri kaydet» yalnız o alımları gerçekten yaptıysanız; denemede basmayın.",
+    "panel": "#/portfoy/hedefim",
+    "kilavuz": "#/kilavuz/portfoy/para-ekle",
+    "no": "5.8",
+    "id": "m5-g8"
+   },
+   {
+    "baslik": "Varlıklar, Takvim ve akış, Rapor sayfalarını okuyun",
+    "amac": "Portföyün geçmişini ve riskini okumak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › Varlıklar›: \"Elde olanlar\", süzgeç (Açık / Kapanmış / Hepsi), \"Nakit\".",
+     "‹Portföy › Takvim ve akış›: aylık günlük K/Z takvimi, \"‹ / ›\" ile ay değiştirin; \"Zaman çizelgesi\" süzgeci.",
+     "‹Portföy › Rapor›: ay seçicisi, ayın kutuları, \"Kazandıranlar / Kaybettirenler\", kötü senaryolar."
+    ],
+    "gorur": [
+     "Üç sayfa da yalnız okur."
+    ],
+    "olmadi": [
+     [
+      "\"Bu ay için veri yok.\" / \"Henüz kayıt yok.\"",
+      "Kayıtlar yeni girildiyse ertesi günden itibaren dolar.",
+      "#/kilavuz/portfoyum-rapor/uyarilar"
+     ]
+    ],
+    "panel": "#/portfoy/rapor",
+    "kilavuz": "#/kilavuz/portfoyum-rapor/ekran",
+    "no": "5.9",
+    "id": "m5-g9"
+   },
+   {
+    "baslik": "Modeller sayfasını okuyun",
+    "amac": "Nova, Lydia ve Simurg model portföylerinin bu ayki önerisini görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › Modeller›i açın; sayfadaki model seçicisinden Nova, Lydia ve Simurg'u sırayla seçin.",
+     "Her birinde kuralı, \"Bu ay\" kartını ve \"Canlı takip\" sayılarını okuyun."
+    ],
+    "gorur": [
+     "Rakamlar kâğıt (sanal) hesaptandır."
+    ],
+    "olmadi": [
+     [
+      "Model boş görünüyor",
+      "Sık sorulanlardaki \"model boş\" maddesine bakın.",
+      "#/kilavuz/sss/model-bos"
+     ]
+    ],
+    "uyari": "\"Bu ay\" kartındaki «Uyguladım» yalnız o işlemleri gerçekten yaptıysanız; denemede basmayın.",
+    "panel": "#/portfoy/nasdaq",
+    "kilavuz": "#/kilavuz/model-portfoy/ekran",
+    "no": "5.10",
+    "id": "m5-g10"
+   }
+  ],
+  "no": 5,
+  "id": "m5"
+ },
+ {
+  "kisa": "İşlem defteri",
+  "baslik": "İşlem defteri: kendi kripto ve FX işlemleriniz",
+  "ozet": "Kendi borsa işlemlerinizi (OKX, Binance, MetaTrader) dosyayla ya da salt okuma anahtarıyla deftere alır, sonuçları okursunuz. Bot işlemlerine dokunmaz.",
+  "onkosul": "Modül 5. Sunucudaki masaüstü panel (\"Yükleme, hesap ekleme ve OKX/Binance anahtarı yalnız sunucunun panelinden\").",
+  "gorevler": [
+   {
+    "baslik": "Kaynak seçiciyi tanıyın",
+    "amac": "Defterin üç kaynağını ayırt etmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Portföy › İşlem defteri›ni açın.",
+     "Kaynak seçicide **Kripto / FX** (varsayılan), **Yatırım (Portföyüm)** ve **Bot** arasında geçin."
+    ],
+    "gorur": [
+     "Kripto / FX: sizin borsa işlemleriniz. Yatırım: Portföyüm kayıtları (Görev 5.5'teki iptal satırı burada). Bot: botların işlemleri (yalnız okuma)."
+    ],
+    "olmadi": [],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/ekran",
+    "no": "6.1",
+    "id": "m6-g1"
+   },
+   {
+    "baslik": "Defterde borsa hesabı açın",
+    "amac": "İşlemlerinizi yükleyeceğiniz hesabı tanımlamak.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Kripto / FX ekranının altındaki **Hesaplar** bölümünde «+ hesap aç»ı açın.",
+     "**Ad**: ör. `OKX ana hesap`. **Tür**: \"Kripto — OKX\" (ya da \"Kripto — Binance\", \"FX — MetaTrader 4 / 5\"). **Para birimi**: USDT.",
+     "«Hesabı aç»."
+    ],
+    "gorur": [
+     "Hesap kartı çıkar; OKX / Binance kartında salt okuma anahtarı alanları görünür."
+    ],
+    "olmadi": [
+     [
+      "Form yok",
+      "Telefondasınız ya da geliştirme bilgisayarındasınız.",
+      "#/kilavuz/islem-defterim/ev-kuyruk"
+     ]
+    ],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/alanlar",
+    "no": "6.2",
+    "id": "m6-g2"
+   },
+   {
+    "baslik": "Salt okuma anahtarıyla eşitleyin (isteğe bağlı)",
+    "amac": "İşlemlerin borsadan kendiliğinden gelmesini sağlamak.",
+    "rozet": [
+     "ayar"
+    ],
+    "once": "Borsada YALNIZ OKUMA (Read) izinli ayrı bir anahtar oluşturun; işlem ve para çekme izni KAPALI.",
+    "adimlar": [
+     "Hesap kartında OKX için **API Key**, **Secret Key**, **Passphrase** (Binance'te ilk ikisi) alanlarını doldurun.",
+     "OKX'te \"Yalnız okuma (Read) izinli …\" onay kutusunu işaretleyin.",
+     "«Anahtarı dene ve kaydet».",
+     "«Şimdi eşitle»."
+    ],
+    "gorur": [
+     "\"Anahtar kaydedildi ✓ (izinler: …). Şimdi eşitleyebilirsin.\"",
+     "\"OKX eşitlendi: N yeni satır.\" (OKX son 3 ayı verir)."
+    ],
+    "olmadi": [
+     [
+      "İzin reddi (\"… KAYDEDİLMEDİ\")",
+      "Anahtarda okuma dışında izin var; borsada yalnız Read bırakıp yeniden deneyin.",
+      "#/kilavuz/islem-defterim/uyarilar"
+     ],
+     [
+      "Binance \"kod -2015\" / \"kod -1021\"",
+      "Anahtar yanlış ya da bilgisayar saati kaymış.",
+      "#/kilavuz/islem-defterim/binance-anahtar"
+     ]
+    ],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/okx-anahtar",
+    "no": "6.3",
+    "id": "m6-g3"
+   },
+   {
+    "baslik": "Borsadan işlem dosyası indirip yükleyin",
+    "amac": "Geçmiş işlemlerinizi dosyayla deftere almak.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Borsadan dosyayı indirin: OKX'te emir geçmişinden \"Trading history\" CSV; Binance'te Trade History dışa aktarma; MetaTrader'da hesap geçmişini HTML rapor olarak kaydedin (ayrıntılı yol kılavuzda).",
+     "Defterde **Dosya yükle** bölümünde **Hesap**ı seçin, dosyayı seçin → «Önizle».",
+     "Önizlemede satır sayılarını (eklenecek / çift / atlanan / hatalı), tarih aralığını ve sembolleri okuyun.",
+     "«Kaydet (N satır)»."
+    ],
+    "gorur": [
+     "\"N satır kaydedildi (M çift atlandı).\"; **Yükleme geçmişi**nde yeni satır."
+    ],
+    "olmadi": [
+     [
+      "\"Önce dosyayı seç.\"",
+      "Dosya seçilmemiş.",
+      "#/kilavuz/islem-defterim/csv-indir"
+     ],
+     [
+      "Excel dosyası okunmuyor",
+      "XLSX desteklenmez; dosyayı CSV olarak kaydedip yükleyin.",
+      "#/kilavuz/islem-defterim/uyarilar"
+     ],
+     [
+      "\"Dosya çok büyük (… en çok 7 MB)\"",
+      "Dönemi bölüp ayrı ayrı yükleyin.",
+      "#/kilavuz/islem-defterim/uyarilar"
+     ],
+     [
+      "MetaTrader saatleri kaymış",
+      "MetaTrader hesap kartında **Sunucu saati** ayarını yapın.",
+      "#/kilavuz/islem-defterim/sunucu-saati"
+     ]
+    ],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/csv-indir",
+    "no": "6.4",
+    "id": "m6-g4"
+   },
+   {
+    "baslik": "Sonuçları sembole göre süzün",
+    "amac": "Bir coinin ya da paritenin sonucunu ayrı görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Kripto / FX ekranında üstteki kutuları okuyun (Net kâr / zarar, Ücret / komisyon, Fonlama + swap, kazanma oranı, En derin düşüş).",
+     "\"Sembollere göre\" tablosuna bakın.",
+     "\"İşlemler\" süzgecinde **Sembol**e bir sembol yazın, tarih aralığı seçin → «Süz»."
+    ],
+    "gorur": [
+     "Tablo yalnız o sembolün işlemlerini gösterir; kutular süzgece göre değişir."
+    ],
+    "olmadi": [
+     [
+      "\"Alışı kayıtta olmayan satış\"",
+      "Daha eski dönemin dosyası eksik; o dönemi de yükleyin.",
+      "#/kilavuz/islem-defterim/uyarilar"
+     ]
+    ],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/ek-olcutler",
+    "no": "6.5",
+    "id": "m6-g5"
+   },
+   {
+    "baslik": "Bir yüklemeyi geri almayı öğrenin",
+    "amac": "Yanlış dosya yüklendiğinde defteri temizlemek.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "**Yükleme geçmişi**nde Görev 6.4'teki satırı bulun.",
+     "Dosya yanlışsa ya da yalnız deneme içinse «Geri al» → \"Bu yükleme geri alınsın mı?\" → «Geri al».",
+     "Dosyayı gerçekten tutmak istiyorsanız bu adımı atlayın ve görevi tamamlandı sayın."
+    ],
+    "gorur": [
+     "Yüklemenin satırları etkisiz olur; sonuç kutuları eski hâline döner."
+    ],
+    "olmadi": [
+     [
+      "Aynı dosyayı yeniden yüklemek istiyorum",
+      "Önizlemede \"Daha önce geri aldığım / iptal ettiğim N satırı bilerek yeniden ekle\" kutusunu işaretleyin.",
+      "#/kilavuz/islem-defterim/geri-alma"
+     ]
+    ],
+    "panel": "#/portfoy/islem-defteri",
+    "kilavuz": "#/kilavuz/islem-defterim/geri-alma",
+    "no": "6.6",
+    "id": "m6-g6"
+   }
+  ],
+  "no": 6,
+  "id": "m6"
+ },
+ {
+  "kisa": "Botlar ve Kurs botu",
+  "baslik": "Botlar: okumak ve kendi kâğıt deneme botunuzu kurmak",
+  "ozet": "Kairos ve Tao'yu yalnız okur, sonra deneme için **Kurs** adlı bir kâğıt bot oluşturup çalıştırırsınız. Kâğıt botta borsaya hiçbir emir gitmez.",
+  "onkosul": "Modül 4. Sunucudaki masaüstü panel (geliştirme bilgisayarında ve telefonda bot düğmeleri kilitlidir).",
+  "not": "**Kairos ve Tao'da bu modülde yalnız okuma var.** Durdur / Başlat, Acil fren, hesap türü, sermaye, Şimdi çalıştır, Kâğıt hesabı sıfırla — hepsi yalnız Kurs botunda.",
+  "gorevler": [
+   {
+    "baslik": "Botlar › Özet ekranını okuyun",
+    "amac": "Bütün botların başlangıçtan getirisini ve kıyasını görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Botlar › Özet›i açın.",
+     "Kartlarda başlangıçtan getiri, kıyas ve \"kaç puan önde / geride\" bilgisini okuyun.",
+     "Karşılaştırma tablosunun sütunlarını okuyun: Bot · Tür · Başlangıç · Gün · Getiri · Kıyas · Kıyas getirisi · Fark (puan) · En derin düşüş · İşlem."
+    ],
+    "gorur": [
+     "Her bot için bir kart; karta dokununca botun sayfası açılır."
+    ],
+    "olmadi": [
+     [
+      "Sayılar boş",
+      "Yeni botta ilk günlük çalışmadan (~03:00) sonra dolar.",
+      "#/kilavuz/botlar/ozet"
+     ]
+    ],
+    "panel": "#/botlar/ozet",
+    "kilavuz": "#/kilavuz/botlar/ozet",
+    "no": "7.1",
+    "id": "m7-g1"
+   },
+   {
+    "baslik": "Kairos'un sayfasını yalnız okuyun",
+    "amac": "Bir botun dört görünümünü (Genel · Hesap · İşlemler · Yönetim) tanımak.",
+    "rozet": [
+     "okuma",
+     "kairos"
+    ],
+    "adimlar": [
+     "‹Botlar › Kairos›u açın. **Genel**: durum rozeti, hesap türü, **Son karar**, sayılar, **Günlük defter** (takvimde bir güne dokunun; o günün işlem tablosu açılır), \"Para nerede duruyor?\", aylık getiri, \"Botun künyesi\".",
+     "**Hesap**: botun hesabı ve bağlantı durumu.",
+     "**İşlemler**: Açık pozisyonlar · Bekleyen emirler · İşlem geçmişi · Pozisyon büyüklüğü.",
+     "**Yönetim**: satırları yalnız okuyun (Hesap türü, Para yatırdım / çektim, Kontroller …) ve demo kabul kartına bakın."
+    ],
+    "gorur": [
+     "Dört görünüm arasında adres `#/botlar/hucum/genel` … `/yonetim` diye değişir."
+    ],
+    "olmadi": [
+     [
+      "Düğmeler gri",
+      "Geliştirme bilgisayarındasınız; okuma görevleri için sorun değil.",
+      "#/kilavuz/sss/arastirma-modu"
+     ]
+    ],
+    "yasak": "Kairos'ta hiçbir düğmeye basmayın: Durdur, Acil fren, Engeli kaldır, Şimdi çalıştır, Deneme dahil. Hesap türü ve küçük hesap kipi seçicilerine dokunmayın.",
+    "panel": "#/botlar/hucum/genel",
+    "kilavuz": "#/kilavuz/botlar/ekran",
+    "no": "7.2",
+    "id": "m7-g2"
+   },
+   {
+    "baslik": "Tao'nun sayfasını yalnız okuyun",
+    "amac": "İkinci botun farkını görmek.",
+    "rozet": [
+     "okuma",
+     "kairos"
+    ],
+    "adimlar": [
+     "‹Botlar › Tao›yu açın; Genel ve İşlemler görünümlerini okuyun.",
+     "Yönetim'de \"Para yatırdım / çektim\" satırında \"kâğıt hesapta gerekmez\" yazdığını görün."
+    ],
+    "gorur": [
+     "Tao kâğıt hesapta çalışır; para kaydı gerekmez."
+    ],
+    "olmadi": [],
+    "yasak": "Tao'nun kâğıt ölçümü sürüyor: «Kâğıt hesabı sıfırla», \"BTC ayağı (kâğıt)\" seçicisi, Durdur / Başlat ve Acil fren Tao'da yasak.",
+    "panel": "#/botlar/denge/genel",
+    "kilavuz": "#/kilavuz/botlar/ayarlar",
+    "no": "7.3",
+    "id": "m7-g3"
+   },
+   {
+    "baslik": "\"Kurs\" adlı kâğıt botu oluşturun",
+    "amac": "Deneme görevleri için kendi güvenli botunuzu kurmak.",
+    "rozet": [
+     "kurs",
+     "ayar"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Botlar (özet)›da **Bot kayıtları** kartının \"Yeni bot (kâğıt hesapta başlar)\" bölümüne gidin.",
+     "**Kural (şablon)**: \"Tao tipi — yarı BTC, sakin\".",
+     "**Borsa (işlem)**: Binance.",
+     "**Kâğıt sermayesi (USD, üst sınır)**: `10000` (örnek; kâğıt paradır).",
+     "**Kimlik**: `kurs`. **Görünen ad**: `Kurs`.",
+     "«Oluştur…» → \"Yeni kâğıt bot: Kurs\" penceresinde «Oluştur»."
+    ],
+    "gorur": [
+     "\"Kurs oluşturuldu (kâğıt, durmuş).\" bildirimi.",
+     "Bot kayıtları tablosunda \"Kurs\" satırı, hesap türü \"kâğıt\".",
+     "‹Botlar›da \"Kurs\" sekmesi; adres `#/botlar/kurs`."
+    ],
+    "olmadi": [
+     [
+      "\"Kimliğin ilk iki harfi (…) … botuyla aynı\"",
+      "Daha önce \"ku\" ile başlayan bir bot açılmış; başka bir kimlik seçin (ör. `krs1`) ve kursun geri kalanında adresi buna göre okuyun.",
+      "#/kilavuz/botlar/yeni-bot"
+     ],
+     [
+      "Görünen ad kullanılıyor",
+      "Arşivde eski bir \"Kurs\" botu olabilir: \"Arşivdeki botlar\" katından «Geri getir…» ile onu kullanın ya da `Kurs 2` deyin.",
+      "#/kilavuz/botlar/bot-arsiv"
+     ],
+     [
+      "Form görünmüyor",
+      "Telefondasınız ya da araştırma kopyasındasınız.",
+      "#/kilavuz/ayarlar/bot-kayitlari"
+     ]
+    ],
+    "panel": "#/ayarlar/botlar",
+    "kilavuz": "#/kilavuz/botlar/yeni-bot",
+    "no": "7.4",
+    "id": "m7-g4"
+   },
+   {
+    "baslik": "Kurs botunun sayfasını bulun ve dört görünümünü açın",
+    "amac": "Kendi botunuzu her zaman doğru yerde açmak.",
+    "rozet": [
+     "kurs",
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Botlar›da \"Kurs\" sekmesine (ya da Özet'teki Kurs kartına) basın. Kullanıcının oluşturduğu botlar yan menüde ayrı satır olarak durmaz.",
+     "Genel · Hesap · İşlemler · Yönetim görünümlerini açın; adresin `#/botlar/kurs/genel` … `/yonetim` olduğunu görün.",
+     "Yönetim'de \"Para yatırdım / çektim\" satırında \"kâğıt hesapta gerekmez\" yazdığını görün."
+    ],
+    "gorur": [
+     "Başlıkta \"Kurs\", durum \"Durdu\", hesap türü kâğıt."
+    ],
+    "olmadi": [
+     [
+      "Sekme yok",
+      "Liste kısa süre önbellekte duruyor; sayfayı yenileyin.",
+      "#/kilavuz/botlar/ozet"
+     ]
+    ],
+    "panel": "#/botlar/kurs/genel",
+    "kilavuz": "#/kilavuz/botlar/ekran",
+    "no": "7.5",
+    "id": "m7-g5"
+   },
+   {
+    "baslik": "Kurs botunda «Deneme (emirsiz)» ve «Borsayla karşılaştır»",
+    "amac": "Botun bugünkü kararını emir vermeden görmek ve kayıtlarının tutarlı olduğunu denetlemek.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › **Yönetim** › **Kontroller** satırında «Deneme (emirsiz)»e basın.",
+     "Bildirimdeki kararı okuyun.",
+     "Aynı satırda «Borsayla karşılaştır»a basın."
+    ],
+    "gorur": [
+     "Deneme: \"Kurs: trend açık (BTC tutuluyor)\" ya da \"trend kapalı (USDT)\" gibi bir karar; hiçbir şey değişmez.",
+     "Karşılaştırma: \"Borsayla karşılaştırıldı: uyumlu\"."
+    ],
+    "olmadi": [
+     [
+      "\"İşlem yapılamadı: …\"",
+      "Sunucuya ulaşılamıyor ya da geliştirme bilgisayarındasınız.",
+      "#/kilavuz/sss/arastirma-modu"
+     ],
+     [
+      "\"Borsayla uyuşmuyor — bot durdu\"",
+      "Kâğıt botta beklenmez; Modül 17'deki ilk senaryoyu Kurs botunda uygulayın.",
+      "#/kilavuz/botlar/durduruldu"
+     ]
+    ],
+    "panel": "#/botlar/kurs/yonetim",
+    "kilavuz": "#/kilavuz/botlar/ayarlar",
+    "no": "7.6",
+    "id": "m7-g6"
+   },
+   {
+    "baslik": "Kurs botunu başlatın ve «Şimdi çalıştır» deyin",
+    "amac": "Botun bir günlük çalışmasını kâğıt hesapta görmek.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › **Genel** › «Başlat».",
+     "Kurs › **Yönetim** › \"Bugünün kararını şimdi uygula\" satırında «Şimdi çalıştır» (bot durmuşken de çalışır: günlük çalışmayı bir kez yapar, botu başlatmaz) → \"Kurs: günlük çalışma\" penceresinde \"Kâğıt hesapta emir verilecek. Gerçek borsaya emir gitmez.\" yazdığını okuyun → onaylayın.",
+     "Genel'e dönüp **Son karar** satırını ve \"Para nerede duruyor?\" bölümünü okuyun; İşlemler'de kâğıt işlemlere bakın."
+    ],
+    "gorur": [
+     "Durum rozeti \"Çalışıyor\".",
+     "Son karar bugünün saatini taşır. Piyasaya göre bot BTC / coin alabilir ya da nakitte kalabilir — ikisi de doğru sonuçtur."
+    ],
+    "olmadi": [
+     [
+      "Başlat basılamıyor",
+      "Kurulum sihirbazındaki risk onayı yapılmamış olabilir (\"riskler ve kullanım şartları onaylanmadan botlar başlatılamaz\").",
+      "#/kilavuz/kurulum-sihirbazi/ne-ise-yarar"
+     ],
+     [
+      "Son karar değişmedi",
+      "Sayfayı yenileyin; günlük çalışma bir iki dakika sürebilir.",
+      "#/kilavuz/botlar/ekran"
+     ]
+    ],
+    "panel": "#/botlar/kurs/genel",
+    "kilavuz": "#/kilavuz/botlar/ekran",
+    "no": "7.7",
+    "id": "m7-g7"
+   },
+   {
+    "baslik": "Kurs botunu durdurun",
+    "amac": "Durdurmanın pozisyonları kapatmadığını görmek.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › Genel › «Durdur».",
+     "Pencerede \"Günlük çalışma durur. Açık pozisyonlar ve bekleyen emirler kapatılmaz — hepsini kapatmak için Acil fren.\" yazdığını okuyun → «Evet»."
+    ],
+    "gorur": [
+     "Durum \"Durdu\"; kâğıt pozisyonlar yerinde kalır."
+    ],
+    "olmadi": [],
+    "panel": "#/botlar/kurs/genel",
+    "kilavuz": "#/kilavuz/botlar/ekran",
+    "no": "7.8",
+    "id": "m7-g8"
+   },
+   {
+    "baslik": "Kurs botunun kâğıt sermaye üst sınırını değiştirin",
+    "amac": "Bot kaydındaki sermaye sınırının nasıl değiştiğini görmek.",
+    "rozet": [
+     "kurs",
+     "ayar"
+    ],
+    "once": "Kurs botu durmuş olmalı (Görev 7.8).",
+    "adimlar": [
+     "‹Ayarlar › Botlar (özet)› › Bot kayıtları tablosunda **Kurs** satırında «Kâğıt…»ya basın.",
+     "\"Yeni üst sınır (USD)\" alanına örnek olarak `5000` yazın → «Kaydet».",
+     "‹Ayarlar › Ayar geçmişi›nde Tür \"Bot kaydı\" süzgeciyle satırı görün."
+    ],
+    "gorur": [
+     "Tabloda sermaye \"kâğıt 5.000 $\" olur; ayar geçmişine \"Bot kaydı\" satırı yazılır."
+    ],
+    "olmadi": [
+     [
+      "Düğme pasif",
+      "Bot çalışıyor; önce durdurun.",
+      "#/kilavuz/botlar/bot-sermaye"
+     ]
+    ],
+    "yasak": "Kairos ve Tao satırlarında «Kâğıt…» ve «Demo…» düğmelerine basmayın.",
+    "panel": "#/ayarlar/botlar",
+    "kilavuz": "#/kilavuz/botlar/bot-sermaye",
+    "no": "7.9",
+    "id": "m7-g9"
+   },
+   {
+    "baslik": "Portföy botlarını (Nova, Lydia, Simurg) okuyun",
+    "amac": "Model portföylerin kâğıt hesaplarını tanımak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Botlar› altında \"Portföy botları\" başlığından **Nova**, **Lydia**, **Simurg**u sırayla açın.",
+     "Her birinde sayıları, değer grafiğini, eldeki hisseleri ve karar defterini okuyun."
+    ],
+    "gorur": [
+     "Başlıkta \"kâğıt hesap — canlı hesap değil\"; bu botlarda Başlat / Durdur ve acil fren yoktur."
+    ],
+    "olmadi": [
+     [
+      "\"Sunucu güncellenince görünür.\"",
+      "Sunucu eski sürümde; Modül 13.",
+      "#/kilavuz/portfoy-botlari/sunucu"
+     ]
+    ],
+    "yasak": "\"Sermaye tam adet için yetmiyor\" uyarısındaki «Kesirli hisseyi aç» düğmesine basmayın (modelin ayarını değiştirir).",
+    "panel": "#/botlar/m-qqq-m10",
+    "kilavuz": "#/kilavuz/portfoy-botlari/ekran",
+    "no": "7.10",
+    "id": "m7-g10"
+   },
+   {
+    "baslik": "Model örneklerini tanıyın",
+    "amac": "Bot kayıtlarında model örneği seçeneğinin ne olduğunu bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Bot kayıtları formunda **Kural (şablon)** seçicisini açın; \"Nova örneği\", \"Lydia örneği\", \"Simurg örneği\" seçeneklerini görün.",
+     "Kılavuzda model örneklerinin farkını okuyun (Başlat / Durdur ve acil fren yoktur). Formu kaydetmeden bırakın."
+    ],
+    "gorur": [
+     "Model örneği seçince \"Başlangıç (model örneği)\" alanı çıkar; bu kursta model örneği oluşturulmaz."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/botlar/yeni-bot",
+    "no": "7.11",
+    "id": "m7-g11"
+   }
+  ],
+  "no": 7,
+  "id": "m7"
+ },
+ {
+  "kisa": "Acil durdurma ve geri alma",
+  "baslik": "Acil durdurma ve geri alma (yalnız Kurs botunda)",
+  "ozet": "Acil frenin ne yaptığını Kurs botunda görür, kâğıt hesaptaki \"Acil durdurmayı geri al\" aracıyla eski hâle döndürürsünüz.",
+  "onkosul": "Modül 7 (Kurs botu var). Acil PIN biliniyor.",
+  "not": "**Acil fren engel koymaz:** bot yalnız \"Durdu\" olur; \"Durduruldu — onay bekliyor\" bandı ve «Engeli kaldır» çıkmaz, yeniden çalıştırmak için «Başlat» yeter (sunucuda kâğıt botta gözlendi). **Acil fren Kairos'ta ya da Tao'da basılırsa geri alınamaz** (Kairos'ta geri alma aracı kapalıdır, demo hesabın pozisyonları gerçekten kapanır). Her pencerenin başlığında \"Kurs:\" yazdığını görmeden onaylamayın. Üst çubuktaki kırmızı Acil durdur düğmesini kullanmayın; yalnız Kurs sayfasındaki «Acil fren».",
+  "gorevler": [
+   {
+    "baslik": "Kurs botunu hazırlayın",
+    "amac": "Acil frenin etkisini görebilmek için botun bir günlük çalışması olsun.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › Genel › «Başlat».",
+     "Kurs › Yönetim › «Şimdi çalıştır» → onay.",
+     "Kurs › İşlemler › **Açık pozisyonlar**ı not edin (ör. \"BTC + 2 coin\" — örnek)."
+    ],
+    "gorur": [
+     "Bot \"Çalışıyor\". Bot nakitte kaldıysa da devam edin: acil fren ve geri alma yine denenebilir."
+    ],
+    "olmadi": [],
+    "panel": "#/botlar/kurs/genel",
+    "kilavuz": "#/kilavuz/botlar/acil-fren",
+    "no": "8.1",
+    "id": "m8-g1"
+   },
+   {
+    "baslik": "Kurs botunda «Acil fren» çekin",
+    "amac": "Acil frenin botu durdurup her şeyi kapattığını görmek.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › **Genel** › kırmızı «Acil fren».",
+     "Pencere başlığının **\"Kurs: ACİL FREN\"** olduğunu doğrulayın; metinde \"Kâğıt hesapta: … Gerçek borsaya dokunulmaz.\" yazar.",
+     "«Acil freni çek»."
+    ],
+    "gorur": [
+     "Bot durur (durum \"Durdu\"), kâğıt pozisyonlar ve BTC kapanır, hesap nakde döner.",
+     "Kırmızı \"Durduruldu — onay bekliyor\" bandı ve «Engeli kaldır» ÇIKMAZ: acil fren engel koymaz.",
+     "Telegram'a \"ACİL DURDURMA\" alarmı gelir (Telegram kuruluysa).",
+     "Kurs › Yönetim'de \"Acil durdurmayı geri al (kâğıt)\" satırı çıkar."
+    ],
+    "olmadi": [
+     [
+      "Sağlık sayfasında acilden sonra güvenli kip kartı çıktı",
+      "Eski sürüm davranışı (acilin kendi kayıt satırları eskiden öz denetimde güvenli kip açıyordu). Sürümü denetleyin (Modül 13) ve kartı sohbete gönderin.",
+      "#/kilavuz/sorun-giderme/guvenli-kip"
+     ],
+     [
+      "Pencere başlığında Kairos ya da Tao yazıyor",
+      "«Vazgeç»; yanlış sekmedesiniz. Adres çubuğunu `#/botlar/kurs/genel` yapıp tekrar deneyin.",
+      "#/kilavuz/botlar/acil-fren"
+     ]
+    ],
+    "panel": "#/botlar/kurs/genel",
+    "kilavuz": "#/kilavuz/botlar/acil-fren",
+    "no": "8.2",
+    "id": "m8-g2"
+   },
+   {
+    "baslik": "Acil durdurmayı geri alın (kâğıt)",
+    "amac": "Yanlışlıkla basılan acil freni kâğıt hesapta geri almayı öğrenmek.",
+    "rozet": [
+     "kurs",
+     "pin"
+    ],
+    "once": "Acil frenden sonra Kurs botu durmuş olmalı; arada yeni günlük çalışma (~03:00) ya da «Şimdi çalıştır» olmamalı (olursa geri alma düğmesi kalkar). Geri almak istemiyorsanız yalnız «Başlat» yeter.",
+    "adimlar": [
+     "Kurs › **Yönetim** › \"Acil durdurmayı geri al (kâğıt)\" satırında «Önizle ve geri al…».",
+     "\"önizleme hazırlanıyor\" yazısını bekleyin (yarım dakika ile birkaç dakika; sayfada kalın).",
+     "\"Kurs: acil durdurmayı geri al (kâğıt)\" penceresinde kaynak, acilin kapattıkları, \"Acil anı doğrulaması\", geri gelecek hâl ve \"Hesap değeri: şimdi … → geri alınınca …\" satırlarını okuyun.",
+     "\"Onay: GERIAL yazın\" alanına `GERIAL` yazın → «Geri al» → PIN penceresinde acil PIN.",
+     "Bot durmuş kalır; Genel › «Başlat»."
+    ],
+    "gorur": [
+     "\"Kurs: acil durdurma geri alındı — … · mutabakat temiz · … · bot durmuş, Başlat'a basın\".",
+     "Pozisyonlar acil öncesi hâline döner (aradaki süre geçmiş fiyatlarla hesaplanır)."
+    ],
+    "olmadi": [
+     [
+      "Satır / düğme görünmüyor",
+      "Acilden sonra günlük çalışma geçmiş ya da bot çalışıyor; önce «Durdur». Geçtiyse geri alma artık yok — botu olduğu gibi başlatın.",
+      "#/kilavuz/sorun-giderme/kagit-acil-geri-al"
+     ],
+     [
+      "\"UYGULANAMAZ: …\"",
+      "Kaynak bulunamadı ya da acil anı uyuşmuyor: zorlamayın, botu olduğu gibi başlatın.",
+      "#/kilavuz/botlar/kagit-geri-al"
+     ],
+     [
+      "\"Geri alınmadı: …\"",
+      "PIN yanlış ya da önizlemenin 30 dakikalık süresi geçti; yeniden önizleyin.",
+      "#/kilavuz/botlar/kagit-geri-al"
+     ]
+    ],
+    "panel": "#/botlar/kurs/yonetim",
+    "kilavuz": "#/kilavuz/botlar/kagit-geri-al",
+    "no": "8.3",
+    "id": "m8-g3"
+   },
+   {
+    "baslik": "Kurs botunun kâğıt hesabını sıfırlayın",
+    "amac": "Bir kâğıt botu temiz başlatmayı öğrenmek.",
+    "rozet": [
+     "kurs",
+     "pin"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç». Bot durmuş olmalı.",
+    "adimlar": [
+     "Kurs › Genel › «Durdur» → «Evet».",
+     "Kurs › Yönetim › «Kâğıt hesabı sıfırla (temiz başla)…» → \"Kurs: kâğıt hesabı sıfırla (temiz başla)\" penceresinde «Sıfırla» → acil PIN."
+    ],
+    "gorur": [
+     "\"Kurs: kâğıt hesap sıfırlandı — temiz başlangıç (sermaye … USDT) · eski kayıtlar …\". Eski kayıtlar silinmez, kenara taşınır."
+    ],
+    "olmadi": [
+     [
+      "Düğme pasif",
+      "Bot çalışıyor; önce durdurun.",
+      "#/kilavuz/botlar/kagit-sifirla"
+     ]
+    ],
+    "yasak": "Tao'da ya da Kairos'ta asla.",
+    "panel": "#/botlar/kurs/yonetim",
+    "kilavuz": "#/kilavuz/botlar/kagit-sifirla",
+    "no": "8.4",
+    "id": "m8-g4"
+   },
+   {
+    "baslik": "\"Durduruldu — onay bekliyor\" bandını ve Engeli kaldır'ı tanıyın",
+    "amac": "Bir bot kendini durdurduğunda ne göreceğinizi önceden bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Kılavuzda \"Durduruldu\" bölümünü okuyun: kırmızı bant, sade neden, «Engeli kaldır» ya da «Borsayla karşılaştır».",
+     "Hangi nedende hangi aracın kullanıldığını not edin (pozisyon uyuşmazlığı → karşılaştırma; uygulama sapması → Farkı kabul et; zarar sınırı → Zarar sınırını sıfırla)."
+    ],
+    "gorur": [
+     "Bir engel gördüğünüzde önce Sorunlar kartını okuyacağınızı biliyorsunuz (Modül 17, ilk senaryo).",
+     "Acil fren bu bandı açmaz; bant yalnız botun kendini durdurduğu durumlarda (uyuşmazlık, sapma, öz denetim …) çıkar."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/botlar/durduruldu",
+    "no": "8.5",
+    "id": "m8-g5"
+   }
+  ],
+  "no": 8,
+  "id": "m8"
+ },
+ {
+  "kisa": "Sermaye dağıtımı (prova)",
+  "baslik": "Sermaye dağıtımı: yalnız prova",
+  "ozet": "Botlar arası sermaye ekranını okur ve sahte borsada bir prova aktarımı yaparsınız. Prova kipinde para hareketi yoktur, botlara ve borsaya dokunulmaz.",
+  "onkosul": "Modül 7 (Kurs botu var ve en az bir günlük çalışma yaptı — Görev 7.7; özsermayesi ölçülmemiş bot aktarılamaz). Acil PIN biliniyor.",
+  "gorevler": [
+   {
+    "baslik": "Sermaye dağıtımı ekranını okuyun",
+    "amac": "Hedef payları, sapmayı ve aktarım kapısını tanımak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Botlar › Sermaye dağıtımı›nı açın.",
+     "**Aktarım kipi** kartında rozeti okuyun (\"yalnız prova\") ve eksik şartları görün.",
+     "**Hedef paylar ve sapma** tablosunu okuyun (Bot · Özsermaye · Hedef pay · Hedef · Fark · Durum).",
+     "**Öneriler** ve **Son aktarımlar** bölümlerine bakın."
+    ],
+    "gorur": [
+     "Kip \"yalnız prova\"; canlı hesap kapısı kapalıdır ve panelden açılamaz."
+    ],
+    "olmadi": [
+     [
+      "\"Bu bilgisayar araştırma kopyası …\" bandı",
+      "Sunucudaki panelden yapın.",
+      "#/kilavuz/sermaye-dagitimi/uyarilar"
+     ]
+    ],
+    "yasak": "«Payları kaydet»e basmayın (Kairos ve Tao'nun hedef payını değiştirir). Kip seçicide \"Canlı hesap\"ı seçmeyin.",
+    "panel": "#/sermaye",
+    "kilavuz": "#/kilavuz/sermaye-dagitimi/alanlar",
+    "no": "9.1",
+    "id": "m9-g1"
+   },
+   {
+    "baslik": "Kurs botuyla bir prova aktarımı yapın",
+    "amac": "Aktarımın iki aşamasını (önizleme → PIN + AKTAR) para hareketi olmadan denemek.",
+    "rozet": [
+     "kurs",
+     "pin"
+    ],
+    "adimlar": [
+     "**Aktarım** kartında **Kip**: \"Prova (sahte borsa — para hareketi yok)\".",
+     "**Kaynak**: Kurs. **Hedef**: \"Ana hesap (prova)\". Kairos listede \"(uygun değil: Kairos demo kabulü … aktarım kapsamı dışında)\" diye görünür; seçilemez. **Tutar**: örnek olarak `10` (en az 5 USDT; kaynak botun özsermayesinin en çok yarısı).",
+     "«Önizle» → satırları okuyun.",
+     "\"Acil PIN\" ve \"Onay için AKTAR yazın\" alanlarını doldurun → «Provayı çalıştır».",
+     "**Son aktarımlar** tablosunda satırı bulun."
+    ],
+    "gorur": [
+     "Son aktarımlarda kip \"prova\", Botlar sütununda \"prova — dokunulmadı\"."
+    ],
+    "olmadi": [
+     [
+      "\"… özsermayesi henüz ölçülmedi — önce bir günlük çalışma gerekir\"",
+      "Kurs botunda «Şimdi çalıştır» (Görev 7.7); kâğıt hesabı sıfırladıysanız (Görev 8.4) yeniden.",
+      "#/kilavuz/sermaye-dagitimi/uyarilar"
+     ],
+     [
+      "\"Yapılamaz: …\" (tavan ya da \"şu an günlük çalışmada\")",
+      "Nedeni okuyun; tavanın altında bir tutar deneyin ya da çalışma bitince yeniden.",
+      "#/kilavuz/sermaye-dagitimi/adim-adim"
+     ],
+     [
+      "Önizlemeden sonra yeni önizleme geldi",
+      "Arada durum değişti (hiçbir şey uygulanmadı); yeni önizlemeyi okuyup PIN'i yeniden girin.",
+      "#/kilavuz/sermaye-dagitimi/adim-adim"
+     ],
+     [
+      "Kurs listede yok",
+      "Bot arşivde olabilir; önce Modül 7.",
+      "#/kilavuz/sermaye-dagitimi/uyarilar"
+     ]
+    ],
+    "panel": "#/sermaye",
+    "kilavuz": "#/kilavuz/sermaye-dagitimi/adim-adim",
+    "no": "9.2",
+    "id": "m9-g2"
+   }
+  ],
+  "no": 9,
+  "id": "m9"
+ },
+ {
+  "kisa": "İzleme ekranları",
+  "baslik": "İzleme: Sinyaller, İleri test, Piyasa bağlamı, Yapay zekâ notları, Raporlar",
+  "ozet": "Karar vermeyen, yalnız bilgi veren ekranları okursunuz.",
+  "onkosul": "Modül 2.",
+  "gorevler": [
+   {
+    "baslik": "Sinyaller ekranını okuyun",
+    "amac": "Botların bugünkü karar kurallarını ve karara uzaklığı görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹İzleme › Sinyaller›i açın.",
+     "\"Uygulanan kurallar\" bölümünde BTC trendi, coin sepeti, Nasdaq ve BIST momentum satırlarını okuyun.",
+     "\"Gölge kurallar\" bölümünün notunu okuyun (\"Bu kurallar uygulanmıyor, yalnız izleniyor…\")."
+    ],
+    "gorur": [
+     "Karara %3'ten yakın satırlar sarı yazılır."
+    ],
+    "olmadi": [
+     [
+      "Veri bayat görünüyor",
+      "‹Sistem › Veri›den güncelleyin (Görev 11.7).",
+      "#/kilavuz/sinyaller/bolumler"
+     ]
+    ],
+    "panel": "#/sinyaller",
+    "kilavuz": "#/kilavuz/sinyaller/ne-ise-yarar",
+    "no": "10.1",
+    "id": "m10-g1"
+   },
+   {
+    "baslik": "İleri test ve Kairos 10× gölgeyi okuyun",
+    "amac": "Gölge testlerin para kullanmadan nasıl izlendiğini görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹İzleme › İleri test › Genel bakış›ta **Testler** tablosunu ve **Karar takvimi**ni okuyun.",
+     "‹İleri test › Kairos 10× gölge›yi açın: karşılaştırma tablosu, marj tamponu, iki grafik."
+    ],
+    "gorur": [
+     "Gölge \"emir yok, para yok\" — yalnız okur. Sayfalarda düğme yoktur."
+    ],
+    "olmadi": [
+     [
+      "\"İzleyici hata verdi\"",
+      "Genelde internettir; 15 dakika sonra kendisi yeniden dener.",
+      "#/kilavuz/ileri-test/uyarilar"
+     ]
+    ],
+    "panel": "#/ileri/genel",
+    "kilavuz": "#/kilavuz/ileri-test/kairos-10x",
+    "no": "10.2",
+    "id": "m10-g2"
+   },
+   {
+    "baslik": "Piyasa bağlamını okuyun",
+    "amac": "Haftanın olaylarını ve piyasa panosunu yorumsuz görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹İzleme › Piyasa bağlamı›nı açın; \"Karar kuralı yok · bilgi\" rozetini görün.",
+     "Olay takvimi, Makro pano, Opsiyon, Pozisyonlanma, Akış, Duygu ve genişlik bölümlerini gezin.",
+     "Ana sayfadaki \"Bu hafta\" kartıyla karşılaştırın."
+    ],
+    "gorur": [
+     "\"bayat\" kartlar sarı ve soluk; \"veri yok\" kartlar kesikli çerçeveli."
+    ],
+    "olmadi": [
+     [
+      "Bir kaynak alınamıyor",
+      "Kendiliğinden yeniden denenir.",
+      "#/kilavuz/sorun-giderme/piyasa-baglami-kaynak"
+     ]
+    ],
+    "panel": "#/piyasa",
+    "kilavuz": "#/kilavuz/piyasa-baglami/durumlar",
+    "no": "10.3",
+    "id": "m10-g3"
+   },
+   {
+    "baslik": "Yapay zekâ notlarını okuyun",
+    "amac": "Gemini'nin günlük notlarını kaynağıyla okumak.",
+    "rozet": [
+     "okuma"
+    ],
+    "once": "Görev 3.7 (Gemini anahtarı) yapılmış ve en az bir sabah (~07:00) geçmiş olmalı.",
+    "adimlar": [
+     "‹İzleme › Yapay zekâ notları›nı açın; \"Yalnız not · karar yok\" rozetini görün.",
+     "\"Gün\" seçicisinden bugünü seçin; \"İncele\" kartını ve bölümleri okuyun; bir alıntının \"kaynak\" bağlantısını açın."
+    ],
+    "gorur": [
+     "Her not tırnak içinde alıntı ve kaynak bağlantısıyla gelir; not yoksa \"Kayda değer not yok.\""
+    ],
+    "olmadi": [
+     [
+      "\"Gemini API anahtarı bekleniyor\" kartı",
+      "Görev 3.7.",
+      "#/kilavuz/sorun-giderme/yapay-zeka-anahtar"
+     ],
+     [
+      "Kanarya geçmedi uyarısı",
+      "Kılavuzdaki adımları izleyin.",
+      "#/kilavuz/sorun-giderme/yapay-zeka-kanarya"
+     ]
+    ],
+    "panel": "#/notlar",
+    "kilavuz": "#/kilavuz/yapay-zeka-notlari/ekran",
+    "no": "10.4",
+    "id": "m10-g4"
+   },
+   {
+    "baslik": "Raporlar ve haftalık karneyi okuyun",
+    "amac": "Günlük / haftalık / aylık raporlara bakmak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Günlük › Raporlar›ı açın; en üstteki **Haftalık karne**de \"‹ Önceki\" / \"Sonraki ›\" ile haftaları gezin.",
+     "Tür seçicisinden Günlük / Haftalık / Aylık seçin, \"‹ ›\" ile dönem değiştirin.",
+     "Seçili türde rapor yoksa «Şimdi hazırla» (PIN istemez, telefonda yoktur; Telegram'a göndermez)."
+    ],
+    "gorur": [
+     "\"Günlük rapor — <tarih>\" başlığı; Botlar, Model emirleri ve \"Telegram'a giden özet\" bölümleri."
+    ],
+    "olmadi": [
+     [
+      "Bot değeri \"—\"",
+      "Yeni botta özsermaye eğrisi henüz yok.",
+      "#/kilavuz/raporlar/uyarilar"
+     ]
+    ],
+    "panel": "#/raporlar",
+    "kilavuz": "#/kilavuz/raporlar/karne",
+    "no": "10.5",
+    "id": "m10-g5"
+   }
+  ],
+  "no": 10,
+  "id": "m10"
+ },
+ {
+  "kisa": "Sistem sayfaları",
+  "baslik": "Sistem: Sorunlar, Sağlık, Olay akışı, Günlükler, Veri, Kurulum denetimi, Tatbikatlar",
+  "ozet": "Bir şey ters gittiğinde bakacağınız sayfaları tanırsınız. Bu modülde yalnız zararsız düğmeler (Şimdi yokla, Sohbete gönder, süzgeçler) kullanılır.",
+  "onkosul": "Modül 2.",
+  "gorevler": [
+   {
+    "baslik": "Sorunlar sayfasını ve bir sorun kartını okuyun",
+    "amac": "Her sorun kartının beş sorusunu okumayı öğrenmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Sorunlar›ı açın (ya da üst çubuktaki sorun rozetine basın).",
+     "Renkleri tanıyın: kırmızı \"müdahale bekliyor\", sarı \"dikkat\", mavi \"kendiliğinden geçecek\" / \"bilgi\".",
+     "Bir kart varsa: Ne oldu · Ciddi mi · Kendiliğinden geçer mi · Ne yapmalı · Dokunmayın satırlarını ve katlı \"Neyi saydı?\" bölümünü okuyun.",
+     "«Sohbete gönder (teşhis paketi)»ne basın."
+    ],
+    "gorur": [
+     "Sorun yoksa \"Her şey yolunda · son denetim N dk önce\".",
+     "\"Teşhis paketi panoya kopyalandı — geliştirme sohbetine yapıştırın (sır içermez).\""
+    ],
+    "olmadi": [
+     [
+      "\"Panoya kopyalanamadı (tarayıcı izin vermedi)\"",
+      "Açılan seçili kutudan Ctrl+C ile kopyalayın.",
+      "#/kilavuz/sorunlar/teshis"
+     ],
+     [
+      "Kart tanınmıyor",
+      "«Sohbete gönder».",
+      "#/kilavuz/sorun-giderme/taninmayan"
+     ]
+    ],
+    "yasak": "Kairos'a ait bir kartta eylem düğmesine (Botu yeniden aç, Güvenli kipi kaldır, Farkı kabul et …) basmayın; önce geliştirme sohbetine yazın.",
+    "panel": "#/sorunlar",
+    "kilavuz": "#/kilavuz/sorunlar/alanlar",
+    "no": "11.1",
+    "id": "m11-g1"
+   },
+   {
+    "baslik": "Sorun araçlarının akışını tanıyın",
+    "amac": "PIN'li araçların (önizleme → PIN + kelime → Uygula) nasıl çalıştığını bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Kılavuzda sorun araçları bölümünü okuyun: «Kaydı borsaya eşitle» (ESITLE), «Zarar sınırını sıfırla» (SIFIRLA), «Farkı kabul et» / «Yatırmayı kabul et» (KABUL), «Para hareketini onayla» (ONAY), «Bu ben değilim — reddet», «Güvenli kipten çık» (KALDIR), «Güvenli kipe al» (GÜVENLİ).",
+     "Sorunlar sayfasının altındaki katlı \"Bir botu güvenli kipe al (yeni işlem açmasın)\" bölümünü açıp yalnız okuyun."
+    ],
+    "gorur": [
+     "Araçlar önce önizleme gösterir; arada durum değişirse hiçbir şey uygulanmaz. Araçlar borsaya emir göndermez."
+    ],
+    "olmadi": [],
+    "yasak": "Bu görevde hiçbir aracı uygulamayın.",
+    "kilavuz": "#/kilavuz/sorun-giderme/sorun-araclari",
+    "no": "11.2",
+    "id": "m11-g2"
+   },
+   {
+    "baslik": "Sağlık sayfasında «Şimdi yokla»",
+    "amac": "Öz denetimi elle çalıştırıp sonucu okumak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Sağlık›ı açın; üst şeritte Durum · Son 24 saat · Botlar · Son yoklama göstergelerini okuyun.",
+     "«Şimdi yokla»ya basın.",
+     "Denetim gruplarını açın; her satırın kademe adını (\"Kendisi onarır\", \"Korur, sonra sorar\", \"Yalnız haber verir\") ve \"Sorun olursa:\" satırını okuyun."
+    ],
+    "gorur": [
+     "\"Yoklandı\" bildirimi; Son yoklama saati yenilenir; sorun yoksa \"Her şey yolunda\"."
+    ],
+    "olmadi": [
+     [
+      "Düğme gri",
+      "Geliştirme kopyasındasınız (\"öz denetim sunucuda çalışır\").",
+      "#/kilavuz/saglik/ne-ise-yarar"
+     ],
+     [
+      "Sarı / kırmızı satır",
+      "Satırdaki \"Ne yapmalı\" adımı; Modül 17'deki Sağlık senaryosu.",
+      "#/kilavuz/saglik/uyarilar"
+     ]
+    ],
+    "panel": "#/saglik",
+    "kilavuz": "#/kilavuz/saglik/alanlar",
+    "no": "11.3",
+    "id": "m11-g3"
+   },
+   {
+    "baslik": "Güvenli kip, toplam risk ve veri kalitesi kartlarını okuyun",
+    "amac": "Botları koruyan üç kartın ne zaman devreye girdiğini bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Sağlık'ta \"Bot ne zaman tamamen kapanır\" katını açıp okuyun.",
+     "**Veri kalitesi** kartında kip rozetini (\"İzleme kipi\" / \"Etkin kip\") okuyun.",
+     "**Toplam risk** kartında kip rozetini ve değerleri okuyun; «Şimdi ölç»e basabilirsiniz.",
+     "Kılavuzda güvenli kibin ne zaman açılıp nasıl kalktığını okuyun."
+    ],
+    "gorur": [
+     "Güvenli kipte yeni işlem açılmaz, stoplar yerinde kalır; öz denetimin koyduğu güvenli kip kendiliğinden kalkar."
+    ],
+    "olmadi": [],
+    "yasak": "«Etkin kipe geç», «Sınırları onayla», «İzleme kipine dön», «Güvenli kipi kaldır» ve «Botu yeniden aç» düğmelerine bu görevde basmayın.",
+    "panel": "#/saglik",
+    "kilavuz": "#/kilavuz/saglik/guvenli-kip",
+    "no": "11.4",
+    "id": "m11-g4"
+   },
+   {
+    "baslik": "Olay akışında süzgeç ve arama",
+    "amac": "Geçmişte ne olduğunu tek zaman çizelgesinde bulmak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Olay akışı›nı açın.",
+     "**Önem**: \"Uyarı ve alarm\"; zaman: \"Son 7 gün\".",
+     "Arama kutusuna `Kurs` yazıp «Ara»: Modül 7–8'deki işlemleriniz görünmeli."
+    ],
+    "gorur": [
+     "En yeni olay en üstte; alarm satırları kırmızı. Kurs botunun başlat / durdur / acil olayları listede."
+    ],
+    "olmadi": [
+     [
+      "Olay hemen görünmüyor",
+      "Eş makine kopyası 10 dakikada bir yapılır; sayfayı yenileyin.",
+      "#/kilavuz/olay-akisi/uyarilar"
+     ]
+    ],
+    "panel": "#/olaylar",
+    "kilavuz": "#/kilavuz/olay-akisi/alanlar",
+    "no": "11.5",
+    "id": "m11-g5"
+   },
+   {
+    "baslik": "Günlüklerde hata arayın",
+    "amac": "Ayrıntılı kayıtta bir hatanın metnini bulmak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Günlükler›i açın; üstteki \"Son 24 saat · hata / uyarı / olay\" sayılarını okuyun.",
+     "**Seviye**: \"Uyarı ve üstü\"; arama kutusuna `Kurs` yazıp «Ara».",
+     "İsterseniz «Dışa aktar (CSV)»."
+    ],
+    "gorur": [
+     "Süzgece uyan kayıtlar; yoksa \"Bu süzgece uyan kayıt yok.\""
+    ],
+    "olmadi": [],
+    "panel": "#/gunluk",
+    "kilavuz": "#/kilavuz/gunluk/alanlar",
+    "no": "11.6",
+    "id": "m11-g6"
+   },
+   {
+    "baslik": "Veri kaynaklarını okuyun",
+    "amac": "Fiyat ve piyasa verisinin güncel olduğunu görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Veri › Kaynaklar›ı açın; her satırın durumunu okuyun.",
+     "Bayat satır varsa yalnız o satırda «Güncelle»ye basın.",
+     "‹Veri › İleriye kayıt› sayfasında durumları okuyun."
+    ],
+    "gorur": [
+     "Satırlar \"güncel\"; hafta sonu borsa verisi bayat sayılmaz."
+    ],
+    "olmadi": [
+     [
+      "Binance beklemesi",
+      "Zorlamayın; kendisi bekler.",
+      "#/kilavuz/sorun-giderme/veri-kaynagi"
+     ],
+     [
+      "İleriye kayıt \"6 saattir yazmıyor\"",
+      "Kılavuzdaki adımlar.",
+      "#/kilavuz/sorun-giderme/ileriye-kayit"
+     ]
+    ],
+    "panel": "#/veri/kaynaklar",
+    "kilavuz": "#/kilavuz/veri/uyarilar",
+    "no": "11.7",
+    "id": "m11-g7"
+   },
+   {
+    "baslik": "Kurulum denetimini okuyun",
+    "amac": "Görevlerin, kısayolların ve veri yerinin doğru kurulduğunu görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Kurulum denetimi›ni açın; Program, Veri, Güncelleme, Görevler, Bilgisayar gruplarını okuyun."
+    ],
+    "gorur": [
+     "Özet \"Kurulum tamam\"; ışıklar yeşil. Sayfa hiçbir şeyi kendiliğinden değiştirmez."
+    ],
+    "olmadi": [
+     [
+      "Sarı / kırmızı satır",
+      "Satırdaki açıklamayı okuyun; «Onar» bazı işleri yapar, bazıları için komutu gösterir (\"Satırdaki komutu bu bilgisayarda Komut İstemi'nde çalıştırın\").",
+      "#/kilavuz/kurulum-denetimi/uyarilar"
+     ],
+     [
+      "Uyku sarı",
+      "Güç seçeneklerinde uyku \"Asla\".",
+      "#/kilavuz/sorun-giderme/uyku"
+     ]
+    ],
+    "panel": "#/kurulum-denetimi",
+    "kilavuz": "#/kilavuz/kurulum-denetimi/ne-ise-yarar",
+    "no": "11.8",
+    "id": "m11-g8"
+   },
+   {
+    "baslik": "Tatbikatlar sayfasını tanıyın (prova YOK)",
+    "amac": "Provaların nerede durduğunu ve nasıl başlatılacağını önceden bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Tatbikatlar›ı açın.",
+     "Prova kartlarını okuyun: her kartta amaç, \"Bot\" seçici ve önkoşul rozetleri (\"tamam\", \"eksik\", \"dikkat\").",
+     "Kartlardaki «Tatbikatı başlat» düğmesini ve yanındaki notu yalnız okuyun.",
+     "En alttaki \"Geçmiş\" bölümüne bakın."
+    ],
+    "gorur": [
+     "Sayfanın nasıl çalıştığını biliyorsunuz; provalar ayrı, müsait bir günde yapılacak."
+    ],
+    "olmadi": [],
+    "yasak": "«Tatbikatı başlat» ve «Şimdi çalıştır»a basmayın. Bazı provalar gerçek etki yaratır (ör. acil durdurma provası bütün pozisyonları kapatır).",
+    "panel": "#/tatbikat",
+    "kilavuz": "#/kilavuz/tatbikat/ne-ise-yarar",
+    "no": "11.9",
+    "id": "m11-g9"
+   }
+  ],
+  "no": 11,
+  "id": "m11"
+ },
+ {
+  "kisa": "Bildirimler ve Telegram",
+  "baslik": "Bildirimler ve Telegram menüsü",
+  "ozet": "Hangi bildirimin ne zaman geldiğini, Telegram menüsünü ve geçici sessizi denersiniz.",
+  "onkosul": "Görev 4.2 (Telegram kurulu).",
+  "gorevler": [
+   {
+    "baslik": "Bildirim türlerini ve son gönderilenleri okuyun",
+    "amac": "Pusula'nın size neyi, ne zaman gönderdiğini görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Sistem › Bildirimler›i açın; tür tablosunu okuyun (Bildirim · ne zaman gelir · Önem · Son gönderim · Açık).",
+     "Bir satırda «Düzenle» → \"Önizleme (örnek mesajla)\" bölümünü okuyun; hiçbir şeyi kaydetmeden «Düzenle»yi kapatın.",
+     "\"Son gönderilenler\" listesini okuyun.",
+     "«Deneme mesajı gönder»."
+    ],
+    "gorur": [
+     "Telefonda deneme mesajı; listede \"gönderildi\"."
+    ],
+    "olmadi": [
+     [
+      "\"Gönderilemedi\"",
+      "Modül 17'deki Telegram senaryosu.",
+      "#/kilavuz/sorun-giderme/telegram-gonderim"
+     ]
+    ],
+    "uyari": "Kritik türler kapatılamaz; bir türü kapatmak istiyorsanız önce açıklamasını okuyun.",
+    "panel": "#/bildirimler",
+    "kilavuz": "#/kilavuz/bildirimler/kanal",
+    "no": "12.1",
+    "id": "m12-g1"
+   },
+   {
+    "baslik": "Telegram menüsünü gezin",
+    "amac": "Uzaktayken Telegram'dan durumu okumak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Telegram'da botunuza `/menu` yazın.",
+     "\"🤖 Botlar\", \"⚠️ Sorunlar\", \"💼 Portföy\", \"🔄 Güncelleme\", \"🖥️ Makineler\" düğmelerini sırayla açın; \"◀ Menü\" ile dönün.",
+     "`/durum` ve `/teshis` yazın."
+    ],
+    "gorur": [
+     "Her düğme kısa bir özet gösterir; Telegram'dan onay ya da emir verilmez (yalnız okur)."
+    ],
+    "olmadi": [
+     [
+      "\"Bu menünün süresi doldu — /menu yazın\"",
+      "`/menu` ile yeni menü açın.",
+      "#/kilavuz/telegram-menu/suresi-doldu"
+     ],
+     [
+      "İki cevap geliyor",
+      "İki bilgisayar aynı botu yokluyor (409).",
+      "#/kilavuz/sorun-giderme/telegram-409"
+     ],
+     [
+      "\"Panelde çöz ↗\" düğmesi yok",
+      "‹Ayarlar › Bildirimler›de \"Panel adresi\" boş.",
+      "#/kilavuz/telegram-menu/bildirim-dugmeleri"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/telegram-menu/ekranlar",
+    "no": "12.2",
+    "id": "m12-g2"
+   },
+   {
+    "baslik": "\"🔕 1 saat sessize al\" ve panelden «Erken bitir»",
+    "amac": "Bildirimleri geçici susturup erken açmayı öğrenmek.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Telegram menüsünde \"⚙️ Bildirim ayarları\" → \"🔕 1 saat sessize al\".",
+     "Panelde ‹Sistem › Bildirimler› › **Sessiz saatler** kartında sarı \"geçici sessiz\" satırını görün.",
+     "«Erken bitir»."
+    ],
+    "gorur": [
+     "\"Geçici sessiz bitti — bekleyenler bir dakika içinde tek özet olarak gelir.\"",
+     "‹Ayarlar › Ayar geçmişi›nde \"Telegram menüsü (1 saat sessize al)\" satırı."
+    ],
+    "olmadi": [
+     [
+      "Panelde geçici sessiz satırı yok",
+      "Sayfayı yenileyin; Telegram düğmesinin cevabını (\"sessize alındı\") kontrol edin.",
+      "#/kilavuz/bildirimler/sessiz"
+     ]
+    ],
+    "uyari": "Kritik bildirimler sessiz saatte de gelir. Erken bitirme Telegram'da yoktur; panelde — telefondaki panelde de (PIN istemez).",
+    "panel": "#/bildirimler",
+    "kilavuz": "#/kilavuz/bildirimler/sessiz",
+    "no": "12.3",
+    "id": "m12-g3"
+   }
+  ],
+  "no": 12,
+  "id": "m12"
+ },
+ {
+  "kisa": "Güncelleme kurma",
+  "baslik": "Güncelleme kurmak",
+  "ozet": "Onay bekleyen bir güncellemeyi kurar, kurulum adımlarını ve kuru denemeyi izlersiniz.",
+  "onkosul": "Görev 4.6. Kurulmayı bekleyen bir sürüm varsa yapılır; yoksa okuyup bir sonraki güncellemede yapın.",
+  "gorevler": [
+   {
+    "baslik": "Onaylı ve otomatik kurulum farkını okuyun",
+    "amac": "Hangi güncellemenin kendiliğinden, hangisinin sizin onayınızla kurulduğunu bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Güncelleme›de \"Nasıl çalışır?\" açıklamasını ve kılavuzdaki \"kendiliğinden\" bölümünü okuyun."
+    ],
+    "gorur": [
+     "Yalnız belgeler ve görseller onaysız kurulur; kod değişikliği «Güncellemeyi kur» onayı ve PIN ister. Sunucu her gün 12:00'de kontrol eder."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/ayarlar/kendiliginden",
+    "no": "13.1",
+    "id": "m13-g1"
+   },
+   {
+    "baslik": "Bekleyen güncellemeyi kurun",
+    "amac": "Yeni sürümü güvenle kurmak.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "once": "02:50–04:30 arasında kurmayın (botların günlük çalışma saati). Sürüm notunu okuyun.",
+    "adimlar": [
+     "‹Ayarlar › Güncelleme›de «Güncellemeyi kur (<sürüm>)».",
+     "Onay penceresinde «Kur ve yeniden başlat» → acil PIN.",
+     "Adımları izleyin: GitHub bağlantısı → … → Sözdizimi denetimi → **Kuru deneme (bot kararı)** → yeniden başlatma → yeni sürümün açılışı → kararlılık gözlemi."
+    ],
+    "gorur": [
+     "\"Pusula <sürüm> kuruldu — yeni panel 5 sn içinde yükleniyor.\"; Durum \"<sürüm> kuruldu ✓\".",
+     "Ana sayfadaki sürüm ışığı yeşil; açık pozisyonlar borsada kalır."
+    ],
+    "olmadi": [
+     [
+      "Kuru denemede fark tablosu çıktı, kurulmadı",
+      "Fark beklenen bir değişiklikse kırmızı «Farkı gördüm, yine de kur»; emin değilseniz kurmayın, tabloyu sohbete gönderin.",
+      "#/kilavuz/ayarlar/kuru-deneme"
+     ],
+     [
+      "\"kurulamadı, eski sürüme dönüldü\"",
+      "Nedeni sohbete gönderin; düzeltilmiş sürüm gelince kurulur.",
+      "#/kilavuz/sorun-giderme/guncelleme-geri-alindi"
+     ],
+     [
+      "\"sırada bekliyor (kademeli güncelleme)\"",
+      "Önce botsuz makine kurulur; bekleyin.",
+      "#/kilavuz/ayarlar/makine-kademe"
+     ],
+     [
+      "\"Elle bakılmalı\"",
+      "Modül 17'deki güncelleme senaryosu.",
+      "#/kilavuz/sorun-giderme/guncelleme-elle"
+     ]
+    ],
+    "panel": "#/ayarlar/guncelleme",
+    "kilavuz": "#/kilavuz/ayarlar/guncelleme-izleme",
+    "no": "13.2",
+    "id": "m13-g2"
+   }
+  ],
+  "no": 13,
+  "id": "m13"
+ },
+ {
+  "kisa": "Telefon",
+  "baslik": "Telefondan izlemek",
+  "ozet": "Paneli telefondan açar, telefon kademesinde neyin açık neyin kilitli olduğunu görürsünüz.",
+  "onkosul": "Modül 3 (acil PIN ve telefon jetonu tanımlı). Tailscale kullanılacaksa sunucuda ve telefonda kurulu.",
+  "gorevler": [
+   {
+    "baslik": "Telefonda paneli açın",
+    "amac": "Her yerden paneli izleyebilmek.",
+    "rozet": [
+     "sunucu"
+    ],
+    "adimlar": [
+     "Önerilen yol (Tailscale): telefonda Tailscale uygulaması açık ve sunucuyla aynı hesapta olsun.",
+     "Sunucuda kılavuzdaki komutla karekodu alın (`npm run telefon-jeton -- --adres …`; adres kılavuzda).",
+     "Telefonda karekodu okutun; panel açılır.",
+     "Tarayıcı menüsünden **Ana ekrana ekle** ile simge oluşturun.",
+     "Yalnız aynı Wi-Fi'dayken: sunucuda `npm run telefon` → karekodu okutun; iş bitince komut penceresinde Ctrl+C."
+    ],
+    "gorur": [
+     "Başlıkta **Telefon: izleme** rozeti; alt çubukta Ana · Portföy · Botlar · Sinyaller · Menü. Giriş 30 gün geçerli."
+    ],
+    "olmadi": [
+     [
+      "Tailscale adresi açılmıyor",
+      "Telefonda Tailscale açık mı, sunucu \"Connected\" mı bakın; Modül 17'deki telefon senaryosu.",
+      "#/kilavuz/telefon/sorun"
+     ],
+     [
+      "\"Telefondan erişim kapalı: panel jetonu tanımlı değil\"",
+      "Sunucuda `npm run telefon-jeton`.",
+      "#/kilavuz/telefon/sorun"
+     ],
+     [
+      "Wi-Fi köprüsünde \"Siteye ulaşılamıyor\"",
+      "Ağ profili Özel olmalı ve güvenlik duvarı izni verilmeli.",
+      "#/kilavuz/telefon/guvenlik-duvari"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/telefon/tailscale",
+    "no": "14.1",
+    "id": "m14-g1"
+   },
+   {
+    "baslik": "Telefon kademesinde neyin kilitli olduğunu görün",
+    "amac": "Telefondan yalnız izleme ve acil durdurma yapılabildiğini bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Telefonda ‹Portföy › Hesaplar›ı açın: kayıt düğmeleri kilitli.",
+     "Kurs botunun Yönetim görünümünü açın: \"Bot ayarları yalnız sunucudaki panelden değişir (telefon izler ve acil durdurur).\"",
+     "‹Ayarlar › Anahtarlar›: \"Telefondan anahtarlar yalnız görüntülenir…\"."
+    ],
+    "gorur": [
+     "Her ekran görünür; yazma düğmeleri kilitli ya da gizli."
+    ],
+    "olmadi": [],
+    "kilavuz": "#/kilavuz/telefon/oturum",
+    "no": "14.2",
+    "id": "m14-g2"
+   },
+   {
+    "baslik": "Telefondan «Şimdi yokla» ve PIN'li araçları tanıyın",
+    "amac": "Uzaktayken yapılabilecekleri görmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Telefonda ‹Sistem › Sağlık› › «Şimdi yokla» (PIN istemez, dakikada bir). Telegram geçici sessizi açıksa ‹Sistem › Bildirimler›deki «Erken bitir» de telefondan PIN istemeden çalışır.",
+     "‹Sistem › Sorunlar›da telefonda çıkan ek katları okuyun (\"Pusula takıldıysa: yeniden başlat\" vb.) — basmayın.",
+     "Kılavuzdaki \"uzaktayken neler yapılabilir\" tablosunu okuyun."
+    ],
+    "gorur": [
+     "\"Yoklandı\" bildirimi."
+    ],
+    "olmadi": [],
+    "yasak": "Telefondaki acil durdurma ve PIN'li araçları bu kursta kullanmayın: telefon acil durdurması seçili botu gerçekten durdurur ve telefonda geri alma yoktur.",
+    "kilavuz": "#/kilavuz/sorun-giderme/uzaktan",
+    "no": "14.3",
+    "id": "m14-g3"
+   }
+  ],
+  "no": 14,
+  "id": "m14"
+ },
+ {
+  "kisa": "Bilgi ve araştırma",
+  "baslik": "Bilgi menüsü, Coin tarama ve araştırma bölümleri",
+  "ozet": "Okuma kaynaklarını ve (yüklüyse) araştırma ekranlarını tanırsınız.",
+  "onkosul": "Modül 1.",
+  "gorevler": [
+   {
+    "baslik": "Pusula Kitabı ve Kitapçık",
+    "amac": "Botların neden böyle çalıştığını okuyacağınız yeri bilmek.",
+    "rozet": [
+     "okuma",
+     "eklenti"
+    ],
+    "adimlar": [
+     "‹Bilgi › Pusula Kitabı›nı açın; kitabın kendi sol menüsünden bir bölüm seçin.",
+     "‹Bilgi › Kitapçık›ta \"Bot stratejileri\"ni açın.",
+     "«Yeni sekmede aç» ile tam ekranda bakın."
+    ],
+    "gorur": [
+     "Kitap panelin içinde, kendi menüsü ve tema düğmesiyle açılır."
+    ],
+    "olmadi": [
+     [
+      "Menüde yok",
+      "Bu kurulumda araştırma eklentisi yüklü değil; görevi atlayın.",
+      "#/kilavuz/pusula-kitabi/ne-ise-yarar"
+     ]
+    ],
+    "panel": "#/kitap",
+    "kilavuz": "#/kilavuz/pusula-kitabi/ne-ise-yarar",
+    "no": "15.1",
+    "id": "m15-g1"
+   },
+   {
+    "baslik": "Coin tarama sayfalarını okuyun",
+    "amac": "Coin tarama, Kaçın ve İzle listelerinin ne işe yaradığını bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Coin tarama › Tarama›, ‹Kaçın listesi›, ‹İzle listesi›, ‹Listeler›, ‹Tarama ayarları› sayfalarını sırayla açıp başlık açıklamalarını okuyun."
+    ],
+    "gorur": [
+     "Sayfalarda \"Alım/satım sinyali değildir\" notu; hiçbiri botları etkilemez."
+    ],
+    "olmadi": [],
+    "panel": "#/tarama",
+    "kilavuz": "#/kilavuz/coin-tarama",
+    "no": "15.2",
+    "id": "m15-g2"
+   },
+   {
+    "baslik": "Araştırma bölümlerini tanıyın",
+    "amac": "Backtest ve araştırma defterinin nerede olduğunu bilmek.",
+    "rozet": [
+     "okuma",
+     "eklenti"
+    ],
+    "adimlar": [
+     "‹Araştırma › Özet›te dört sayıyı okuyun.",
+     "‹Stratejiler›, ‹Backtest›, ‹Backtest sembolleri›, ‹Pine›, ‹Portföy laboratuvarı›, ‹Araştırma defteri› sayfalarını açıp başlık açıklamalarını okuyun."
+    ],
+    "gorur": [
+     "Araştırma ekranları emir vermez."
+    ],
+    "olmadi": [
+     [
+      "Araştırma grubu menüde yok",
+      "Araştırma eklentisi yüklü değil; görevi atlayın.",
+      "#/kilavuz/yedek-tasima/eklenti"
+     ]
+    ],
+    "panel": "#/arastirma/ozet",
+    "kilavuz": "#/kilavuz/arastirma-ozet",
+    "no": "15.3",
+    "id": "m15-g3"
+   },
+   {
+    "baslik": "Kurulum sihirbazına göz atın",
+    "amac": "Yeni bir bilgisayarda ilk kurulumun nasıl yapıldığını bilmek.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "‹Bilgi › Kurulum sihirbazı›nı açın; adım sayacını (\"Pusula kurulumu · N / 8\") ve adım adlarını okuyun.",
+     "Hiçbir şeyi değiştirmeden çıkın."
+    ],
+    "gorur": [
+     "Sihirbaz riskler, Binance demo anahtarı, Telegram, telefon, acil durdurma ve ilk deneme adımlarını gösterir."
+    ],
+    "olmadi": [],
+    "yasak": "Hoş geldin adımındaki \"Başka bilgisayardan taşı\" yolunu kullanmayın.",
+    "panel": "#/kurulum",
+    "kilavuz": "#/kilavuz/kurulum-sihirbazi/ne-ise-yarar",
+    "no": "15.4",
+    "id": "m15-g4"
+   }
+  ],
+  "no": 15,
+  "id": "m15"
+ },
+ {
+  "kisa": "Kursu kapatmak",
+  "baslik": "Kursu kapatmak: temizlik ve notlar",
+  "ozet": "Deneme için oluşturduklarınızı kaldırır, notlarınızı geliştirme sohbetine taşırsınız.",
+  "onkosul": "Kullandığınız bütün modüller.",
+  "gorevler": [
+   {
+    "baslik": "Kurs botunu durdurun ve arşivleyin",
+    "amac": "Deneme botunu listelerden kaldırmak.",
+    "rozet": [
+     "kurs"
+    ],
+    "once": "Her adımdan önce sayfa başlığında, kırıntıda ve adres çubuğunda **Kurs** yazdığını doğrulayın (`#/botlar/kurs/…`). Kairos ve Tao sayfalarında aynı düğmeler durur; açılan pencerenin başlığında \"Kurs:\" yazmıyorsa «Vazgeç».",
+    "adimlar": [
+     "Kurs › Genel › «Durdur» → «Evet» (zaten durmuşsa geçin).",
+     "‹Ayarlar › Botlar (özet)› › Bot kayıtları tablosunda **Kurs** satırında «Arşivle…» → \"Kurs arşivlensin mi?\" → «Arşivle»."
+    ],
+    "gorur": [
+     "\"Kurs arşivlendi.\"; bot listelerden kalkar. Kayıtları silinmez, \"Arşivdeki botlar\" katından geri getirilebilir."
+    ],
+    "olmadi": [
+     [
+      "«Arşivle…» pasif",
+      "\"Önce botu durdurun\" — bot çalışıyor.",
+      "#/kilavuz/botlar/bot-arsiv"
+     ]
+    ],
+    "yasak": "Kairos ve Tao satırlarında arşiv yoktur (\"arşivlenmez\"); başka bir satıra basmayın.",
+    "panel": "#/ayarlar/botlar",
+    "kilavuz": "#/kilavuz/botlar/bot-arsiv",
+    "no": "16.1",
+    "id": "m16-g1"
+   },
+   {
+    "baslik": "Deneme borsa hesabını silin",
+    "amac": "Modül 3'teki deneme anahtarını Pusula'dan ve borsadan kaldırmak.",
+    "rozet": [
+     "ayar",
+     "pin"
+    ],
+    "adimlar": [
+     "‹Ayarlar › Anahtarlar›da \"Kurs deneme\" satırında «Sil» → acil PIN.",
+     "Borsanın web sitesinde aynı API anahtarını da silin."
+    ],
+    "gorur": [
+     "\"Silindi.\"; satır tablodan kalkar."
+    ],
+    "olmadi": [
+     [
+      "Silinmiyor",
+      "Bota bağlı hesap silinmez; deneme hesabı bir bota bağlandıysa önce bağlantıyı kaldırın.",
+      "#/kilavuz/ayarlar/anahtarlar"
+     ]
+    ],
+    "yasak": "Yalnız \"Kurs deneme\" satırı. Kairos satırlarına dokunmayın.",
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/ayarlar/anahtar-degistir",
+    "no": "16.2",
+    "id": "m16-g2"
+   },
+   {
+    "baslik": "Deneme kayıtlarını toparlayın",
+    "amac": "Portföyüm ve İşlem defterinde yalnız gerçek kayıtlarınızın kalması.",
+    "rozet": [
+     "ayar"
+    ],
+    "adimlar": [
+     "Portföyüm'de yalnız deneme için açtığınız bir hesap varsa: Hesaplar › \"Gelişmiş\" katında o hesabı «Kapat» (hesap silinmez, kapanır).",
+     "İşlem defterinde yalnız deneme için yüklediğiniz bir dosya varsa: Yükleme geçmişinde «Geri al».",
+     "Gerçek hesaplarınıza ve kayıtlarınıza dokunmayın."
+    ],
+    "gorur": [
+     "Pano yalnız gerçek varlıklarınızı gösterir."
+    ],
+    "olmadi": [],
+    "panel": "#/portfoy/hesaplar",
+    "kilavuz": "#/kilavuz/portfoyum/uyarilar",
+    "no": "16.3",
+    "id": "m16-g3"
+   },
+   {
+    "baslik": "Notlarınızı geliştirme sohbetine taşıyın",
+    "amac": "Çözülmeyen sorunların düzeltilmesini sağlamak.",
+    "rozet": [
+     "okuma"
+    ],
+    "adimlar": [
+     "Bu sayfanın en üstündeki «Notlarımı kopyala»ya basın.",
+     "Geliştirme sohbetine yapıştırın."
+    ],
+    "gorur": [
+     "Panoya tamamlanmayan görevler ve notlarınız düz metin olarak alınır (anahtar ya da PIN içermez — not alanına yazmadıysanız)."
+    ],
+    "olmadi": [
+     [
+      "\"Panoya kopyalanamadı\"",
+      "Açılan kutudaki metni seçip Ctrl+C ile kopyalayın.",
+      "#/kilavuz/pusula-kursu/uyarilar"
+     ]
+    ],
+    "kilavuz": "#/kilavuz/pusula-kursu",
+    "no": "16.4",
+    "id": "m16-g4"
+   }
+  ],
+  "no": 16,
+  "id": "m16"
+ },
+ {
+  "kisa": "Sorun çözme senaryoları",
+  "baslik": "Sorun çözme senaryoları",
+  "ozet": "Gerçekçi durumlar için teşhis sırası, çözüm ve doğrulama. Bunları şimdi yaşamanız gerekmez: her senaryoyu okuyun, \"teşhis sırası\"ndaki sayfaları panelde açıp yerlerini bulun ve tamamlandı işaretleyin. Gerçekten yaşadığınızda bu sayfaya dönün.",
+  "onkosul": "Modül 11 (Sorunlar ve Sağlık sayfalarını tanıyorsunuz).",
+  "not": "**Her sorunda ilk durak ‹Sistem › Sorunlar›.** Mavi kart = kendiliğinden geçecek, dokunmayın. Kırmızı kart Kairos'a aitse düğmeye basmadan önce geliştirme sohbetine yazın (Kairos'un demo kabul ölçümü sürüyor; her müdahale ölçümü etkiler). Süreç kapatmak gerekirse yalnız \"Pusula'yı durdur\" kısayolunu kullanın; Görev Yöneticisi'nden toplu süreç kapatmayın.",
+  "gorevler": [
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Bir bot durdu: \"Durduruldu — onay bekliyor\" (ENGEL)",
+    "amac": "Botun neden kendini durdurduğunu bulup güvenle yeniden açmak.",
+    "belirti": [
+     "Ana sayfada kırmızı \"… durdu — onayınızı bekliyor\"; bot sayfasında kırmızı Durduruldu bandı.",
+     "Telegram'da \"… TAMAMEN KAPANDI\" ya da \"… durdu: emirler borsada reddedildi\", \"koruma stopu kurulamıyor\", \"EMİR FRENİ\", \"borsadaki pozisyonlar botun kayıtlarıyla uyuşmuyor\", \"gerçek sonuç simülasyondan … ayrıldı\"."
+    ],
+    "teshis": [
+     "Önce ayırın: bot yalnız \"Durdu\" ise ve son olay acil frense bu bir engel değildir (kâğıt acil senaryosu). Kırmızı bant varsa devam edin.",
+     "[Sorunlar](#/sorunlar): kartın \"Ne oldu\" satırı ve katlı \"Neyi saydı?\" (ret kodları, borsa / kayıt farkı, olası neden).",
+     "[Sağlık](#/saglik): bot kartındaki \"Sebep\" ve olay kaydı.",
+     "Botun Genel görünümündeki bant ve Hesap görünümündeki teminat."
+    ],
+    "cozum": [
+     "Pozisyon uyuşmazlığı: \"gecikmeli dolum\" ise 2 dakika bekleyip «Borsayla karşılaştır»; stop / ADL / likidasyonsa Sorunlar'da o coin için «Kaydı borsaya eşitle» (PIN + ESITLE), sonra «Borsayla karşılaştır».",
+     "Emirler reddedildi (bakiye / teminat): Hesap'ta teminatı denetleyin → «Borsayla karşılaştır» → temizse «Sebebi okudum» kutusu → «Botu yeniden aç».",
+     "Kod hatası (ret metni anlaşılmıyor): botu açmayın, «Sohbete gönder».",
+     "Uygulama sapması: Sorunlar kartında «Farkı kabul et» → önizlemeyi okuyun; fark tek güne yığılmış ve sebebi biliniyorsa PIN + KABUL, her gün küçük farksa önce sohbete yazın.",
+     "Sağlık'tan: \"Sebebi okudum ve düzelttim\" kutusu → «Botu yeniden aç»."
+    ],
+    "dogrula": [
+     "Kart Sorunlar'dan kalkar, bant kaybolur, bot \"Çalışıyor\".",
+     "Telegram \"açtığınız bot yeniden kapandı\" derse gerçek bir tekrardır → sohbete yazın."
+    ],
+    "yasak": "Pozisyon uyuşmazlığında «Engeli kaldır»a basmayın (yalnız temiz karşılaştırma kaldırır). Sapmada Engeli kaldır tek başına yetmez. Felaket stopundan sonra Acil frene basmayın. Kairos'ta önce sohbete danışın.",
+    "panel": "#/sorunlar",
+    "kilavuz": "#/kilavuz/sorun-giderme/bot-durdu",
+    "no": "17.1",
+    "id": "m17-g1"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Telegram iletisi gelmiyor",
+    "amac": "Bildirimlerin neden ulaşmadığını bulmak.",
+    "belirti": [
+     "`/durum` cevapsız ya da iki cevap geliyor.",
+     "‹Ayarlar › Bildirimler›de \"Telegram komutları: HATA 409\" ya da \"HATA 401\".",
+     "‹Sistem › Bildirimler› › Son gönderilenler'de \"gönderilemedi\".",
+     "İletiler sonradan \"[gecikmeli]\" önekiyle geliyor."
+    ],
+    "teshis": [
+     "[Ayarlar › Bildirimler](#/ayarlar/bildirimler): en üstteki \"Telegram komutları\" satırı (409 = başka bilgisayar aynı botu yokluyor; 401 = jeton geçersiz).",
+     "[Sistem › Bildirimler](#/bildirimler): son gönderilenler (\"kapalı olduğu için gönderilmedi\" de burada görünür).",
+     "[Sorunlar](#/sorunlar)."
+    ],
+    "cozum": [
+     "409: eski / öbür bilgisayarda **Pusula'yı durdur**; orada Görev Zamanlayıcı'da PusulaBot ve PusulaBekci görevlerini devre dışı bırakın; Telegram'a `/durum` yazın.",
+     "401 / gönderilemiyor: bota `/start` yazın, engellediyseniz kaldırın → sunucuda «Test mesajı gönder» → jeton değiştiyse yeniden girin.",
+     "\"[gecikmeli]\": internet ya da Telegram kısa süre kesilmiş; dokunmayın.",
+     "Yedek kanal isterseniz ‹Sağlık› › İkinci uyarı kanalı (ntfy)."
+    ],
+    "dogrula": [
+     "`/durum`a tek cevap gelir; \"Telegram komutları\" satırı \"yoklama çalışıyor\"; test mesajı ulaşır."
+    ],
+    "yasak": "İki bilgisayarda aynı Telegram botunu açık bırakmayın. Geliştirme bilgisayarında Telegram'ın susması bilinçlidir; orada düzeltmeye çalışmayın.",
+    "panel": "#/ayarlar/bildirimler",
+    "kilavuz": "#/kilavuz/sorun-giderme/telegram-409",
+    "no": "17.2",
+    "id": "m17-g2"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Güncelleme \"elle bakılmalı\" dedi",
+    "amac": "Kurulamayan bir güncellemeyi bozmadan çözmek.",
+    "belirti": [
+     "\"Güncelleme kendiliğinden kurulamadı — elle bakılmalı\"; Ana sayfadaki Pusula sürümü ışığı sarı / kırmızı.",
+     "Ya da: \"kurulumu yarıda kaldı\", imzasız kod uyarısı, \"Yeniden başlatma gerekli\", \"kurulamadı, eski sürüme dönüldü\"."
+    ],
+    "teshis": [
+     "[Ayarlar › Güncelleme](#/ayarlar/guncelleme): neden metni, adımlar (✓ ◐ – ✗) ve alttaki günlük.",
+     "Telegram'da \"🔄 Güncelleme\" ya da `/guncelleme`."
+    ],
+    "cozum": [
+     "Neden metnini olduğu gibi geliştirme sohbetine gönderin; çalışan sürüm sağlamdır, acele yok.",
+     "\"Yeniden başlatma gerekli\" sarıysa uygun bir saatte (02:50–04:30 dışında) yeniden başlatın; kırmızı \"KAPALI\" ise sunucuda **Pusula** kısayolu.",
+     "Yarıda kaldıysa: panel açılıyorsa «Şimdi kontrol et»; açılmıyorsa sunucuda **Pusula** kısayolu, o da olmazsa kılavuzdaki kurtarma adımları.",
+     "İmzasız kod: kodu siz göndermediyseniz GitHub parolasını ve jetonlarını değiştirin, hemen sohbete yazın."
+    ],
+    "dogrula": [
+     "Durum \"Güncel ✓\" ya da \"<sürüm> kuruldu ✓\"; sürüm ışığı yeşil."
+    ],
+    "yasak": "Kendiniz `git reset` / `git checkout` ile geri almayın; yedek paket klasörlerini silmeyin; 02:50–04:30 arasında kurmayın.",
+    "panel": "#/ayarlar/guncelleme",
+    "kilavuz": "#/kilavuz/sorun-giderme/guncelleme-elle",
+    "no": "17.3",
+    "id": "m17-g3"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Sağlık sayfası sarı ya da kırmızı",
+    "amac": "Öz denetimin uyarısını okuyup doğru adımı atmak.",
+    "belirti": [
+     "Yan menüde Sağlık'ın yanında renkli nokta; Ana sayfa Sistem kartında sarı / kırmızı satır; Telegram'da \"Öz denetim: …\"."
+    ],
+    "teshis": [
+     "[Sağlık](#/saglik): üstteki Durum satırı; sorunlu satırlar grubun en üstündedir.",
+     "Satırın \"Ne yapmalı\" metni ve \"Sorunlar'da adımlar →\" bağlantısı.",
+     "Bot kartı varsa \"Sebep\" satırı."
+    ],
+    "cozum": [
+     "Satırdaki adımı uygulayın; sonra «Şimdi yokla».",
+     "Tuhaf bir durumda «Şimdi rapor al» (olay raporu) ve sohbete gönderin.",
+     "Bot kartında: \"Sebebi okudum ve düzelttim\" → «Botu yeniden aç» / «Güvenli kipi kaldır» (Kairos'ta önce sohbet)."
+    ],
+    "dogrula": [
+     "Satır yeşil; \"N / N denetim tamam\". Düzelenler akşam özetinde \"DÜZELDİ\" olarak görünür."
+    ],
+    "yasak": "Sarı satır için pozisyon kapatmayın; öz denetim para kararı vermez. Gri satır \"ölçülemedi\" demektir, hata değildir.",
+    "panel": "#/saglik",
+    "kilavuz": "#/kilavuz/saglik/uyarilar",
+    "no": "17.4",
+    "id": "m17-g4"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Para çıkışı / para girişi onay bekliyor",
+    "amac": "Hesaptaki beklenmeyen para hareketini doğru biçimde onaylamak ya da reddetmek.",
+    "belirti": [
+     "\"onaysız para çıkışı — bot durdu\" ya da \"sizin yapmadığınız para çıkışı — bot durdu (güvenlik)\".",
+     "\"para girişi algılandı — onayınızı bekliyor\"; \"spot cüzdana para yatırıldı — kabul bekliyor\"."
+    ],
+    "teshis": [
+     "[Sorunlar](#/sorunlar) kartında yön ve tutar.",
+     "Borsada yatırma / çekme geçmişiniz.",
+     "Botun Yönetim görünümünde \"Para yatırdım / çektim\" ön kaydı var mı (72 saat geçerli)."
+    ],
+    "cozum": [
+     "Hareket sizinse: Sorunlar'da «Para hareketini onayla» (PIN + ONAY).",
+     "Çıkış sizin DEĞİLSE: «Bu ben değilim — reddet» (PIN + BEN DEĞİLİM); hemen borsa şifresini ve iki adımlı doğrulamayı değiştirin, API anahtarlarını silip yenileyin, sohbete yazın.",
+     "Spot yatırma: «Yatırmayı kabul et» (PIN + KABUL)."
+    ],
+    "dogrula": [
+     "Kart kalkar; bot yeniden işlem açabilir; hareket getiri sayılmaz."
+    ],
+    "yasak": "Sizin olmayan bir hareketi \"temizlemek\" için onaylamayın. Yatırma kabulünü «Engeli kaldır» ile yapmayın.",
+    "panel": "#/sorunlar",
+    "kilavuz": "#/kilavuz/sorun-giderme/para-akisi-onay",
+    "no": "17.5",
+    "id": "m17-g5"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Kâğıt botta yanlışlıkla acil durdurma basıldı",
+    "amac": "Kâğıt hesaptaki botu acil öncesi hâline döndürmek.",
+    "belirti": [
+     "Kâğıt hesaptaki bot \"Durdu\"; pozisyonlar ve BTC kapanmış; Telegram'da \"ACİL DURDURMA\". \"Durduruldu — onay bekliyor\" bandı YOKTUR (acil fren engel koymaz)."
+    ],
+    "teshis": [
+     "Botun **Yönetim** görünümünde \"Acil durdurmayı geri al (kâğıt)\" satırı var mı? (Yalnız son olay acil durdurmaysa görünür.)"
+    ],
+    "cozum": [
+     "Acil fren engel koymaz: pozisyonları geri istemiyorsanız yalnız «Başlat» yeter (bot bugünkü hedefe gider).",
+     "Geri almak için bot çalışıyorsa önce «Durdur».",
+     "«Önizle ve geri al…» → önizlemeyi okuyun → `GERIAL` → «Geri al» → acil PIN.",
+     "«Başlat»."
+    ],
+    "dogrula": [
+     "Pozisyonlar acil öncesi hâlden devam eder; bildirimde \"mutabakat temiz\"."
+    ],
+    "yasak": "Demo ve canlı hesapta bu araç yoktur; Kairos'ta kapalıdır. Önizleme \"UYGULANAMAZ\" derse zorlamayın: botu olduğu gibi başlatın ya da sohbete gönderin. Tao'nun kâğıt ölçümünü bozmamak için Tao'da geri almayı önce sohbete danışın.",
+    "panel": "#/botlar/kurs/yonetim",
+    "kilavuz": "#/kilavuz/sorun-giderme/kagit-acil-geri-al",
+    "no": "17.6",
+    "id": "m17-g6"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Anahtar «Sına» başarısız",
+    "amac": "Bir borsa anahtarının neden çalışmadığını bulmak.",
+    "belirti": [
+     "Anahtarlar'da satır \"Bakılmalı\": \"Son sınama …: başarısız — <borsanın hata metni>\".",
+     "Kırmızı \"PARA ÇEKME izni AÇIK\"; Sağlık'ta \"API anahtarı yetkisi\" kırmızı / sarı.",
+     "Sabah \"Anahtar sınaması başarısız\" bildirimi."
+    ],
+    "teshis": [
+     "[Anahtarlar](#/ayarlar/anahtarlar): hata metni, satırın türü (demo / canlı / aktarım) ve hangi bot kullanıyor (\"Kullanan\" sütunu).",
+     "[Sağlık](#/saglik): API anahtarı yetkisi satırı."
+    ],
+    "cozum": [
+     "Yanlış anahtar / imza / izin hatası: borsada anahtarı denetleyin → «Değiştir» → yeni değer → «Kaydet» (PIN) → «Sına».",
+     "Demo / canlı karışıklığı: demo türüne borsanın demo kipinde oluşturulmuş anahtar girilir.",
+     "Saat hatası: Windows'ta **Saati şimdi eşitle**.",
+     "Para çekme izni açık: borsada kapatın → «Sına»; şüphe varsa anahtarı silip yenileyin.",
+     "\"Bilinmiyor\": biraz sonra yeniden «Sına»."
+    ],
+    "dogrula": [
+     "\"bağlantı tamam\"; izinlerde para çekme yok; durum **Tamam**; Sağlık satırı yeşil."
+    ],
+    "yasak": "Kairos'un kullandığı satırı değiştirmeden önce sohbete yazın: yanlış anahtar Kairos'u borsadan koparır.",
+    "panel": "#/ayarlar/anahtarlar",
+    "kilavuz": "#/kilavuz/sorun-giderme/anahtar-yetkisi",
+    "no": "17.7",
+    "id": "m17-g7"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Telefon panele bağlanmıyor",
+    "amac": "Telefondan erişimi geri getirmek.",
+    "belirti": [
+     "Tailscale adresi açılmıyor; \"Siteye ulaşılamıyor\"; \"Pusula · giriş\" sayfası; \"Oturum süresi doldu — Yeniden giriş\"; \"Çok fazla yanlış deneme\"; \"Sunucuya ulaşılamıyor — son görülen\"."
+    ],
+    "teshis": [
+     "Telefonda Tailscale açık mı (VPN simgesi)?",
+     "Sunucu açık ve Tailscale'de \"Connected\" mı?",
+     "Wi-Fi köprüsünde: aynı Wi-Fi mi, ağ \"Özel\" mi, güvenlik duvarı izni var mı?"
+    ],
+    "cozum": [
+     "Tailscale'i açın; sunucuda kılavuzdaki komutla adresi ve karekodu yeniden alın.",
+     "\"panel jetonu tanımlı değil\": sunucuda `npm run telefon-jeton`.",
+     "Giriş sayfası / oturum doldu: karekodu yeniden okutun.",
+     "\"Çok fazla yanlış deneme\": 10 dakika bekleyin."
+    ],
+    "dogrula": [
+     "Panel açılır; başlıkta **Telefon: izleme** rozeti."
+    ],
+    "yasak": "Modemde port yönlendirme (internete açma) yapmayın; dışarıdan yalnız Tailscale.",
+    "kilavuz": "#/kilavuz/telefon/sorun",
+    "no": "17.8",
+    "id": "m17-g8"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Makine sessiz / sunucu sessiz",
+    "amac": "Sunucudan ses gelmediğinde doğru sırayla bakmak.",
+    "belirti": [
+     "healthchecks \"down\" e-postası; Telegram susmuş; telefonda \"Sunucuya ulaşılamıyor — son görülen\".",
+     "Eşli kurulumda Sorunlar'da sarı \"Makine sessiz: …\"."
+    ],
+    "teshis": [
+     "Telefonda Tailscale'de sunucu \"Connected\" mı?",
+     "Elektrik / modem; elektrik gidip geldiyse bilgisayarın güç düğmesi.",
+     "Panel telefondan açılıyorsa [Sorunlar](#/sorunlar).",
+     "Windows gece yeniden başladıysa 15 dakika bekleyin; donmada bekçi Pusula'yı 10–15 dakikada yeniden açar.",
+     "[Ayarlar › Makineler](#/ayarlar/makineler): son görülme."
+    ],
+    "cozum": [
+     "Kısa kesintide beklemek doğrudur.",
+     "Pusula takıldıysa telefondan Sorunlar'daki \"Pusula takıldıysa: yeniden başlat\" (PIN + YENİDEN BAŞLAT; 02:30–04:30 dışında).",
+     "Sunucu başına geçince masaüstündeki **Pusula**.",
+     "Makine kalıcı olarak kayıpsa devralma — önce sohbete yazın."
+    ],
+    "dogrula": [
+     "Kart kalkar; Telegram yanıt verir; healthchecks \"up\"."
+    ],
+    "yasak": "Eski makine açık ama yalnız ağı kopuksa devralmayın (iki makine aynı hesaba emir gönderebilir). Kairos devralınamaz. Pozisyonları panikle kapatmayın; stoplar borsada durur.",
+    "panel": "#/ayarlar/makineler",
+    "kilavuz": "#/kilavuz/sorun-giderme/makine-sessiz",
+    "no": "17.9",
+    "id": "m17-g9"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Veri kalitesi bulgusu ve güvenli kip",
+    "amac": "Şüpheli piyasa verisi yüzünden ertelenen çalışmayı doğru okumak.",
+    "belirti": [
+     "Sorunlar'da \"veri kalitesi bulgusu\" ya da mavi \"… güvenli kipte — kendiliğinden geçecek\" kartı (tahmini saatle).",
+     "\"günlük çalışma ertelendi — borsa verisi şüpheli\" (veri kapısı)."
+    ],
+    "teshis": [
+     "Kartın \"Ne oldu\" satırı: hangi denetim, hafif mi ağır mı.",
+     "[Sağlık](#/saglik) › Veri kalitesi kartı: kip rozeti (\"İzleme kipi\" / \"Etkin kip\")."
+    ],
+    "cozum": [
+     "Hafif bulgu ve mavi kart: dokunmayın; çoğu zaman bir sonraki çalışmada kaybolur.",
+     "Güvenli kip tahmini saatten 1 saat sonra hâlâ sürüyorsa «Şimdi yokla», sonra sohbete yazın.",
+     "Ağır bulgu günlerce sürüyorsa ya da borsada fiyatlar normal görünüyorsa «Sohbete gönder»."
+    ],
+    "dogrula": [
+     "\"güvenli kip geçti\" iletisi; ertelenen çalışma birkaç dakikada yapılır; mavi kart kalkar."
+    ],
+    "yasak": "Mavi kartta «Güvenli kipten çık» ile acele etmeyin; sebep sürüyorsa bot yeniden güvenli kipe girer. Veri güncellemesini elle zorlamayın.",
+    "panel": "#/saglik",
+    "kilavuz": "#/kilavuz/sorun-giderme/veri-kalitesi",
+    "no": "17.10",
+    "id": "m17-g10"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "\"Bugünkü çalışma yapılmadı\" / \"26 saattir çalışmadı\"",
+    "amac": "Kaçan günlük çalışmanın nedenini bulmak.",
+    "belirti": [
+     "\"bugünkü çalışma … yapılmadı\"; \"… 26 saattir başarılı çalışmadı\"; Sağlık'ta \"Kaçan planlı işlem\"."
+    ],
+    "teshis": [
+     "[Günlükler](#/gunluk): son hata.",
+     "[Kurulum denetimi](#/kurulum-denetimi): PusulaBot görevi ve uyku.",
+     "Sağlık › Sunucu bilgisayarı: Windows yeniden başlatması."
+    ],
+    "cozum": [
+     "Sunucu kapalı kaldıysa bir şey yapmayın: bot sonraki çalışmada bugünkü hedefe gider.",
+     "Sık oluyorsa uyku / hazırda bekleme \"Asla\".",
+     "Görev sonucu parola hatası diyorsa Kurulum denetimindeki komutu kendiniz çalıştırın."
+    ],
+    "dogrula": [
+     "Bot kartında \"Son çalışma\" saati güncellenir; satır kalkar."
+    ],
+    "yasak": "Kaçırılan günün emirlerini elle \"telafi etmeye\" çalışmayın.",
+    "panel": "#/gunluk",
+    "kilavuz": "#/kilavuz/sorun-giderme/kacan-calisma",
+    "no": "17.11",
+    "id": "m17-g11"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Antivirüs Pusula'yı sildi ya da karantinaya aldı",
+    "amac": "Silinen dosyaları geri getirip Pusula'yı açmak.",
+    "belirti": [
+     "Pusula açılıp hemen kapanıyor; antivirüs bildirimi; Telegram'da \"Pusula açılamıyor — çökme döngüsü\"."
+    ],
+    "teshis": [
+     "Antivirüs programının karantina listesi.",
+     "Kılavuzdaki adımlar (konsol kaydının son satırları)."
+    ],
+    "cozum": [
+     "Karantinadaki Pusula dosyalarını geri yükleyin.",
+     "Pusula klasörü ve Node.js için antivirüste istisna ekleyin.",
+     "Masaüstündeki **Pusula** ile açın."
+    ],
+    "dogrula": [
+     "Panel açılır; \"Pusula süreci: bugün N kez açıldı\" günde 5'in altında."
+    ],
+    "yasak": "Önce karantinadan geri yükleyin; dosyaları başka yoldan \"onarmaya\" çalışmayın. Antivirüs raporunu sohbete gönderin.",
+    "kilavuz": "#/kilavuz/sorun-giderme/antivirus",
+    "no": "17.12",
+    "id": "m17-g12"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Disk ya da yedek uyarısı",
+    "amac": "Yedeğin sürmesini sağlamak.",
+    "belirti": [
+     "Sağlık'ta disk alanı / \"Yedek alınıyor\" sarı; \"ENOSPC\"; \"Eş makinenin kopyası eski\"."
+    ],
+    "teshis": [
+     "[Yedek ve taşıma](#/ayarlar/yedek): son yedek tarihi.",
+     "Yedek diski takılı mı, dolu mu?",
+     "[Makineler](#/ayarlar/makineler) › Eş kopyaları."
+    ],
+    "cozum": [
+     "Yedek diskinde yer açın.",
+     "Eski taşıma dosyalarını Yedek ve taşıma'da «Sil».",
+     "Eş kopyası: iki makinede aynı yedek şifresi → «Şimdi kopya al»."
+    ],
+    "dogrula": [
+     "Sağlık satırları yeşil; son yedek tarihi taze."
+    ],
+    "yasak": "Veri klasöründen kendiniz dosya silmeyin; emin değilseniz sohbete yazın.",
+    "panel": "#/ayarlar/yedek",
+    "kilavuz": "#/kilavuz/sorun-giderme/yedek",
+    "no": "17.13",
+    "id": "m17-g13"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "Toplam risk eşiği aşıldı",
+    "amac": "Bütün hesapların toplam riski uyarısını doğru okumak.",
+    "belirti": [
+     "Sağlık'ta \"Bütün hesapların toplam riski\" sarı; Ana sayfada toplam risk ışığı."
+    ],
+    "teshis": [
+     "[Sağlık](#/saglik) › Toplam risk kartı: hangi değer, hangi botun payı büyük, kip rozeti."
+    ],
+    "cozum": [
+     "İzleme kipinde (kâğıt / demo hesaplar) dokunmayın: hiçbir emir engellenmez.",
+     "«Şimdi ölç» ile yeniden ölçün; eş verisi okunamıyorsa Makineler'e bakın."
+    ],
+    "dogrula": [
+     "Satır yeşil; ışık \"eşiklerin altında\"."
+    ],
+    "yasak": "Uyarıyı \"bot bozuk\" diye yorumlayıp pozisyon kapatmayın; «Sınırları onayla»yı sohbete danışmadan basmayın.",
+    "panel": "#/saglik",
+    "kilavuz": "#/kilavuz/sorun-giderme/toplam-risk",
+    "no": "17.14",
+    "id": "m17-g14"
+   },
+   {
+    "rozet": [
+     "senaryo"
+    ],
+    "baslik": "\"Borsaya bağlı değil\"",
+    "amac": "Borsa bağlantısı kesildiğinde ne yapılacağını bilmek.",
+    "belirti": [
+     "\"borsaya bağlı değil — yeniden deneniyor\"; Hesap rozeti \"Okunamadı\"; \"İnternet: kendiliğinden geçecek\"."
+    ],
+    "teshis": [
+     "İnternet / modem.",
+     "Sorunlar kartındaki bitiş saati (borsa beklemesi).",
+     "Hata \"-2015 / -2014 / izin\" ise anahtar (yukarıdaki Sına senaryosu)."
+    ],
+    "cozum": [
+     "Bağlantı kendisi aralıklarla yeniden denenir; 30 dakikayı geçerse Anahtarlar'da «Sına».",
+     "Bir emrin sonucu belirsizse 1 saat sonra «Borsayla karşılaştır» (Kairos'ta sohbete danışın)."
+    ],
+    "dogrula": [
+     "Hesap rozeti \"Bağlantı sağlıklı\"; \"internet geri geldi — kesinti N dk sürdü\"."
+    ],
+    "yasak": "Borsa beklemesinde paneli tekrar tekrar yenilemeyin, düğmelere art arda basmayın (geçici yasağı uzatır).",
+    "panel": "#/sorunlar",
+    "kilavuz": "#/kilavuz/sorun-giderme/baglanti",
+    "no": "17.15",
+    "id": "m17-g15"
+   }
+  ],
+  "no": 17,
+  "id": "m17"
+ }
+];
+
+/* ═══ MOTOR ══════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  const ANAHTAR = 'pusulaKurs:v1';
+  const doc = document;
+  const $ = (id) => doc.getElementById(id);
+  let durum = { tamam: {}, not: {}, bitenGizli: false, tema: null };
+
+  function oku() {
+    try {
+      const v = JSON.parse(localStorage.getItem(ANAHTAR) || 'null');
+      if (v && typeof v === 'object') durum = { tamam: v.tamam || {}, not: v.not || {}, bitenGizli: !!v.bitenGizli, tema: v.tema || null };
+    } catch (e) { /* depolama yok ya da bozuk: boş başla */ }
+  }
+  function yaz() {
+    try { localStorage.setItem(ANAHTAR, JSON.stringify(durum)); } catch (e) { /* depolama yok: yalnız bu oturum */ }
+  }
+
+  /** Küçük biçim dili → DOM parçası (HTML ayrıştırılmaz; metin düğümleri + bilinen öğeler). */
+  const KALIP = /`([^`]+)`|\*\*([^*]+)\*\*|«([^»]+)»|‹((?: › |[^‹›])+)›|\[([^\]]+)\]\((#\/[a-z0-9\-\/]+)\)/g;
+  function bic(s, kok) {
+    kok = kok || doc.createDocumentFragment();
+    const m = String(s == null ? '' : s);
+    const re = new RegExp(KALIP.source, 'g');
+    let i = 0, x;
+    while ((x = re.exec(m))) {
+      if (x.index > i) kok.appendChild(doc.createTextNode(m.slice(i, x.index)));
+      let e;
+      if (x[1] != null) { e = doc.createElement('code'); e.textContent = x[1]; }
+      else if (x[2] != null) { e = doc.createElement('strong'); bic(x[2], e); }
+      else if (x[3] != null) { e = doc.createElement('span'); e.className = 'dg'; e.textContent = x[3]; }
+      else if (x[4] != null) { e = doc.createElement('span'); e.className = 'yol'; e.textContent = x[4]; }
+      else { e = doc.createElement('a'); e.setAttribute('href', '../' + x[6]); e.setAttribute('data-panel', x[6]); e.textContent = x[5]; }
+      kok.appendChild(e);
+      i = x.index + x[0].length;
+    }
+    if (i < m.length) kok.appendChild(doc.createTextNode(m.slice(i)));
+    return kok;
+  }
+  const el = (etiket, ozel, ic) => { const e = doc.createElement(etiket); if (ozel) for (const k in ozel) { if (k === 'md') bic(ozel[k], e); else if (k === 'text') e.textContent = ozel[k]; else e.setAttribute(k, ozel[k]); } (ic || []).forEach(c => c && e.appendChild(c)); return e; };
+  const liste = (tur, ogeler, sinif) => el(tur, sinif ? { class: sinif } : null, (ogeler || []).map(x => el('li', { md: x })));
+
+  const ROZET = { okuma: ['rozet-okuma', 'Yalnız okuma'], kurs: ['rozet-kurs', 'Kurs botunda'], ayar: ['rozet-dikkat', 'Ayar değiştirir'], pin: ['rozet-dikkat', 'PIN ister'], kairos: ['rozet-yasak', 'Kairos / Tao: yalnız oku'], senaryo: ['rozet-okuma', 'Senaryo'], sunucu: ['rozet-dikkat', 'Sunucuda yapılır'], eklenti: ['rozet-okuma', 'Araştırma eklentisi varsa'] };
+
+  const tumGorevler = () => MODULLER.flatMap(m => m.gorevler.map(g => ({ m, g })));
+
+  function gorevCiz(m, g) {
+    const id = g.id;
+    const kart = el('article', { class: 'gorev' + (durum.tamam[id] ? ' tamam' : ''), id, 'aria-labelledby': id + '-b' });
+    const rozet = el('div', { class: 'rozetler' }, (g.rozet || []).map(r => ROZET[r] ? el('span', { class: 'rozet ' + ROZET[r][0], text: ROZET[r][1] }) : null));
+    kart.appendChild(el('div', { class: 'gorev-bas' }, [
+      el('span', { class: 'gorev-no', text: g.no }),
+      el('div', null, [el('h3', { id: id + '-b', md: g.baslik }), g.amac ? el('p', { class: 'amac', md: '**Amaç:** ' + g.amac }) : null, rozet])
+    ]));
+    const bolum = (ad, dugum) => { kart.appendChild(el('p', { class: 'bolum-ad', text: ad })); kart.appendChild(dugum); };
+    if (g.once) bolum('Başlamadan önce', el('p', { style: 'margin:0', md: g.once }));
+    if (g.belirti) bolum('Belirti — ne görürsünüz', liste('ul', g.belirti));
+    if (g.teshis) bolum('Teşhis sırası — nereye bakılır', liste('ol', g.teshis));
+    if (g.adimlar) bolum('Adımlar', liste('ol', g.adimlar));
+    if (g.cozum) bolum('Çözüm', liste('ol', g.cozum));
+    if (g.gorur) bolum('Doğru gittiyse ne görürsünüz', liste('ul', g.gorur, 'beklenen'));
+    if (g.dogrula) bolum('Doğrulama — düzeldiğini nereden anlarsınız', liste('ul', g.dogrula, 'beklenen'));
+    if (g.olmadi && g.olmadi.length) {
+      bolum('Olmadıysa', el('ul', { class: 'olmadi' }, g.olmadi.map(o => el('li', null, [
+        el('div', { class: 'neden', md: o[0] }),
+        el('div', { class: 'cozum', md: '→ ' + o[1] + (o[2] ? ' [Kılavuzda](' + o[2] + ')' : '') })
+      ]))));
+    }
+    if (g.uyari) kart.appendChild(el('p', { class: 'uyari-satir', md: '**Dikkat:** ' + g.uyari }));
+    if (g.yasak) kart.appendChild(el('p', { class: 'yasak-satir', md: '**Yapmayın:** ' + g.yasak }));
+    const bag = el('div', { class: 'baglantilar' });
+    if (g.panel) bag.appendChild(el('a', { class: 'btn', href: '../' + g.panel, 'data-panel': g.panel, text: 'Paneldeki ekranı aç →' }));
+    if (g.kilavuz) bag.appendChild(el('a', { class: 'btn', href: '../' + g.kilavuz, 'data-panel': g.kilavuz, text: 'Kılavuzda oku →' }));
+    if (bag.childNodes.length) kart.appendChild(bag);
+    const kutu = el('input', { type: 'checkbox', id: id + '-t' });
+    kutu.checked = !!durum.tamam[id];
+    kutu.addEventListener('change', () => {
+      if (kutu.checked) durum.tamam[id] = new Date().toISOString().slice(0, 10); else delete durum.tamam[id];
+      kart.classList.toggle('tamam', kutu.checked);
+      yaz(); ilerlemeYaz();
+    });
+    const not = el('textarea', { class: 'not-alan', id: id + '-n', rows: '2', placeholder: 'Not / sorun: ne oldu, ne gördünüz? (anahtar, PIN, jeton yazmayın)', 'aria-label': g.no + ' için not' });
+    not.value = durum.not[id] || '';
+    let zaman = null;
+    not.addEventListener('input', () => { clearTimeout(zaman); zaman = setTimeout(() => { const v = not.value.trim(); if (v) durum.not[id] = not.value; else delete durum.not[id]; yaz(); }, 300); });
+    kart.appendChild(el('div', { class: 'gorev-alt' }, [el('label', { class: 'tamam-kutu', for: id + '-t' }, [kutu, el('span', { text: 'Tamamlandı' })]), not]));
+    return kart;
+  }
+
+  function ciz() {
+    const kok = $('moduller');
+    const ic = $('icListe');
+    kok.textContent = ''; ic.textContent = '';
+    ic.appendChild(el('li', null, [el('a', { href: '#guvenlik' }, [el('span', { class: 'ic-no', text: '!' }), el('span', { class: 'ic-ad-m', text: 'Güvenlik kuralları' })])]));
+    ic.appendChild(el('li', null, [el('a', { href: '#nasil' }, [el('span', { class: 'ic-no', text: '?' }), el('span', { class: 'ic-ad-m', text: 'Kurs nasıl çalışılır' })])]));
+    ic.appendChild(el('li', { class: 'ic-ayrac', text: 'Modüller' }));
+    for (const m of MODULLER) {
+      const s = el('section', { class: 'modul', id: m.id, 'aria-labelledby': m.id + '-b' });
+      s.appendChild(el('h2', { id: m.id + '-b' }, [el('span', { class: 'modul-no', text: 'Modül ' + m.no }), el('span', { md: m.baslik }), el('span', { class: 'modul-say', 'data-modul-say': m.id })]));
+      if (m.ozet) s.appendChild(el('p', { class: 'modul-ozet', md: m.ozet }));
+      if (m.onkosul) s.appendChild(el('p', { class: 'onkosul', md: '**Ön koşul:** ' + m.onkosul }));
+      if (m.not) s.appendChild(el('p', { class: 'uyari-satir', md: m.not }));
+      m.gorevler.forEach(g => s.appendChild(gorevCiz(m, g)));
+      kok.appendChild(s);
+      ic.appendChild(el('li', null, [el('a', { href: '#' + m.id, 'data-ic': m.id }, [el('span', { class: 'ic-no', text: m.no }), el('span', { class: 'ic-ad-m', text: m.kisa || m.baslik }), el('span', { class: 'ic-say', 'data-ic-say': m.id })])]));
+    }
+    ilerlemeYaz();
+  }
+
+  function ilerlemeYaz() {
+    const t = tumGorevler();
+    const n = t.filter(x => durum.tamam[x.g.id]).length;
+    const yuzde = t.length ? Math.round(100 * n / t.length) : 0;
+    $('anaCubuk').style.width = yuzde + '%'; $('icCubuk').style.width = yuzde + '%';
+    $('anaYazi').textContent = `${n} / ${t.length} görev tamamlandı (%${yuzde})`;
+    $('icYazi').textContent = `${n} / ${t.length} görev · %${yuzde}`;
+    $('ustIlerleme').textContent = `${n} / ${t.length}`;
+    for (const m of MODULLER) {
+      const b = m.gorevler.filter(g => durum.tamam[g.id]).length, top = m.gorevler.length;
+      const a = doc.querySelector(`[data-modul-say="${m.id}"]`); if (a) a.textContent = `${b} / ${top}`;
+      const c = doc.querySelector(`[data-ic-say="${m.id}"]`); if (c) { c.textContent = `${b}/${top}`; c.parentNode.classList.toggle('bitti', b === top); }
+    }
+  }
+
+  /** Düz metin: tamamlanmayan görevler (notuyla) + notu olan tamamlanmış görevler. */
+  function notMetni() {
+    const t = tumGorevler();
+    const n = t.filter(x => durum.tamam[x.g.id]).length;
+    const satir = [`Pusula Kursu — notlarım (${new Date().toLocaleString('tr-TR')})`, `İlerleme: ${n} / ${t.length} görev tamamlandı`, ''];
+    const duz = (s) => String(s).replace(/\*\*|«|»|‹|›|`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+    for (const m of MODULLER) {
+      const kalan = m.gorevler.filter(g => !durum.tamam[g.id] || (durum.not[g.id] || '').trim());
+      if (!kalan.length) continue;
+      satir.push(`## Modül ${m.no} — ${duz(m.baslik)}`);
+      for (const g of kalan) {
+        satir.push(`${durum.tamam[g.id] ? '[x]' : '[ ]'} ${g.no} ${duz(g.baslik)}`);
+        const nt = (durum.not[g.id] || '').trim();
+        if (nt) nt.split('\n').forEach((x, i) => satir.push((i ? '      ' : '    Not: ') + x));
+      }
+      satir.push('');
+    }
+    if (satir.length === 3) satir.push('Bütün görevler tamamlandı, not yok.');
+    return satir.join('\n');
+  }
+
+  function bildir(metin) {
+    const b = el('div', { class: 'bildirim', role: 'status', text: metin });
+    doc.body.appendChild(b);
+    setTimeout(() => b.remove(), 3200);
+  }
+  function pencereGoster(metin) {
+    const ta = el('textarea', { readonly: 'readonly', 'aria-label': 'Notlarım (düz metin)' }); ta.value = metin;
+    const kapat = el('button', { type: 'button', text: 'Kapat' });
+    const p = el('div', { class: 'pencere', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Notlarım' }, [el('div', { class: 'pencere-ic' }, [
+      el('strong', { text: 'Panoya kopyalanamadı — metni seçip kopyalayın (Ctrl+C)' }), ta, el('div', null, [kapat])])]);
+    kapat.addEventListener('click', () => p.remove());
+    p.addEventListener('click', (e) => { if (e.target === p) p.remove(); });
+    doc.body.appendChild(p); ta.focus(); ta.select();
+  }
+  async function kopyala() {
+    const m = notMetni();
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(m); bildir('Notlar panoya kopyalandı — sohbete yapıştırabilirsiniz.'); return; }
+    } catch (e) { /* izin yok: eski yol */ }
+    try {
+      const ta = el('textarea'); ta.value = m; ta.style.position = 'fixed'; ta.style.opacity = '0'; doc.body.appendChild(ta); ta.select();
+      const ok = doc.execCommand && doc.execCommand('copy'); ta.remove();
+      if (ok) { bildir('Notlar panoya kopyalandı — sohbete yapıştırabilirsiniz.'); return; }
+    } catch (e) { /* olmadı: pencere */ }
+    pencereGoster(m);
+  }
+
+  /* Tema: panelin içindeyse panel data-theme yazar (js/pages/kitapcik.js temaYaz); ayrı sekmede panelin kayıtlı tercihi okunur. */
+  function temaEtkin() { const a = doc.documentElement.getAttribute('data-theme'); return a === 'light' ? 'light' : 'dark'; }
+  function temaYazi() { $('btnTema').textContent = 'Tema: ' + (temaEtkin() === 'light' ? 'açık' : 'koyu'); }
+  function temaBaslat() {
+    let t = durum.tema;
+    if (!t) { try { const p = localStorage.getItem('pusula.tema'); if (p === 'light' || p === 'dark') t = p; } catch (e) { /* depolama yok */ } }
+    doc.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    temaYazi();
+    try { new MutationObserver(temaYazi).observe(doc.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) { /* eski tarayıcı */ }
+  }
+
+  /* Panel bağlantıları: panelin içindeyken üst pencerenin adresi değişir; ayrı sekmede panel tek bir ayrı pencerede açılır. */
+  function panelAc(yol, e) {
+    let ust = null;
+    try { if (window.parent && window.parent !== window && window.parent.location && window.parent.document) ust = window.parent; } catch (x) { ust = null; }
+    if (ust) { e.preventDefault(); ust.location.hash = yol; return; }
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;   // tarayıcının kendi yeni sekme davranışı
+    e.preventDefault();
+    const w = window.open('../' + yol, 'pusulaPanel');
+    if (w) { try { w.focus(); } catch (x) { /* odak verilemedi */ } } else window.location.href = '../' + yol;
+  }
+
+  function icAcKapa(ac) {
+    doc.body.classList.toggle('ic-acik', ac);
+    $('perde').hidden = !ac;
+    $('btnIc').setAttribute('aria-expanded', ac ? 'true' : 'false');
+  }
+
+  function etkinIzle() {
+    if (!('IntersectionObserver' in window)) return;
+    const bag = new Map([...doc.querySelectorAll('[data-ic]')].map(a => [a.getAttribute('data-ic'), a]));
+    const io = new IntersectionObserver((girdiler) => {
+      for (const g of girdiler) if (g.isIntersecting) { bag.forEach(a => a.classList.remove('etkin')); const a = bag.get(g.target.id); if (a) a.classList.add('etkin'); }
+    }, { rootMargin: '0px 0px -70% 0px' });
+    MODULLER.forEach(m => { const s = $(m.id); if (s) io.observe(s); });
+  }
+
+  function baslat() {
+    oku();
+    temaBaslat();
+    ciz();
+    doc.body.classList.toggle('gizle-bitenler', durum.bitenGizli);
+    $('btnBitenler').setAttribute('aria-pressed', durum.bitenGizli ? 'true' : 'false');
+    $('btnBitenler').textContent = durum.bitenGizli ? 'Bitenleri de göster' : 'Yalnız bitmeyenleri göster';
+    $('btnKopyala').addEventListener('click', kopyala);
+    $('btnBitenler').addEventListener('click', () => {
+      durum.bitenGizli = !durum.bitenGizli; yaz();
+      doc.body.classList.toggle('gizle-bitenler', durum.bitenGizli);
+      $('btnBitenler').setAttribute('aria-pressed', durum.bitenGizli ? 'true' : 'false');
+      $('btnBitenler').textContent = durum.bitenGizli ? 'Bitenleri de göster' : 'Yalnız bitmeyenleri göster';
+    });
+    $('btnTema').addEventListener('click', () => { const t = temaEtkin() === 'light' ? 'dark' : 'light'; doc.documentElement.setAttribute('data-theme', t); durum.tema = t; yaz(); temaYazi(); });
+    $('btnSifirla').addEventListener('click', () => {
+      if (!window.confirm('Bütün "Tamamlandı" işaretleri ve notlar silinsin mi? (Önce "Notlarımı kopyala" ile notlarınızı alabilirsiniz.)')) return;
+      durum = { tamam: {}, not: {}, bitenGizli: false, tema: durum.tema }; yaz(); ciz();
+      doc.body.classList.remove('gizle-bitenler'); bildir('Kurs sıfırlandı.');
+    });
+    $('btnIc').addEventListener('click', () => icAcKapa(!doc.body.classList.contains('ic-acik')));
+    $('perde').addEventListener('click', () => icAcKapa(false));
+    $('icindekiler').addEventListener('click', (e) => { if (e.target.closest('a')) icAcKapa(false); });
+    doc.addEventListener('keydown', (e) => { if (e.key === 'Escape') icAcKapa(false); });
+    doc.addEventListener('click', (e) => { const a = e.target.closest && e.target.closest('a[data-panel]'); if (a) panelAc(a.getAttribute('data-panel'), e); });
+    etkinIzle();
+  }
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', baslat); else baslat();
+})();
+</script>
+</body>
+</html>

@@ -19,6 +19,13 @@
  * menü öğesi [data-arastirma], yol js/pages/kabuk.js arastirmaEklentisiniUygula → AG.rota.gizle yollar ['kitapcik', 'kitap']
  * (adresle açılış ana sayfaya düşer; boş sayfa açılmaz). Kendi kurulumunuzda (araştırma verisi / eklenti var) görünür. Okuyucu kodu
  * (tembel src, tema aktarımı, yeni sekme) iki ekranda ORTAK (okuyucuAc / temaIlet). Kitapçık listesinde de son satır olarak durur.
+ *
+ * PUSULA KURSU — #/kurs (Bilgi › Pusula Kursu, bölüm #tab-kurs, okuyucu #kursOkuyucu / #kursCerceve / #kursYeniSekme):
+ * kullanıcı isteği "paneli tam anlamıyla kullanmam için tüm özellikleri test edebileceğim bir görev listesi … bunu bir kurs gibi düşün".
+ * public/kurs/pusula-kursu.html kendi başına tam sayfa (modüller, görevler, tamamlandı kutuları + notlar localStorage 'pusulaKurs:v1',
+ * "Notlarımı kopyala"). Aynı okuyucu kodu (okuyucuAc / temaYaz). Kitaptan FARKI: araştırma sonucu ya da kişisel bilgi içermez →
+ * dağıtıma GİRER (public/kurs/), araştırma eklentisine bağlı değil, her kurulumda görünür. Kurs içindeki panel bağlantıları
+ * (href="../#/yol") iframe'deyken üst pencerenin adresini değiştirir (kursun kendi betiği; aynı köken).
  */
 (function (global) {
   'use strict';
@@ -73,6 +80,9 @@
   /** Okuyucu kimlikleri: Kitapçık ekranı ve Pusula Kitabı ekranı aynı okuyucu kodunu kullanır. */
   const OKUYUCU_KTP = { okuyucu: 'ktpOkuyucu', cerceve: 'ktpCerceve', baslik: 'ktpBaslik', yeni: 'ktpYeniSekme' };
   const OKUYUCU_KITAP = { okuyucu: 'kitapOkuyucu', cerceve: 'kitapCerceve', baslik: 'kitapBaslik', yeni: 'kitapYeniSekme' };
+  const OKUYUCU_KURS = { okuyucu: 'kursOkuyucu', cerceve: 'kursCerceve', baslik: 'kursBaslik', yeni: 'kursYeniSekme' };
+  /** Bilgi › Pusula Kursu (#/kurs): her kurulumda görünür, dağıtıma girer (kitapçık listesinde DEĞİL — kitapçıklar araştırma eklentisinde). */
+  const PUSULA_KURSU = { kimlik: 'pusula-kursu', baslik: 'Pusula Kursu', aciklama: 'Paneli uygulamalı öğrenmek için sıralı görevler.', dosya: 'kurs/pusula-kursu.html' };
 
   const bul = (id) => (doc ? doc.getElementById(id) : null);
 
@@ -97,10 +107,10 @@
       return true;
     } catch (e) { return false; }
   }
-  /** İki okuyucuya da (Kitapçık + Pusula Kitabı); en az birine yazıldıysa true. */
+  /** Üç okuyucuya da (Kitapçık + Pusula Kitabı + Pusula Kursu); en az birine yazıldıysa true. */
   function temaIlet() {
-    const a = temaYaz(OKUYUCU_KTP.cerceve), b = temaYaz(OKUYUCU_KITAP.cerceve);
-    return a || b;
+    const a = temaYaz(OKUYUCU_KTP.cerceve), b = temaYaz(OKUYUCU_KITAP.cerceve), c = temaYaz(OKUYUCU_KURS.cerceve);
+    return a || b || c;
   }
 
   /** Ortak okuyucu: başlık, yeni sekme adresi, iframe (src yalnız değişince — tembel yükleme). */
@@ -111,7 +121,7 @@
     if (!k) return k;
     if (baslik) baslik.textContent = k.baslik;
     if (yeni) yeni.setAttribute('href', k.dosya);
-    c.setAttribute('title', (ids === OKUYUCU_KITAP ? '' : 'Kitapçık: ') + k.baslik);
+    c.setAttribute('title', (ids === OKUYUCU_KTP ? 'Kitapçık: ' : '') + k.baslik);
     if (c.getAttribute('src') !== k.dosya) c.setAttribute('src', k.dosya);
     return k;
   }
@@ -139,6 +149,9 @@
   /** 72.1: Bilgi › Pusula Kitabı (#/kitap). */
   function kitapAc() { const k = okuyucuAc(OKUYUCU_KITAP, PUSULA_KITABI); kitapYoklama(); return k; }
 
+  /** Bilgi › Pusula Kursu (#/kurs). */
+  function kursAc() { return okuyucuAc(OKUYUCU_KURS, PUSULA_KURSU); }
+
   /**
    * 72.2 güvence: menü/yol gizlemesine rağmen ekran açılır ama kitap dosyası bu kurulumda yoksa (ör. araştırma verisi olan ama
    * araştırma paketi olmayan bir dağıtım kurulumu → sunucu 404) boş/hata sayfası yerine açıklama (#kitapYok) gösterilir.
@@ -163,15 +176,16 @@
     doc.addEventListener('ag:rota', (e) => {
       if (e.detail && e.detail.bolum === 'tab-kitapcik') ac(e.detail.alt);
       else if (e.detail && e.detail.bolum === 'tab-kitap') kitapAc();
+      else if (e.detail && e.detail.bolum === 'tab-kurs') kursAc();
     });
     doc.addEventListener('ag:tema', temaIlet);
-    for (const id of [OKUYUCU_KTP.cerceve, OKUYUCU_KITAP.cerceve]) {
+    for (const id of [OKUYUCU_KTP.cerceve, OKUYUCU_KITAP.cerceve, OKUYUCU_KURS.cerceve]) {
       const c = bul(id);
       if (c) c.addEventListener('load', () => { temaYaz(id); if (id === OKUYUCU_KITAP.cerceve) kitapYoklama(); });
     }
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, sec, ac, kitapAc, kitapYoklama, temaIlet };
+  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, PUSULA_KURSU, sec, ac, kitapAc, kursAc, kitapYoklama, temaIlet };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.kitapcik;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -17,7 +17,7 @@ Bir ekranda ne yapacağınızı bilmediğinizde, bir terimi anlamadığınızda 
 ## Nasıl açılır {#nasil-acilir}
 
 - **Üst çubuktan (her ekranda):** sağ üstteki **?** düğmesi, o an açık ekranın bölümünü açar (Portföy'de Portföyüm açıksa [Portföyüm](#/kilavuz/portfoyum)). Yanındaki **Kur** düğmesi [kur çeviriciyi](#/kilavuz/kur-cevirici) açar.
-- **Menüden:** masaüstünde sol menünün en altında **Kılavuz**; telefonda **Diğer › Kılavuz**.
+- **Menüden:** masaüstünde sol menüde **Bilgi › Kılavuz**; telefonda alt çubuktaki **Menü › Bilgi › Kılavuz**.
 - **Ekranın başlığından:** her ekranın başlığının yanındaki **? Kılavuz** o ekranın bölümünü açar.
 - **Bağlantıyla:** `#/kilavuz/botlar/acil-fren` gibi adresler doğrudan bir başlığa gider; yer imi olarak saklanabilir.
 
@@ -27,6 +27,10 @@ Bir ekranda ne yapacağınızı bilmediğinizde, bir terimi anlamadığınızda 
 - **İçindekiler** masaüstünde solda durur; telefonda **İçindekiler** düğmesiyle açılır.
 - Bölümün sonundaki düğmeler: **… ekranına git**, önceki / sonraki bölüm.
 - Ekran görüntüsüne tıklayınca tam boyutu yeni sekmede açılır. Görüntünün altındaki numaralı liste, kutulardaki numaraların anlamıdır.
+
+## Kılavuz ile Pusula Kursu farkı {#kurs-farki}
+
+Kılavuz bir **başvuru kaynağıdır**: "bu düğme ne yapar, bu alan ne demek" sorusuna cevap verir; ihtiyaç olunca açılıp okunur. **Pusula Kursu** ise ([Bilgi › Pusula Kursu](#/kurs)) paneli baştan sona **kendi elinizle deneyerek** öğrenmek için sıralı görevlerdir: her görevde amaç, ön koşul, adımlar, doğru gittiyse ne göreceğiniz ve olmadıysa en olası nedenler ile çözüm adımları yazar; sonda gerçekçi sorun senaryoları vardır. Kursun her görevi ilgili kılavuz başlığına bağlantı verir. Ayrıntı: [Pusula Kursu](#/kilavuz/pusula-kursu).
 
 ## Kılavuz nasıl güncel kalır {#guncel}
 

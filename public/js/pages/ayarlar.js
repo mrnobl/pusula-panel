@@ -245,7 +245,7 @@
   async function kontrol(g) {
     let ek = {};
     if (telefonMu()) {
-      ek = pinGovdesi(await AG.onayla({ baslik: 'Güncellemeyi şimdi kontrol et', metin: 'Sunucu GitHub\'da yeni sürüm var mı bakar. Panel değişikliğiyse hemen kurar (Pusula ~30 sn yeniden başlar); bot kodu değiştiyse kurmaz, onayınızı bekler.', onay: 'Kontrol et', alanlar: PIN_ALANLARI }));
+      ek = pinGovdesi(await AG.onayla({ baslik: 'Güncellemeyi şimdi kontrol et', metin: 'Sunucu GitHub\'da yeni sürüm var mı bakar. Yalnız belgeler, kılavuz metinleri, ekran görüntüleri ve kayıtlar değiştiyse onaysız kurar; panel dahil her kod değişikliği kurulmaz, "Güncellemeyi kur" onayınızı (ve PIN) bekler.', onay: 'Kontrol et', alanlar: PIN_ALANLARI }));
       if (!ek) return;
     }
     const r = await AG.api.guncelleme.kontrol(ek);

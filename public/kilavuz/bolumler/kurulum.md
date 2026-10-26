@@ -267,7 +267,7 @@ Get-Content C:\Pusula\data\pusula.pid
 `appVersion` **60.7 ya da daha yeni**, `arastirmaModu` **False** olmalı (sunucuda araştırma modu KAPALI; bot burada çalışır). `pusula.pid` iki numara gösterir (denetleyici ve sunucu) — Durdur yalnız bu numaraları kapatır.
 
 Panelde:
-- Başlıkta **Pusula** ve rüzgâr gülü; sol menüde en altta **Kılavuz**.
+- Başlıkta **Pusula** ve rüzgâr gülü; sol menüde **Bilgi › Kılavuz** (altında **Pusula Kursu**).
 - Ana sayfada **"bu sürümde yeni"** kartı (bir kez görünür; "Tamam, gördüm" kapatır).
 - Başlıkta "Araştırma modu" rozeti **olmamalı**.
 

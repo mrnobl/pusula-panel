@@ -46,7 +46,7 @@ Her kayıt bir öncekinin özetini taşır. İki bilgisayarda ayrı ayrı liste 
 
 ## Telefondan bot durdurabilir miyim? {#telefon-durdur}
 
-Varsayılan telefon köprüsü **salt okunur**dur. Sunucuda `npm run telefon -- --tam` ile açarsanız evet; işiniz bitince kapatın ([Telefondan açmak](#/kilavuz/telefon)).
+Telefondan **Durdur / Başlat yoktur**; telefon her ekranı izler ve botu yalnız **acil durdurabilir**: botun Genel görünümünde (bot çalışırken üst çubukta da) kırmızı **Acil durdur** → **acil PIN** + **DURDUR**. Acil durdurma bütün pozisyonları kapatır ve demo / canlı hesapta geri alınamaz. Eski `--tam` (tam erişim) seçeneği 60.5'te kaldırıldı. Ayrıntı: [Telefondan açmak](#/kilavuz/telefon/acil-pin).
 
 ## Model portföy canlı hesapla mı işlem yapıyor? {#model-portfoy}
 

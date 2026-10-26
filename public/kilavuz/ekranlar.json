@@ -7269,11 +7269,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 49174,
+        "bayt": 48686,
         "olcek": 1,
-        "ozet": "8adf8fa89a1a1d2d626c37cde8a53366293b969c9d8a144ebf780154eb6a471a",
-        "genel": "26bb7b0cfe280d413b477547c4bb4c7b11a88896747ecdde4b534f11c7fcdce2",
-        "surum": "77.9",
+        "ozet": "6223fda74ed594f86e0b092989e0bc016aaec5b34d311e5ed1fd4b4d1aa16918",
+        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
+        "surum": "78.0",
         "tarih": "2026-10-26",
         "isaretler": [
           {
@@ -8559,6 +8559,101 @@
       }
     },
     {
+      "kimlik": "kurs-1400",
+      "rota": "kurs",
+      "genislik": 1400,
+      "once": [
+        {
+          "bekle": 2500
+        }
+      ],
+      "isaretler": [
+        {
+          "secici": "#kursYeniSekme",
+          "etiket": "Yeni sekmede aç"
+        },
+        {
+          "secici": "#kursCerceve",
+          "etiket": "Kurs panelin içinde: solda modüller, görevler, tamamlandı kutuları ve notlar"
+        }
+      ],
+      "uretim": {
+        "dosya": "kurs-1400.webp",
+        "en": 1400,
+        "boy": 900,
+        "bayt": 89960,
+        "olcek": 1,
+        "ozet": "6fbadb8762eb49de85ee485d013db9c1ec810c0a397ca35cd9bb35ccd407a9a6",
+        "genel": "e797b64c90933b6889a1e8c088555fa657e29a20916fa7aac6d3c383f8c1e33e",
+        "surum": "78.0",
+        "tarih": "2026-10-26",
+        "isaretler": [
+          {
+            "secici": "#kursYeniSekme",
+            "x": 1205,
+            "y": 223,
+            "w": 170,
+            "h": 42
+          },
+          {
+            "secici": "#kursCerceve",
+            "x": 273,
+            "y": 269,
+            "w": 1102,
+            "h": 629
+          }
+        ]
+      }
+    },
+    {
+      "kimlik": "kurs-390",
+      "rota": "kurs",
+      "genislik": 390,
+      "once": [
+        {
+          "bekle": 2500
+        }
+      ],
+      "kaydir": "#kursOkuyucu",
+      "isaretler": [
+        {
+          "secici": "#kursYeniSekme",
+          "etiket": "Yeni sekmede aç"
+        },
+        {
+          "secici": "#kursCerceve",
+          "etiket": "Kurs (kendi içinde kayar; modüller üstteki İçindekiler düğmesinde)"
+        }
+      ],
+      "uretim": {
+        "dosya": "kurs-390.webp",
+        "en": 780,
+        "boy": 1688,
+        "bayt": 67138,
+        "olcek": 2,
+        "ozet": "6fbadb8762eb49de85ee485d013db9c1ec810c0a397ca35cd9bb35ccd407a9a6",
+        "genel": "e797b64c90933b6889a1e8c088555fa657e29a20916fa7aac6d3c383f8c1e33e",
+        "surum": "78.0",
+        "tarih": "2026-10-26",
+        "isaretler": [
+          {
+            "secici": "#kursYeniSekme",
+            "x": 180,
+            "y": 165,
+            "w": 193,
+            "h": 52
+          },
+          {
+            "secici": "#kursCerceve",
+            "x": 17,
+            "y": 221,
+            "w": 356,
+            "h": 621
+          }
+        ]
+      }
+    },
+    {
       "kimlik": "kitap-1400",
       "rota": "kitap",
       "genislik": 1400,
@@ -8583,10 +8678,10 @@
         "boy": 900,
         "bayt": 56774,
         "olcek": 1,
-        "ozet": "13ee5911e2955c2c4b5e1f9acb4ce0d90c91ed45f73ca482d4ba24763eb99f14",
-        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
-        "surum": "77.1",
-        "tarih": "2026-10-25",
+        "ozet": "c0593576d54e9f7a1befd1b3e2924e3da13b7dfdbf19501a9cb8543a08bb8781",
+        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
+        "surum": "77.9",
+        "tarih": "2026-10-26",
         "isaretler": [
           {
             "secici": "#kitapYeniSekme",
@@ -8632,10 +8727,10 @@
         "boy": 1688,
         "bayt": 61288,
         "olcek": 2,
-        "ozet": "13ee5911e2955c2c4b5e1f9acb4ce0d90c91ed45f73ca482d4ba24763eb99f14",
-        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
-        "surum": "77.1",
-        "tarih": "2026-10-25",
+        "ozet": "c0593576d54e9f7a1befd1b3e2924e3da13b7dfdbf19501a9cb8543a08bb8781",
+        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
+        "surum": "77.9",
+        "tarih": "2026-10-26",
         "isaretler": [
           {
             "secici": "#kitapYeniSekme",
@@ -8681,12 +8776,12 @@
         "dosya": "kitapcik-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 71854,
+        "bayt": 71860,
         "olcek": 1,
-        "ozet": "c7302747d7ce7a7bde36ad00af68476556a5b487cd471ace9cb069f7bf635005",
-        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
-        "surum": "77.1",
-        "tarih": "2026-10-25",
+        "ozet": "08d3758abacb96c1dcb1aa9fe3cee1c3eb15dca405a9d937e78a37a600d6bc0a",
+        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
+        "surum": "77.9",
+        "tarih": "2026-10-26",
         "isaretler": [
           {
             "secici": "#ktpListe .ktp-kart",
@@ -8738,10 +8833,10 @@
         "boy": 1688,
         "bayt": 54094,
         "olcek": 2,
-        "ozet": "d31004bd9de56e663ab75957d4723c5adba13d400780b220a71869fbfba171e2",
-        "genel": "87a49d1a9b2b68d3521cbee3a76d374922bb0b02a1d5101c855599c0a7fa3594",
-        "surum": "77.1",
-        "tarih": "2026-10-25",
+        "ozet": "5fad57c0dcca74bc9bce25f57683dee9a713dc3dd200191526fc912151443ae4",
+        "genel": "c72274efaffff2458f8837f322ae096c6f08b139784177ddf939db0ab195b8f3",
+        "surum": "77.9",
+        "tarih": "2026-10-26",
         "isaretler": [
           {
             "secici": "#ktpYeniSekme",

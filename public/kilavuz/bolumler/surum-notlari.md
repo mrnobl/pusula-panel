@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.0 — Pusula Kursu (2026-10-26) {#s78-0}
+- **Yeni: [Bilgi › Pusula Kursu](#/kilavuz/pusula-kursu).** paneli baştan sona kendiniz deneyerek öğrenmek için 17 modül, 107 görev — her görevde amaç, adımlar, doğru gittiyse ne görürsünüz ve olmadıysa ne yapılır; sonda 15 sorun çözme senaryosu. İşaretler ve notlar bu tarayıcıda saklanır, "Notlarımı kopyala" ile sohbete alınır. Ölçüm süren botlarda (Kairos, Tao) yalnız okuma; denemeler kendi açacağınız "Kurs" kâğıt botunda.
+- Kılavuz düzeltmeleri: acil fren engel koymaz (Başlat yeter; kâğıtta önce geri alınabilir), telefonda Durdur/Başlat yok, Kâğıt hesabı sıfırla PIN ister, spot yatırma 'Yatırmayı kabul et' ile, Erken bitir telefondan da; güncelleme penceresi gerçek onay kuralını yazar.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
+
 ## 77.9 — Yeni biçim Gemini anahtarı (2026-10-26) {#s77-9}
 - **Gemini API anahtarı:** Google AI Studio artık bazı anahtarları "AIza…" yerine "AQ.…" biçiminde (nokta içeren) veriyor; Ayarlar › Anahtarlar bu biçimi de kabul eder. Hata metinlerinde bu anahtarlar da gizlenir. Anahtarı kaydettikten sonra **Sına** ile Google'ın kabul ettiğini görün.
 - Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
