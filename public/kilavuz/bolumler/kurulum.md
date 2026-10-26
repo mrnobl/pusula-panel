@@ -64,7 +64,7 @@ git commit -m "liste kaydı"
 git push
 ```
 
-**Kontrol:** `$eski` eski klasörün yolunu yazar. `git status` ilk satırı `On branch main`; `modified: config.json` görmek normaldir (sunucudaki ayarlar — Adım 5'te taşınacak). `kayitlar/listeler` artık listelenmiyor.
+**Kontrol:** `$eski` eski klasörün yolunu yazar. `git status` ilk satırı `On branch main`; eski sürümlerde `modified: config.json` görmek normaldir (sunucudaki ayarlar — Adım 5'te taşınacak; 77.x'ten sonra `config.json` depoda izlenmez, bu satır görünmez). `kayitlar/listeler` artık listelenmiyor.
 
 **Sorun olursa:**
 - `git` tanınmıyorsa Git for Windows kurulu değildir: https://git-scm.com/download/win kurun, PowerShell'i kapatıp açın.
@@ -113,7 +113,7 @@ taskkill /PID <numara> /F
 ```powershell
 $t = Get-Date -Format yyyy-MM-dd
 robocopy data "E:\PusulaYedek\$t\data" /E /XF market.db market.db-shm market.db-wal *.kilit /R:1 /W:1 /NFL /NDL /NP
-Copy-Item config.json "E:\PusulaYedek\$t\config.json"
+if (Test-Path config.json) { Copy-Item config.json "E:\PusulaYedek\$t\config.json" }
 ```
 
 **Kontrol:** robocopy'nin son tablosunda `FAILED` sütunu 0 olmalı. robocopy çıkış kodu 0–7 başarıdır (1 = dosya kopyalandı); 8 ve üstü hatadır: `$LASTEXITCODE` yazıp bakabilirsiniz.
@@ -147,13 +147,13 @@ Bundan sonra güncellemeler hep bu klasörde alınır: `cd C:\Pusula` ve `git pu
 
 ## 5. Veri ve ayar dosyalarını taşı {#adim-5}
 
-Git'te olmayan her şey eski klasörden kopyalanır: `data\` (botun defteri, ileri test, tarama, `secrets.json` = API anahtarları ve Telegram jetonu, `telefon-jeton.json`, `acil-pin.json`, `market.db`), `config.json` (sunucudaki ayarlar: bot modları), varsa `.env`, ve henüz git'e gitmemiş liste kayıtları.
+Git'te olmayan her şey eski klasörden kopyalanır: `data\` (botun defteri, ileri test, tarama, `secrets.json` = API anahtarları ve Telegram jetonu, `telefon-jeton.json`, `acil-pin.json`, `market.db`), varsa kökteki eski `config.json` (eski kurulumda sunucudaki ayarlar: bot modları; yeni düzende ayarlar `data\ayarlar.json`'dadır ve `data\` ile gelir), varsa `.env`, ve henüz git'e gitmemiş liste kayıtları.
 
 **Yap** (aynı pencerede; `market.db` büyük olduğu için birkaç dakika sürebilir):
 
 ```powershell
 robocopy "$eski\data" C:\Pusula\data /E /XF *.kilit pusula.pid /R:1 /W:1 /NFL /NDL /NP
-Copy-Item "$eski\config.json" C:\Pusula\config.json -Force
+if (Test-Path "$eski\config.json") { Copy-Item "$eski\config.json" C:\Pusula\config.json -Force }
 if (Test-Path "$eski\.env") { Copy-Item "$eski\.env" C:\Pusula\.env }
 robocopy "$eski\kayitlar" C:\Pusula\kayitlar /E /XC /XN /XO /R:1 /W:1 /NFL /NDL /NP
 ```
@@ -169,7 +169,7 @@ Test-Path C:\Pusula\data\makine.json
 git -C C:\Pusula status --short
 ```
 
-İlk ikisi `True`, üçüncüsü **`False`** olmalı (`makine.json` yalnız geliştirme bilgisayarında bulunur ve sunucuyu araştırma modunda açar — sunucuda olmamalı). `git status` yalnız ` M config.json` göstermeli.
+İlk ikisi `True`, üçüncüsü **`False`** olmalı (`makine.json` yalnız geliştirme bilgisayarında bulunur ve sunucuyu araştırma modunda açar — sunucuda olmamalı). `git status --short` boş olmalı (77.x öncesi bir sürümdeyseniz ` M config.json` satırı da normaldir).
 
 **Sorun olursa:** robocopy çıkış kodu 8 ve üstüyse (`$LASTEXITCODE`) disk dolu ya da dosya açık olabilir: Adım 2'deki `netstat` boş mu bakın, komutu tekrarlayın. `makine.json` `True` çıkarsa silin: `Remove-Item C:\Pusula\data\makine.json`.
 
@@ -348,11 +348,11 @@ Kurulum betiği ayrıca üç uyarı yazar: parola **Windows hesap parolası** ol
 **Yap:** Panelde **Botlar** ekranını açın ([Botlar bölümü](#/kilavuz/botlar)).
 
 **Kontrol:**
-- Kairos ve Tao kartlarında mod (**kâğıt** ya da **demo**) beklediğiniz gibi (eski klasördeki gibi; `config.json` taşındı).
+- Kairos ve Tao kartlarında mod (**kâğıt** ya da **demo**) beklediğiniz gibi (eski klasördeki gibi; ayarlar `data\ayarlar.json` ya da eski kurulumda `config.json` ile taşındı).
 - **Son çalışma** 26 saatten yeni (bot kapalı kaldıysa bir sonraki günlük çalışmadan sonra düzelir; kaçırılan günler sayılır ama geçmiş günlerin emirleri verilmez).
 - Kırmızı **"Durduruldu — onay bekliyor"** bandı yok.
 
-**Sorun olursa:** Kırmızı bant varsa nedenini okuyun; borsayla uyuşmazlıkta banttaki **Borsayla karşılaştır**, nedeni anladıysanız **Engeli kaldır**. Ayrıntı: [Botlar › Durduruldu bandı](#/kilavuz/botlar/durduruldu). Mod beklediğinizden farklıysa `config.json` taşınmamış olabilir: Adım 5.
+**Sorun olursa:** Kırmızı bant varsa nedenini okuyun; borsayla uyuşmazlıkta banttaki **Borsayla karşılaştır**, nedeni anladıysanız **Engeli kaldır**. Ayrıntı: [Botlar › Durduruldu bandı](#/kilavuz/botlar/durduruldu). Mod beklediğinizden farklıysa ayar dosyası (`data\ayarlar.json`, eski kurulumda kökteki `config.json`) taşınmamış olabilir: Adım 5.
 
 ## 14. Gölge izleyiciler ve coin tarama ilk çalışma {#adim-14}
 
@@ -458,9 +458,9 @@ git commit -m "liste kaydı"
 git push
 ```
 
-**Kontrol:** `git status` temiz (yalnız ` M config.json`); GitHub'da `kayitlar/listeler/` altında yeni `NNNN-<tarih>-<kaynak>.json`.
+**Kontrol:** `git status` temiz (77.x öncesi sürümde ` M config.json` satırı da olabilir); GitHub'da `kayitlar/listeler/` altında yeni `NNNN-<tarih>-<kaynak>.json`.
 
-**Sorun olursa:** `git push` reddedilirse önce `git pull`, sonra yeniden `git push`. `config.json`u commit'lemeyin (yalnız `kayitlar/listeler` eklenir).
+**Sorun olursa:** `git push` reddedilirse önce `git pull`, sonra yeniden `git push`. Yalnız `kayitlar/listeler` eklenir; başka dosya commit'lemeyin (ayarlarınız veri klasöründe, depoya girmez).
 
 ## 20. Otomatik yedek (PusulaYedek, her gün 05:30) {#adim-20}
 
@@ -472,7 +472,7 @@ git push
 | `data\ileri` | İleri test (gölge) kayıtları — hüküm 2027-10-07'de bunlarla verilecek |
 | `data\tarama`, `data\dikkat` | Günlük coin taraması ve dikkat listesi arşivi |
 | `data\tasarimci`, `data\portfoyum`, `data\portfoy-lab` | Portföy kararları, sermaye, Uyguladım kayıtları, Portföyüm defteri |
-| `config.json`, `data\secrets.json` ve küçük ayar dosyaları | Ayarlar ve sırlar (bulut klasörüne yedeklenirken sırlar **kopyalanmaz**) |
+| `data\ayarlar.json` (eski kurulumda kökteki `config.json`), `data\secrets.json` ve küçük ayar dosyaları | Ayarlar ve sırlar (bulut klasörüne yedeklenirken sırlar **kopyalanmaz**) |
 
 Piyasa verisi (`market.db` ~1,2 GB, mum önbellekleri, araştırma çıktıları) yedeklenmez — yeniden indirilir. Bir kopya ~10 MB; son **14 gün** ve son **8 pazartesi** tutulur, eskiler silinir.
 
@@ -662,7 +662,7 @@ npm run sunucu-baglanti -- --yazma-jeton <jeton>
 
 Ayrılınca veri türlerine göre beş alt klasöre dağılır: `kisisel` (portföy, bot durumları, ileri test, ayarlar), `gizli` (anahtarlar, jetonlar, PIN özeti), `arastirma` (araştırma çalışmaları), `onbellek` (yeniden indirilebilen fiyat verisi), `makine` (bu bilgisayara özel: PID kaydı, günlükler).
 
-Ayarlar da ikiye ayrıldı: program varsayılanı `config.varsayilan.json` (depoda, kişisel değer yok) + sizin ayarınız `ayarlar.json` (veri klasöründe, yalnız varsayılandan farklı olanlar). `ayarlar.json` yoksa eski `config.json` okunur — davranış aynı; Ayarlar ekranında ilk kayıtta `ayarlar.json` oluşur, o andan sonra `config.json` okunmaz (elle değiştirilecek bir ayar varsa artık `ayarlar.json`'a yazılır).
+Ayarlar da ikiye ayrıldı: program varsayılanı `config.varsayilan.json` (depoda, kişisel değer yok) + sizin ayarınız `ayarlar.json` (veri klasöründe, yalnız varsayılandan farklı olanlar). `ayarlar.json` yoksa eski `config.json` okunur — davranış aynı (77.x'ten sonra `config.json` depoda değil: yeni kurulumda hiç yoktur, eski kurulumda güncelleme onu kaldırmadan önce ayarlarınızı `ayarlar.json`'a alır, değiştirilmişse içeriğini veri klasörüne `config.json.yedek-<zaman>` olarak yedekler); Ayarlar ekranında ilk kayıtta `ayarlar.json` oluşur, o andan sonra `config.json` okunmaz (elle değiştirilecek bir ayar varsa artık `ayarlar.json`'a yazılır).
 
 **Önce deneyin** (hiçbir şey değişmez, yalnız plan yazar):
 

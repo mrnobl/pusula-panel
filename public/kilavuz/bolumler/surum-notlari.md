@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.5 — Eski config.json kalktı (2026-10-26) {#s77-5}
+- **Ayar dosyası:** Program klasöründeki eski `config.json` kalktı; ayarlarınız yalnız veri klasöründeki `ayarlar.json`'da durur. Güncelleme bunu kendisi yapar: önce ayarlarınızı `ayarlar.json`'a alır, eski dosyayı elle değiştirdiyseniz içeriğini veri klasörüne `config.json.yedek-<zaman>` adıyla saklar. Sizin bir şey yapmanız gerekmez; ayarlarınız değişmez.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
+
 ## 77.4 — Ayarlar güvencede: eski config.json güncellemeyi durdurmaz (2026-10-26) {#s77-4}
 - **Güncelleme:** Ayarlarınız artık veri klasöründeki `ayarlar.json` dosyasında. Sunucuda elle değiştirilmiş eski `config.json` dosyasına dokunan bir güncelleme bundan sonra durup sizi beklemez: kurulurken eski dosyanın içeriği veri klasörüne `config.json.yedek-<zaman>` adıyla yedeklenir, dosya depodaki hâline döndürülür, güncelleme kurulur. Ayarlarınız değişmez. Ayarlar güvenceye alınamazsa güncelleme yine "Elle bakılmalı" der ve hiçbir şeyi değiştirmez.
 - Bu sürüm, eski ayar dosyasının depodan çıkarılmasına hazırlıktır; çıkarma bir sonraki sürümde gelir. Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.

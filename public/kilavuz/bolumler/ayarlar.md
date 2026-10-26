@@ -353,7 +353,7 @@ Formun altındaki durum satırı her botu ayrı gösterir: adres kayıtlı mı v
 ## Uyarılar ve ne yapmalı {#uyarilar}
 
 - Bot token ve healthchecks adresleri (Tao'nunki dahil) **sırdır**: `data/secrets.json`'a yazılır, panelde gösterilmez, `config.json` / `ayarlar.json`'a girmez.
-- **Chat id** gizli bilgi sayılmaz: `config.json`'da durur, ama panelde **maskeli** gösterilir.
+- **Chat id** gizli bilgi sayılmaz: ayar dosyasında (`ayarlar.json`, veri klasöründe; depoya girmez) durur, ama panelde **maskeli** gösterilir.
 - **Canlı hesap izni** (`canliIzin`) ve canlı / Kalkan emir-sermaye tavanları (`canli`, `kalkan`) bu ekrandan ya da panelin herhangi bir kaydından **değiştirilemez**: sunucu bu alanları her kayıtta yok sayar. Yalnız sunucuda ayar dosyası elle düzenlenerek açılır: veri klasöründeki `ayarlar.json` (68.0 öncesinden kalan, henüz ayar kaydı yapılmamış kurulumda kökteki `config.json`); değişiklik Pusula yeniden başlayınca geçerli olur (bkz. [Bot hesabı](#/kilavuz/hesaplar/anahtar)).
 - **Araştırma kopyasında** (bot sunucudayken bu bilgisayarda) bu ekrandaki **bütün kayıtlar kilitlidir** (Araştırma'daki piyasa verisi ve izleme listesi de): Telegram "Ayarları kaydet" ve test, sağlık sinyali kaydet/kaldır/test; sunucu da reddeder. Telegram bu bilgisayarda bilinçli kapalıdır ve bu kapalılık `config.json`'a asla yazılmaz — sunucudaki ayar korunur.
 - Telefondan bu ekran yalnız okunur; kayıt düğmeleri kilitlidir.

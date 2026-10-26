@@ -1,5 +1,5 @@
 {
-  "surum": "77.4",
+  "surum": "77.5",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -65,6 +65,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"77.5","tarih":"2026-10-26","yeni":["Ayar dosyası: Program klasöründeki eski `config.json` kalktı; ayarlarınız yalnız veri klasöründeki `ayarlar.json`'da durur. Güncelleme bunu kendisi yapar: önce ayarlarınızı `ayarlar.json`'a alır, eski dosyayı elle değiştirdiyseniz içeriğini veri klasörüne `config.json.yedek-<zaman>` adıyla saklar. Sizin bir şey yapmanız gerekmez; ayarlarınız değişmez."]},
     {"surum":"77.4","tarih":"2026-10-26","yeni":["Güncelleme: Ayarlarınız artık veri klasöründeki `ayarlar.json` dosyasında. Sunucuda elle değiştirilmiş eski `config.json` dosyasına dokunan bir güncelleme bundan sonra durup sizi beklemez: kurulurken eski dosyanın içeriği veri klasörüne `config.json.yedek-<zaman>` adıyla yedeklenir, dosya depodaki hâline döndürülür, güncelleme kurulur. Ayarlarınız değişmez. Ayarlar güvenceye alınamazsa güncelleme yine \"Elle bakılmalı\" der ve hiçbir şeyi değiştirmez."]},
     {"surum":"77.3","tarih":"2026-10-26","yeni":["Kılavuz: ekran görüntüleri yeniden net (görüntü sınırı 10 MB'a çıktı); sözlüğe FX, MT, XLSX, TCMB, EVDS, TÜİK, HHI, PATH açıklamaları eklendi."]},
     {"surum":"77.2","tarih":"2026-10-26","yeni":["Kılavuz: Ayarlar › Makineler ve Anahtarlar görüntüleri yenilendi; para hareketi onayı Botlar ve Sorunlar bölümlerinde, aktarım hesap türü Anahtarlar'da anlatılıyor; eski menü yolları ve denetim sayısı düzeltildi.","Bybit hazırlığı: yeni bot formunda Borsa seçiminde Bybit ve \"Kairos tipi — Bybit (demo hazırlığı)\" şablonu. Bybit botu kâğıt hesapta Bybit'in pazar kurallarıyla çalışır (karar verisi Binance'ten, evren Binance ∩ Bybit; Bybit'te olmayan coin nakitte, Botlar kartında \"Bybit'te yok — nakitte\"). Bybit demo hesabı Anahtarlar'a eklenip sınanabilir ama bota henüz bağlanamaz (\"Bybit demo: hazırlık — henüz bağlanamaz\"); canlı hesap yok. Güncellemenin kuru denemesi Bybit botunu da dener. Kairos, Tao ve OKX botu değişmedi."]},

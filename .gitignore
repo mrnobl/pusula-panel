@@ -12,6 +12,9 @@ data/
 
 # Araştırma defteri atomik yazımının geçici dosyası (lib/defter.js; yarıda kalırsa)
 kayitlar/*.tmp
+# 77.x (PLAN-TASIMA F1 ikinci adım): kökteki eski kullanıcı ayar dosyası depodan çıktı — ayar <veri>/ayarlar.json
+# (lib/ayarlar.js). Eski kurulumda kalan dosya yalnız ayarlar.json yokken okunur; asla commit'lenmez.
+config.json
 config.json.yedek
 config.json.tmp
 config.json.bozuk-*.bak
