@@ -82,7 +82,7 @@
       case 'defter-binance': return [k('apiKey', 'API anahtarı'), k('apiSecret', 'Gizli anahtar (secret)')];
       case 'telegram': return [k('deger', 'Yeni bot jetonu', '@BotFather\'ın verdiği "123456789:AA…" metni')];
       case 'saglik': return [k('deger', 'Yeni ping adresi', 'https://hc-ping.com/…')];
-      case 'gemini': return [k('deger', 'Gemini API anahtarı', 'Google AI Studio › Get API key — genelde "AIza…" ile başlar')];
+      case 'gemini': return [k('deger', 'Gemini API anahtarı', 'Google AI Studio › Get API key — "AIza…" ya da "AQ.…" ile başlar')];
       case 'pin': return [{ ad: 'eskiPin', etiket: 'Şimdiki PIN', tip: 'password', inputmode: 'numeric' }, { ad: 'yeniPin', etiket: 'Yeni PIN (6–12 rakam)', tip: 'password', inputmode: 'numeric' },
         { ad: 'yeniPin2', etiket: 'Yeni PIN (tekrar)', tip: 'password', inputmode: 'numeric' }];
       default: return [];

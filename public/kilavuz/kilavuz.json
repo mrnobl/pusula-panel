@@ -1,5 +1,5 @@
 {
-  "surum": "77.8",
+  "surum": "77.9",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -65,6 +65,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"77.9","tarih":"2026-10-26","yeni":["Gemini API anahtarı: Google'ın yeni \"AQ.…\" biçimindeki anahtarları da kabul edilir (önceden yalnız \"AIza…\")."]},
     {"surum":"77.8","tarih":"2026-10-26","yeni":["Telefondan devralma: bozulan sunucunun botu ayakta kalan sunucuya Sorunlar › Makine sessiz kartından alınır — \"eski makine kapalı\" kutusu + acil PIN + DEVRAL; demo botta SAHİPLEN; sonra bir kez telefondan BAŞLAT (24 saat içinde). Her adım Telegram'a güvenlik iletisi."]},
     {"surum":"77.7","tarih":"2026-10-26","yeni":["Taşınmış ya da devralınmış botun eski bilgisayarında (telefondan da) Sorunlar araçları, Sağlık'taki Güvenli kipten çık ve bot kaydı işlemleri artık \"bu bot … makinesine taşındı\" diye reddedilir.","Kâğıt hesapta acil durdurmayı geri alma önizlemesi sürerken görünür bilgi mesajı çıkar."]},
     {"surum":"77.6","tarih":"2026-10-26","yeni":["Kâğıt hesapta acil durdurma geri alınabilir: Botlar › bot › Yönetim › Acil durdurmayı geri al (kâğıt) — acil öncesi hâl geri gelir, aradaki süre geçmiş fiyatlarla botun kendi kurallarıyla hesaplanır; önizleme + GERIAL + PIN.","Telefondan: güvenli kipten çık / güvenli kipe al (PIN), Borsayla karşılaştır (PIN), Pusula'yı yeniden başlat (PIN; 02:30–04:30 dışında, saatte bir), Şimdi yokla ve Telegram sessizini erken bitir.","Acil durdurmanın kendi kayıt satırları artık güvenli kip açmıyor."]},
