@@ -49,7 +49,7 @@ const KNOWN_TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
 // built with; a mismatch means the browser is running cached UI code against a
 // newer server, which silently reintroduces already-fixed bugs. Keep in sync
 // with APP_VERSION in public/app.js.
-const APP_VERSION = '77.6';
+const APP_VERSION = '77.7';
 
 /**
  * C1 (74.8, TASARIM-MAKINE-HESAP-BOT §3) SUNUCU BAĞLAMI — server.js'ten bölünen lib/sunucu/* modüllerinin ortak bağlamı.
@@ -320,7 +320,11 @@ app.use((req, res, next) => {
 // burada başlamaz, çalışmaz, borsaya bağlanmaz, ayarı değişmez (durdur serbest); eşli sunucuda elle Başlat / Çalıştır taze nöbet denetiminden geçer.
 app.use((req, res, next) => {
   if (req.method !== 'POST') return next();
-  const m = guvenlikKur.yasakYolu(req.path).match(/^\/api\/bindirme\/([a-z][a-z0-9]{1,15})\/([a-z-]{2,24})$/);
+  const y = guvenlikKur.yasakYolu(req.path);
+  // 77.7: Sağlık › "Güvenli kipten çık" ve bot kaydı uçları (hesap, sermaye, arşivle, geri getir) da aynı kapıdan (aynı 409 gövdesi).
+  // /api/bindirme altında üç parçalı YAZAN uç eklenirse buraya alınmalı (scripts/sunucu-uc-envanteri-selftest.js denetler).
+  const m = y.match(/^\/api\/bindirme\/([a-z][a-z0-9]{1,15})\/([a-z-]{2,24})$/)
+    || y.match(/^\/api\/saglik\/oz\/([a-z][a-z0-9]{1,15})\/(guvenli-kip-kaldir)$/) || y.match(/^\/api\/botlar\/([a-z][a-z0-9]{1,15})\/(hesap|sermaye|arsivle|geri-getir)$/);
   if (!m || m[2] === 'durdur') return next();
   let p;
   try { p = ctx.makine.nobetKapisi(m[1], m[2]); } catch { return next(); }

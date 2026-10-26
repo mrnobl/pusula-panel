@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.7 — Taşınmış botta bütün yazan işlemler kapalı (2026-10-26) {#s77-7}
+- **Taşınmış botta Sorunlar araçları da kapalı:** bot başka makineye taşındıysa ya da devralındıysa eski bilgisayarda (telefondan da) Kaydı borsaya eşitle, Zarar sınırını sıfırla, Farkı / Yatırmayı kabul et, para hareketi onayı / reddi, güvenli kip araçları ve Borsayla karşılaştır; Sağlık sayfasındaki **Güvenli kipten çık** ve Botlar'daki hesap / sermaye / arşivle / geri getir de artık "bu bot … makinesine taşındı" diye reddedilir — Başlat / Mutabakat gibi. Önizlemeler açılır.
+- **Kâğıt acil geri alma:** önizleme sürerken "önizleme hazırlanıyor" bilgi mesajı çıkar (önizleme yarım dakika ile birkaç dakika sürer).
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); kuru denemede bütün botların kararı birebir aynı.
+
 ## 77.6 — Kâğıt acil durdurmayı geri al; telefondan güvenli kip ve dört işlem (2026-10-26) {#s77-6}
 - **Kâğıt hesapta acil durdurma geri alınabilir.** Botlar › bot › Yönetim › **Acil durdurmayı geri al (kâğıt)**: bot acil öncesi hâline döner,
   aradaki süre geçmiş fiyatlarla botun kendi kurallarıyla hesaplanır (dolumlar, arada karar saati geçtiyse o günün kararı) ve bugünkü hâlden

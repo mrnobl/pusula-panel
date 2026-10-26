@@ -242,6 +242,8 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
   async function kagitGeriAl(ad, d, dugme) {
     const b = d.bot;
     AG.dom.mesgul(dugme, 'Önizleme hazırlanıyor…');
+    // 77.7 (kullanıcı: "hiçbir şey olmadı izlenimi verdi"): simülasyon ~30 sn–birkaç dk sürer; görünür bilgi.
+    bildir(`${GA(b)}: önizleme hazırlanıyor — aradaki süre geçmiş fiyatlarla hesaplanıyor (yarım dakika ile birkaç dakika sürer). Bu sayfada kalın; bitince özet penceresi açılır.`);
     let is = null;
     try {
       const r0 = await AG.api.bindirmeGeriAlOnizle(ad);
