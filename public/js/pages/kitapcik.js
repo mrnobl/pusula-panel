@@ -26,6 +26,10 @@
  * "Notlarımı kopyala"). Aynı okuyucu kodu (okuyucuAc / temaYaz). Kitaptan FARKI: araştırma sonucu ya da kişisel bilgi içermez →
  * dağıtıma GİRER (public/kurs/), araştırma eklentisine bağlı değil, her kurulumda görünür. Kurs içindeki panel bağlantıları
  * (href="../#/yol") iframe'deyken üst pencerenin adresini değiştirir (kursun kendi betiği; aynı köken).
+ *
+ * ONARIM REHBERİ — #/rehber (Bilgi › Onarım Rehberi, bölüm #tab-rehber, okuyucu #rehberOkuyucu / #rehberCerceve / #rehberYeniSekme):
+ * public/rehber/onarim-rehberi.html (senaryo verisi scripts/rehber-uret.js ile kayitlar/rehber/senaryolar.json'dan). Kursla aynı kalıp:
+ * dağıtıma GİRER, araştırma eklentisine bağlı değil; panel bağlantıları "../#/yol" üst pencereyi yönlendirir.
  */
 (function (global) {
   'use strict';
@@ -81,8 +85,11 @@
   const OKUYUCU_KTP = { okuyucu: 'ktpOkuyucu', cerceve: 'ktpCerceve', baslik: 'ktpBaslik', yeni: 'ktpYeniSekme' };
   const OKUYUCU_KITAP = { okuyucu: 'kitapOkuyucu', cerceve: 'kitapCerceve', baslik: 'kitapBaslik', yeni: 'kitapYeniSekme' };
   const OKUYUCU_KURS = { okuyucu: 'kursOkuyucu', cerceve: 'kursCerceve', baslik: 'kursBaslik', yeni: 'kursYeniSekme' };
+  const OKUYUCU_REHBER = { okuyucu: 'rehberOkuyucu', cerceve: 'rehberCerceve', baslik: 'rehberBaslik', yeni: 'rehberYeniSekme' };
   /** Bilgi › Pusula Kursu (#/kurs): her kurulumda görünür, dağıtıma girer (kitapçık listesinde DEĞİL — kitapçıklar araştırma eklentisinde). */
   const PUSULA_KURSU = { kimlik: 'pusula-kursu', baslik: 'Pusula Kursu', aciklama: 'Paneli uygulamalı öğrenmek için sıralı görevler.', dosya: 'kurs/pusula-kursu.html' };
+  /** Bilgi › Onarım Rehberi (#/rehber): kurs gibi her kurulumda görünür, dağıtıma girer. */
+  const ONARIM_REHBERI = { kimlik: 'onarim-rehberi', baslik: 'Onarım Rehberi', aciklama: 'Sorun çıkınca ne yapılır.', dosya: 'rehber/onarim-rehberi.html' };
 
   const bul = (id) => (doc ? doc.getElementById(id) : null);
 
@@ -107,10 +114,10 @@
       return true;
     } catch (e) { return false; }
   }
-  /** Üç okuyucuya da (Kitapçık + Pusula Kitabı + Pusula Kursu); en az birine yazıldıysa true. */
+  /** Dört okuyucuya da (Kitapçık + Pusula Kitabı + Pusula Kursu + Onarım Rehberi); en az birine yazıldıysa true. */
   function temaIlet() {
-    const a = temaYaz(OKUYUCU_KTP.cerceve), b = temaYaz(OKUYUCU_KITAP.cerceve), c = temaYaz(OKUYUCU_KURS.cerceve);
-    return a || b || c;
+    const a = temaYaz(OKUYUCU_KTP.cerceve), b = temaYaz(OKUYUCU_KITAP.cerceve), c = temaYaz(OKUYUCU_KURS.cerceve), d = temaYaz(OKUYUCU_REHBER.cerceve);
+    return a || b || c || d;
   }
 
   /** Ortak okuyucu: başlık, yeni sekme adresi, iframe (src yalnız değişince — tembel yükleme). */
@@ -152,6 +159,9 @@
   /** Bilgi › Pusula Kursu (#/kurs). */
   function kursAc() { return okuyucuAc(OKUYUCU_KURS, PUSULA_KURSU); }
 
+  /** Bilgi › Onarım Rehberi (#/rehber). */
+  function rehberAc() { return okuyucuAc(OKUYUCU_REHBER, ONARIM_REHBERI); }
+
   /**
    * 72.2 güvence: menü/yol gizlemesine rağmen ekran açılır ama kitap dosyası bu kurulumda yoksa (ör. araştırma verisi olan ama
    * araştırma paketi olmayan bir dağıtım kurulumu → sunucu 404) boş/hata sayfası yerine açıklama (#kitapYok) gösterilir.
@@ -177,15 +187,16 @@
       if (e.detail && e.detail.bolum === 'tab-kitapcik') ac(e.detail.alt);
       else if (e.detail && e.detail.bolum === 'tab-kitap') kitapAc();
       else if (e.detail && e.detail.bolum === 'tab-kurs') kursAc();
+      else if (e.detail && e.detail.bolum === 'tab-rehber') rehberAc();
     });
     doc.addEventListener('ag:tema', temaIlet);
-    for (const id of [OKUYUCU_KTP.cerceve, OKUYUCU_KITAP.cerceve, OKUYUCU_KURS.cerceve]) {
+    for (const id of [OKUYUCU_KTP.cerceve, OKUYUCU_KITAP.cerceve, OKUYUCU_KURS.cerceve, OKUYUCU_REHBER.cerceve]) {
       const c = bul(id);
       if (c) c.addEventListener('load', () => { temaYaz(id); if (id === OKUYUCU_KITAP.cerceve) kitapYoklama(); });
     }
   }
 
   AG.pages = AG.pages || {};
-  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, PUSULA_KURSU, sec, ac, kitapAc, kursAc, kitapYoklama, temaIlet };
+  AG.pages.kitapcik = { KITAPCIKLAR, PUSULA_KITABI, PUSULA_KURSU, ONARIM_REHBERI, sec, ac, kitapAc, kursAc, rehberAc, kitapYoklama, temaIlet };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.kitapcik;
 })(typeof window !== 'undefined' ? window : globalThis);

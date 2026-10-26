@@ -28,6 +28,7 @@
  *   kitap                → tab-kitap           Bilgi › Pusula Kitabı (72.1) — 72.2: araştırma eklentisi yokken gizlenir (kitap dağıtıma girmez).
  *   kurs                 → tab-kurs            Bilgi › Pusula Kursu — uygulamalı görev listesi (public/kurs/pusula-kursu.html, js/pages/kitapcik.js
  *                          kursAc); araştırma eklentisine BAĞLI DEĞİL, her kurulumda görünür ve dağıtıma girer.
+ *   rehber               → tab-rehber          Bilgi › Onarım Rehberi (public/rehber/onarim-rehberi.html, kitapcik.js rehberAc); her kurulumda, dağıtıma girer.
  *
  * ESKİ SEKME KİMLİKLERİ (`tab-dashboard`, `tab-risk`…) hâlâ kabul edilir:
  * `AG.rota.git('tab-risk')` doğru yola gider. İç bağlantılar
@@ -96,6 +97,7 @@
     // 72.1: Pusula Kitabı — kendi yolu ve bölümü (js/pages/kitapcik.js kitapAc). 72.2: kabuk.js eklentisizken gizle({ yollar: ['kitapcik', 'kitap'] }).
     // Pusula Kursu — Kılavuz'un "nasıl yapılır"ından ayrı, uygulamalı görev listesi (js/pages/kitapcik.js kursAc); her kurulumda görünür.
     'kurs': { bolum: 'tab-kurs', menu: 'bilgi', baslik: 'Pusula Kursu' },
+    'rehber': { bolum: 'tab-rehber', menu: 'bilgi', baslik: 'Onarım Rehberi' },   // sorun çıkınca ne yapılır (kitapcik.js rehberAc); her kurulumda görünür
     'kitap': { bolum: 'tab-kitap', menu: 'bilgi', baslik: 'Pusula Kitabı' },
     'kitapcik': { bolum: 'tab-kitapcik', menu: 'bilgi', baslik: 'Kitapçık', altYol: true },
     'kurulum': { bolum: 'tab-kurulum', menu: 'bilgi', baslik: 'Kurulum sihirbazı' },

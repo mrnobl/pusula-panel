@@ -1,5 +1,7 @@
 # Sorun giderme {#sorun-giderme}
 
+> **Yazılım bilgisi gerekmeden adım adım:** [Bilgi › Onarım Rehberi](#/rehber) — gördüğünüz mesajın bir parçasını arama kutusuna yazın; her durumda kimin çözebileceği, adımlar, komut satırı kutuları ve geliştiriciye iletilecek metin hazırdır ([rehber nasıl okunur](#/kilavuz/onarim-rehberi/kart)).
+
 Ekranda ya da Telegram'da bir uyarı gördüğünüzde buradan bakın. Çoğu zaman bu sayfayı açmanız bile gerekmez: **Sistem › Sorunlar** sayfası o an etkin her sorunu aynı kartla gösterir ve kartın **Kılavuz** düğmesi sizi doğrudan buradaki başlığa getirir.
 
 Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anlamı** (zararsız, dikkat ya da tehlike) → **Kendiliğinden geçer mi** → **Adımlar** → **Sohbete yazın** (ne zaman geliştirme sohbetine yazmalı). Sohbete yazarken Sorunlar sayfasındaki **Sohbete gönder** düğmesini kullanın: sürüm, etkin sorunlar, son olay raporunun özeti, son 30 dakikanın uyarı / hata satırları ve botların durumu panoya kopyalanır; anahtar, jeton, chat id, sağlık adresi ve e-posta silinmiştir.
@@ -256,7 +258,7 @@ Yalnız bilgi: piyasa emri kayması + ücret backtest varsayımının 2 katı. B
 
 ### "Yeniden başlatma gerekli" {#yeniden-baslatma-gerekli}
 
-**Anlamı:** sarı = eski Pusula çalışıyor, yeni kod diskte (zararsız). Kırmızı "Pusula KAPALI kaldı" = tehlike. **Adımlar:** kırmızıysa sunucuda **Pusula** kısayolu; sarıysa uygun bir saatte **Yeniden başlat** (02:50–04:30 arasında yapmayın).
+**Anlamı:** sarı = eski Pusula çalışıyor, yeni kod diskte (zararsız). Kırmızı "Pusula KAPALI kaldı" = tehlike. **Adımlar:** kırmızıysa sunucuda **Pusula** kısayolu; sarıysa uygun bir saatte masaüstündeki **Pusula'yı durdur** → **Pusula** kısayolları (uzaktaysanız telefonda Sorunlar › **Pusula'yı yeniden başlat**, acil PIN) (02:50–04:30 arasında yapmayın).
 
 ### GitHub'a ulaşılamadı {#github}
 

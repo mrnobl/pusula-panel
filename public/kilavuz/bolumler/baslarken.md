@@ -32,7 +32,7 @@ Masaüstünde (1024 px ve üstü) menü solda durur: dört grup (**Günlük · �
 | Araştırma › Coin tarama | Bugün hangi coinlere dikkat? | [Coin tarama](#/kilavuz/coin-tarama) |
 | Sistem › Veri | Veriler güncel mi? | [Veri](#/kilavuz/veri) |
 | Sistem › Ayarlar | Telegram, sağlık sinyali, bağlantılar, güncelleme | [Ayarlar](#/kilavuz/ayarlar) |
-| Sistem › Bilgi | Kılavuz, [Pusula Kursu](#/kilavuz/pusula-kursu) (paneli sıralı görevlerle uygulamalı öğrenme), Pusula Kitabı (Pusula, güvenlik, botlar, testler, sözlük) ve kitapçık (botlar nasıl alır, nasıl satar, geçmişte ne yaptı?) | [Kılavuzu kullanmak](#/kilavuz/kilavuz-kullanimi), [Pusula Kursu](#/kilavuz/pusula-kursu), [Pusula Kitabı](#/kilavuz/pusula-kitabi), [Kitapçık](#/kilavuz/kitapcik) |
+| Sistem › Bilgi | Kılavuz, [Pusula Kursu](#/kilavuz/pusula-kursu) (paneli sıralı görevlerle uygulamalı öğrenme), [Onarım Rehberi](#/kilavuz/onarim-rehberi) (sorun çıkınca adım adım ne yapılır), Pusula Kitabı (Pusula, güvenlik, botlar, testler, sözlük) ve kitapçık (botlar nasıl alır, nasıl satar, geçmişte ne yaptı?) | [Kılavuzu kullanmak](#/kilavuz/kilavuz-kullanimi), [Pusula Kursu](#/kilavuz/pusula-kursu), [Pusula Kitabı](#/kilavuz/pusula-kitabi), [Kitapçık](#/kilavuz/kitapcik) |
 | Sistem › Arşiv | Artık kullanılmayan bölümler (kâğıt test, emekli botlar) | [Arşiv](#/kilavuz/arsiv) |
 
 ## Ekranın üstündeki işaretler {#isaretler}

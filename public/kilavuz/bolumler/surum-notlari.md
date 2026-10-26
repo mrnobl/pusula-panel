@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.2 — Onarım Rehberi (2026-10-27) {#s78-2}
+- **Yeni: [Bilgi › Onarım Rehberi](#/kilavuz/onarim-rehberi).** bir uyarı gördüğünüzde ya da bir şey çalışmadığında yazılım bilgisi gerekmeden ne yapılacağı — 115 durum, gördüğünüz mesajın bir parçasıyla arama; her durumda ciddi mi, kendiliğinden düzelir mi, kimin çözebileceği (siz / komut satırı ya da karar / geliştirici), adımlar, gerekiyorsa kopyalanabilir komut ve geliştiriciye iletilecek hazır metin. Sorunlar ve Sağlık sayfalarının üstünde "Onarım Rehberi'nde ara" bağlantısı; Pusula'nın uyarmayabileceği 17 durum ayrı bölümde.
+- **Düzeltme:** "Yeniden başlatma gerekli" kartı var olmayan bir düğmeyi tarif ediyordu; artık masaüstündeki **Pusula'yı durdur** → **Pusula** kısayollarını ya da telefonda Sorunlar › **Pusula'yı yeniden başlat**'ı söylüyor.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); kuru denemede bütün botların kararı birebir aynı.
+
 ## 78.1 — Pusula Doktoru (2026-10-27) {#s78-1}
 - **Pusula Doktoru ([Sistem › Pusula Doktoru](#/kilavuz/doktor)):** şu an ne bozuk, anlamı ne, kendiliğinden düzelir mi ve ne yapmanız gerektiği tek sayfada; Pusula'nın kendiliğinden yaptığı onarımların günlüğü (yeniden bağlanma, yeniden açılma, güncelleme geri alma, stopu yeniden koyma, güvenli kip …); botların hazır olup olmadığı. Doktor yalnız bakar: pozisyona, ayara, ENGEL'e, güvenli kipe dokunmaz. İki zararsız bakım işi yapar: 20 MB'ı aşan konsol günlüğünü açılışta döndürür, yarıda kalmış geçici tatbikat klasörlerini günde bir siler. Telefonda da açılır.
 - Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
