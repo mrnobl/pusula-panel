@@ -133,9 +133,12 @@
     // AG.dom.el false'u da öznitelik yazar (checked="false" işaretli sayılır) — yalnız gerektiğinde verilir.
     const kutu = el('input', { type: 'checkbox', id: kutuId, checked: okundu[b.ad] ? 'checked' : null });
     const ac = el('button', { type: 'button', class: kapali ? 'btn btn-danger btn-sm' : 'btn btn-secondary btn-sm', id: `btnOzAc-${b.ad}`, disabled: okundu[b.ad] ? null : 'disabled' },
-      [el('span', { text: kapali ? (kolEngeli ? 'Borsayla karşılaştır' : 'Botu yeniden aç') : 'Güvenli kipi kaldır' })]);
+      [el('span', { text: kapali ? (kolEngeli ? 'Borsayla karşılaştır' : 'Botu yeniden aç') : (AG.api && typeof AG.api.kademe === 'function' && AG.api.kademe() === 'telefon') ? 'Güvenli kipten çık (Sorunlar, PIN)…' : 'Güvenli kipi kaldır' })]);
     kutu.addEventListener('change', () => { okundu[b.ad] = kutu.checked; ac.disabled = !kutu.checked; });
+    // 77.x (kullanıcı 2026-10-26): telefonda güvenli kipten çıkış Sorunlar sayfasının PIN'li aracıyla (önizleme + acil PIN + KALDIR)
+    const telefonGk = !kapali && !!(AG.api && typeof AG.api.kademe === 'function' && AG.api.kademe() === 'telefon');
     ac.addEventListener('click', () => {
+      if (telefonGk) { if (AG.rota && AG.rota.git) AG.rota.git('sorunlar'); return; }
       if (!kapali) return eylem(ac, () => AG.api.saglikOz.guvenliKipKaldir(b.ad), `${GA(b)}: güvenli kip kaldırıldı — bot sonraki çalışmada işlem yapabilir`);
       if (kolEngeli) return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'mutabakat'), `${GA(b)}: borsayla karşılaştırıldı`);
       return eylem(ac, () => AG.api.bindirmeEylem(b.ad, 'engel-kaldir'), `${GA(b)}: bot yeniden açıldı`);

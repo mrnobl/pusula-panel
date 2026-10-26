@@ -1,6 +1,6 @@
 # Telefondan açmak {#telefon}
 
-Telefondan panel **yalnız izler ve acil durdurur** (60.5). Her ekranı görürsünüz; bot başlatma/durdurma, ayar, emir ve backtest yalnız sunucudaki panelden yapılır. Telefonda başlıkta **Telefon: izleme** rozeti çıkar. Ekranın altında çubuk vardır: **Ana · Portföy · Botlar · Sinyaller · Menü** — **Menü** yan menünün aynısını açar.
+Telefondan panel **izler ve acil durdurur** (60.5); ayrıca acil PIN ve onay kelimesiyle onaylı güncellemeyi kurar, Sorunlar sayfasının araçlarını kullanır ve **botu güvenli kipe alır / güvenli kipten çıkarır**, **Borsayla karşılaştırır** ve gerekirse **Pusula'yı yeniden başlatır**. PIN'siz iki zararsız işlem de vardır: Sağlık › **Şimdi yokla** ve Bildirimler'de Telegram geçici sessizini **Erken bitir**. Her ekranı görürsünüz; bot başlatma/durdurma, Engeli kaldır, ayar, emir ve backtest yalnız sunucudaki panelden yapılır. Telefonda başlıkta **Telefon: izleme** rozeti çıkar. Ekranın altında çubuk vardır: **Ana · Portföy · Botlar · Sinyaller · Menü** — **Menü** yan menünün aynısını açar.
 
 ![Telefonda Ana sayfa](ekran:ana-390)
 
@@ -54,6 +54,24 @@ npm run acil-pin
 
 **Sorun araçları (73.8):** Sorunlar sayfasındaki **Kaydı borsaya eşitle**, **Zarar sınırını sıfırla**, **Farkı kabul et** ve **Yatırmayı kabul et** telefondan da kullanılır: önce önizleme, sonra aynı acil PIN ve onay kelimesi (ESITLE / SIFIRLA / KABUL). Önizlemeden sonra durum değiştiyse hiçbir şey uygulanmaz, yeni önizleme gelir. Ayrıntı: [Sorun giderme › Sorun araçları](#/kilavuz/sorun-giderme/sorun-araclari).
 
+**Güvenli kip telefondan:** sunucuya ulaşamadığınızda tek imkânınız telefon olduğu için güvenli kip iki yönde de telefondan yönetilir — aynı kalıp: önce önizleme, sonra acil PIN ve onay kelimesi.
+
+| İşlem | Nerede | Onay kelimesi | Ne olur |
+|---|---|---|---|
+| **Güvenli kipten çık** | Sorunlar › güvenli kip kartı › **Güvenli kipten çık (PIN)…** (botun sarı bandı ve Sağlık kartı da buraya götürür) | KALDIR | Önizleme neden güvenli kipte olduğunu, kimin koyduğunu ve çıkınca botun yeniden **yeni işlem açabileceğini** yazar. Sebep sürüyorsa bot kısa süre içinde yeniden güvenli kipe girer. Telegram'a **kritik güvenlik iletisi** gider (sessiz saatte de). |
+| **Güvenli kipe al** | Sorunlar sayfasının altında **Bir botu güvenli kipe al** | GÜVENLİ | Bot yeni işlem açmaz; açık pozisyonlar kapanmaz, stoplar borsada kalır. Kendiliğinden **kalkmaz** — Güvenli kipten çık ile kalkar. Pozisyonları hemen kapatmak için bu değil **Acil durdur**. |
+
+İkisi de borsaya emir göndermez; ENGEL'i (tam kapanma) kaldırmaz — **Engeli kaldır** yine yalnız sunucudaki panelde. Yanlış PIN sayacı aynıdır (5 yanlışta 1 dakika kilit). Her işlem günlüğe, botun olay kaydına ve Ayarlar › Ayar geçmişi'ne yazılır. Ayrıntı: [Sorun giderme › Güvenli kip](#/kilavuz/sorun-giderme/guvenli-kip).
+
+**Telefondan başka neler yapılır:**
+
+| İşlem | Nerede | Kilit | Ne olur |
+|---|---|---|---|
+| **Borsayla karşılaştır** | Sorunlar › bot kartı › **Borsayla karşılaştır (PIN)…** | Acil PIN + KARŞILAŞTIR | Masaüstündeki "Borsayla karşılaştır" ile aynı: bot kaydı borsayla karşılaştırılır, yeni emir açılmaz. Önizleme yazan yan etkileri açıkça söyler: botun kendi önekli ama kaydında olmayan (sahipsiz) kademeli alım emirlerini iptal eder, arada dolan emirleri kayda işler; fark yoksa kol engeli kalkar, fark varsa ENGEL konur. Sizin elle açtığınız emirlere dokunulmaz. |
+| **Pusula'yı yeniden başlat** | Sorunlar sayfasının altında **Pusula takıldıysa: yeniden başlat** | Acil PIN + YENİDEN BAŞLAT | Pusula temiz kapanır, ~10 sn sonra aynı kodla açılır (güncelleme kurulmaz); stoplar borsada kalır. TR 02:30–04:30 arası, bir bot çalışması sürerken ve saatte birden fazla yapılamaz. Telegram'a bilgi gider. |
+| **Şimdi yokla** | Sağlık (ve Sorunlar kartları) | PIN'siz, dakikada en çok 1 | Öz denetim hemen koşar; hiçbir şeyi değiştirmez. |
+| **Erken bitir** (geçici sessiz) | Sistem › Bildirimler | PIN'siz | Telegram menüsünden açılan "1 saat sessize al"ı bitirir; bekleyenler tek özet olarak gelir. Sessize **almak** telefondan panelde yoktur (Telegram menüsünden). |
+
 PIN tanımlı değilse telefondan acil durdurma **kapalıdır**. 1 dakikada 5 yanlış PIN → 1 dakika kilit + Telegram uyarısı (73.0; kilit her zaman 1 dakika). PIN'i değiştirmek için komutu yeniden çalıştırın (eski PIN'i sormaz — unuttuysanız da böyle) ya da panelde [Ayarlar › Anahtarlar › PIN'i değiştir](#/kilavuz/ayarlar/pin-degistir) (eski PIN ister). **Ortak PIN:** PIN bütün bilgisayarlarda aynıdır; değiştirdiğinizde öbür bilgisayarlarda da aynı PIN'i girin (Faz 3'te kendiliğinden eşitlenecek). Silmek için `npm run acil-pin -- --sil`. Telegram'dan acil durdurma yoktur (Telegram yalnız okur; [Telegram menüsü](#/kilavuz/telegram-menu)'ndeki ↗ düğmeleri bu panelin doğru sayfasını açar, işlem burada acil PIN ile).
 
 ## Wi-Fi köprüsüyle {#adimlar}
@@ -104,7 +122,10 @@ New-NetFirewallRule -DisplayName "Pusula telefon 3100" -Direction Inbound -Proto
 | "Siteye ulaşılamıyor" (Wi-Fi köprüsü) | Aynı Wi-Fi mı? Ağ **Özel** mi, güvenlik duvarı izni var mı? Modemde misafir ağı / AP yalıtımı kapalı mı? |
 | "Pusula · giriş" sayfası | Karekodu yeniden okutun ya da jetonu elle yapıştırın |
 | "Çok fazla yanlış deneme" | 10 yanlışta 10 dakika bekleyin |
-| Bir düğme "yalnız izleme ve acil durdurma" diyor | Beklenen: telefondan yalnız izleme; işlemi sunucuda yapın |
+| Bir düğme "yalnız izleme ve acil durdurma" diyor | Beklenen: telefondan yalnız izleme, acil durdurma, güncelleme ve PIN'li araçlar; işlemi sunucuda yapın |
+| "Telefondan dakikada en çok bir kez yoklanır" | Bir dakika bekleyip yeniden **Şimdi yokla** |
+| Yeniden başlatma "saatte en çok bir kez" / "02:30–04:30" diyor | Beklenen; yazan saatten sonra yeniden deneyin. Pusula takılı kalırsa bekçi kendisi yeniden açar |
+| Güvenli kipten çıktım, bot yeniden güvenli kipe girdi | Sebep (bakım, fiyat farkı, veri kalitesi, tekrarlayan hata) hâlâ sürüyor — kartın "Kendiliğinden geçer mi" satırını okuyup bekleyin |
 | "Acil PIN tanımlı değil" | Sunucuda `npm run acil-pin` |
 | Üstte "Sunucuya ulaşılamıyor — son görülen" | Sunucu kapalı/uykuda ya da bağlantı yok; ekrandaki sayılar o saatten kalma |
 | Düğmeler gri, "Araştırma modu" | Beklenen (geliştirme bilgisayarı) |

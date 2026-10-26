@@ -211,6 +211,66 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     finally { if (!kutu) AG.dom.hazir(dugme); grafikVeri[ad] = null; yukle(true); }
   }
 
+  /**
+   * 77.5 KÂĞIT ACİL DURDURMAYI GERİ AL (lib/live/kagitGeriAl.js): önizleme sunucuda arka planda (acil öncesi kopya + botun kendi kodu +
+   * geçmiş 1 dk fiyatlarla bugüne kadar) → özet + "GERIAL" → uygulama (yerel PIN). Yalnız kâğıt hesapta, son olay acil durdurmaysa.
+   */
+  const GERIAL_ARALIK = 2000;
+  const zamanUtc = (t) => (t ? `${new Date(t).toISOString().slice(0, 16).replace('T', ' ')} UTC` : '—');
+  const sy = (x) => String(x || '').split('/')[0];
+  function geriAlMetni(s) {
+    const n = (x, k = 6) => (Number.isFinite(+x) ? String(+(+x).toFixed(k)) : '—');
+    const l = [];
+    if (s.kaynak) l.push(`Kaynak: ${s.kaynak.aciklama} — ${zamanUtc(s.kaynak.zaman)}.`);
+    if (s.acil) l.push(`Acil durdurma: ${zamanUtc(s.acil.zaman)} — kapatılanlar: ${(s.acil.kapatilan || []).map(x => `${sy(x.symbol)} ${n(x.miktar)} (giriş ${n(x.giris, 4)} → ${n(x.kapanis, 4)})`).join(', ') || '—'}${s.acil.btc ? `; BTC ${n(s.acil.btc.miktar)} satıldı @ ${n(s.acil.btc.fiyat, 2)}` : ''}.`);
+    if (s.acilAni) {
+      const k = s.acilAni.karsilastirma || [];
+      l.push(`Acil anı doğrulaması: ${k.filter(x => x.uyumlu).length}/${k.length} sembol${s.acilAni.btc ? ` + BTC (${n(s.acilAni.btc.acil)} / ${n(s.acilAni.btc.simulasyon)})` : ''} ${k.every(x => x.uyumlu) && (!s.acilAni.btc || s.acilAni.btc.uyumlu) ? 'uyuşuyor' : 'UYUŞMUYOR'}.`);
+    }
+    if (s.aralik) {
+      const dol = (s.olaylar || []).filter(x => x.tur === 'dolum' || x.tur === 'spot');
+      l.push(`Aradaki simülasyon: ${s.aralik.dakika} dakika, ${(s.aralik.kararSaatleri || []).length} karar saati (UTC 00:02); acilden sonra ${dol.length} dolum${dol.length ? `: ${dol.slice(0, 8).map(x => `${sy(x.symbol)} ${x.side === 'buy' ? 'alış' : 'satış'} ${n(x.miktar)} @ ${n(x.fiyat, 4)} (${x.zaman.slice(11, 16)})`).join(', ')}${dol.length > 8 ? ` … +${dol.length - 8}` : ''}` : ''}.`);
+      for (const k of s.kararlar || []) l.push(`Karar ${k.gun} (${zamanUtc(k.t)}): BTC ${k.rejimIcerde ? 'trendde' : 'trend dışı'}${k.btcSebep ? ` — ${k.btcSebep}` : ''}${k.btcIslem ? ` (${k.btcIslem.yon} ${n(k.btcIslem.miktar)})` : ''}; coin sepeti ${k.kolEmir ? `${k.kolEmir.donchian} trend emri, ${k.kolEmir.dca} yeni kademe` : '—'}.`);
+    }
+    if (s.son) l.push(`Geri gelecek hâl (şimdiki fiyatla): ${(s.son.pozisyonlar || []).map(x => `${sy(x.symbol)} ${n(x.miktar)} giriş ${n(x.giris, 4)} → ${n(x.fiyat, 4)} (K/Z ${n(x.kz, 2)})`).join(', ') || 'coin pozisyonu yok'}; BTC ${n(s.son.btc && s.son.btc.miktar)}; ${s.son.acikEmir} açık emir.`);
+    if (s.deger) l.push(`Hesap değeri: şimdi ${D().para(s.deger.simdi)} → geri alınınca ${D().para(s.deger.sonra)} USDT (fark ${s.deger.fark >= 0 ? '+' : ''}${D().para(s.deger.fark)}).`);
+    for (const u of s.uyarilar || []) l.push(`Not: ${u}`);
+    for (const r of s.redler || []) l.push(`UYGULANAMAZ: ${r}`);
+    if (s.uygulanabilir) l.push('Uygulamadan önce botun bütün dosyaları kendi klasöründe geri-al-yedek/<zaman>/ altına kopyalanır. Bot durmuş kalır: uyguladıktan sonra Başlat\'a basın (önizlemeden sonraki dakikaları kâğıt borsa kendisi tamamlar). Önizleme 30 dakika geçerli.\nOnay için GERIAL yazın.');
+    return l.join('\n');
+  }
+  async function kagitGeriAl(ad, d, dugme) {
+    const b = d.bot;
+    AG.dom.mesgul(dugme, 'Önizleme hazırlanıyor…');
+    let is = null;
+    try {
+      const r0 = await AG.api.bindirmeGeriAlOnizle(ad);
+      if (!r0.success) throw new Error(r0.error);
+      is = r0.is;
+      for (let i = 0; i < 900 && is && is.durum === 'calisiyor'; i++) {      // en çok ~30 dk
+        await new Promise(r => setTimeout(r, GERIAL_ARALIK));
+        const r = await AG.api.bindirmeGeriAlDurum(ad);
+        if (!r.success) throw new Error(r.error);
+        is = r.is;
+        if (is && is.ilerleme && is.ilerleme.metin) AG.dom.mesgul(dugme, `Önizleme: ${is.ilerleme.metin}`);
+      }
+    } catch (e) { AG.dom.hazir(dugme); bildir(`Önizleme yapılamadı: ${e.message}`, 'hata'); return; }
+    AG.dom.hazir(dugme);
+    if (!is || is.durum !== 'bitti' || !is.sonuc) { bildir(`Önizleme tamamlanmadı: ${(is && is.hata) || 'sonuç yok'}`, 'hata'); return; }
+    const s = is.sonuc;
+    if (!s.uygulanabilir) { await AG.onayla({ baslik: `${GA(b)}: acil durdurma geri alınamıyor`, metin: geriAlMetni(s), onay: 'Tamam', iptal: 'Kapat' }); return; }
+    const v = await AG.onayla({ baslik: `${GA(b)}: acil durdurmayı geri al (kâğıt)`, onay: 'Geri al', iptal: 'Vazgeç', tehlikeli: true, metin: geriAlMetni(s),
+      alanlar: [{ ad: 'onay', etiket: 'Onay: GERIAL yazın', ipucu: 'GERIAL', dogrula: (x) => x.trim().toLocaleUpperCase('tr-TR').replace(/İ/g, 'I') === 'GERIAL' }] });
+    if (!v) return;
+    AG.dom.mesgul(dugme, '…');
+    try {
+      const r = await AG.api.bindirmeGeriAlUygula(ad, v.onay.trim(), is.kimlik);
+      if (!r.success) throw new Error(r.error);
+      bildir(`${GA(b)}: acil durdurma geri alındı — ${(r.son && r.son.pozisyonlar || []).length} pozisyon + ${r.son && r.son.btc ? r.son.btc.miktar : 0} BTC; hesap ${D().para(r.deger && r.deger.simdi)} → ${D().para(r.deger && r.deger.sonra)} USDT · mutabakat temiz · eski dosyalar ${r.yedek} · bot durmuş, Başlat'a basın`, 'ok');
+    } catch (e) { bildir(`Geri alınmadı: ${e.message}`, 'hata'); }
+    finally { AG.dom.hazir(dugme); grafikVeri[ad] = null; yukle(true); }
+  }
+
   /** O3 (62.1): borsada hesaba para yatırdıktan/çektikten sonra kayıt — bot bunu getiri saymaz. */
   async function sermayeAkisi(ad, d, dugme) {
     const b = d.bot;
@@ -297,6 +357,13 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
       ayak: ayakSec,
       // 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda; bot çalışırken pasif (sunucu da 409 verir)
       sifirla: m === 'kagit' ? (() => { const x = dugme('Kâğıt hesabı sıfırla (temiz başla)…', (y) => kagitSifirla(ad, d, y), 'btn-outline-danger'); x.setAttribute('id', `btnBotKagitSifirla-${ad}`); if (b.calisiyor) { x.disabled = true; x.setAttribute('title', 'Önce botu durdurun'); } return x; })() : null,
+      // 77.5: kâğıt acil durdurmayı geri al — YALNIZ kâğıt hesapta ve son olay acil durdurmaysa (sunucu d.kagitGeriAl.gorunur); bot çalışırken pasif
+      geriAl: m === 'kagit' && d.kagitGeriAl && d.kagitGeriAl.gorunur ? (() => {
+        const x = dugme('Önizle ve geri al…', (y) => kagitGeriAl(ad, d, y), 'btn-outline-danger'); x.setAttribute('id', `btnBotGeriAl-${ad}`);
+        if (b.calisiyor) { x.disabled = true; x.setAttribute('title', 'Önce botu durdurun'); }
+        const ac = d.kagitGeriAl.acil;
+        return el('div', { class: 'ayar-bot-hucre' }, [x, el('div', { class: 'hint hint-sm mb-0', text: `${ac ? `Acil durdurma ${zamanUtc(ac.zaman)}. ` : ''}Pozisyonlar acil öncesi kayıttan geri gelir; arada geçen süre geçmiş fiyatlarla botun kendi koduyla simüle edilir. Önce önizleme gösterilir.${b.calisiyor ? ' Önce botu durdurun.' : ''}` })]);
+      })() : null,
       calistir: dugme('Şimdi çalıştır', (x) => calistir(ad, 'calistir', x, { baslik: `${GA(b)}: günlük çalışma`, tehlikeli: m === 'canli',
         metin: m === 'canli' ? 'CANLI hesapta emir verilecek (BTC + coin sepeti). Canlı hesaptaki para kullanılır.' : demo ? 'Demo hesapta emir verilecek (BTC + coin sepeti). Canlı hesaba dokunulmaz.' : 'Kâğıt hesapta emir verilecek. Gerçek borsaya emir gitmez.' })),
       kontrol: el('div', { class: 'pf-dugmeler' }, [
@@ -334,6 +401,7 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
         h[0].ayak ? satir('BTC ayağı (kâğıt)', 'ayak') : null,
         satir('Bugünün kararını şimdi uygula', 'calistir'),
         h[0].sifirla ? satir('Kâğıt hesabı sıfırla', 'sifirla', 'kagit') : null,
+        h[0].geriAl ? satir('Acil durdurmayı geri al (kâğıt)', 'geriAl', 'kagit') : null,
         satir('Kontroller', 'kontrol')
       ].filter(Boolean) })
     ]);
@@ -498,6 +566,9 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
         catch (e) { bildir(`İşlem yapılamadı: ${e.message}`, 'hata'); }
         finally { AG.dom.hazir(dugme); yukle(true); }
       });
+    } else {
+      // 77.x (kullanıcı 2026-10-26): telefondan güvenli kipten çıkış Sorunlar sayfasında — önizleme + acil PIN + KALDIR
+      dugme = el('a', { class: 'btn btn-secondary btn-sm no-underline', id: `lnkGkCik-${ad}`, href: '#/sorunlar' }, [el('span', { text: 'Güvenli kipten çık (PIN)…' })]);
     }
     return el('div', { class: 'bot-dur-bandi bot-gk-bandi', role: 'status' }, [
       el('div', { class: 'bot-dur-metin' }, [
@@ -1124,5 +1195,5 @@ Yalnız kâğıt hesap: demo ve canlı hesaba dokunulmaz.` });
     grafikVeri[ad] = { zaman: Date.now(), oz: r.ozsermaye, islemler: r.islemler };
     defterCiz(ad); grafikCiz(ad, true); sayilarCiz(ad); aylikCiz(ad);
   }
-  AG.pages.botlar = { borsadaYokSatiri, _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, ORNEKLER, menuOrnekleriCiz, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
+  AG.pages.botlar = { borsadaYokSatiri, geriAlMetni, _ornekGrafik, portfoyGorunumu, ozetGorunumu, portfoyBotuMu, yukle, kartCiz, grafikCiz, telegramSatiri, telefonAcil, telefonAcilNotu, ADLAR, ORNEKLER, menuOrnekleriCiz, listeYukle, listeAyikla, botBilgi: (k) => BOT_BILGI[k] || null, sec, secili: () => secili, ayarYukle, ayarlarCiz, ayarOzetCiz, gorunumSec, gorunum: () => gorunum, GORUNUMLER, botHesabi, egriOzeti, paraDagilimi, coinKz, binanceKimlik, tabanMetni, binanceCiz, grafikYukle, _binanceVeri: binanceVeri };
 })(typeof window !== 'undefined' ? window : globalThis);

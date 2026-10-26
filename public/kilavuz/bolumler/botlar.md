@@ -292,6 +292,7 @@ Genel görünümde yalnız Durdur/Başlat ve Acil fren durur. Geri kalanı botun
 | BTC ayağı (kâğıt) | Yalnız **kâğıt hesapta**: **spot** (varsayılan) ya da **çoklu varlık (canlı tasarımı)**. Değiştirmek kâğıt hesabı sıfırlar (onaylı); bot durmuşken açık ([aşağıda](#/kilavuz/botlar/btc-ayagi)) |
 | Bugünün kararını şimdi uygula | **Şimdi çalıştır** (onaylı) |
 | Kâğıt hesabı sıfırla | Yalnız **kâğıt hesapta**: **Kâğıt hesabı sıfırla (temiz başla)…** — bot durmuşken açık ([aşağıda](#/kilavuz/botlar/kagit-sifirla)) |
+| Acil durdurmayı geri al (kâğıt) | Yalnız **kâğıt hesapta** ve son olay acil durdurmaysa görünür: **Önizle ve geri al…** — bot durmuşken açık ([aşağıda](#/kilavuz/botlar/kagit-geri-al)) |
 | Kontroller | **Deneme (emirsiz)** bugünkü kararı emir vermeden gösterir · **Borsayla karşılaştır** · **Acil freni dene** (yalnız durmuş demo bot: dolmayacak küçük bir emir koyup acil freni sınar — demo hesaptaki TÜM pozisyonlar kapanır) |
 
 ### Kâğıt hesabı sıfırla (temiz başla) {#kagit-sifirla}
@@ -303,6 +304,21 @@ Kâğıt hesaptaki bir botu (ör. Tao) sıfırdan başlatmak için: önce **Durd
 - **Bot çalışırken** düğme pasiftir ("Önce botu durdurun"); sıfırladıktan sonra **Başlat**.
 - Telefondan ve araştırma kopyasından yapılamaz (yalnız sunucudaki masaüstü panel).
 - **Kötümser dolum (69.5):** sıfırlamadan sonra açılan yeni kâğıt hesap gerçeğe daha yakın çalışır — felaket stopu 1 dakikalık mumda tetiklenir ve tetik fiyatı ile kapanıştan **kötü olanından** 5 baz puan kaymayla dolar; piyasa emri 5 baz puan kaymayla dolar; stoplar diske yazılır. Sıfırlanmamış eski kâğıt hesap eski (iyimser) modelde kalır, böylece süren ölçüm (ör. Tao) ortasında kurallar değişmez.
+
+### Acil durdurmayı geri al (kâğıt) {#kagit-geri-al}
+
+Kâğıt hesapta acil fren denendiyse ya da yanlışlıkla basıldıysa bot, pozisyonlarını **kaldığı yerden** geri alabilir: acil öncesi hâl geri yüklenir, aradaki süre **geçmiş fiyatlarla** botun kendi koduyla simüle edilir (kâğıt borsanın dolum kuralları: kademeli alım basamakları, kâr al emirleri; arada karar saati geçtiyse o günün kararı) ve bot bugünkü hâlden devam eder. Acilin kapanış işlemleri ve ücretleri hiç olmamış sayılır.
+
+1. Botu **Durdur** (çalışırken düğme pasiftir). Durmuşken geçen karar saatleri de simüle edilir.
+2. Yönetim'de **Acil durdurmayı geri al (kâğıt)** → **Önizle ve geri al…**. Önizleme sunucuda birkaç dakika sürebilir; düğmede ilerleme yazar. Botun dosyalarına bu sırada dokunulmaz.
+3. Önizlemeyi okuyun: kaynak (acil öncesi kayıt), acilin kapattıkları (giriş fiyatlarıyla), **acil anı doğrulaması** (simülasyonun o anki pozisyonları acilin kapattıklarıyla aynı mı), aradaki dolumlar ve kararlar, geri gelecek pozisyonlar, hesap değeri şimdi → sonra.
+4. Doğruysa **GERIAL** yazıp onaylayın; acil PIN istenir. Önizleme 30 dakika geçerlidir.
+5. Bot durmuş kalır: **Başlat**'a basın. Önizlemeden sonraki dakikaları kâğıt borsa kendisi tamamlar.
+
+- **Kaynak:** 77.5'ten sonra kâğıt hesaptaki her acil durdurma, başlamadan önce botun dosyalarını `acil-oncesi/<zaman>/` klasörüne kopyalar; araç önce onu kullanır. Yoksa (77.5'ten önceki acil) **günlük yedek** (sabah 05:30, acilden önce alınmışsa) kullanılır. İkisi de yoksa ya da acil anı doğrulaması tutmazsa önizleme **nedenini yazar ve uygulanmaz**.
+- **Yedek:** uygulamadan önce botun bütün dosyaları kendi klasöründe `geri-al-yedek/<zaman>/` altına kopyalanır. Uygulamadan sonra borsayla karşılaştırma temiz çıkmazsa eski hâl kendiliğinden geri yüklenir.
+- **Yalnız kâğıt hesap:** demo ve canlı hesapta düğme yoktur, sunucu da reddeder. Kairos'ta bu sürümde kapalıdır (demo kabul süresi). Telefondan ve araştırma kopyasından yapılamaz.
+- Acilden sonra bot yeniden işlem yaptıysa (günlük karar, yeni dolum) geri alma anlamsızdır; düğme görünmez.
 
 ### BTC ayağı: spot ya da çoklu varlık {#btc-ayagi}
 
@@ -352,7 +368,7 @@ Bot Binance **gerçek** hesabınızda çalışır (BTC spot, vadeli hesapta temi
 3. Botun bütün emirleri iptal edilir, açık pozisyonları piyasa fiyatından kapanır, bot **Durduruldu** olur.
 4. Sonuç Telegram'a da gelir. Yeniden başlatmak için nedenini anlayın, sonra **Engeli kaldır** + **Başlat**.
 
-> **Tehlike:** Acil fren geri alınamaz. Fiyat sert hareket ederken piyasa emri kötü fiyattan dolabilir. Yalnız gerçekten durdurmanız gerekiyorsa kullanın; sadece yeni emir vermesin istiyorsanız **Durdur** yeterlidir.
+> **Tehlike:** Demo ve canlı hesapta acil fren geri alınamaz (kâğıt hesapta 77.5'ten beri [geri alınabilir](#/kilavuz/botlar/kagit-geri-al)). Fiyat sert hareket ederken piyasa emri kötü fiyattan dolabilir. Yalnız gerçekten durdurmanız gerekiyorsa kullanın; sadece yeni emir vermesin istiyorsanız **Durdur** yeterlidir.
 
 Bu bilgisayar araştırma modundaysa acil fren de kilitlidir — acil durumda sunucudaki paneli ya da telefonu kullanın.
 
@@ -368,7 +384,7 @@ Bot kendini durdurduysa başlığın altında kırmızı bant ve sade bir neden 
 4. **Zarar sınırı (K3) çekildi** (bot çalışıyor görünür ama nakitte kalır): çekildiği an Telegram'a bir kez yazılır; yeniden risk almak strateji kararıdır — Sorunlar kartındaki **Zarar sınırını sıfırla** (PIN + SIFIRLA; yeni tepe = bugünkü değer).
 5. **Öz denetim botu tamamen kapattı** (69.1 — kurulamayan stop, art arda reddedilen emirler, tekrar tekrar çöken döngü): neden "öz denetim: …" diye başlar. İnceleyin, sonra **Engeli kaldır** ya da [Sağlık](#/kilavuz/saglik/tam-kapanma) sayfasında **Botu yeniden aç**.
 
-**Sarı bant — güvenli kipte (69.1):** bot yeni işlem açmaz, açık pozisyonun stopu yerinde kalır. Öz denetim koyduysa sebep geçince kendiliğinden kalkar; banttaki **Güvenli kipi kaldır** ile de kaldırabilirsiniz ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
+**Sarı bant — güvenli kipte (69.1):** bot yeni işlem açmaz, açık pozisyonun stopu yerinde kalır. Öz denetim koyduysa sebep geçince kendiliğinden kalkar; banttaki **Güvenli kipi kaldır** ile de kaldırabilirsiniz; telefonda bantta **Güvenli kipten çık (PIN)…** çıkar ve Sorunlar sayfasının PIN'li aracına götürür ([Güvenli kip](#/kilavuz/saglik/guvenli-kip)).
 
 ## Sürpriz sermaye: yatırma ve çekmeyi bot kendisi fark eder {#surpriz-sermaye}
 
@@ -415,6 +431,7 @@ Coin grafiği (**İşlemler** görünümü) seçili botun coinleriyle çalışı
 | Teminat durumu: Dikkat / Tehlike | Likidasyona yaklaşılıyor; pozisyon ve koruma stopu botun **Hesap** görünümünde |
 | "Telegram bağlı değil" | [Ayarlar › Bildirimler › Telegram](#/kilavuz/ayarlar/telegram) |
 | Düğmeler gri | Bu bilgisayar araştırma modunda — bot sunucuda çalışır |
+| Kâğıt hesapta acil fren yanlışlıkla / deneme için basıldı | Botu durdurun, Yönetim › **Acil durdurmayı geri al (kâğıt)** ([ayrıntı](#/kilavuz/botlar/kagit-geri-al)) |
 
 ## Araştırma kopyası ve telefon {#arastirma-telefon}
 

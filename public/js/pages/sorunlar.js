@@ -7,7 +7,9 @@
  * Güvenli kipi kaldır, Şimdi yokla; 73.8 sorun araçları: önizleme → acil PIN + onay metni → uygula, 409 = durum değişti) · kılavuz bağlantısı · "Sohbete gönder" teşhis paketi (panoya).
  * Sorun yoksa: "Her şey yolunda · son denetim N dk önce".
  *
- * Telefon kademesi: yalnız telefona açık eylemler (Acil durdur, gezinme, 73.8 PIN'li sorun araçları) görünür. Rozet (73.8) yalnız müdahale / dikkat sayar. Araştırma kopyası: sunucunun
+ * Telefon kademesi: yalnız telefona açık eylemler (Acil durdur, gezinme, 73.8 PIN'li sorun araçları) görünür. 77.x (kullanıcı 2026-10-26):
+ * güvenli kip kartlarında "Güvenli kipten çık (PIN)…" (telefon + araştırma kopyası; sunucu masaüstünde mevcut "Güvenli kipi kaldır" kalır)
+ * ve sayfa altında "Botu güvenli kipe al" bölümü (her kademede; önizleme → acil PIN + GÜVENLİ). Rozet (73.8) yalnız müdahale / dikkat sayar. Araştırma kopyası: sunucunun
  * sorunları (GET /api/sorunlar → lib/evOkuma.js sunucudan) + bu bilgisayarınkiler ("bu bilgisayar" etiketiyle, GET /api/sorunlar/yerel).
  * Rozet ve bant 5 dk'da bir (ve sayfa değişince en çok dakikada bir) tazelenir. DOM yalnız AG.dom; istek yalnız AG.api.
  */
@@ -53,7 +55,7 @@
     for (const k of sorunlar) if (sayac[k.ciddiyet] != null) sayac[k.ciddiyet]++;
     return { sorunlar, sayac, sonDenetim: s ? s.sonDenetim : null, rol: (s && s.rol) || (yerel && yerel.rol) || null,
       sunucuYok: !s, sunucuHata: !s ? ((sunucu && sunucu.error) || null) : null, eski: !!(s && s.evKaynak && s.evKaynak.eski), ornek: !!(s && s.ornek),
-      calisiyor: s ? s.calisiyor : false, zaman: (s && s.zaman) || Date.now() };
+      calisiyor: s ? s.calisiyor : false, zaman: (s && s.zaman) || Date.now(), botDurum: (s && Array.isArray(s.botDurum)) ? s.botDurum : [] };
   }
   /**
    * Saf: BAŞLIK rozeti → { ton: 'neg'|'warn'|null, parcalar: [{ ton, sayi, ad }], metin }. 73.8 (kullanıcı, 73.7 açık sorusu): rozet YALNIZ
@@ -80,9 +82,24 @@
     const ilk = (v.sorunlar || []).find(k => k.ciddiyet === 'mudahale' || k.ciddiyet === 'dikkat');
     return { ton: s.mudahale ? 'neg' : 'warn', metin: [s.mudahale ? `${s.mudahale} sorun müdahalenizi bekliyor` : null, s.dikkat ? `${s.dikkat} dikkat` : null].filter(Boolean).join(' · '), ilk: ilk ? ilk.baslik : '' };
   }
-  /** Saf: telefonda / araştırma kopyasında görünecek eylemler. */
-  function gorunenEylemler(k, { telefon = false } = {}) {
-    return (k.eylemler || []).filter(e => !telefon || e.telefon);
+  /**
+   * Saf: telefonda / araştırma kopyasında görünecek eylemler. 77.x: `yalnizUzak` (PIN'li güvenli kipten çıkış) sunucu masaüstünde gizli;
+   * `yalnizTelefon` (PIN'li Borsayla karşılaştır) yalnız telefonda.
+   */
+  function gorunenEylemler(k, { telefon = false, arastirma = false } = {}) {
+    return (k.eylemler || []).filter(e => (telefon ? e.telefon : (!e.yalnizTelefon && (arastirma || !e.yalnizUzak))));
+  }
+  /** 77.x Saf: telefondaki "Pusula'yı yeniden başlat" aracının sahte kartı + eylemi (botsuz). */
+  function ybModeli() {
+    return { k: { kimlik: 'sistem-yeniden-baslat' }, e: { kimlik: 'arac:yeniden-baslat', ad: 'Pusula\'yı yeniden başlat (PIN)…', api: { tur: 'sorunArac', arac: 'yeniden-baslat', bot: '' }, arac: true, telefon: true, yalnizTelefon: true } };
+  }
+  /**
+   * 77.x Saf: "Botu güvenli kipe al" listesi — sunucunun botDurum'undan; güvenli kipte / ENGELLİ olan bot listede yok (önizleme de reddeder).
+   * Her satır sahte bir kart kimliğiyle (gk-gir-<bot>) mevcut araç önizleme / PIN formunu kullanır.
+   */
+  function gkGirModeli(v) {
+    return ((v && v.botDurum) || []).filter(b => b && b.ad && !b.guvenliKip && !b.engel)
+      .map(b => ({ k: { kimlik: `gk-gir-${b.ad}` }, e: { kimlik: 'arac:guvenli-kip-gir', ad: `${b.adGorunen || b.ad}: güvenli kipe al…`, api: { tur: 'sorunArac', arac: 'guvenli-kip-gir', bot: b.ad }, arac: true, telefon: true } }));
   }
 
   // ── rozet + bant ──
@@ -279,8 +296,8 @@
     return el('details', { class: 'sorun-neyi' }, [el('summary', { text: `Neyi saydı? — ${n.baslik}` }), tablo, satirlar]);
   }
 
-  function kartCiz(k, { telefon }) {
-    const eylemler = gorunenEylemler(k, { telefon });
+  function kartCiz(k, { telefon, arastirma = false }) {
+    const eylemler = gorunenEylemler(k, { telefon, arastirma });
     const gizlenen = (k.eylemler || []).length - eylemler.length;
     const okudumGerek = eylemler.some(e => e.okudum) && !telefon;
     const kutuId = `chkSorunOkudum-${String(k.kimlik).replace(/[^a-z0-9-]/gi, '-')}`;
@@ -313,6 +330,34 @@
     ]);
   }
 
+  /** 77.x "Botu güvenli kipe al" (güvenli yön; telefondan da): bot başına düğme + mevcut araç önizleme / PIN formu. */
+  function gkGirBolumu(v) {
+    const l = gkGirModeli(v);
+    if (!l.length) return null;
+    const acik = l.some(x => aracDurum[x.k.kimlik]);
+    return el('details', { class: 'sorun-gk-gir mt-4', id: 'sorunGkGir', open: acik ? 'open' : null }, [
+      el('summary', { text: 'Bir botu güvenli kipe al (yeni işlem açmasın)' }),
+      el('p', { class: 'hint hint-sm', text: 'Bot yeni işlem açmaz; açık pozisyonlar kapanmaz, stoplar borsada kalır. Kendiliğinden kalkmaz — "Güvenli kipten çık" (PIN + KALDIR) ile kalkar. Pozisyonları kapatmak için bu değil "Acil durdur". Acil PIN + GÜVENLİ onayı ister.' }),
+      ...l.map(x => {
+        const d = el('button', { type: 'button', class: 'btn btn-secondary btn-sm sorun-arac-dugme', 'data-arac': 'guvenli-kip-gir', 'data-bot': x.e.api.bot }, [el('span', { text: x.e.ad })]);
+        d.addEventListener('click', () => aracAc(x.k, x.e, d));
+        return el('div', { class: 'sorun-gk-gir-satir mb-2' }, [d, el('div', { class: 'sorun-arac is-hidden', id: `sorunArac-${String(x.k.kimlik).replace(/[^a-z0-9-]/gi, '-')}` })]);
+      }),
+    ]);
+  }
+
+  /** 77.x yalnız telefon: "Pusula'yı yeniden başlat" (önizleme → acil PIN + YENİDEN BAŞLAT; TR 02:30–04:30 dışında, saatte 1). */
+  function ybBolumu() {
+    const x = ybModeli();
+    const d = el('button', { type: 'button', class: 'btn btn-secondary btn-sm sorun-arac-dugme', id: 'btnSorunYenidenBaslat', 'data-arac': 'yeniden-baslat' }, [el('span', { text: x.e.ad })]);
+    d.addEventListener('click', () => aracAc(x.k, x.e, d));
+    return el('details', { class: 'sorun-gk-gir mt-4', id: 'sorunYenidenBaslat', open: aracDurum[x.k.kimlik] ? 'open' : null }, [
+      el('summary', { text: 'Pusula takıldıysa: yeniden başlat' }),
+      el('p', { class: 'hint hint-sm', text: 'Pusula temiz kapanır, ~10 saniye sonra aynı kodla yeniden açılır; stoplar borsada kalır. TR 02:30–04:30 arası ve saatte birden fazla yapılamaz. Acil PIN + YENİDEN BAŞLAT onayı ister.' }),
+      el('div', { class: 'sorun-gk-gir-satir mb-2' }, [d, el('div', { class: 'sorun-arac is-hidden', id: `sorunArac-${x.k.kimlik}` })]),
+    ]);
+  }
+
   function ciz() {
     const kok = bul('sorunKok');
     if (!kok || !son) return;
@@ -332,13 +377,17 @@
     const notlar = [];
     if (v.ornek) notlar.push(el('p', { class: 'hint hint-sm', text: 'ÖRNEK kartlar (kılavuz görüntüsü) — gerçek veri değil.' }));
     if ((v.rol === 'arastirma' || arastirmaMu()) && !v.ornek) notlar.push(el('p', { class: 'hint hint-sm', text: v.sunucuYok ? `Bu bilgisayar araştırma kopyası; sunucunun sorunları okunamadı${v.sunucuHata ? ` (${v.sunucuHata})` : ''}. Aşağıda yalnız bu bilgisayarınkiler ("bu bilgisayar").` : `Bu bilgisayar araştırma kopyası: kartlar sunucudan${v.eski ? ' (SON OKUNAN KOPYA — sunucuya şu an ulaşılamıyor)' : ''}; "bu bilgisayar" etiketliler buranın.` }));
-    if (telefon) notlar.push(el('p', { class: 'hint hint-sm', text: 'Telefon: yalnız telefondan yapılabilen işlemler görünür — acil durdurma, gezinme ve PIN + onaylı sorun araçları (kayıt eşitleme, zarar sınırı, sapma / yatırma kabulü).' }));
+    if (telefon) notlar.push(el('p', { class: 'hint hint-sm', text: 'Telefon: yalnız telefondan yapılabilen işlemler görünür — acil durdurma, gezinme, Şimdi yokla ve PIN + onaylı sorun araçları (güvenli kipten çık / güvenli kipe al, Borsayla karşılaştır, Pusula\'yı yeniden başlat, kayıt eşitleme, zarar sınırı, sapma / yatırma kabulü).' }));
     doldur(kok, [ust, ...notlar,
       el('div', { class: 'sorun-paket is-hidden mb-4', id: 'sorunPaket' }),
-      el('div', { class: 'sorun-liste', id: 'sorunListe' }, v.sorunlar.map(k => kartCiz(k, { telefon }))),
+      el('div', { class: 'sorun-liste', id: 'sorunListe' }, v.sorunlar.map(k => kartCiz(k, { telefon, arastirma: arastirmaMu() }))),
       v.sorunlar.length ? null : el('p', { class: 'hint mt-3', text: 'Bir sorun çıkarsa burada kartıyla görünür; Telegram\'daki uyarıların sonundaki "Sorunlar" bağlantısı da buraya gelir. Uzaktayken Telegram\'a /teshis yazabilirsiniz.' }),
+      v.ornek ? null : gkGirBolumu(v),
+      v.ornek || !telefon ? null : ybBolumu(),
     ]);
+    if (telefon && !v.ornek && aracDurum[ybModeli().k.kimlik]) aracCiz(ybModeli().k);
     for (const k of v.sorunlar) if (aracDurum[k.kimlik]) aracCiz(k);   // 73.8: açık önizleme / sonuç yeniden çizimde kaybolmasın
+    if (!v.ornek) for (const x of gkGirModeli(v)) if (aracDurum[x.k.kimlik]) aracCiz(x.k);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
 
@@ -389,7 +438,7 @@
 
   AG.pages = AG.pages || {};
   AG.pages.sorunlar = { yukle, ciz, rozetGuncelle, anaBantCiz, birlestir, rozetModeli, ozetParcalari, bantModeli, gorunenEylemler, kartCiz, dkOnce, saatMetni, TELEFON_NOTU,
-    aracModeli, aracGovde, aracAc, aracUygula, aracCiz,
+    aracModeli, aracGovde, aracAc, aracUygula, aracCiz, gkGirModeli, ybModeli,
     _durum: { veriAyarla: (v) => { son = v; }, aracDurum } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.sorunlar;
 })(typeof window !== 'undefined' ? window : globalThis);

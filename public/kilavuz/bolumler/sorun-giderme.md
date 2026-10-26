@@ -15,13 +15,13 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Sorun araçları: önizle, PIN, onay {#sorun-araclari}
 
-Bugün hiçbir düğmenin çözemediği dört durum için kartta araç düğmesi çıkar: **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası), **Zarar sınırını sıfırla** (K3), **Farkı kabul et** (%5 uygulama sapması) ve **Yatırmayı kabul et**. Hepsi aynı yolu izler:
+Bugün hiçbir düğmenin çözemediği durumlar için kartta araç düğmesi çıkar: **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası), **Zarar sınırını sıfırla** (K3), **Farkı kabul et** (%5 uygulama sapması), **Yatırmayı kabul et**, para hareketi kartlarında **Para hareketini onayla** / **Bu ben değilim**; güvenli kip kartlarında (telefonda ve geliştirme bilgisayarında) **Güvenli kipten çık (PIN)…**, sayfanın altında **Bir botu güvenli kipe al**. Hepsi aynı yolu izler:
 
 1. Düğmeye basın: önce **önizleme** açılır — şimdiki durum, ne değişeceği, uyarılar. Araç bu durumda güvenle uygulanamıyorsa nedenini yazar ve düğme çıkmaz.
-2. Önizlemeyi okuyun; doğruysa **acil PIN**'i ve onay kelimesini (ESITLE / SIFIRLA / KABUL) yazıp **Uygula**.
+2. Önizlemeyi okuyun; doğruysa **acil PIN**'i ve onay kelimesini (ESITLE / SIFIRLA / KABUL / ONAY / BEN DEĞİLİM / KALDIR / GÜVENLİ) yazıp **Uygula**.
 3. Önizlemeden sonra durum değiştiyse (ör. bu arada bir dolum geldi) **hiçbir şey uygulanmaz**: yeni önizleme gelir, yeniden okuyup onaylarsınız.
 
-Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da risk durumunu değiştirir. Telefondan da kullanılır (aynı acil PIN ve aynı yanlış deneme sayacı: 5 yanlışta 1 dakika kilit). Geliştirme bilgisayarında sunucuya iletilir (kuyruğa girmez). Her uygulama günlüğe ve botun olay kaydına yazılır, Telegram'a bilgi iletisi gider. Demo hesaptaki botta (Kairos demo kabulü) müdahale ayrıca prova günlüğüne "ölçümden düşülecek" diye yazılır.
+Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da risk durumunu değiştirir. Telefondan da kullanılır (aynı acil PIN ve aynı yanlış deneme sayacı: 5 yanlışta 1 dakika kilit). Geliştirme bilgisayarında sunucuya iletilir (kuyruğa girmez). Her uygulama günlüğe ve botun olay kaydına yazılır, Telegram'a bilgi iletisi gider (güvenli kipten çıkış riski artırdığı için sessiz saatte de giden **güvenlik** iletisi olarak; güvenli kip işlemleri Ayar geçmişi'ne de yazılır). Demo hesaptaki botta (Kairos demo kabulü) müdahale ayrıca prova günlüğüne "ölçümden düşülecek" diye yazılır.
 - Geliştirme bilgisayarında sunucunun sorunları gösterilir; bu bilgisayarın kendi sorunları (sunucu bağlantısı, yazma kuyruğu) **bu bilgisayar** etiketiyle ayrıca çıkar.
 - Uzaktayken Telegram'a **/teshis** yazın: etkin sorunlar ve her biri için ilk iki adım gelir (yalnız Ayarlar'daki Chat ID'den gelen mesaja cevap verilir; komut yalnız okur).
 - Telegram'daki uyarıların "Ne yapmalı" satırı aynı kartın 2–3 kısa adımını ve **Sorunlar** bağlantısını taşır. Bağlantının tıklanabilir olması için **Ayarlar › Bildirimler › Panel adresi**'ne sunucunun Tailscale adresini girin (boşsa mesajda "Panel › Sorunlar" yazar).
@@ -83,6 +83,10 @@ Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da ri
 
 **Belirti:** Telegram "felaket stopu tetiklendi", ardından pozisyon uyuşmazlığı. **Anlamı:** koruma çalıştı, zarar sınırlandı; ama botun defteri pozisyonu hâlâ açık sanıyor. **Adımlar:** panik satış yapmayın; Binance'te o coinde pozisyon kaldı mı bakın. Kartta o coinin **Kaydı borsaya eşitle** düğmesine basın: önizleme borsadaki miktarı, trend kolu ve kademeli alım kayıtlarını, farkı ve eşitlemeden sonraki hâli gösterir. Doğruysa PIN + **ESITLE** ile uygulayın, sonra **Borsayla karşılaştır** — temiz çıkınca kol engeli kalkar. Araç **emir göndermez**: pozisyon borsada kapandıysa kayıt 0'a çekilir (kademeli alım deal'i kapanmış sayılır); yalnız trend kolu açıksa ve borsa aynı yönde küçüldüyse (kısmi ADL / kısmi stop) kayıt borsadaki miktara çekilir. Borsada botun bilmediği pozisyon (elle işlem), büyüyen pozisyon, iki kol birden kısmen açık, sonucu belirsiz ya da son 5 dakikadaki emir varsa araç **uygulanmaz** ve nedenini yazar. Borsada bu coinde botun açık kademeli alım emirleri kaldıysa önizleme uyarır: eşitlemeden sonraki karşılaştırma onları sahipsiz sayıp iptal eder (yeni pozisyon açmaz). **Acil fren**'e basmayın: kalan her şeyi kapatır.
 
+### Kâğıt hesapta acil fren basıldı, pozisyonlar geri isteniyor {#kagit-acil-geri-al}
+
+**Belirti:** kâğıt hesaptaki bot (ör. Tao) acil frenle durdu — deneme ya da yanlış dokunuş; pozisyonlar ve BTC kapandı, hesap nakitte. **Anlamı:** zararsız (kâğıt hesap); ama bot bir sonraki kararda pozisyonları bugünkü fiyattan yeniden kurar, arada kaçan dolumlar ve fiyat farkı hesaba girmez. **Kendiliğinden geçer mi:** hayır. **Adımlar:** botu **Durdur** → Yönetim › **Acil durdurmayı geri al (kâğıt)** → önizlemeyi okuyun → **GERIAL** + PIN → **Başlat** ([ayrıntı](#/kilavuz/botlar/kagit-geri-al)). Önizleme "kaynak bulunamadı" ya da "acil anında uyuşmuyor" derse uygulanmaz: botu olduğu gibi başlatın (bir sonraki kararda kendisi yeniden kurar) ya da **Sohbete gönder**. Demo ve canlı hesapta bu araç yoktur.
+
 ### Çoklu varlık (BTC teminat) denetimi {#coklu-varlik}
 
 **Belirti:** "çoklu varlık modu KAPALI", "spot cüzdanda botun olmayan bakiye", "vadeli BTC ≠ beklenen", "çözülmemiş belirsiz akış". **Anlamı:** dikkat — elle aktarım, yatırma ya da satış. Kart alt türü tanır ve doğru düğmeyi gösterir:
@@ -130,6 +134,8 @@ Onaydan sonra bütün hesaplar yeni bakiyeye göre yapılır: sermaye tavanı, p
 **Belirti:** Telegram'da tek bilgi iletisi "X güvenli kipte — kendiliğinden geçecek"; Sorunlar'da mavi kart ve tahmini kalkış saati. **Anlamı:** zararsız / koruyucu — bakım, fiyat kaynakları arasında fark ya da 24 saatte 2 stop vuruşu yüzünden yeni işlem açılmıyor. Stoplar yerinde. Bu sırada kırmızı alarm gitmez, healthchecks "çalışmadı" demez. **Kendiliğinden geçer mi:** evet — bakımda bitişten 15 dk sonra; fiyat farkında fark %1'in altına inince; stop vuruşunda son vuruştan 24 saat sonra. Kalkınca "güvenli kip geçti" iletisi gelir, ertelenen çalışma birkaç dakika içinde yapılır.
 
 **Adımlar:** dokunmayın. Tahmini saatten 1 saat sonra hâlâ sürüyorsa Sağlık › **Şimdi yokla**, sonra sohbete yazın.
+
+**Telefondan (sunucuya ulaşamıyorsanız):** kartta **Güvenli kipten çık (PIN)…** — önizleme neden güvenli kipte olduğunu, kimin koyduğunu ve çıkınca ne olacağını yazar; acil PIN + **KALDIR** ile uygulanır. Sebep sürüyorsa bot kısa süre içinde yeniden güvenli kipe girer; kendiliğinden geçen durumlarda beklemek daha doğrudur. Bir botu **siz** durdurmadan bekletmek isterseniz Sorunlar sayfasının altındaki **Bir botu güvenli kipe al** (acil PIN + **GÜVENLİ**): yeni işlem açılmaz, stoplar yerinde kalır; bu güvenli kip kendiliğinden kalkmaz ("elle alındı" kartı). ENGEL'i bu araçlar kaldırmaz.
 
 ### Güvenli kip — aynı hata tekrar ediyor {#guvenli-kip-tekrar}
 
@@ -304,9 +310,13 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 | Telegram **/teshis**, **/durum** | Evet | — | — |
 | Botu **acil durdurmak** | Evet (acil PIN + DURDUR) | Hayır | Evet |
 | Onaylı **güncellemeyi kurmak** | Evet (acil PIN + GÜNCELLE) | Hayır | Evet |
-| **Sorun araçları** (kayıt eşitleme, zarar sınırı, sapma / yatırma kabulü) | Evet (acil PIN + onay kelimesi) | Evet (sunucuya iletilir) | Evet |
+| **Sorun araçları** (kayıt eşitleme, zarar sınırı, sapma / yatırma kabulü, para hareketi onayı / Bu ben değilim) | Evet (acil PIN + onay kelimesi) | Evet (sunucuya iletilir) | Evet |
+| **Güvenli kipten çık** / **Botu güvenli kipe al** | Evet (önizleme + acil PIN + KALDIR / GÜVENLİ) | Evet (sunucuya iletilir) | Evet (ayrıca tek tıkla "Güvenli kipi kaldır") |
+| **Borsayla karşılaştır** | Evet (önizleme + acil PIN + KARŞILAŞTIR; önizleme sahipsiz emir iptalini yazar) | Hayır | Evet |
+| **Pusula'yı yeniden başlat** | Evet (acil PIN + YENİDEN BAŞLAT; TR 02:30–04:30 dışında, saatte 1) | Hayır | Evet |
+| Öz denetimi **Şimdi yokla**, Telegram geçici sessizini **Erken bitir** | Evet (PIN'siz; yoklama dakikada 1) | Hayır | Evet |
 | İşlem defterim / Portföyüm kaydı, API anahtarı | Hayır | Evet (yazma jetonu, kuyruk) | Evet |
-| **Botu yeniden aç**, Engeli kaldır, güvenli kipi kaldır, Borsayla karşılaştır | Hayır | Hayır | Evet |
+| **Botu yeniden aç**, Engeli kaldır, Başlat / Durdur, devralma, veri kalitesi kipi, sessize alma | Hayır | Hayır | Evet |
 | Telegram jetonu / Chat ID, sağlık adresleri, acil PIN | Hayır | Hayır | Evet |
 | `git pull`, görev kurma, Windows / güç / saat ayarı | Hayır | Hayır | Evet |
 | Pusula kapalıyken açmak | Hayır | Hayır | Evet (Pusula kısayolu) |

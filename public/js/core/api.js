@@ -65,9 +65,9 @@
     } catch (e) { return 'yerel'; }
   };
   let kademe = ilkKademe();
-  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları — hepsi PIN'li.
-  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet)\/uygula$)/;
-  const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da) — bu işlem sunucudaki panelden yapılır.';
+  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları (77.x: güvenli kipten çık / güvenli kipe al / borsayla karşılaştır / yeniden başlat dahil) — hepsi PIN'li; 77.x TELEFON_SERBEST_YOLU: Şimdi yokla ve sessizi erken bitir PIN'siz.
+  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet|guvenli-kip-kaldir|guvenli-kip-gir|borsa-karsilastir|yeniden-baslat)\/uygula$)|(?:^\/api\/(saglik\/oz\/yokla|bildirim\/gecici-bitir)$)/;
+  const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da: güvenli kipten çık / güvenli kipe al, kayıt eşitleme …) — bu işlem sunucudaki panelden yapılır.';
 
   /**
    * 69.6 YEREL PIN (lib/yerelPin.js): masaüstü panelin tehlikeli işlemleri sunucudan 403 + `kod: 'pin-gerekli'` alır.
@@ -326,6 +326,10 @@
     bindirmeBinanceBakiye: (ad) => al(`/api/bindirme/${q(ad)}/binance-bakiye`),
     /** 68.8: kâğıt hesabı sıfırla (temiz başla) — yalnız kâğıt modda ve bot durmuşken; eski dizin <dizin>-onceki-<zaman> yedeğine taşınır. */
     bindirmeKagitSifirla: (ad, onay, btcAyak) => gonder(`/api/bindirme/${q(ad)}/kagit-sifirla`, btcAyak ? { onay, btcAyak } : { onay }),
+    /** 77.5: kâğıt acil durdurmayı geri al — durum (görünürlük + önizleme işi), önizleme başlat (PIN'siz), uygula (yerel PIN + "GERIAL"). */
+    bindirmeGeriAlDurum: (ad) => al(`/api/bindirme/${q(ad)}/kagit-geri-al`),
+    bindirmeGeriAlOnizle: (ad) => gonder(`/api/bindirme/${q(ad)}/kagit-geri-al/onizle`, {}),
+    bindirmeGeriAlUygula: (ad, onay, is) => gonder(`/api/bindirme/${q(ad)}/kagit-geri-al`, { onay, is }),
     /* Hesap düzeyi kapsayıcı kayıt (data/live/hesap-islemleri.jsonl) */
     hesapIslemleri: ({ hesap = '', bas = '', bit = '', sembol = '', kaynak = '', sayfa = 1 } = {}) =>
       al(`/api/hesap-islemleri?hesap=${q(hesap)}&bas=${q(bas)}&bit=${q(bit)}&sembol=${q(sembol)}&kaynak=${q(kaynak)}&sayfa=${q(sayfa)}`),

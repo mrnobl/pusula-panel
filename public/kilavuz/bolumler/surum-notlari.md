@@ -2,6 +2,16 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.6 — Kâğıt acil durdurmayı geri al; telefondan güvenli kip ve dört işlem (2026-10-26) {#s77-6}
+- **Kâğıt hesapta acil durdurma geri alınabilir.** Botlar › bot › Yönetim › **Acil durdurmayı geri al (kâğıt)**: bot acil öncesi hâline döner,
+  aradaki süre geçmiş fiyatlarla botun kendi kurallarıyla hesaplanır (dolumlar, arada karar saati geçtiyse o günün kararı) ve bugünkü hâlden
+  devam eder. Önce önizleme gösterilir; **GERIAL** + PIN ile uygulanır; eski dosyalar yedeklenir. Demo ve canlı hesapta yoktur.
+- Kâğıt hesapta acil durdurma artık başlamadan önce botun dosyalarının bir kopyasını alır (geri alma için).
+- Acil durdurmanın kendi kayıt satırları artık "tekrarlayan hata" sayılıp güvenli kip açmıyor.
+- **Güvenli kip telefondan:** sunucuya bilgisayardan ulaşamadığınızda güvenli kipi telefondan yönetebilirsiniz. Sorunlar sayfasındaki güvenli kip kartında **Güvenli kipten çık (PIN)…** — önizleme neden güvenli kipte olduğunu ve çıkınca botun yeniden işlem açabileceğini yazar; acil PIN + **KALDIR** ile uygulanır, Telegram'a sessiz saatte de giden bir güvenlik iletisi gider. Sayfanın altındaki **Bir botu güvenli kipe al** (acil PIN + **GÜVENLİ**) botu siz kaldırana kadar bekletir: yeni işlem açılmaz, stoplar yerinde kalır. Engeli kaldırma, başlatma ve ayarlar yine yalnız sunucudaki panelde. [Ayrıntı](#/kilavuz/telefon/acil-pin).
+- **Telefondan dört işlem daha:** Sorunlar kartlarında **Borsayla karşılaştır (PIN)…** (önizleme sahipsiz emir iptali gibi yan etkileri yazar; acil PIN + KARŞILAŞTIR), Sorunlar sayfasının altında **Pusula'yı yeniden başlat** (acil PIN + YENİDEN BAŞLAT; 02:30–04:30 dışında, saatte bir), PIN'siz **Şimdi yokla** (dakikada bir) ve Bildirimler'de geçici sessizi **Erken bitir**. [Ayrıntı](#/kilavuz/telefon/acil-pin).
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)): bot kodu değişti; kuru denemede bütün botların kararı birebir aynı.
+
 ## 77.5 — Eski config.json kalktı (2026-10-26) {#s77-5}
 - **Ayar dosyası:** Program klasöründeki eski `config.json` kalktı; ayarlarınız yalnız veri klasöründeki `ayarlar.json`'da durur. Güncelleme bunu kendisi yapar: önce ayarlarınızı `ayarlar.json`'a alır, eski dosyayı elle değiştirdiyseniz içeriğini veri klasörüne `config.json.yedek-<zaman>` adıyla saklar. Sizin bir şey yapmanız gerekmez; ayarlarınız değişmez.
 - Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); bot kodu aynı.
