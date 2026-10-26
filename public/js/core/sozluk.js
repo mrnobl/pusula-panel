@@ -18,6 +18,14 @@
   const AG = global.AG || (global.AG = {});
 
   const TERIMLER = {
+    fx: 'FX (foreign exchange): döviz piyasası; işlem defterinde döviz çiftleri (ör. EURUSD).',
+    mt: 'MT (MetaTrader): forex ve CFD aracı kurumlarının işlem platformu; işlem defterine MT dökümü yüklenebilir.',
+    xlsx: 'XLSX: Excel dosya biçimi; işlem defterine borsa dökümü olarak yüklenebilir.',
+    tcmb: 'TCMB: Türkiye Cumhuriyet Merkez Bankası; politika faizi ve kurlar buradan.',
+    evds: 'EVDS: TCMB Elektronik Veri Dağıtım Sistemi; ücretsiz makro veri servisi.',
+    tuik: 'TÜİK: Türkiye İstatistik Kurumu; enflasyon (TÜFE) ve büyüme verileri.',
+    hhi: 'HHI (Herfindahl-Hirschman endeksi): yoğunlaşma ölçüsü; payların karelerinin toplamı. Yüksekse varlık birkaç kalemde toplanmıştır.',
+    path: 'PATH: Windows\'un komutları aradığı klasör listesi; Pusula kurulumu node ve npm\'i burada bulur.',
     durduruldu: 'Bot kendini durdurdu ve yeni emir vermiyor. Nedeni incelenip "Engeli kaldır" ile onaylanmadan yeniden işlem yapmaz (iç adı: ENGEL).',
     kagit: 'Kâğıt mod: gerçek emir yok; bot kendi sanal hesabında işlem yapar (eski adı: PAPER).',
     demo: 'Demo mod: Binance Demo Trading hesabında gerçek borsa akışıyla, sahte parayla işlem.',

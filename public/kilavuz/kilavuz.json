@@ -1,5 +1,5 @@
 {
-  "surum": "77.2",
+  "surum": "77.3",
   "aciklama": "Pusula panel içi kılavuzu. Bölüm başına Markdown (bolumler/), ekran görüntüleri ekranlar.json + ekran/. Güncel tutma: npm run kilavuz:ekran + scripts/kilavuz-testi.js (npm test). Her ekranın (rota) bir bölümü olmalı.",
   "bolumler": [
     { "id": "baslarken", "baslik": "Başlarken", "grup": "Başlangıç", "dosya": "bolumler/baslarken.md" },
@@ -65,6 +65,7 @@
     { "id": "surum-notlari", "baslik": "Sürüm notları", "grup": "Başvuru", "dosya": "bolumler/surum-notlari.md" }
   ],
   "surumler": [
+    {"surum":"77.3","tarih":"2026-10-26","yeni":["Kılavuz: ekran görüntüleri yeniden net (görüntü sınırı 10 MB'a çıktı); sözlüğe FX, MT, XLSX, TCMB, EVDS, TÜİK, HHI, PATH açıklamaları eklendi."]},
     {"surum":"77.2","tarih":"2026-10-26","yeni":["Kılavuz: Ayarlar › Makineler ve Anahtarlar görüntüleri yenilendi; para hareketi onayı Botlar ve Sorunlar bölümlerinde, aktarım hesap türü Anahtarlar'da anlatılıyor; eski menü yolları ve denetim sayısı düzeltildi.","Bybit hazırlığı: yeni bot formunda Borsa seçiminde Bybit ve \"Kairos tipi — Bybit (demo hazırlığı)\" şablonu. Bybit botu kâğıt hesapta Bybit'in pazar kurallarıyla çalışır (karar verisi Binance'ten, evren Binance ∩ Bybit; Bybit'te olmayan coin nakitte, Botlar kartında \"Bybit'te yok — nakitte\"). Bybit demo hesabı Anahtarlar'a eklenip sınanabilir ama bota henüz bağlanamaz (\"Bybit demo: hazırlık — henüz bağlanamaz\"); canlı hesap yok. Güncellemenin kuru denemesi Bybit botunu da dener. Kairos, Tao ve OKX botu değişmedi."]},
     {"surum":"77.1","tarih":"2026-10-26","yeni":["Bot güvenliği: bot yeniden başlarken borsada az önce dolmuş ama borsanın sorgusunda henüz görünmeyen bir DCA emri artık ikinci kez gönderilmiyor; bot birkaç dakika bekleyip yeniden sorar. Kendiliğinden çözülür, elle bir şey gerekmez."]},
     {"surum":"77.0","tarih":"2026-10-26","yeni":["Yeni: Botlar › Sermaye dağıtımı — hedef paylar, sapma ve aktarım önerisi; iki aşamalı aktarım (önizleme, sonra acil PIN + AKTAR). Şimdilik yalnız prova (para hareketi yok); canlı hesap aktarımı kapalı. Pusula dış adrese para çekmez."]},

@@ -2,6 +2,11 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.3 — Kılavuz görüntüleri ve sözlük (2026-10-26) {#s77-3}
+- **Kılavuz:** gece kalitesi düşürülen ekran görüntüleri yeniden net; kılavuz görüntülerinin toplam sınırı 8 MB'tan 10 MB'a çıktı.
+- **Sözlük:** FX, MT, XLSX, TCMB, EVDS, TÜİK, HHI ve PATH kısaltmalarının üzerine gelince açıklama çıkar.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)) — sürüm numarası ve panel dosyaları değişti; bot kodu aynı, kuru denemede bütün botların kararı birebir aynı çıkar.
+
 ## 77.2 — Bybit hazırlığı (2026-10-26) {#s77-2}
 - **Bybit hazırlığı:** yeni bot formunda Borsa seçiminde Bybit ve "Kairos tipi — Bybit (demo hazırlığı)" şablonu. Bybit botu kâğıt hesapta Bybit'in pazar kurallarıyla çalışır (karar verisi Binance'ten, evren Binance ∩ Bybit; Bybit'te olmayan coin nakitte, Botlar kartında "Bybit'te yok — nakitte"). Bybit demo hesabı Anahtarlar'a eklenip sınanabilir ama bota henüz bağlanamaz ("Bybit demo: hazırlık — henüz bağlanamaz"); canlı hesap yok. Güncellemenin kuru denemesi Bybit botunu da dener. Kairos, Tao ve OKX botu değişmedi.
 - **Kılavuz:** Ayarlar › Makineler ve Anahtarlar görüntüleri yenilendi; para hareketi onayı [Botlar](#/kilavuz/botlar) ve [Sorunlar](#/kilavuz/sorunlar) bölümlerinde, aktarım hesap türü Anahtarlar'da anlatılıyor; eski menü yolları ve denetim sayısı düzeltildi.
