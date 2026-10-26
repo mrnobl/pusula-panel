@@ -15,6 +15,8 @@
  * bu bilgisayara al — "Devral" (yalnız bilgisayardan + yerel PIN + "DEVRAL"); bot kendiliğinden başlamaz. Demo botta borsadaki bilinmeyen
  * emirler listelenir, "Listeyi onayla" (yerel PIN + "SAHİPLEN") deftere alır; sonra Botlar sayfasında Başlat. Canlı hesap ve Kairos demo
  * kabulü devralınamaz — satırda nedeni yazar.
+ * 77.8 (kullanıcı 2026-10-26): telefonda devralma / emir listesi onayı / bir kezlik Başlat Sistem › Sorunlar'daki PIN'li araçla — bu kart
+ * telefonda o sayfaya bağlantı verir; "Bu bilgisayar" kartının başlığı telefonda bağlı olunan sunucunun adını yazar (her sunucu ayrı simge).
  * DOM AG.dom ile (HTML dizgesi yok), stil p- / an- aileleri, istek AG.api.makine.
  */
 (function (global) {
@@ -326,7 +328,8 @@
   function benKarti() {
     const b = veri.ben || {};
     return el('section', { class: 'p-kart', id: 'mkBen' }, [
-      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', text: 'Bu bilgisayar' })]),
+      // 77.8: telefonda hangi sunucuya bağlı olduğunuz başlıkta (her sunucu telefona ayrı simge — kılavuz › Telefon › Yedek sunucu)
+      el('div', { class: 'p-kart-bas' }, [el('h3', { class: 'p-kart-baslik', id: 'mkBenBaslik', text: telefonMu() ? `Telefon bu sunucuya bağlı: ${b.ad || '—'}` : 'Bu bilgisayar' })]),
       el('dl', { class: 'p-kv' }, [
         el('dt', { text: 'Ad' }), el('dd', { text: b.ad || '—' }),
         el('dt', { text: 'Makine kimliği' }), el('dd', { text: b.kimlik || '—' }),
@@ -449,6 +452,8 @@
       const dugmeler = [];
       if (yaz && x.eylem === 'sahiplen') dugmeler.push(dugme(`mkSahiplen-${d.kimlik}`, 'Listeyi onayla', () => sahiplenOnay(d), 'p-dugme-ana'));
       if (yaz && (x.eylem === 'sahiplen' || x.eylem === 'liste')) dugmeler.push(dugme(`mkSahiplenYenile-${d.kimlik}`, 'Listeyi yenile', () => sahiplenListeYenile(d), 'p-dugme-sessiz'));
+      // 77.8: telefonda emir listesi onayı / bir kezlik Başlat Sorunlar sayfasındaki araçla
+      if (telefonMu() && dv.rol === 'sunucu' && (x.eylem === 'sahiplen' || x.eylem === 'liste' || d.telefonBaslat)) dugmeler.push(el('a', { class: 'p-dugme p-dugme-kucuk no-underline', id: `mkDevralinanSorun-${d.kimlik}`, href: '#/sorunlar' }, [el('span', { text: x.eylem === 'sahiplen' || x.eylem === 'liste' ? 'Telefondan onayla: Sorunlar →' : 'Telefondan Başlat (bir kez): Sorunlar →' })]));
       if (dugmeler.length) parca.push(el('div', { class: 'an-dugmeler' }, dugmeler));
       govde.push(el('div', { class: 'an-form', 'data-devralinan': d.kimlik }, parca));
     }
@@ -460,7 +465,9 @@
         return el('tr', { 'data-devral': `${es.kimlik}:${b.kimlik}` }, [
           el('td', null, [el('strong', { text: b.adGorunen || b.kimlik }), el('span', { class: 'an-alt', text: `${b.kimlik} · ${MOD[b.mod] || b.mod || '—'} · nöbet ${b.nobet || 0}` })]),
           el('td', null, [el('span', { class: d.ton === 'iyi' ? 'p-pos' : '', text: d.metin })]),
-          el('td', null, [el('div', { class: 'an-dugmeler' }, yaz && d.eylem === 'devral' ? [dugme(`mkDevral-${es.kimlik}-${b.kimlik}`, 'Devral', () => devral(es, b))] : [])])
+          el('td', null, [el('div', { class: 'an-dugmeler' }, yaz && d.eylem === 'devral' ? [dugme(`mkDevral-${es.kimlik}-${b.kimlik}`, 'Devral', () => devral(es, b))]
+            // 77.8: telefonda devralma Sorunlar sayfasındaki araçla (önizleme + kutu + DEVRAL + acil PIN) — doğrudan uç telefonda 403
+            : telefonMu() && dv.rol === 'sunucu' && d.eylem === 'devral' ? [el('a', { class: 'p-dugme p-dugme-kucuk no-underline', id: `mkDevralSorun-${es.kimlik}-${b.kimlik}`, href: '#/sorunlar' }, [el('span', { text: 'Telefondan devral: Sorunlar →' })])] : [])])
         ]);
       });
       if (satirlar.length) govde.push(AG.tablo.kutulu({ id: `mkDevralTablo-${es.kimlik}`, sinif: 'an-tablo', basliklar: ['Bot (kopyada)', 'Durum', 'Devral'], satirlar }));
@@ -499,7 +506,7 @@
   }
   function bantlar() {
     const l = [];
-    if (telefonMu()) l.push(bant('Telefondan makineler yalnız görüntülenir — eşleme ve kaldırma bilgisayardaki panelden.', ''));
+    if (telefonMu()) l.push(bant(`Telefon şu an ${(veri.ben && veri.ben.ad) || 'bu sunucu'} sunucusunu gösteriyor. Makineler buradan yalnız görüntülenir — eşleme, kaldırma ve taşıma bilgisayardaki panelden. Bozulan sunucunun botunu devralmak telefondan da olur: Sistem › Sorunlar › "Makine sessiz" kartı (PIN).`, ''));
     l.push(bant('Pano botlara dokunmaz: buradan eşleme, yönetici makine seçimi ve (aşağıdaki kartta, PIN ile) bot taşıma yapılır. Eşlenmiş makine yokken Pusula hiçbir makineye istek göndermez.', ''));
     const belirsiz = ((tasimaVeri && tasimaVeri.botlar) || []).filter(b => b.tasima && b.tasima.asama === 'tasiniyor');
     if (belirsiz.length) l.push(bant(`${belirsiz.map(b => b.adGorunen).join(', ')}: taşıma sürüyor ya da sonucu belli değil — bot iki makinede de başlamaz. Hedef makine açıkken "Yeniden denetle"ye basın.`, 'uyari'));

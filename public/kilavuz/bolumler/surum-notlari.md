@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 77.8 — Telefondan devralma (2026-10-26) {#s77-8}
+- **Telefondan devralma:** bir sunucu kalıcı olarak giderse (bozuldu, elektrik yok, çalındı) onun botunu öbür sunucuya artık telefondan da alabilirsiniz. Ayakta kalan sunucunun panelinde **Sorunlar › Makine sessiz** kartında botun **devral (PIN)** düğmesi: önizleme sessizliği ve son kopyanın yaşını yazar; **"eski makinenin kapalı olduğunu biliyorum"** kutusunu işaretleyip acil PIN + **DEVRAL** ile alınır. Demo botta borsadaki emir listesini **SAHİPLEN** ile onaylarsınız; sonra bot telefondan **bir kez** başlatılabilir (acil PIN + **BAŞLAT**, devralmadan sonraki 24 saat içinde). Her adım Telegram'a sessiz saatte de giden bir güvenlik iletisi olarak gelir. İkinci sunucuyu telefona ayrı bir simge olarak bir kez tanıtmanız gerekir. Canlı hesap botu ve Kairos demo kabulü devralınamaz. [Ayrıntı](#/kilavuz/telefon/telefon-devralma).
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); iki sunucuya da kurun. Kuru denemede bütün botların kararı birebir aynı.
+
 ## 77.7 — Taşınmış botta bütün yazan işlemler kapalı (2026-10-26) {#s77-7}
 - **Taşınmış botta Sorunlar araçları da kapalı:** bot başka makineye taşındıysa ya da devralındıysa eski bilgisayarda (telefondan da) Kaydı borsaya eşitle, Zarar sınırını sıfırla, Farkı / Yatırmayı kabul et, para hareketi onayı / reddi, güvenli kip araçları ve Borsayla karşılaştır; Sağlık sayfasındaki **Güvenli kipten çık** ve Botlar'daki hesap / sermaye / arşivle / geri getir de artık "bu bot … makinesine taşındı" diye reddedilir — Başlat / Mutabakat gibi. Önizlemeler açılır.
 - **Kâğıt acil geri alma:** önizleme sürerken "önizleme hazırlanıyor" bilgi mesajı çıkar (önizleme yarım dakika ile birkaç dakika sürer).

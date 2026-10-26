@@ -1,6 +1,6 @@
 # Telefondan açmak {#telefon}
 
-Telefondan panel **izler ve acil durdurur** (60.5); ayrıca acil PIN ve onay kelimesiyle onaylı güncellemeyi kurar, Sorunlar sayfasının araçlarını kullanır ve **botu güvenli kipe alır / güvenli kipten çıkarır**, **Borsayla karşılaştırır** ve gerekirse **Pusula'yı yeniden başlatır**. PIN'siz iki zararsız işlem de vardır: Sağlık › **Şimdi yokla** ve Bildirimler'de Telegram geçici sessizini **Erken bitir**. Her ekranı görürsünüz; bot başlatma/durdurma, Engeli kaldır, ayar, emir ve backtest yalnız sunucudaki panelden yapılır. Telefonda başlıkta **Telefon: izleme** rozeti çıkar. Ekranın altında çubuk vardır: **Ana · Portföy · Botlar · Sinyaller · Menü** — **Menü** yan menünün aynısını açar.
+Telefondan panel **izler ve acil durdurur** (60.5); ayrıca acil PIN ve onay kelimesiyle onaylı güncellemeyi kurar, Sorunlar sayfasının araçlarını kullanır ve **botu güvenli kipe alır / güvenli kipten çıkarır**, **Borsayla karşılaştırır**, gerekirse **Pusula'yı yeniden başlatır** ve bir sunucu bozulursa onun botunu **öbür sunucuya devralır** ([Telefondan devralma](#/kilavuz/telefon/telefon-devralma)). PIN'siz iki zararsız işlem de vardır: Sağlık › **Şimdi yokla** ve Bildirimler'de Telegram geçici sessizini **Erken bitir**. Her ekranı görürsünüz; bot başlatma/durdurma (yeni devralınmış botun bir kezlik Başlat'ı dışında), Engeli kaldır, ayar, emir ve backtest yalnız sunucudaki panelden yapılır. Telefonda başlıkta **Telefon: izleme** rozeti çıkar. Ekranın altında çubuk vardır: **Ana · Portföy · Botlar · Sinyaller · Menü** — **Menü** yan menünün aynısını açar.
 
 ![Telefonda Ana sayfa](ekran:ana-390)
 
@@ -40,6 +40,22 @@ npm run telefon-jeton -- --adres https://<makine>.<ağ>.ts.net
 
 Tailscale'den kapatmak: `tailscale serve reset`.
 
+### Yedek sunucuyu telefona tanıtmak {#yedek-sunucu-telefon}
+
+İki sunucunuz varsa (biri bozulunca öbürü botları devralsın diye), telefon **her sunucuyu ayrı tanır**: her sunucunun kendi adresi, kendi panel jetonu ve telefonda kendi simgesi olur. Bozulan sunucunun botunu telefondan devralmak için telefonun **ayakta kalan** sunucuya da bağlanabilmesi gerekir — bunu sunucu sağlamken bir kez yapın:
+
+1. **Yedek sunucuda** (öbür bilgisayar) yukarıdaki 1–3. adımları yapın: Tailscale aynı hesapla, `tailscale serve --bg 3000`. Telefonunuz zaten aynı Tailscale hesabındadır.
+2. Yedek sunucunun proje klasöründe kendi karekodunu alın (adres yedek sunucunun adresi):
+
+```powershell
+npm run telefon-jeton -- --adres https://<yedek-makine>.<ağ>.ts.net
+```
+
+3. Telefonda karekodu okutun → yedek sunucunun paneli açılır. **Ana ekrana ayrı bir simge olarak ekleyin** (adını değiştirebiliyorsanız ör. "Pusula B" yazın).
+4. Hangi sunucuya bağlı olduğunuzu her zaman **Ayarlar › Makineler** üst kartı yazar: *Telefon bu sunucuya bağlı: …*. Acil PIN iki sunucuda **aynı** olmalı ([ortak PIN](#/kilavuz/telefon/acil-pin)).
+
+Yeni bir kod ya da ayar yoktur; iki simge iki ayrı paneldir. Bir sunucu sessiz kalınca **öbür sunucunun simgesini** açın — devralma oradan yapılır.
+
 ## Acil durdurma ve acil PIN {#acil-pin}
 
 Telefondaki tek eylem kırmızı **Acil durdur**'dur (botun Genel görünümünde; bot çalışırken üst çubukta da): bot durur, bütün emirler iptal edilir, TÜM pozisyonlar piyasadan kapanır, BTC satılır — geri alınamaz. Bu yüzden iki kilit ister:
@@ -71,6 +87,20 @@ npm run acil-pin
 | **Pusula'yı yeniden başlat** | Sorunlar sayfasının altında **Pusula takıldıysa: yeniden başlat** | Acil PIN + YENİDEN BAŞLAT | Pusula temiz kapanır, ~10 sn sonra aynı kodla açılır (güncelleme kurulmaz); stoplar borsada kalır. TR 02:30–04:30 arası, bir bot çalışması sürerken ve saatte birden fazla yapılamaz. Telegram'a bilgi gider. |
 | **Şimdi yokla** | Sağlık (ve Sorunlar kartları) | PIN'siz, dakikada en çok 1 | Öz denetim hemen koşar; hiçbir şeyi değiştirmez. |
 | **Erken bitir** (geçici sessiz) | Sistem › Bildirimler | PIN'siz | Telegram menüsünden açılan "1 saat sessize al"ı bitirir; bekleyenler tek özet olarak gelir. Sessize **almak** telefondan panelde yoktur (Telegram menüsünden). |
+
+### Telefondan devralma (bozulan sunucunun botu) {#telefon-devralma}
+
+Bir sunucu kalıcı olarak giderse (bozuldu, çalındı, elektrik yok) **ayakta kalan sunucunun** panelinden (telefonda onun simgesi — [yedek sunucuyu tanıtmak](#/kilavuz/telefon/yedek-sunucu-telefon)) botu devralabilirsiniz. Kurallar bilgisayardaki devralmayla aynıdır ([Devralma](#/kilavuz/ayarlar/makine-devralma)): eski makine **30 dakikadan uzun** sessiz ve şu an ulaşılamıyor olmalı, canlı hesap botu ve **Kairos demo kabulü (2026-12-09'a kadar)** devralınamaz.
+
+| Adım | Nerede | Kilit | Ne olur |
+|---|---|---|---|
+| 1. **Devral** | Sistem › Sorunlar › **Makine sessiz: …** kartı › **… bu sunucuya devral (PIN)…** (Ayarlar › Makineler › Devralma kartı da buraya götürür) | Önizleme + **"eski makinenin kapalı olduğunu biliyorum ya da yerinde değil" kutusu** + acil PIN + DEVRAL | Önizleme sessizliği, son kopyanın yaşını ve botu yazar. Kutu işaretlenmeden devralınmaz. Bot bu sunucuya alınır, **kendiliğinden başlamaz**. |
+| 2. **Emir listesini onayla** (yalnız demo bot) | Sorunlar › **…: devralındı — emir listesi onayınızı bekliyor** | Acil PIN + SAHİPLEN (her seferinde PIN) | Borsadaki, botun defterinin bilmediği bizim emirler listelenir; onaylanınca deftere alınır. Liste bu arada değişirse hiçbir şey uygulanmaz, yeni liste gelir. Kâğıt botta bu adım yoktur (karşılaştırma kendiliğinden). |
+| 3. **Başlat (bir kez)** | Sorunlar › **…: devralındı — başlatılmayı bekliyor** | Önizleme + acil PIN + BAŞLAT | Yalnız **yeni devralınmış ve o zamandan beri hiç başlatılmamış** bot için, **bir kez** ve devralmadan sonraki **24 saat** içinde. Başlatmadan önce öbür sunuculara taze nöbet sorulur. Sonraki Durdur / Başlat sunucudaki panelde. |
+
+Her adım Telegram'a **kritik güvenlik iletisi** olarak gider (sessiz saatte de): *"… telefondan devralındı — siz değilseniz hemen acil durdurun"*. Genel **Başlat** telefonda yine yoktur; Bot taşıma, Engeli kaldır ve ayarlar telefonda kapalı kalır.
+
+> **En büyük risk:** eski makine aslında açık ama yalnız ağı kopuksa, ağ gelene kadar iki makine aynı borsa hesabına emir gönderebilir. Bunu telefondan bilemezsiniz — kutuyu yalnız gerçekten biliyorsanız işaretleyin. Eski makine geri gelince botu başlatmaz; çalışır hâlde gelirse ilk nabızda durdurur.
 
 PIN tanımlı değilse telefondan acil durdurma **kapalıdır**. 1 dakikada 5 yanlış PIN → 1 dakika kilit + Telegram uyarısı (73.0; kilit her zaman 1 dakika). PIN'i değiştirmek için komutu yeniden çalıştırın (eski PIN'i sormaz — unuttuysanız da böyle) ya da panelde [Ayarlar › Anahtarlar › PIN'i değiştir](#/kilavuz/ayarlar/pin-degistir) (eski PIN ister). **Ortak PIN:** PIN bütün bilgisayarlarda aynıdır; değiştirdiğinizde öbür bilgisayarlarda da aynı PIN'i girin (Faz 3'te kendiliğinden eşitlenecek). Silmek için `npm run acil-pin -- --sil`. Telegram'dan acil durdurma yoktur (Telegram yalnız okur; [Telegram menüsü](#/kilavuz/telegram-menu)'ndeki ↗ düğmeleri bu panelin doğru sayfasını açar, işlem burada acil PIN ile).
 

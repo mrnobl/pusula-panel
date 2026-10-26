@@ -15,13 +15,13 @@ Her durum aynı sırayla anlatılır: **Belirti** (ne görüyorsunuz) → **Anla
 
 ### Sorun araçları: önizle, PIN, onay {#sorun-araclari}
 
-Bugün hiçbir düğmenin çözemediği durumlar için kartta araç düğmesi çıkar: **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası), **Zarar sınırını sıfırla** (K3), **Farkı kabul et** (%5 uygulama sapması), **Yatırmayı kabul et**, para hareketi kartlarında **Para hareketini onayla** / **Bu ben değilim**; güvenli kip kartlarında (telefonda ve geliştirme bilgisayarında) **Güvenli kipten çık (PIN)…**, sayfanın altında **Bir botu güvenli kipe al**. Hepsi aynı yolu izler:
+Bugün hiçbir düğmenin çözemediği durumlar için kartta araç düğmesi çıkar: **Kaydı borsaya eşitle** (felaket stopu / ADL / likidasyon sonrası), **Zarar sınırını sıfırla** (K3), **Farkı kabul et** (%5 uygulama sapması), **Yatırmayı kabul et**, para hareketi kartlarında **Para hareketini onayla** / **Bu ben değilim**; güvenli kip kartlarında (telefonda ve geliştirme bilgisayarında) **Güvenli kipten çık (PIN)…**, sayfanın altında **Bir botu güvenli kipe al**; telefonda **Makine sessiz** kartında **… bu sunucuya devral (PIN)…**, devralınan botun kartlarında **Emir listesini onayla** ve **Başlat (bir kez)** ([Telefondan devralma](#/kilavuz/telefon/telefon-devralma)). Hepsi aynı yolu izler:
 
 1. Düğmeye basın: önce **önizleme** açılır — şimdiki durum, ne değişeceği, uyarılar. Araç bu durumda güvenle uygulanamıyorsa nedenini yazar ve düğme çıkmaz.
-2. Önizlemeyi okuyun; doğruysa **acil PIN**'i ve onay kelimesini (ESITLE / SIFIRLA / KABUL / ONAY / BEN DEĞİLİM / KALDIR / GÜVENLİ) yazıp **Uygula**.
+2. Önizlemeyi okuyun; doğruysa **acil PIN**'i ve onay kelimesini (ESITLE / SIFIRLA / KABUL / ONAY / BEN DEĞİLİM / KALDIR / GÜVENLİ / DEVRAL / SAHİPLEN / BAŞLAT) yazıp **Uygula**. Devralmada ayrıca *"eski makinenin kapalı olduğunu biliyorum ya da yerinde değil"* kutusu işaretlenmelidir.
 3. Önizlemeden sonra durum değiştiyse (ör. bu arada bir dolum geldi) **hiçbir şey uygulanmaz**: yeni önizleme gelir, yeniden okuyup onaylarsınız.
 
-Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da risk durumunu değiştirir. Telefondan da kullanılır (aynı acil PIN ve aynı yanlış deneme sayacı: 5 yanlışta 1 dakika kilit). Geliştirme bilgisayarında sunucuya iletilir (kuyruğa girmez). Her uygulama günlüğe ve botun olay kaydına yazılır, Telegram'a bilgi iletisi gider (güvenli kipten çıkış riski artırdığı için sessiz saatte de giden **güvenlik** iletisi olarak; güvenli kip işlemleri Ayar geçmişi'ne de yazılır). Demo hesaptaki botta (Kairos demo kabulü) müdahale ayrıca prova günlüğüne "ölçümden düşülecek" diye yazılır.
+Araçlar **borsaya emir göndermez**; yalnız botun kaydını, engelini ya da risk durumunu değiştirir (istisna: devralınan botun **Başlat**'ı — bot başlar ve kendi planıyla işlem açabilir). Telefondan da kullanılır (aynı acil PIN ve aynı yanlış deneme sayacı: 5 yanlışta 1 dakika kilit). Geliştirme bilgisayarında sunucuya iletilir (kuyruğa girmez). Her uygulama günlüğe ve botun olay kaydına yazılır, Telegram'a bilgi iletisi gider (güvenli kipten çıkış riski artırdığı için sessiz saatte de giden **güvenlik** iletisi olarak; güvenli kip işlemleri Ayar geçmişi'ne de yazılır). Demo hesaptaki botta (Kairos demo kabulü) müdahale ayrıca prova günlüğüne "ölçümden düşülecek" diye yazılır.
 - Geliştirme bilgisayarında sunucunun sorunları gösterilir; bu bilgisayarın kendi sorunları (sunucu bağlantısı, yazma kuyruğu) **bu bilgisayar** etiketiyle ayrıca çıkar.
 - Uzaktayken Telegram'a **/teshis** yazın: etkin sorunlar ve her biri için ilk iki adım gelir (yalnız Ayarlar'daki Chat ID'den gelen mesaja cevap verilir; komut yalnız okur).
 - Telegram'daki uyarıların "Ne yapmalı" satırı aynı kartın 2–3 kısa adımını ve **Sorunlar** bağlantısını taşır. Bağlantının tıklanabilir olması için **Ayarlar › Bildirimler › Panel adresi**'ne sunucunun Tailscale adresini girin (boşsa mesajda "Panel › Sorunlar" yazar).
@@ -314,9 +314,11 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 | **Güvenli kipten çık** / **Botu güvenli kipe al** | Evet (önizleme + acil PIN + KALDIR / GÜVENLİ) | Evet (sunucuya iletilir) | Evet (ayrıca tek tıkla "Güvenli kipi kaldır") |
 | **Borsayla karşılaştır** | Evet (önizleme + acil PIN + KARŞILAŞTIR; önizleme sahipsiz emir iptalini yazar) | Hayır | Evet |
 | **Pusula'yı yeniden başlat** | Evet (acil PIN + YENİDEN BAŞLAT; TR 02:30–04:30 dışında, saatte 1) | Hayır | Evet |
+| Bozulan sunucunun botunu **devralmak** (ayakta kalan sunucunun panelinde) | Evet (Sorunlar › Makine sessiz: önizleme + kutu + acil PIN + DEVRAL; demo botta SAHİPLEN) | Hayır | Evet |
+| Devralınan botu **Başlat** | Evet — yalnız yeni devralınmış, hiç başlatılmamış bota, **bir kez**, 24 saat içinde (acil PIN + BAŞLAT) | Hayır | Evet |
 | Öz denetimi **Şimdi yokla**, Telegram geçici sessizini **Erken bitir** | Evet (PIN'siz; yoklama dakikada 1) | Hayır | Evet |
 | İşlem defterim / Portföyüm kaydı, API anahtarı | Hayır | Evet (yazma jetonu, kuyruk) | Evet |
-| **Botu yeniden aç**, Engeli kaldır, Başlat / Durdur, devralma, veri kalitesi kipi, sessize alma | Hayır | Hayır | Evet |
+| **Botu yeniden aç**, Engeli kaldır, Başlat / Durdur (devralma sonrası bir kezlik Başlat dışında), bot taşıma, veri kalitesi kipi, sessize alma | Hayır | Hayır | Evet |
 | Telegram jetonu / Chat ID, sağlık adresleri, acil PIN | Hayır | Hayır | Evet |
 | `git pull`, görev kurma, Windows / güç / saat ayarı | Hayır | Hayır | Evet |
 | Pusula kapalıyken açmak | Hayır | Hayır | Evet (Pusula kısayolu) |
@@ -368,6 +370,24 @@ Eşlenmiş SUNUCULAR birbirinin bot verisini her saatin 20. dakikasında şifrel
 **Adımlar:** kartta yazan nedene bakın. *Eşe ulaşılamadı* → eş açık mı, Tailscale bağlı mı; açınca "Şimdi kopya al". *Yedek şifresi yok / farklı* → iki bilgisayarda Ayarlar › Yedek & taşıma'dan **aynı** yedek şifresini girin (kopya bu şifreyle şifrelenir). *Sürüm uyumsuz / kopyayı bilmiyor* → iki makineyi aynı sürüme güncelleyin.
 
 **Kopya kapsamı 64 MB sınırına yaklaşıyor / AŞIYOR (76.7):** eş kopyasının bir sınırı var (64 MB). Bir makinenin bot kayıtları bunun %80'ine gelince Sağlık'ta "Eş makine kopyası" sarı yanar ve kaç MB olduğunu yazar; sınırı aşarsa o makinenin kopyası alınamaz (eski kopya bozulmaz, olduğu gibi kalır). Bu yalnız haberdir: botları etkilemez, **Telegram'a anında gitmez** (yalnız panelde ve akşam özetinde görünür). Siz bir şey silmeyin — geliştirme sohbetine yazın.
+
+### Makine sessiz (eşlenmiş sunucu) {#makine-sessiz}
+
+**Belirti:** Sorunlar'da sarı **Makine sessiz: …** kartı — eşlenmiş öbür sunucu 30 dakikadan uzun nabız ve kopya vermedi; kart son temas zamanını, son kopyanın yaşını ve o makinedeki hangi botun devralınabileceğini (hangisinin neden devralınamayacağını) yazar. **Anlamı:** o makinedeki botlar karar veremiyor olabilir; açık pozisyonların felaket stopları **borsada** durur. **Kendiliğinden geçer mi:** makine açılıp nabız gönderince kart kalkar; botlar orada kaldığı yerden devam eder.
+
+**Adımlar:**
+
+1. Önce neden sessiz olduğunu öğrenin: [Sunucu sessiz](#/kilavuz/sorun-giderme/sunucu-sessiz) karar ağacı (elektrik, internet, Tailscale). Kısa bir kesintiyse **beklemek** doğrudur.
+2. Makine **kalıcı olarak** gittiyse (bozuldu, çalındı) ve **kapalı olduğundan eminseniz**: kartta botun **… bu sunucuya devral (PIN)…** düğmesi (telefonda görünür; bilgisayardaysanız Ayarlar › Makineler › Devralma kartı) → önizleme → *"eski makinenin kapalı olduğunu biliyorum ya da yerinde değil"* kutusu → **DEVRAL** + acil PIN.
+3. Sonra *devralındı* kartları gelir: demo botta emir listesi onayı, ardından bir kez Başlat ([aşağıda](#/kilavuz/sorun-giderme/devralma-bekliyor)).
+
+**Dokunmayın:** eski makine açık ama yalnız ağı kopuksa devralmayın — ağ gelene kadar iki makine aynı borsa hesabına emir gönderebilir. Kairos demo kabulü (2026-12-09'a kadar) ve canlı hesap botu devralınamaz. **Sohbete yazın:** devralma "yapılamadı" derse ya da makine bir günden uzun sessizse.
+
+### Devralınan bot bekliyor (emir listesi / Başlat) {#devralma-bekliyor}
+
+**Belirti:** **…: devralındı — emir listesi onayınızı bekliyor** (kırmızı, demo bot) ya da **…: devralındı — başlatılmayı bekliyor** (sarı). **Anlamı:** bot bu sunucuya alındı ama kendiliğinden başlamaz. Demo botta önce borsadaki, botun defterinin bilmediği bizim emirler onaylanmalı (onaydan önce Mutabakat ve Başlat kapalı; acil durdurma serbest). **Kendiliğinden geçer mi:** hayır.
+
+**Adımlar:** *Emir listesini onayla (PIN)…* → önizlemedeki listeyi okuyun → **SAHİPLEN** + acil PIN (liste bu arada değişirse hiçbir şey uygulanmaz, yeni liste gelir). Temizse *Başlat (PIN, bir kez)…* → **BAŞLAT** + acil PIN. Telefondan Başlat yalnız devralmadan sonraki **ilk** başlatma için ve **24 saat** içinde açıktır; sonra Başlat / Durdur sunucudaki panelde. Her adım Telegram'a kritik güvenlik iletisi olarak gider (*"… telefondan devralındı / sahiplenildi / başlatıldı — siz değilseniz hemen acil durdurun"*). Siz yapmadıysanız: hemen **Acil durdur**, sonra acil PIN'i ve panel jetonunu değiştirin. **Sohbete yazın:** liste okunamıyorsa ya da onaydan sonra "TEMİZ DEĞİL" derse.
 
 ### Geri dönüş tatbikatı geçmedi {#geri-donus}
 

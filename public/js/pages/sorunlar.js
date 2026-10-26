@@ -168,18 +168,20 @@
     const o = onz || {};
     return { baslik: o.baslik || o.ad || 'Önizleme', satirlar: o.satirlar || [], uyarilar: o.uyarilar || [], tablo: o.tablo || null,
       form: !!o.uygulanabilir, neden: o.uygulanabilir ? null : (o.neden || 'Uygulanamaz.'), onayMetni: o.onayMetni || '', demo: o.demoKabul || null,
+      kutu: o.uygulanabilir && o.kutu ? String(o.kutu) : null,   // 77.8 devral: "eski makine kapalı" kutusu (zorunlu — sunucu da denetler)
       eski: !!(o.evKaynak && o.evKaynak.eski) };
   }
   /** Saf: uygulama gövdesi (PIN yalnız bu istekte; hiçbir yerde saklanmaz). */
-  function aracGovde(e, onz, pin, onay) {
+  function aracGovde(e, onz, pin, onay, biliyorum) {
     const a = e.api || {};
-    return { bot: a.bot, ...(a.sembol ? { sembol: a.sembol } : {}), pin: String(pin || '').trim(), onay: String(onay || '').trim(), parmak: onz && onz.parmak };
+    return { bot: a.bot, ...(a.sembol ? { sembol: a.sembol } : {}), ...(a.es ? { es: a.es } : {}), ...(onz && onz.kutu ? { biliyorum: biliyorum === true } : {}),
+      pin: String(pin || '').trim(), onay: String(onay || '').trim(), parmak: onz && onz.parmak };
   }
   async function aracAc(k, e, dugme) {
     const a = e.api || {};
     AG.dom.mesgul(dugme, '…');
     try {
-      const r = await AG.api.sorunArac.onizle(a.arac, a.bot, a.sembol);
+      const r = await AG.api.sorunArac.onizle(a.arac, a.bot, a.sembol, a.es);
       if (!r || r.success === false || !r.onizleme) throw new Error((r && r.error) || 'önizleme alınamadı');
       aracDurum[k.kimlik] = { e, onz: { ...r.onizleme, evKaynak: r.evKaynak || null }, sonuc: null, mesaj: null };
     } catch (x) { aracDurum[k.kimlik] = { e, onz: null, sonuc: null, mesaj: `Önizleme alınamadı: ${x.message}` }; }
@@ -192,9 +194,11 @@
     const kid = String(k.kimlik).replace(/[^a-z0-9-]/gi, '-');
     const pin = (bul(`inpSorunAracPin-${kid}`) || {}).value;
     const onay = (bul(`inpSorunAracOnay-${kid}`) || {}).value;
+    const biliyorum = !!(bul(`chkSorunAracKutu-${kid}`) || {}).checked;
+    if (d.onz.kutu && d.onz.uygulanabilir && !biliyorum) { d.mesaj = 'Önce kutuyu işaretleyin: eski makinenin kapalı olduğunu biliyor musunuz? İşaretlenmeden devralınmaz.'; aracCiz(k); return; }
     AG.dom.mesgul(dugme, 'Uygulanıyor…');
     let r;
-    try { r = await AG.api.sorunArac.uygula(d.e.api.arac, aracGovde(d.e, d.onz, pin, onay)); } catch (x) { r = { success: false, error: x.message }; }
+    try { r = await AG.api.sorunArac.uygula(d.e.api.arac, aracGovde(d.e, d.onz, pin, onay, biliyorum)); } catch (x) { r = { success: false, error: x.message }; }
     finally { AG.dom.hazir(dugme); }
     if (r && r.success) { d.sonuc = r; d.mesaj = null; bildir(`${d.e.ad.replace(/…$/, '')}: tamam`, 'ok'); aracCiz(k); yukle({ taze: true }); return; }
     if (r && r.onizleme) d.onz = r.onizleme;   // 409: durum değişti → yeni önizleme (PIN yeniden)
@@ -229,6 +233,7 @@
       const uygula = el('button', { type: 'button', class: 'btn btn-danger btn-sm', id: `btnSorunAracUygula-${kid}` }, [el('span', { text: 'Uygula' })]);
       uygula.addEventListener('click', () => aracUygula(k, uygula));
       parca.push(el('div', { class: 'sorun-arac-form' }, [
+        ...(m.kutu ? [el('label', { class: 'oz-okudum sorun-arac-kutu', for: `chkSorunAracKutu-${kid}` }, [el('input', { type: 'checkbox', id: `chkSorunAracKutu-${kid}` }), el('span', { text: ` ${m.kutu}` })])] : []),
         el('label', { for: `inpSorunAracPin-${kid}`, text: 'Acil PIN' }),
         el('input', { type: 'password', id: `inpSorunAracPin-${kid}`, class: 'form-control', inputmode: 'numeric', autocomplete: 'off', maxlength: '12' }),
         el('label', { for: `inpSorunAracOnay-${kid}`, text: `Onay için ${m.onayMetni} yazın` }),

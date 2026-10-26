@@ -65,8 +65,8 @@
     } catch (e) { return 'yerel'; }
   };
   let kademe = ilkKademe();
-  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları (77.x: güvenli kipten çık / güvenli kipe al / borsayla karşılaştır / yeniden başlat dahil) — hepsi PIN'li; 77.x TELEFON_SERBEST_YOLU: Şimdi yokla ve sessizi erken bitir PIN'siz.
-  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet|guvenli-kip-kaldir|guvenli-kip-gir|borsa-karsilastir|yeniden-baslat)\/uygula$)|(?:^\/api\/(saglik\/oz\/yokla|bildirim\/gecici-bitir)$)/;
+  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları (77.x: güvenli kipten çık / güvenli kipe al / borsayla karşılaştır / yeniden başlat dahil; 77.8: devral / devral-sahiplen / devral-baslat) — hepsi PIN'li; 77.x TELEFON_SERBEST_YOLU: Şimdi yokla ve sessizi erken bitir PIN'siz.
+  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet|guvenli-kip-kaldir|guvenli-kip-gir|borsa-karsilastir|yeniden-baslat|devral|devral-sahiplen|devral-baslat)\/uygula$)|(?:^\/api\/(saglik\/oz\/yokla|bildirim\/gecici-bitir)$)/;
   const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da: güvenli kipten çık / güvenli kipe al, kayıt eşitleme …) — bu işlem sunucudaki panelden yapılır.';
 
   /**
@@ -684,7 +684,7 @@
     },
     /* 73.8 Sorun araçları (lib/sorunAraclari.js): önizleme → PIN + onay metni + parmak izi; 409 = durum değişti (yeni önizleme gövdede) */
     sorunArac: {
-      onizle: (arac, bot, sembol) => al(`/api/sorun-arac/${q(arac)}/onizle?bot=${q(bot)}${sembol ? `&sembol=${q(sembol)}` : ''}`),
+      onizle: (arac, bot, sembol, es) => al(`/api/sorun-arac/${q(arac)}/onizle?bot=${q(bot)}${sembol ? `&sembol=${q(sembol)}` : ''}${es ? `&es=${q(es)}` : ''}`),   // 77.8 es: devralınacak eş makine
       uygula: (arac, govde) => istek(`/api/sorun-arac/${q(arac)}/uygula`, { govde, pinYineleme: true })
     },
 
