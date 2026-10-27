@@ -2,6 +2,10 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.5 — Pusula Doktoru onarım motoru (gölge kipinde) (2026-10-27) {#s78-5}
+- **Pusula Doktoru onarım motoru** ([ayrıntı](#/kilavuz/doktor/onarim-motoru)): Sistem › Pusula Doktoru'nda yeni **Onarım motoru** bölümü. Doktor artık dört küçük işi kendiliğinden deneyebilir: hata veren bayat veri kaynağını yeniden indirtmek, susan ileriye kayıtçıyı (ör. OKX tasfiye akışı) yeniden başlatmak, Telegram ulaşmıyorsa bekleyen ileti başlıklarını ikinci kanala göndermek ve (siz açarsanız) başarısız yedeği gündüz bir kez yeniden denemek. **İlk 7 gün gölge kipinde**: yalnız "şunu yapardım" der, hiçbir şey yapmaz; 7. gün bir kez hatırlatır. Etkin kipe yalnız siz geçirirsiniz (sunucudaki panel, acil PIN + ONAR); "İzleme kipine dön" telefondan da, PIN'siz. Aynı iş 3 kez olmazsa size devreder (Telegram + Sorunlar kartı + Onarım Rehberi). Pozisyona, bota, ayara dokunmaz; Pusula'yı yeniden başlatmaz. Açılışta borsaya bağlanma denemeleri ±%20 kaydırıldı (Kairos hariç). Kurs ve kitapçıkta öz denetim sayısı 39.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); kuru denemede bütün botların kararı birebir aynı.
+
 ## 78.4 — Pusula kendini daha iyi izliyor (2026-10-27) {#s78-4}
 - **Öz denetim kendini de denetler:** takılan bir denetim en çok 60 saniye beklenir; yoklama durursa Sorunlar'da "Öz denetim durdu" kartı ve bir Telegram alarmı çıkar, kendiliğinden yeniden başlar. Öz denetim taze değilken sunucunun sağlık sinyali gönderilmez — dış izleyici de uyarır.
 - **Yeni denetimler (39):** "Program dosyaları yerinde" (antivirüs bir dosyayı karantinaya alırsa Pusula kapanmadan haber verir — Pusula'yı yeniden başlatmayın) ve "Zamanlanmış görevler" (görev yok, devre dışı, Windows parolası değişti ya da uzun süredir çalışmadı — günde bir bilgi). Güncellemeler 2 gündür denetlenmiyorsa da sarı.

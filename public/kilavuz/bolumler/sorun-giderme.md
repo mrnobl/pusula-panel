@@ -538,6 +538,16 @@ Gölge test kayıtları bu denemede yazılmadı (bilgisayar meşgul ya da ağ); 
 
 Öz denetim sorun görmüyorsa yalnız bilgi (tek tük ağ / kaynak hatası). Merak ederseniz Günlükler'de okuyun.
 
+## Pusula Doktoru onarım motoru {#doktor-onarim-motoru}
+
+### Pusula Doktoru size devretti {#doktor-devretti}
+
+**Belirti:** Sorunlar'da kırmızı "Pusula Doktoru size devretti: …"; Telegram'da "Pusula Doktoru: … olmadı — size devredildi". **Anlamı:** dikkat — Doktor'un onarım motoru (etkin kipte) aynı işi art arda 3 kez denedi, olmadı. Pozisyonlara ve botların kararına dokunmaz. **Adımlar:** kartta yazan Onarım Rehberi kartını açın (Bilgi › Onarım Rehberi, arama kutusuna kart numarasını yazın, ör. S-100) ve adımlarını izleyin; [Pusula Doktoru › Onarım motoru](#/kilavuz/doktor/onarim-motoru) bölümünde Doktor'un ne denediğini okuyun. Doktor bu işi 24 saat yeniden denemez, sonra bir kez dener. Çözülmezse "Sohbete gönder".
+
+### Pusula Doktoru: gölge süresi doldu {#doktor-golge-ozeti}
+
+**Belirti:** Sorunlar'da mavi "7 günlük gölge süresi doldu — kararınız bekleniyor"; Telegram'da bir kez aynı ileti. **Anlamı:** zararsız — onarım motoru bir haftadır yalnız izledi ("şunu yapardım"), hiçbir şey yapmadı. Pusula kipi kendiliğinden değiştirmez. **Adımlar:** [Pusula Doktoru › Onarım motoru](#/kilavuz/doktor/onarim-motoru) › "Şunu yapardım" listesine bakın. Doğruysa sunucudaki panelden **Etkin kipe geç…** (acil PIN + ONAR); emin değilseniz gölgede bırakın. Kart gölgenin 14. gününde kendiliğinden kalkar.
+
 ## Geliştirme bilgisayarı (araştırma kopyası) {#arastirma-kopyasi}
 
 ### Sunucu bağlantısı {#sunucu-baglantisi}

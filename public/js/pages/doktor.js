@@ -5,7 +5,13 @@
  * kendi kuralları (D1 konsol günlüğü, D2 geçici tatbikat artığı, D3 bayat kilit, D10 hazır olma): "şu an ne bozuk · anlamı ne · kendiliğinden
  * düzelir mi · siz ne yapmalısınız · rehber", (3) onarım günlüğü — Pusula'nın kendiliğinden yaptığı onarımlar (kayıtlardan; 1 / 7 / 30 gün),
  * (4) bakım durumu, (5) Doktor ne yapar / ne yapmaz (K1/K2) + kendiliğinden onarımlar listesi.
- * SALT OKUMA: bu sayfada işlem düğmesi YOK (telefonda da aynı). Araştırma kopyasında sunucunun Doktor'u okunur (yanıtta evKaynak).
+ * (6) 78.2 ONARIM MOTORU (#doktorMotor): kip (gölge / etkin / kapalı), gölge gün sayacı, kurallar (D4 D5 D6 D7: tetik var mı, neden yapmadı,
+ * son karar), "şunu yapardım" listesi, etkin kayıtlar, devirler, ortak sınırlar. Düğmeler — YALNIZ bunlar yazar:
+ *   "Etkin kipe geç…"   yalnız bu bilgisayarda (telefonda gizli; sunucu da 403): önizleme + ONAR yazma → sunucu yerel PIN ister (api.js PIN penceresi)
+ *   "İzleme kipine dön" / "Kapat" / "İzleme kipini aç"   PIN'siz, telefonda da (güvenli yön)
+ *   kural "Aç" (yerel PIN) / "Kapat" (PIN'siz) — yalnız bu bilgisayarda
+ * Araştırma kopyasında (sunucudan okunan sayfa) düğme yok: değişiklik sunucudaki panelden ya da telefondan.
+ * Teşhis kartlarında ve onarım günlüğünde işlem düğmesi YOK. Araştırma kopyasında sunucunun Doktor'u okunur (yanıtta evKaynak).
  */
 (function (global) {
   'use strict';
@@ -181,10 +187,131 @@
     ]);
   }
 
+  // ── 78.2 ONARIM MOTORU ────────────────────────────────────────────────────────
+  const KIP_TON = { golge: 'p-rozet-info', etkin: 'p-rozet-pos', kapali: '' };
+  const KIP_AD = { golge: 'gölge (izleme)', etkin: 'etkin', kapali: 'kapalı' };
+  const KARAR_AD = { yapardim: ['yapardım', 'p-rozet-info'], 'golge-sonra': ['sonra', ''], yapildi: ['yaptı', 'p-rozet-pos'], dogrulandi: ['düzeldi', 'p-rozet-pos'],
+    olmadi: ['olmadı', 'p-rozet-neg'], atlandi: ['atlandı', ''], devretti: ['size devretti', 'p-rozet-neg'] };
+  const telefonMu = () => !!(AG.api && AG.api.kademe && AG.api.kademe() === 'telefon');
+  /** Sunucudan okunan sayfada (araştırma kopyası) yazma yok — değişiklik sunucuda. */
+  const yazilabilir = (v) => !!v && !v.sunucudan && v.rol !== 'arastirma';
+  const kisaOnce = (o) => {
+    if (!o || typeof o !== 'object') return '';
+    const p = [];
+    if (o.hata) p.push(o.hata);
+    if (o.veriGunu) p.push(`veri ${o.veriGunu} tarihine kadar`);
+    if (Number.isFinite(o.saat)) p.push(`${String(o.saat).replace('.', ',')} saattir yazmıyor`);
+    if (o.bekleme) p.push(`${o.kuyruk || '?'} ileti ${o.bekleme} bekliyor`);
+    if (o.sorun) p.push(o.sorun);
+    return p.join(' · ');
+  };
+
+  /** Saf: "şunu yapardım" / etkin kayıt satırı → tablo modeli. */
+  function motorSatirModeli(x) {
+    const [ad, ton] = KARAR_AD[x.karar] || [x.karar, ''];
+    let ne;
+    if (x.karar === 'golge-sonra') ne = x.sonuc === 'gecti' ? 'sorun kendiliğinden geçti (Doktor bir şey yapmadan)' : 'sorun sürüyordu';
+    else if (x.karar === 'yapardim') ne = `${x.kuralAd || x.kural}${kisaOnce(x.once) ? ` — gördüğü: ${kisaOnce(x.once)}` : ''}`;
+    else ne = `${x.kuralAd || x.kural}${x.sonra && x.sonra.ayrinti ? ` — ${x.sonra.ayrinti}` : ''}${x.neden ? ` — ${x.neden}` : ''}`;
+    return { zaman: zaman(x.z), karar: ad, ton, hedef: x.hedefAd || x.hedef || '—', ne };
+  }
+  /** Saf: motor özeti → düğme listesi (kademe + kip'e göre). Telefonda YALNIZ izleme / kapalı kipine dönüş. */
+  function motorDugmeleri(m, { telefon = false, yazilir = true } = {}) {
+    if (!m || !yazilir) return [];
+    const l = [];
+    if (m.kip !== 'etkin' && !telefon) l.push({ kimlik: 'etkin', metin: 'Etkin kipe geç…', birincil: true });
+    if (m.kip === 'etkin') l.push({ kimlik: 'golge', metin: 'İzleme kipine dön', birincil: true });
+    if (m.kip === 'kapali') l.push({ kimlik: 'golge', metin: 'İzleme kipini aç' });
+    if (m.kip !== 'kapali') l.push({ kimlik: 'kapali', metin: 'Kapat' });
+    return l;
+  }
+
+  async function kipDugmesi(kimlik) {
+    const m = veri && veri.motor;
+    if (!m) return;
+    let r;
+    if (kimlik === 'etkin') {
+      const o = m.onizleme || {};
+      const ac = (o.acikKurallar || []).map(x => `${x.ad} — ${x.sinir}`).join(' · ') || 'açık kural yok';
+      const kapali = (o.kapaliKurallar || []).map(x => x.ad).join(', ');
+      const g = m.golge || {};
+      const cevap = await AG.bildirim.onayla({ baslik: 'Onarım motoru etkin kipe geçsin mi?', tehlikeli: true, onay: 'Etkin kipe geç',
+        metin: `Etkin kipte Doktor şu kuralları sınırları içinde KENDİLİĞİNDEN uygular: ${ac}.${kapali ? ` Kapalı kalanlar: ${kapali}.` : ''} Ortak sınırlar: ${(o.sinirlar || []).join(' ')} Gölgede son 7 günde ${g.yapardim || 0} kez "yapardım" dedi. Telefondan "İzleme kipine dön" ile hemen durdurabilirsiniz. Ardından acil PIN sorulur.`,
+        alanlar: [{ ad: 'onay', etiket: `Onay için ${o.onay || 'ONAR'} yazın`, ipucu: o.onay || 'ONAR', dogrula: (s) => s.trim().toLocaleUpperCase('tr-TR') === (o.onay || 'ONAR') }] });
+      if (!cevap) return;
+      r = await AG.api.doktor.etkin(cevap.onay);
+    } else {
+      if (kimlik === 'kapali' && !(await AG.bildirim.onayla({ baslik: 'Onarım motoru kapatılsın mı?', metin: 'Kapalıyken Doktor ne izler ne yapar ("yapardım" kaydı da düşmez). Teşhis ve bakım işleri sürer. İstediğiniz zaman PIN\'siz yeniden açabilirsiniz.', onay: 'Kapat' }))) return;
+      r = await AG.api.doktor.kip(kimlik);
+    }
+    AG.bildirim.bildir(r && r.success ? `Onarım motoru: ${KIP_AD[r.motor && r.motor.kip] || 'güncellendi'}` : `Olmadı: ${(r && r.error) || 'yanıt yok'}`, r && r.success ? 'ok' : 'hata');
+    if (r && r.success) { veri.motor = r.motor; ciz(); }
+  }
+  async function kuralDugmesi(kural, ac) {
+    const r = ac ? await AG.api.doktor.kuralAc(kural) : await AG.api.doktor.kuralKapat(kural);
+    AG.bildirim.bildir(r && r.success ? `${kural} ${ac ? 'açıldı' : 'kapatıldı'}` : `Olmadı: ${(r && r.error) || 'yanıt yok'}`, r && r.success ? 'ok' : 'hata');
+    if (r && r.success) { veri.motor = r.motor; ciz(); }
+  }
+
+  function motorCiz(v) {
+    const m = v.motor;
+    if (!m) return el('section', { class: 'p-kart mb-4', id: 'doktorMotor' }, [el('h3', { class: 'p-kart-baslik', text: 'Onarım motoru' }), el('p', { class: 'hint hint-sm mb-0', text: 'Onarım motoru bilgisi yok (sunucu eski sürüm olabilir).' })]);
+    const telefon = telefonMu();
+    const yazilir = yazilabilir(v);
+    const g = m.golge || {};
+    const kipMetni = m.kip === 'golge'
+      ? `Gölge kipi — Doktor yalnız izler: sorun görünce "şunu yapardım" diye yazar, HİÇBİR şey yapmaz. ${g.doldu ? `${g.gunSiniri} günlük gölge süresi doldu (${String(g.gun).replace('.', ',')}. gün) — listeye bakıp karar verin; Pusula kipi kendisi değiştirmez.` : `Gölge ${String(g.gun != null ? g.gun : 0).replace('.', ',')}. gün / ${g.gunSiniri || 7} (kalan ${g.kalanGun != null ? g.kalanGun : '?'} gün).`}`
+      : m.kip === 'etkin' ? 'Etkin kip — açık kurallar sınırları içinde kendiliğinden uygulanır. Her deneme aşağıda ve onarım günlüğünde görünür. "İzleme kipine dön" hemen durdurur (telefondan da, PIN\'siz).'
+        : 'Kapalı — Doktor onarım için ne izler ne yapar. Teşhis ve bakım işleri sürer.';
+    const dugmeler = motorDugmeleri(m, { telefon, yazilir });
+    const kuralSatir = (r) => {
+      const [dAd, dTon] = r.durum === 'var' ? ['tetik var', 'p-rozet-warn'] : r.durum === 'yok' ? ['tetik yok', 'p-rozet-pos'] : ['bilinmiyor', ''];
+      const son = r.sonKarar ? `${zaman(r.sonKarar.z)} ${(KARAR_AD[r.sonKarar.karar] || [r.sonKarar.karar])[0]}` : '—';
+      const dugme = yazilir && !telefon ? el('button', { type: 'button', class: 'btn btn-secondary btn-sm', 'data-kural': r.kimlik, text: r.acik ? 'Kapat' : 'Aç (PIN)', onclick: () => kuralDugmesi(r.kimlik, !r.acik) }) : null;
+      return el('tr', { 'data-kural': r.kimlik }, [
+        el('td', null, [el('strong', { text: `${r.kimlik} · ${r.ad}` }), el('div', { class: 'df-soluk', text: r.eylem })]),
+        el('td', null, [el('span', { class: `p-rozet ${r.acik ? 'p-rozet-pos' : ''}`, text: r.acik ? 'açık' : 'kapalı' })]),
+        el('td', null, [el('span', { class: `p-rozet ${dTon}`, text: dAd }), el('div', { class: 'df-soluk', text: `${r.ayrinti || ''}${r.bekleyen ? ` · yapmadı: ${r.bekleyen}` : ''}` })]),
+        el('td', { class: 'df-soluk', text: son }),
+        el('td', { class: 'df-soluk' }, [el('span', { text: r.sinir }), el('div', null, [el('a', { href: r.kilavuz, text: `Rehber ${r.rehber}` })])]),
+        el('td', null, [dugme]),
+      ]);
+    };
+    const yapardim = m.yapardim || [];
+    const etkinKayit = m.etkinKayit || [];
+    const tablo = (id, l) => AG.tablo.kutulu({ id, sinif: 'p-tablo gl-tablo', basliklar: ['Zaman', 'Karar', 'Hedef', 'Ne'],
+      satirlar: l.map(x => { const s = motorSatirModeli(x); return el('tr', null, [el('td', { class: 'sayi gl-zaman', text: s.zaman }), el('td', null, [el('span', { class: `p-rozet ${s.ton}`, text: s.karar })]), el('td', { class: 'df-soluk', text: s.hedef }), el('td', { class: 'gl-mesaj', text: s.ne })]); }) }, 'p-tablo-kap');
+    return el('section', { class: 'p-kart mb-4', id: 'doktorMotor', 'data-kip': m.kip }, [
+      el('div', { class: 'p-kart-bas' }, [
+        el('h3', { class: 'p-kart-baslik', text: 'Onarım motoru' }),
+        el('span', { class: `p-rozet ${KIP_TON[m.kip] || ''}`, id: 'doktorMotorKip', text: KIP_AD[m.kip] || m.kip }),
+      ]),
+      el('p', { class: 'mb-2', text: kipMetni }),
+      m.kip === 'golge' ? el('p', { class: 'hint hint-sm mb-2', text: `Son 7 gün: ${g.yapardim || 0} kez "yapardım" · ${g.gecti || 0} tanesinde sorun kendiliğinden geçti · ${g.suruyor || 0} tanesinde sürüyordu.` }) : null,
+      dugmeler.length ? el('div', { class: 'sorun-dugmeler mb-3', id: 'doktorMotorDugmeler' }, dugmeler.map(d => el('button', { type: 'button', class: `btn ${d.birincil ? 'btn-primary' : 'btn-secondary'} btn-sm`, 'data-kip': d.kimlik, text: d.metin, onclick: () => kipDugmesi(d.kimlik) })))
+        : el('p', { class: 'hint hint-sm mb-3', text: !yazilir ? 'Bu sayfa sunucudan okunuyor — değişiklik sunucudaki panelden (ya da telefondan izleme kipine dönüş).' : telefon ? 'Telefondan yalnız izleme kipine dönülür; etkin kipe geçiş sunucudaki panelden.' : '' }),
+      (m.devirler || []).length ? el('div', { class: 'mb-3', id: 'doktorDevirler' }, m.devirler.map(x => el('section', { class: 'sorun-kart s-bad' }, [
+        el('div', { class: 'sorun-bas' }, [el('h3', { class: 'sorun-baslik', text: `Size devredildi: ${x.ad} — ${x.hedefAd}` })]),
+        el('p', { class: 'mb-0', text: `${zaman(x.z)} · art arda ${x.ardisik} deneme olmadı${x.neden ? ` (${x.neden})` : ''}. Onarım Rehberi › ${x.rehber}. Doktor ${zaman(x.yenidenDeneme)} sonrası bir kez daha dener.` }),
+      ]))) : null,
+      AG.tablo.kutulu({ id: 'tblDoktorMotorKural', sinif: 'p-tablo', basliklar: ['Kural', 'Açık mı', 'Şu an', 'Son karar', 'Sınır', ''], satirlar: (m.kurallar || []).map(kuralSatir) }, 'p-tablo-kap'),
+      el('h4', { class: 'mt-3 mb-2', text: `Şunu yapardım (gölge kaydı, ${yapardim.length})` }),
+      yapardim.length ? tablo('tblDoktorYapardim', yapardim) : el('div', { class: 'p-bos' }, [el('p', { class: 'p-bos-metin', text: 'Henüz "yapardım" kaydı yok — Doktor bir sorun görmedi ya da sınırlar izin vermedi.' })]),
+      etkinKayit.length ? el('h4', { class: 'mt-3 mb-2', text: `Etkin kipte yaptıkları (${etkinKayit.length})` }) : null,
+      etkinKayit.length ? tablo('tblDoktorEtkin', etkinKayit) : null,
+      el('details', { class: 'mt-3', id: 'doktorMotorSinir' }, [
+        el('summary', { text: 'Ortak sınırlar ve asla yapmadıkları' }),
+        el('ul', { class: 'hint hint-sm' }, (m.sinirlar || []).map(x => el('li', { text: x }))),
+        el('ul', { class: 'hint hint-sm' }, (m.asla || []).map(x => el('li', { text: x }))),
+        el('p', { class: 'hint hint-sm mb-0', text: `Sessiz saatte yeniden başlatma kuralı YOK: ${((m.d8 && m.d8.elenen) || []).map(x => `${x.belirti} (${x.neden})`).join(' · ')}` }),
+      ]),
+    ]);
+  }
+
   function ciz() {
     const k = bul('doktorKok');
     if (!k || !veri) return;
-    doldur(k, [ozetCiz(veri), teshisCiz(veri), onarimCiz(veri), bakimCiz(veri), sinirCiz(veri)]);
+    doldur(k, [ozetCiz(veri), teshisCiz(veri), onarimCiz(veri), motorCiz(veri), bakimCiz(veri), sinirCiz(veri)]);
     if (global.lucide && global.lucide.createIcons) global.lucide.createIcons();
   }
 
@@ -203,6 +330,6 @@
   if (doc && doc.addEventListener) doc.addEventListener('ag:rota', (e) => { if (e.detail && e.detail.bolum === 'tab-doktor') yukle(); });
 
   AG.pages = AG.pages || {};
-  AG.pages.doktor = { yukle, zaman, sure, hazirModeli, onarimModeli, _durum: { durum, veriAyarla: (v) => { veri = v; } }, _ciz: { ciz } };
+  AG.pages.doktor = { yukle, zaman, sure, hazirModeli, onarimModeli, motorSatirModeli, motorDugmeleri, _durum: { durum, veriAyarla: (v) => { veri = v; } }, _ciz: { ciz, motorCiz } };
   if (typeof module !== 'undefined' && module.exports) module.exports = AG.pages.doktor;
 })(typeof window !== 'undefined' ? window : globalThis);

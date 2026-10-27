@@ -65,8 +65,8 @@
     } catch (e) { return 'yerel'; }
   };
   let kademe = ilkKademe();
-  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları (77.x: güvenli kipten çık / güvenli kipe al / borsayla karşılaştır / yeniden başlat dahil; 77.8: devral / devral-sahiplen / devral-baslat) — hepsi PIN'li; 77.x TELEFON_SERBEST_YOLU: Şimdi yokla ve sessizi erken bitir PIN'siz.
-  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet|guvenli-kip-kaldir|guvenli-kip-gir|borsa-karsilastir|yeniden-baslat|devral|devral-sahiplen|devral-baslat)\/uygula$)|(?:^\/api\/(saglik\/oz\/yokla|bildirim\/gecici-bitir)$)/;
+  // lib/acilPin.js TELEFON_PIN_YOLU ile aynı: acil durdurma + (61.3) güncelleme kontrol/kur + (73.8) sorun araçları (77.x: güvenli kipten çık / güvenli kipe al / borsayla karşılaştır / yeniden başlat dahil; 77.8: devral / devral-sahiplen / devral-baslat) — hepsi PIN'li; 77.x TELEFON_SERBEST_YOLU: Şimdi yokla ve sessizi erken bitir PIN'siz; 78.2: Pusula Doktoru'nu izleme / kapalı kipe döndürme PIN'siz.
+  const TELEFON_YAZMA = /(?:^\/api\/(bindirme\/[^/]+\/acil|kalkan\/acil|exchange\/kill)$)|(?:^\/api\/guncelleme\/(kontrol|uygula)$)|(?:^\/api\/sorun-arac\/(kayit-esitle|zarar-siniri-sifirla|sapma-kabul|yatirma-kabul|para-akisi-onay|para-akisi-reddet|guvenli-kip-kaldir|guvenli-kip-gir|borsa-karsilastir|yeniden-baslat|devral|devral-sahiplen|devral-baslat)\/uygula$)|(?:^\/api\/(saglik\/oz\/yokla|bildirim\/gecici-bitir|doktor\/motor\/kip)$)/;
   const TELEFON_MESAJI = 'Telefondan yalnız izleme, acil durdurma ve güncelleme yapılır (Sorunlar sayfasının PIN\'li araçları da: güvenli kipten çık / güvenli kipe al, kayıt eşitleme …) — bu işlem sunucudaki panelden yapılır.';
 
   /**
@@ -583,7 +583,13 @@
     /* ── 78.1 Pusula Doktoru (lib/doktor; panel: js/pages/doktor.js) — SALT OKUMA (telefonda da); araştırma kopyasında sunucudan (EV_YOLU) ── */
     doktor: {
       durum: (gun, ornek) => al('/api/doktor?' + new URLSearchParams({ ...(gun ? { gun: String(gun) } : {}), ...(ornek ? { ornek: '1' } : {}) }).toString()),
-      hazir: () => al('/api/hazir')
+      hazir: () => al('/api/hazir'),
+      // 78.2 onarım motoru: etkin kipe geçiş + kural açma YALNIZ bu bilgisayardan (yerel PIN — sunucu 403 pin-gerekli → PIN penceresi);
+      // izleme (gölge) / kapalı kipe dönüş PIN'siz, telefonda da (TELEFON_YAZMA'da); kural kapatma PIN'siz, yalnız bu bilgisayar
+      etkin: (onay) => gonder('/api/doktor/motor/etkin', { onay }),
+      kip: (kip) => gonder('/api/doktor/motor/kip', { kip }),
+      kuralAc: (kural) => gonder('/api/doktor/motor/kural-ac', { kural }),
+      kuralKapat: (kural) => gonder('/api/doktor/motor/kural-kapat', { kural })
     },
     /* ── D3 Tatbikat sihirbazı (lib/tatbikat; panel: js/pages/tatbikat.js) — durum telefonda da; yazma yalnız bu bilgisayardan; kaydet yerel PIN ── */
     tatbikat: {
