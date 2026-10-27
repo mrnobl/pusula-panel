@@ -2,6 +2,13 @@
 
 Her sürümde panelde ne değişti. Yeni bir sürüm geldiğinde Ana sayfada bir kez **"bu sürümde yeni"** kartı çıkar.
 
+## 78.4 — Pusula kendini daha iyi izliyor (2026-10-27) {#s78-4}
+- **Öz denetim kendini de denetler:** takılan bir denetim en çok 60 saniye beklenir; yoklama durursa Sorunlar'da "Öz denetim durdu" kartı ve bir Telegram alarmı çıkar, kendiliğinden yeniden başlar. Öz denetim taze değilken sunucunun sağlık sinyali gönderilmez — dış izleyici de uyarır.
+- **Yeni denetimler (39):** "Program dosyaları yerinde" (antivirüs bir dosyayı karantinaya alırsa Pusula kapanmadan haber verir — Pusula'yı yeniden başlatmayın) ve "Zamanlanmış görevler" (görev yok, devre dışı, Windows parolası değişti ya da uzun süredir çalışmadı — günde bir bilgi). Güncellemeler 2 gündür denetlenmiyorsa da sarı.
+- **İki sunucu:** açılışta öbür sunucuya ulaşılamadıysa Pusula artık 1, 2, 5, 10, 30 dakika arayla yeniden sorar ve çakışma yoksa botu kendisi başlatır; Sorunlar doğru durumu yazar. Nöbet çakışması ve sonucu belli olmayan taşıma da Sorunlar'da kart olur.
+- **Güncelleme sırasında elektrik kesilirse:** paket kurulumu yarıda kaldıysa Pusula açılışta eski sürümü geri koyar ve haber verir.
+- Güncelleme sunucuda **onaylı** kurulur ([Ayarlar › Güncelleme](#/kilavuz/ayarlar/guncelleme-izleme)); kuru denemede bütün botların kararı birebir aynı.
+
 ## 78.3 — Veri dosyaları elektrik kesintisine karşı daha sağlam (2026-10-27) {#s78-3}
 - **Bozuk ya da silinmiş dosya sessizce sıfırlanmaz.** Bir botun durum dosyası silinmiş (antivirüs, elle) ama son iyi kopyası duruyorsa bot o kopyayla açılır ve ENGEL'de bekler. Kâğıt hesabın kendi dosyası bozulursa da öyle: kâğıt hesap sessizce sıfırdan başlamaz. [Ayrıntı](#/kilavuz/sorun-giderme/durum-dosyasi).
 - **İşlem geçmişi / günlük / özsermaye dosyası bozulursa** Pusula onu silmez, `.bozuk-*.bak` adıyla kenara alır, son iyi kopyadan açar; Telegram ve Sorunlar'da kart çıkar. [Ayrıntı](#/kilavuz/sorun-giderme/kayit-dosyasi-bozuk).

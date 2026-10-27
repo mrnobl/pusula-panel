@@ -7269,11 +7269,11 @@
         "dosya": "gosterge-havuzu-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 49004,
+        "bayt": 49522,
         "olcek": 1,
-        "ozet": "032e1178acb9ecf385f8bb06ffbbdb99d48fb9e24d67714ebd09b9d1e3b5313c",
+        "ozet": "ec72bf339b8c5bfb2b41fc7b83761b70d2b25cac432c3ea40564ee0c9a826b91",
         "genel": "9f5164c21a304f89dd6311353c5d80fba9e41fc590e47c2a920378ae9842b5e4",
-        "surum": "78.3",
+        "surum": "78.4",
         "tarih": "2026-10-26",
         "isaretler": [
           {
@@ -7811,11 +7811,11 @@
         "dosya": "saglik-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 73898,
+        "bayt": 74056,
         "olcek": 1,
-        "ozet": "d6ae196bb7f9038b4739eb0c3254dadc40355fcc1dfd876a3c75afa9f75e2336",
-        "genel": "544903d3844aaf3d3b8326ae798fd9f7b51d86a425778f4ce646fca9ef8ee924",
-        "surum": "78.0",
+        "ozet": "4bc6fbebbc4554817d852779f78e48e06ec2f7bccf9d0921e02d63f9c4883da6",
+        "genel": "9f5164c21a304f89dd6311353c5d80fba9e41fc590e47c2a920378ae9842b5e4",
+        "surum": "78.2",
         "tarih": "2026-10-26",
         "isaretler": [
           {
@@ -8818,9 +8818,9 @@
         "dosya": "rehber-1400.webp",
         "en": 1400,
         "boy": 900,
-        "bayt": 93152,
+        "bayt": 89852,
         "olcek": 1,
-        "ozet": "f06db517c8fa2a1f6ce827b7e2fd28171098a6fb36bf456e831846ecfcf8a46d",
+        "ozet": "106fcb236a9e8995da3b3955ee322e5b5d9916f7e7df5e2768f92eccaab435fe",
         "genel": "9f5164c21a304f89dd6311353c5d80fba9e41fc590e47c2a920378ae9842b5e4",
         "surum": "78.2",
         "tarih": "2026-10-26",
@@ -8828,16 +8828,16 @@
           {
             "secici": "#rehberYeniSekme",
             "x": 1205,
-            "y": 223,
+            "y": 281,
             "w": 170,
             "h": 42
           },
           {
             "secici": "#rehberCerceve",
             "x": 273,
-            "y": 269,
+            "y": 327,
             "w": 1102,
-            "h": 629
+            "h": 571
           }
         ]
       }
@@ -8865,9 +8865,9 @@
         "dosya": "rehber-390.webp",
         "en": 780,
         "boy": 1688,
-        "bayt": 89372,
+        "bayt": 84944,
         "olcek": 2,
-        "ozet": "f06db517c8fa2a1f6ce827b7e2fd28171098a6fb36bf456e831846ecfcf8a46d",
+        "ozet": "106fcb236a9e8995da3b3955ee322e5b5d9916f7e7df5e2768f92eccaab435fe",
         "genel": "9f5164c21a304f89dd6311353c5d80fba9e41fc590e47c2a920378ae9842b5e4",
         "surum": "78.2",
         "tarih": "2026-10-26",
@@ -8875,16 +8875,16 @@
           {
             "secici": "#rehberYeniSekme",
             "x": 180,
-            "y": 355,
+            "y": 433,
             "w": 193,
             "h": 52
           },
           {
             "secici": "#rehberCerceve",
             "x": 17,
-            "y": 411,
+            "y": 489,
             "w": 356,
-            "h": 431
+            "h": 353
           }
         ]
       }

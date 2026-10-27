@@ -239,6 +239,24 @@ Yalnız bilgi: piyasa emri kayması + ücret backtest varsayımının 2 katı. B
 
 **Belirti:** "taşımadan sonra botlar borsayla karşılaştırılmayı bekliyor". **Adımlar:** eski bilgisayarda **Pusula'yı durdur**; Botlar › Yönetim › **Borsayla karşılaştır**, temiz çıkınca **Başlat**.
 
+### Bot açılışta başlamadı — eşlere ulaşılamadı (nöbet) {#nobet-baslamadi}
+
+**Belirti:** Telegram "Bot açılışta başlamadı (nöbet denetimi)" — "eşlenmiş sunucunun hiçbirine ulaşılamadı"; Sorunlar'da kırmızı "açılışta başlamadı — eşlere ulaşılamadı". **Anlamı:** dikkat — iki sunucu eşliyse Pusula açılışta öbür sunucuya "bu bot sende çalışıyor mu?" diye sorar; cevap alamazsa, iki makine aynı hesaba emir göndermesin diye botu **başlatmaz**. Bot karar vermiyor; açık pozisyonların stopları borsada. Pusula soruyu **1, 2, 5, 10, 30 dakika arayla (sonra 30 dakikada bir) yeniden sorar**: öbür sunucu açılınca ve çakışma yoksa bot kendiliğinden başlar (Telegram'da "nöbet denetimi geçti — bot başladı"). **Adımlar:** Ayarlar › Makineler'de öbür sunucunun durumuna bakın. Öbür makine kapalı / yerinde değil ve bot orada **çalışmıyorsa** bu sunucuda Botlar › bot › **Başlat** (elle Başlat ulaşılamayan eşi engel saymaz). Emin değilseniz başlatmayın — bekleyin ya da sohbete yazın.
+
+### İki makine aynı botun sahibi görünüyor (nöbet çakışması) {#nobet-cakisma}
+
+**Belirti:** Telegram "Bot açılışta başlamadı (nöbet denetimi)" çakışma metniyle, "iki makine aynı botun sahibi (bölünmüş beyin)" ya da "bu makinede durduruldu — başka makinede devralınmış"; Sorunlar'da "iki makine aynı botun sahibi görünüyor". **Anlamı:** tehlike — iki makine aynı hesaba emir gönderirse çift emir olur; nöbet kuralı botu bir makinede durdurdu ya da başlatmadı (büyük nöbet kazanır, eşitlikte büyük makine kimliği). "Devralınmış / taşınmış" türü bilinçli bir taşımanın sonucuysa yalnız bilgidir. **Adımlar:**
+
+1. Botu **hangi makinenin** çalıştıracağına karar verin (genellikle son taşınan / devralınan).
+2. Öbür makinede masaüstündeki **Pusula'yı durdur**; gerekirse orada Görev Zamanlayıcı › PusulaBot ve PusulaBekci görevlerini **Devre dışı bırak**.
+3. Kalan makinede Botlar › **Borsayla karşılaştır**; temizse ve bot orada kalacaksa **Başlat**.
+
+Borsada pozisyonları aceleyle kapatmayın — önce makinelerden birini durdurun. Kart 24 saat sonra ya da bot bu makinede yeniden başlayınca kalkar.
+
+### Bot taşımasının sonucu belli değil {#tasima-belirsiz}
+
+**Belirti:** Ayarlar › Makineler'de "… makinesine ulaşılamadı — taşımanın sonucu belli değil. Bot iki makinede de başlamaz"; Sorunlar'da "taşımanın sonucu belli değil". **Anlamı:** dikkat — taşıma sırasında bağlantı koptu; çift emir olmasın diye bot iki makinede de karar vermiyor. **Adımlar:** hedef makineyi açın (Tailscale bağlı olsun) → Ayarlar › Makineler › taşıma satırı › **Yeniden denetle** (Pusula açılışta da kendiliğinden sorar). "Taşındı" çıkarsa hedefte **Borsayla karşılaştır** → **Başlat**; "başarısız" çıkarsa bot bu makinede olduğu gibi kalır. İki makinede de elle Başlat'a basmayın.
+
 ## Güncelleme {#guncelleme-sorunlari}
 
 ### Onayınızı bekleyen güncelleme {#guncelleme-onay}
@@ -272,6 +290,10 @@ Yalnız bilgi: piyasa emri kayması + ücret backtest varsayımının 2 katı. B
 ### Kod imzası kurulmamış {#imza-kurulmamis}
 
 **Anlamı:** dikkat — güncellemeler imzasız da kurulur. **Adımlar:** sunucuda bir kez `npm run imza-kur`.
+
+### Güncellemeler denetlenmiyor {#guncelleme-denetlenmiyor}
+
+**Belirti:** Sağlık › Son güncelleme sarı "güncelleme … süredir denetlenmedi"; Sorunlar'da "Güncellemeler 2 gündür denetlenmiyor". **Anlamı:** dikkat — günlük güncelleme denetimi (PusulaGuncelle görevi, 12:00) iki gündür çalışmadı (sunucu en az bir gündür açıkken): görev silinmiş, devre dışı ya da Windows parolası değişmiş olabilir. Çalışan sürüm etkilenmez, ama düzeltmeler gelmez. Onay bekleyen bir sürüm 3 günden uzun beklerse de aynı satır sararır (Ayarlar › Güncelleme › **Güncellemeyi kur**). **Adımlar:** Ayarlar › Güncelleme › **Şimdi kontrol et**; sonra Sistem › Kurulum denetimi › **PusulaGuncelle** satırı — kırmızı / sarıysa satırdaki komutu sunucuda Komut İstemi'nde (Yönetici olarak) siz çalıştırın ([görev parolası](#/kilavuz/sorun-giderme/parola)).
 
 ## Telegram ve sinyaller {#telegram-sinyal}
 
@@ -342,9 +364,19 @@ Sunucu dönünce bot kaçırılan günleri kendisi sayar; geçmiş günlerin emi
 
 `git checkout` / `git reset` ile kendiniz geri almayın; önce karantinadan geri yükleyin. Kaspersky raporunu sohbete gönderin.
 
+**Pusula çalışırken:** öz denetim saatte bir program dosyalarının (server.js, lib/*, başlatma betikleri, package.json, paketler) **var olup olmadığına** bakar (dosya okumaz, tarama yapmaz). Biri eksikse Telegram ALARM "program dosyası EKSİK — antivirüs karantinası olabilir" ve Sorunlar'da kırmızı kart çıkar: Pusula o an çalışıyor ama bir sonraki yeniden başlatmada açılmayabilir — **Pusula'yı yeniden başlatmayın**, önce karantinadan geri yükleyin (öz denetim de bu durumda Pusula'yı kendisi yeniden başlatmaz). Pusula zaten açılamıyorsa denetleyicinin "çökme döngüsü" iletisi eksik dosyayı ve konsol günlüğündeki "Cannot find module" satırını da yazar.
+
 ### Windows parolası değişti, görevler çalışmıyor {#parola}
 
-**Belirti:** elektrik kesintisinden sonra Pusula açılmıyor; yedek ve güncelleme durmuş; Kurulum denetiminde görev sonucu `0x8007052E`. **Anlamı:** tehlike — parolayla kaydedilmiş görevler (PusulaBot, Bekçi, Yedek, Güncelle) parola değişince çalışmaz. Kurulum denetimi görev satırında kodun sade açıklamasını ("oturum açılamadı — parola değişmiş") ve tek komutluk düzeltmeyi yazar. Bilinen diğer kodlar: `0x80070005` erişim reddedildi (yetki / antivirüs), `0x800710E0` görev reddedildi, `0x1` betik hata ile bitti, `0x41303` hiç çalışmadı (zararsız). **Adımlar:** satırdaki komutu (ya da **Onar**'ın gösterdiğini) sunucuda Komut İstemi'ni açıp kendiniz çalıştırın — Pusula bunu kendisi çalıştırmaz; görevi yeni parolayla yeniden kurar; bilgisayara PIN ile giriyorsanız PIN değil hesap parolası istenir; sonra bilgisayarı bir kez yeniden başlatıp Pusula'nın kendiliğinden açıldığını görün.
+**Belirti:** elektrik kesintisinden sonra Pusula açılmıyor; yedek ve güncelleme durmuş; Kurulum denetiminde görev sonucu `0x8007052E`. **Anlamı:** tehlike — parolayla kaydedilmiş görevler (PusulaBot, Bekçi, Yedek, Güncelle) parola değişince çalışmaz. Kurulum denetimi görev satırında kodun sade açıklamasını ("oturum açılamadı — parola değişmiş") ve tek komutluk düzeltmeyi yazar. Bilinen diğer kodlar: `0x80070005` erişim reddedildi (yetki / antivirüs), `0x800710E0` görev reddedildi, `0x1` betik hata ile bitti, `0x41303` hiç çalışmadı (zararsız). **Adımlar:** satırdaki komutu (ya da **Onar**'ın gösterdiğini) sunucuda Komut İstemi'ni açıp kendiniz çalıştırın — Pusula bunu kendisi çalıştırmaz; görevi yeni parolayla yeniden kurar; bilgisayara PIN ile giriyorsanız PIN değil hesap parolası istenir; sonra bilgisayarı bir kez yeniden başlatıp Pusula'nın kendiliğinden açıldığını görün. Öz denetim görevleri günde bir okur; bu kod görülürse Sorunlar'da "Windows parolası değişmiş — görev çalışamıyor" kartı ve günde bir Telegram bilgisi çıkar (Pusula kapanmadan önce haber).
+
+### Zamanlanmış görevlerde sorun {#zamanlanmis-gorevler}
+
+**Belirti:** Sağlık › Zamanlanmış görevler sarı; Telegram (günde bir bilgi) "zamanlanmış görevlerde sorun"; Sorunlar'da "PusulaX: zamanlanmış görev çalışmıyor" ya da "Pusula kısayolu yok". **Anlamı:** dikkat — Pusula görevlerinden biri (PusulaBot, PusulaBekci, PusulaDikkatArsiv, PusulaGuncelle, PusulaYedek, PusulaYedekUSB) yok, devre dışı, son çalışması hata verdi ya da beklenenden uzun süredir çalışmadı (Bekçi 2 saat, günlük görevler 36 saat, USB yedeği 8 gün — sunucu o süre boyunca açıkken). Botların kararını etkilemez; yedek, güncelleme, gece arşivi ya da kendiliğinden açılma durabilir. Öz denetim bunu günde bir **yalnız okur** (`schtasks /query`; PowerShell açmaz, görev kurmaz). **Adımlar:** Sistem › Kurulum denetimi › ilgili satırı okuyun; satırdaki komutu sunucuda Komut İstemi'ni **Yönetici olarak çalıştır** ile açıp siz yazın (Windows hesap parolası sorabilir — PIN değil). "Devre dışı" ise Görev Zamanlayıcı › Görev Zamanlayıcı Kitaplığı › görev › sağ tık **Etkinleştir**. Sonuç kodu `0x8007052E` ise [Windows parolası değişti](#/kilavuz/sorun-giderme/parola).
+
+### Öz denetim durdu {#oz-durdu}
+
+**Belirti:** Telegram "Öz denetim: yoklama durdu"; Sorunlar'da kırmızı "Öz denetim durdu — denetimler yapılmıyor"; Sağlık sayfasında saatler ilerlemiyor. **Anlamı:** dikkat — öz denetimin bir yoklaması 10 dakikadan uzun sürdü (bir denetim takıldı) ya da yoklamalar art arda hata veriyor. Bu sürede yeni sorunlar Telegram'a **gitmez** ve panel eski sonuçları gösterir; botlar kendi işini sürdürür, stoplar borsada. Her denetim en çok 60 saniye beklenir (aşan denetim o tur "bilinmiyor — zaman aşımı" olur); takılan yoklama 20 dakikada bırakılır ve yeniden başlar; düzelince "yoklama yeniden çalışıyor" bilgisi gelir. Öz denetim taze değilken sunucunun sağlık sinyali (healthchecks) **gönderilmez** — dış izleyici de bir süre sonra uyarır. **Adımlar:** Sistem › Sağlık › **Şimdi yokla**; kart kalkmazsa uygun bir saatte (02:50–04:30 dışında) Pusula'yı yeniden başlatın ve **Sohbete gönder** ile geliştirme sohbetine iletin.
 
 ### Çökme döngüsü {#cokme-dongusu}
 

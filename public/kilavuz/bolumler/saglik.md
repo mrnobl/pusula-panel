@@ -2,7 +2,7 @@
 
 ## Ne işe yarar {#ne-ise-yarar}
 
-"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 37 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
+"Pusula'da bir şey ters gidiyor mu?" sorusunu Pusula kendine 5 dakikada bir sorar. 39 denetim beş grupta: **Pusula ve sunucu**, **Sunucu bilgisayarı**, **Borsa ve veri**, **Botlar ve pozisyonlar**, **Bildirimler**. Bulduğu her sorunu bu sayfada ve Telegram'da gösterir; güvenli işleri kendisi onarır. Disk, yedek, sunucu bilgisayarı ve borsa duyuruları saatte bir yoklanır.
 
 Üç kademe var:
 
@@ -110,6 +110,9 @@ Pusula'yı en çok Windows durdurur. Bu grup saatte bir yalnız **okur**, hiçbi
 |---|---|---|
 | Windows yeniden başlatması | Güncelleme yeniden başlatma bekliyor. Windows **etkin saatler** dışında kendiliğinden yeniden başlatır; 03:02'deki günlük çalışma bu aralığın dışındaysa gece yeniden başlatabilir | Yeniden başlatmayı gündüz uygun bir saatte elle yapın. Kalıcı çözüm: sunucuda **yönetici** PowerShell'de `powershell -ExecutionPolicy Bypass -File scripts\windows-etkin-saat.ps1` — etkin saatleri **21:00–15:00** sabitler (03:02 ve 12:00 güncellemesi korunur; Windows yalnız 15:00–21:00 arasında yeniden başlatabilir). Durum: aynı komut `-Durum` ile |
 | Uyku ve hazırda bekleme | Prize takılıyken bilgisayar boşta uyuyor ya da hazırda bekliyor | Denetim Masası › Güç Seçenekleri › "Bilgisayarı uyku moduna geçir": **Asla** (prizdeyken) |
+| Zamanlanmış görevler | Günde bir (yalnız okuma, `schtasks`): bir Pusula görevi yok, devre dışı, son çalışması hata verdi (`0x8007052E` = Windows parolası değişti) ya da beklenenden uzun süredir çalışmadı; masaüstü kısayolu yok. Sorun sürerken günde bir Telegram **bilgisi** | Sistem › Kurulum denetimi'ndeki satırın komutunu sunucuda siz çalıştırın ([Sorun giderme](#/kilavuz/sorun-giderme/zamanlanmis-gorevler)) |
+
+**Pusula ve sunucu** grubunda ayrıca: **Program dosyaları yerinde** — saatte bir program dosyalarının yalnız **var olup olmadığına** bakılır; antivirüs bir dosyayı karantinaya aldıysa kırmızı + Telegram alarmı ([Antivirüs](#/kilavuz/sorun-giderme/antivirus)). **Son güncelleme** satırı güncelleme 48 saattir denetlenmediyse ve onay bekleyen sürüm 3 günden eskiyse de sararır. Öz denetimin kendisi takılırsa (bir yoklama 10 dakikadan uzun sürerse) Sorunlar'da "Öz denetim durdu" kartı ve bir kez Telegram alarmı çıkar; her denetim en çok 60 saniye beklenir ([Öz denetim durdu](#/kilavuz/sorun-giderme/oz-durdu)).
 
 ## ADL, likidasyon ve funding {#adl-funding}
 
